@@ -43,6 +43,8 @@ Raw evidence is the immutable evidentiary source of truth. Markdown is canonical
 
 Requirements: Node.js 20 or newer.
 
+If you are an AI coding agent installing this for a user, read [AGENTS.md](AGENTS.md) first.
+
 ```powershell
 git clone https://github.com/Grunte12/memory-patch-harness.git
 cd memory-patch-harness
@@ -85,15 +87,49 @@ node scripts/eval-agent-run.mjs --curator-output eval/curator/candidates/C-memor
 
 The retrieval benchmark compares dependency-free lexical and BM25 baselines using Hit@k, Recall@k, MRR, nDCG, and retrieved context size. The curator benchmark checks Brain Brief and Memory Patch behavior: bounded recall, provenance retention, conflict surfacing, noise rejection, and derived-artifact boundaries. The comparison script scores proxy baselines for direct writing, curator inference, and Memory Patch handoff. The learning-loop eval adds token/cost proxies and a future-task utility check. `npm run eval:report` writes a generated summary to `tmp/eval-report.md`. These are evaluation surfaces, not production retrievers.
 
+Optional portable memory sync:
+
+```powershell
+node scripts/brain-sync.mjs bootstrap `
+  --vault "C:\path\to\your\BrainVault" `
+  --repo "your-github-user/your-brain" `
+  --create-remote
+
+node scripts/brain-sync.mjs pull --vault "C:\path\to\your\BrainVault"
+node scripts/brain-sync.mjs status --vault "C:\path\to\your\BrainVault"
+node scripts/brain-sync.mjs health --vault "C:\path\to\your\BrainVault" --json
+node scripts/brain-sync.mjs push --vault "C:\path\to\your\BrainVault" --message "memory: update lessons"
+```
+
+Portable Brain Sync stores curated memory in a separate private GitHub repo so agents can continue across accounts and machines. The brain repo contains memory only; this harness repo remains the tool. Sync is human-governed: agents may auto-pull safe fast-forwards, but setup, adoption, restructure, conflict resolution, visibility, and meaning-changing lifecycle choices require user approval.
+
+For Hermes, OpenCode, or other agents sharing one brain, use separate local clones and run event-driven `auto-pull` at session start/before shared recall. Sync is fast-forward-only; push never auto-rebases competing memory.
+
+Do not push every remembered item. Push at healthy thresholds: session end, account/machine handoff, 3-7 small verified patches, one high-value/risky patch, or before restructure/conflict work. Keep raw inbox noise and unresolved facts local until curated.
+
+Run `health` after conflict resolution, restructure, large intake triage, and before publishing durable memory. It gives agents a deterministic health report instead of making them manually rediscover unresolved links, duplicate titles, missing provenance, stale notes, inbox backlog, and secret-like values.
+
+If sync reports `diverged` or `REMOTE_CHANGED`, run read-only conflict assistance instead of merging blindly:
+
+```bash
+node scripts/brain-sync.mjs conflict-assist --vault "C:\path\to\your\BrainVault" --json
+```
+
+The command explains local-vs-remote memory changes, highlights same-note semantic conflicts, and asks for a human-approved lifecycle decision before any resolution.
+
+Existing Obsidian/custom memory is never restructured silently. The reviewed flow is `detect -> adoption-plan -> restructure-plan -> user approval -> dry-run -> apply -> verify`, with a clean-Git gate, local backup branch, exact migration record, and rollback support.
+
 ## Guides
 
 - [Installation](docs/install.md): install the skill and adapt it to OpenCode or any other coding agent.
+- [Portable Brain Sync](docs/portable-brain-sync.md): connect a private GitHub-backed memory repo for account and machine portability.
+- [Troubleshooting](docs/troubleshooting.md): machine diagnostics, stable error codes, platform notes, and safe agent recovery.
 - [Demo Workflow](docs/demo-workflow.md): see one realistic task become a Memory Patch, Brain Brief, and Hot Context Pack.
 - [Live Model Evaluation](docs/live-model-eval.md): compare real model outputs against the deterministic evaluator.
 - [Live Model Results](docs/live-model-results.md): publish real model results separately from proxy fixtures.
 - [Evaluation](docs/evaluation.md): understand the retrieval, curator, patch-quality, and baseline comparison checks.
 - [Learning Loop](docs/learning-loop.md): v0.3 contract for verified behavior-changing lessons.
-- [คู่มือแนวคิดภาษาไทย](docs/thai-strategy-guide.md): อธิบาย strategy, process, use cases, trade-offs, และข้อจำกัดของ Memory Patch Harness สำหรับผู้ใช้ไทย.
+- [Thai Strategy Guide](docs/thai-strategy-guide.md): strategy, process, use cases, trade-offs, and limitations for Thai readers.
 - [Repository Patterns](docs/repository-patterns.md): how this repo borrows packaging patterns from agent-tool projects without adding heavy dependencies.
 
 ## Project Health
@@ -235,13 +271,13 @@ The most accurate description is:
 
 > **Agentic memory retrieval with an evidence-grounded compiled wiki, designed to become RAG-enabled when scale and measured retrieval failures justify it.**
 
-Read the bilingual guide: [Where This Fits in the RAG Landscape / ระบบนี้อยู่ตรงไหนในโลกของ RAG](docs/rag-positioning.md).
+Read the bilingual guide: [Where This Fits in the RAG Landscape](docs/rag-positioning.md).
 
 The first synthetic retrieval baseline is documented in [Evaluation](docs/evaluation.md). It found no Recall@3 improvement from BM25 over lexical retrieval, so BM25 remains an experimental baseline rather than a default dependency.
 
-See [Cost and Scale / ต้นทุนและการขยายระบบ](docs/cost-and-scale.md) for private real-vault results, honest vector-RAG trade-offs, and the current scalability boundary.
+See [Cost and Scale](docs/cost-and-scale.md) for private real-vault results, honest vector-RAG trade-offs, and the current scalability boundary.
 
-See [Research Source Map / แผนที่แหล่งวิจัย](docs/research-source-map.md) for adopted evidence, discovery-only sources, and sources excluded as irrelevant.
+See [Research Source Map](docs/research-source-map.md) for adopted evidence, discovery-only sources, and sources excluded as irrelevant.
 
 See [Independent NotebookLM Review](docs/notebooklm-review.md) for the neutral research pass, seeded critique, accepted changes, and rejected overreach.
 

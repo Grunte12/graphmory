@@ -1,6 +1,6 @@
 {
   "name": "memory-patch-harness",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Provenance-preserving memory contracts for coding agents",
   "type": "module",
   "license": "MIT",
@@ -15,6 +15,10 @@
   "engines": {
     "node": ">=20"
   },
+  "bin": {
+    "memory-patch-harness": "scripts/brain-sync.mjs",
+    "mph": "scripts/brain-sync.mjs"
+  },
   "files": [
     "adapters/",
     "docs/",
@@ -25,6 +29,7 @@
     "skills/",
     "src/",
     "test/",
+    "AGENTS.md",
     "CHANGELOG.md",
     "CITATION.cff",
     "CODE_OF_CONDUCT.md",
@@ -47,6 +52,7 @@
     "eval:agent-run": "node scripts/eval-agent-run.mjs",
     "eval": "npm run eval:retrieval && npm run eval:curator && npm run eval:patch-quality && npm run eval:learning-loop && npm run eval:future-task",
     "hot-context:render": "node scripts/render-hot-context.mjs",
+    "brain:sync": "node scripts/brain-sync.mjs",
     "bench:scale": "node scripts/bench-scale.mjs",
     "check": "npm run test && npm run validate:examples && npm run eval"
   },

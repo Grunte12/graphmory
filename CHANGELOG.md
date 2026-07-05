@@ -2,6 +2,19 @@
 
 This project follows a lightweight changelog format inspired by Keep a Changelog, but versioning is still pre-1.0.
 
+## 0.4.0 - 2026-07-05
+
+### Added
+
+- Portable Brain Sync command for Git-backed memory portability across accounts and machines.
+- Private-by-default brain repo initialization with GitHub CLI support.
+- Secret-like value scan before memory push.
+- Portable Brain Sync guide and install instructions.
+- Reviewed memory restructure manifests with explicit per-note approval, dry-run, clean-Git and batch-size gates, local backup branches, locking, verification records, and rollback.
+- Cross-machine `doctor` diagnostics, stable input/command error codes, platform guidance, and an agent-safe recovery playbook.
+- Event-driven shared-brain auto-pull for multiple agents, fast-forward-only synchronization, local sync locking, and safe `REMOTE_CHANGED` push refusal instead of automatic rebase.
+- Read-only `conflict-assist` reports for diverged shared memory, including local/remote/dirty change summaries, same-note semantic conflict hints, and user-approved lifecycle decision guidance.
+
 ## 0.3.0 - 2026-06-28
 
 ### Added

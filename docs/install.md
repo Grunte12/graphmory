@@ -27,6 +27,32 @@ node scripts/init-project.mjs --vault "/path/to/ObsidianVault" --project "my-pro
 
 This creates a small project home under the vault. Keep project-specific facts there; keep global harness rules in this repository.
 
+## Optional Portable Brain Sync
+
+If you want the same memory to follow you across accounts or machines, connect the vault to a private GitHub memory repo:
+
+```sh
+node scripts/brain-sync.mjs bootstrap \
+  --vault "/path/to/YourBrain" \
+  --repo "your-github-user/your-brain" \
+  --create-remote
+```
+
+On a new machine, install the harness and run the same bootstrap command. If the repo already exists and the target vault path is empty, it clones/connects that memory. Then run:
+
+```sh
+node scripts/brain-sync.mjs status --vault "/path/to/YourBrain"
+node scripts/brain-sync.mjs pull --vault "/path/to/YourBrain"
+```
+
+Use `push` only after a durable Memory Patch has been curated and validated:
+
+```sh
+node scripts/brain-sync.mjs push --vault "/path/to/YourBrain" --message "memory: update lessons"
+```
+
+The memory repo should contain only curated Markdown memory and temporary inbox evidence. Keep the harness code in this repo.
+
 ## OpenCode Adapter
 
 Review:
@@ -45,6 +71,11 @@ Derived Index / Hot Context Pack -> rebuildable views
 ```
 
 ## Any-Agent Adapter
+
+For coding agents that are not OpenCode, start with:
+
+- `AGENTS.md`
+- `adapters/generic-agent/INSTALL.md`
 
 If you are not using OpenCode, keep the same boundary:
 
