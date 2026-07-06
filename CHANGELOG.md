@@ -2,7 +2,39 @@
 
 This project follows a lightweight changelog format inspired by Keep a Changelog, but versioning is still pre-1.0.
 
-## 0.4.0 - 2026-07-05
+## Unreleased
+
+## 0.5.0-rc.3 - 2026-07-06
+
+### Added
+
+- Research-backed improvement roadmap covering stale-memory lifecycle audits, structured conflict decisions, curation-first retrieval improvements, optional reranking, live-agent evals, and initializer/resume artifacts.
+- Read-only `lifecycle-audit` command for expired `valid_until`, due `revalidate_when`, obsolete notes without replacement markers, active notes with stale language, raw memory outside Inbox, and tension notes without a decision path.
+- Structured `decisionOptions` in `conflict-assist` so agents can present clear human lifecycle choices without merging or rewriting memory.
+- Deterministic lifecycle-audit and conflict-assist evals, plus a `release:gate` script that runs the core check suite, report eval, and npm pack dry-run before a release checkpoint.
+- Retrieval stress benchmark that measures misses, stale/raw pollution, estimated context tokens, and latency across exact, alias, paraphrase, conflict, and multi-hop cases.
+- FAMA-inspired current-memory accuracy in stress/gate evals: a run must retrieve current canonical memory and avoid stale/raw/superseded top-k contamination.
+- Lifecycle-aware governed retrieval with bounded `recall` output and explicit low-confidence escalation guidance.
+- Optional scoped recall via `--scope` so agents can search a known project/domain instead of the whole vault.
+- Field-weighted section BM25 recall that gives structured Obsidian path, title, frontmatter, and heading signals more influence than long body text.
+- Diagnostic `recall-loop` command that compares field-weighted and ordinary section BM25 lanes without calling an external model.
+- Optional `recall-semantic` and semantic retrieval eval commands for measured paraphrase/vocabulary failures; this lane uses local Transformers.js only when the user installs the optional dependency.
+- `curation-recommend` CLI flow that classifies retrieval misses, then converts them into alias, frontmatter, MOC-link, scope, and grouped-gold review actions.
+- Review-only Curation Plan contract with machine-readable alias, MOC-link, scope-fix, and grouped-gold candidates; every candidate preserves miss evidence and forbids automatic application.
+- Atomic harness-owned file writes plus worst-case coverage for interrupted replacement, adversarial raw clippings, stale exact-match dominance, alias collisions, and Unicode/Windows paths.
+- Real-vault eval support for `relevant_groups`, allowing human-reviewed alternate canonical notes without weakening flat gold labels.
+- Read-only `sync-plan` decisions for batching, handoff, health blockers, remote divergence, and human approval.
+- Fresh-package installation test that verifies the published agent command surface outside the source tree.
+
+### Changed
+
+- Portable sync guidance now emphasizes autonomy-first detect-act-verify-repair loops with human decisions only at real memory/sync gates.
+- npm package surface is narrowed to runtime scripts, source modules, schemas, examples, adapters, skills, and essential docs; tests/eval/internal planning docs stay in the source repo instead of the installed package.
+- Raw inbox/clipping roots are marked as noncanonical even when deliberately included for benchmark/debug runs.
+- Obsidian-aware section chunking now indexes heading hierarchy while avoiding frontmatter-as-body duplication, reducing deterministic retrieved context without lowering recall.
+- Retrieval ranking now caches section splits, token frequencies, eligible document sets, BM25/BM25F corpus indexes, wikilink reference indexes, and scoped vault subsets to reduce repeated pure work during eval and multi-lane recall.
+
+## 0.4.0 - 2026-07-06
 
 ### Added
 

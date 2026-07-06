@@ -55,6 +55,13 @@ const VERIFICATION_STATUSES = new Set([
   "blocked",
 ])
 
+const CURATION_CANDIDATE_TYPES = new Set([
+  "alias-patch-candidate",
+  "moc-link-candidate",
+  "scope-fix-candidate",
+  "grouped-gold-review",
+])
+
 function text(value, path, errors, min = 1) {
   if (typeof value !== "string" || value.trim().length < min) {
     errors.push(`${path} must be a string with at least ${min} characters`)
@@ -290,6 +297,36 @@ export function validateLearningPacket(value) {
   return { valid: errors.length === 0, errors }
 }
 
+export function validateCurationPlan(value) {
+  const errors = []
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return { valid: false, errors: ["curation plan must be an object"] }
+  }
+  if (value.role !== "curation-plan") errors.push("role must be curation-plan")
+  if (value.canonical_memory !== false) errors.push("canonical_memory must be false")
+  text(value.schema_version, "schema_version", errors, 1)
+  text(value.method, "method", errors, 2)
+  if (!Array.isArray(value.recommendations)) {
+    errors.push("recommendations must be an array")
+  } else {
+    value.recommendations.forEach((recommendation, recIndex) => {
+      if (!Array.isArray(recommendation.patchCandidates)) {
+        errors.push(`recommendations[${recIndex}].patchCandidates must be an array`)
+        return
+      }
+      recommendation.patchCandidates.forEach((candidate, index) => {
+        const base = `recommendations[${recIndex}].patchCandidates[${index}]`
+        if (!CURATION_CANDIDATE_TYPES.has(candidate?.type)) errors.push(`${base}.type is unsupported`)
+        text(candidate?.target, `${base}.target`, errors, 2)
+        if (candidate?.requiresHumanReview !== true) errors.push(`${base}.requiresHumanReview must be true`)
+        if (candidate?.autoApplicable !== false) errors.push(`${base}.autoApplicable must be false`)
+        if (!candidate?.evidence || typeof candidate.evidence !== "object") errors.push(`${base}.evidence must be an object`)
+      })
+    })
+  }
+  return { valid: errors.length === 0, errors }
+}
+
 function validateLearningSelectors(value, path, errors) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     errors.push(`${path} must be an object when present`)
@@ -347,5 +384,6 @@ export function detectContract(value) {
   if (value && typeof value === "object" && "relevant_memory" in value) return "brain-brief"
   if (value && typeof value === "object" && value.role === "derived-index") return "derived-index"
   if (value && typeof value === "object" && value.role === "hot-context-pack") return "hot-context-pack"
+  if (value && typeof value === "object" && value.role === "curation-plan") return "curation-plan"
   return "unknown"
 }

@@ -40,7 +40,7 @@ const report = {
   methods: {},
 }
 
-for (const method of ["lexical", "bm25", "bm25-sections"]) {
+for (const method of ["lexical", "bm25", "bm25-sections", "bm25f-sections"]) {
   const runs = queries.map((item) => {
     const results = rank(documents, item.query, method)
     return {

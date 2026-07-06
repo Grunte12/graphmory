@@ -29,7 +29,7 @@ function makeDocuments(count) {
   })
 }
 
-const methods = ["lexical", "bm25", "bm25-sections"]
+const methods = ["lexical", "bm25", "bm25-sections", "bm25f-sections"]
 console.log("| Notes | Method | Avg query ms | Retrieved context chars |")
 console.log("|---:|---|---:|---:|")
 

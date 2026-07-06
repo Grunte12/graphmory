@@ -77,9 +77,56 @@ node <harness-path>/scripts/brain-sync.mjs health --vault "<vault-path>" --json
 
 Run `health` after conflict resolution, restructure, large intake triage, and before a sync push that publishes durable memory. It checks unresolved links, duplicate titles, orphan notes, missing provenance/lifecycle markers, stale memory without revalidation, inbox backlog, raw captures outside Inbox, and secret-like values. Treat critical findings as blockers before push. Do not ask the Memory Curator to manually rediscover these checks from scratch.
 
+When memory may be time-sensitive or recently changed, run the lifecycle audit before relying on it:
+
+```sh
+node <harness-path>/scripts/brain-sync.mjs lifecycle-audit --vault "<vault-path>" --json
+```
+
+Use it after vendor/API/policy changes, before resurrecting old operational notes, during periodic hygiene, and after conflict resolution. It is read-only and returns review actions such as revalidate, add replacement marker, split/mark tension, add a decision path, or triage raw memory. It must not delete, supersede, or rewrite notes automatically.
+
+For recall, start with the bounded machine-readable path selector instead of broad vault reads:
+
+```sh
+node <harness-path>/scripts/brain-sync.mjs recall --vault "<vault-path>" --query "<task-specific memory question>" --json
+```
+
+Add `--scope "<known project-or-domain path>"` when the active project/domain is known. Read only the returned paths. Raw inbox/clipping paths and stale/superseded lifecycle states are excluded by default. If `needsExpansion` is true, reformulate once using project vocabulary or inspect the named MOC/backlink neighborhood; do not immediately scan the whole vault.
+
+If bounded recall misses repeatedly, use the diagnostic sparse-fusion loop once before broad manual vault search:
+
+```sh
+node <harness-path>/scripts/brain-sync.mjs recall-loop --vault "<vault-path>" --query "<task-specific memory question>" --scope "<known project-or-domain path>" --json
+```
+
+Treat `recall-loop` as a fallback, not the default. If eval misses persist, generate a curation recommendation report instead of guessing:
+
+```sh
+node <harness-path>/scripts/brain-sync.mjs curation-recommend --report "<eval-report.json>" --queries "<query-set.json>" --method governed-bm25f-sections --json
+```
+
+Use the report to classify whether the miss is buried gold, missing scope, no candidates, or vocabulary/gold ambiguity. Apply clearly reversible curator improvements such as adding non-sensitive aliases, frontmatter hints, or MOC links when the evidence is explicit and the target note is unambiguous. Ask before meaning-changing rewrites, grouped-gold changes, note moves, deletions, or conflict resolution.
+
+If frozen evals still show paraphrase or vocabulary misses after scope and curation review, use optional semantic recall as an escalation lane:
+
+```sh
+npm install @huggingface/transformers
+node <harness-path>/scripts/brain-sync.mjs recall-semantic --vault "<vault-path>" --query "<task-specific memory question>" --scope "<known project-or-domain path>" --json
+```
+
+Semantic recall is not the default install path. Do not install optional dependencies in a shared/public project without user approval, do not treat generated embeddings as canonical memory, and do not skip Markdown curation just because semantic search found a match.
+
 ## Human Judgment Gates
 
-The harness keeps humans in control of durable memory. Agents may automate detection, summaries, checks, and safe fast-forwards, but important memory decisions require human judgment.
+The harness keeps humans in control of durable memory without forcing humans into every loop. Default to autonomous loop engineering for reversible, evidence-backed work:
+
+1. detect the state with tools,
+2. make the smallest safe change,
+3. verify with deterministic checks,
+4. repair once or twice if checks fail,
+5. report the result and caveats.
+
+Do not stop just to ask for permission on routine recall, health checks, sync-plan reports, safe fast-forwards, bounded curation recommendations, or clearly reversible metadata/link improvements. Stop only at decision gates where automation could publish, erase, expose, or change the meaning of durable memory.
 
 Ask the user before:
 
@@ -109,7 +156,7 @@ When histories diverge or `push` reports `REMOTE_CHANGED`, use conflict assist b
 node <harness-path>/scripts/brain-sync.mjs conflict-assist --vault "<vault-path>" --json
 ```
 
-Conflict assist is read-only. It fetches remote state, compares local/remote/dirty memory, names same-note semantic conflicts, and returns a decision report. It must not merge, rebase, reset, discard, or rewrite notes. Ask the user to choose the memory lifecycle decision when both sides changed the same meaning: merge both, prefer one side, supersede stale memory, create TENSION, or leave BLOCKED pending evidence.
+Conflict assist is read-only. It fetches remote state, compares local/remote/dirty memory, names same-note semantic conflicts, and returns a decision report with structured `decisionOptions`. It must not merge, rebase, reset, discard, or rewrite notes. Ask the user to choose the memory lifecycle decision when both sides changed the same meaning: merge compatible facts, prefer one side, supersede stale memory, create TENSION, or leave BLOCKED pending evidence.
 
 Do not run a polling daemon by default. Event-driven pulls avoid unnecessary network/RAM use and reduce concurrent Git operations.
 
@@ -117,6 +164,8 @@ Do not push after every remembered item. Batch memory sync when it keeps the bra
 
 - Push at session end after verified durable Memory Patches.
 - Push before switching accounts, machines, or agent runtimes.
+
+Use `sync-plan --json` before deciding whether to hold, pull first, request conflict review, or ask the user to approve a push. The command is advisory and must never be treated as push approval.
 - Push after 3-7 small APPLIED patches or one high-value/risky patch.
 - Push before any restructure, conflict resolution, or long multi-session handoff.
 - Do not push raw inbox/clipping noise, partial notes, unresolved conflicts, or unverified facts.

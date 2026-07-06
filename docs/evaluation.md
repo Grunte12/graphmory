@@ -30,11 +30,109 @@ Interpretation:
 
 Decision: keep BM25 as an evaluation baseline. Do not make it the production default until a larger real-vault dataset shows a meaningful gain.
 
+### Stress Baseline
+
+Run `npm run eval:retrieval:stress` to evaluate a larger generated vault containing canonical notes, stale guidance, raw captures, and unrelated distractors. Unlike the original scale benchmark, this diagnostic measures retrieval quality and contamination as well as speed:
+
+- misses at the selected `k`,
+- stale/raw notes retrieved above or beside canonical memory,
+- current-memory accuracy, which requires a correct canonical hit with no stale/raw/superseded item in the returned set,
+- estimated context tokens,
+- average query latency,
+- category-level exact, alias, paraphrase, conflict, and multi-hop performance.
+
+This command intentionally exposes failures and has no adoption threshold yet. Its first role is to establish a reproducible v0.5 baseline before agentic query expansion or another retrieval technique is added.
+
+The first 250-note development run exposed lifecycle pollution. After governed filtering and bounded one-hop wikilink expansion, the v0.5 deterministic gate runs 50 query variants across seven corpus/seed combinations (350 query executions total):
+
+| Corpus | Runs | Minimum Recall@3 | Minimum MRR | Pollution | Max estimated context |
+|---|---:|---:|---:|---:|---:|
+| 250 notes | 3 seeds | 99% | 0.990 | 0 | 128 tokens |
+| 1,000 notes | 3 seeds | 99% | 0.990 | 0 | 128 tokens |
+| 5,000 notes | 1 seed | 99% | 0.990 | 0 | 128 tokens |
+
+Run `npm run eval:v05-gate` to reproduce the acceptance check. The gate requires at least 50 query executions per run, Recall@3, current-memory accuracy, and MRR of at least 0.90, zero stale/raw pollution, at most 300 estimated context tokens, and bounded local latency.
+
+This is a deterministic regression and scale gate, not sufficient evidence of real-world effectiveness. Query variants share ten underlying intents, latency is machine-dependent, and synthetic aliases/links are cleaner than many real vaults. It supports governed filtering as the default local recall path but does not establish superiority on private vaults or justify embeddings.
+
+The v0.5 candidate adds Obsidian-aware section chunking and field-weighted BM25F: frontmatter is indexed as metadata, headings carry their hierarchy, section bodies avoid re-ingesting frontmatter, and structured fields receive more weight than long body prose. Conservative plural normalization and bounded wikilink boosting further reduce brittle lexical misses without admitting raw/stale memory. Section, frequency, eligible-document, BM25/BM25F corpus, wikilink reference-index, and scoped-vault caches avoid repeatedly rebuilding pure derived state during eval or multi-lane recall. On the deterministic gate this reduced estimated context from roughly 199 tokens to roughly 128 tokens while raising Recall@3 to 99% with zero stale/raw pollution. In local v0.5 development, the full deterministic gate dropped from roughly 74 seconds to under roughly 10 seconds on the same machine after cache/index work; latency remains machine-dependent and should be treated as regression evidence, not a universal benchmark.
+
+On a frozen private 30-question scoped vault eval, governed BM25F section retrieval reached Recall@3 83.3% and MRR 0.726. `recall-loop` is intentionally evaluated as a diagnostic sparse-fusion fallback; it compares field-weighted, focused-query, and ordinary section BM25 lanes in one bounded command. In the current private eval it improved Recall@3 to 86.7% but lowered MRR to 0.706, so it is not the default path. Keep it for low-confidence cases and failure analysis.
+
+The remaining private misses are mostly vocabulary and semantic-distance failures, not lifecycle pollution. A local optional Transformers.js semantic-hybrid experiment using `Xenova/bge-small-en-v1.5` improved the same frozen private eval to Recall@3 96.7% and MRR 0.903 with one remaining miss. This justifies an opt-in semantic escalation lane, but not a core dependency: first-run model download, local index cost, and embedding privacy/caching choices must remain explicit user decisions.
+
+Optional semantic eval:
+
+```sh
+npm install @huggingface/transformers
+node scripts/eval-semantic-retrieval.mjs --vault <vault> --queries <frozen-queries.json> --scope <scope> --json tmp/semantic-report.json
+```
+
+## v0.5 Release Evidence Gate
+
+`0.5.0` remains a release candidate until all applicable layers are reported separately:
+
+1. **Deterministic regression:** `npm run check`, `npm run eval:v05-gate`, and `npm run release:gate` pass with no critical safety regression.
+2. **Human-labeled retrieval:** at least 30 private or anonymized real-vault questions, frozen before tuning, with Recall@3 >= 0.90, MRR >= 0.80, zero stale/raw pollution, and bounded context.
+3. **Lifecycle correctness:** `npm run eval:lifecycle` passes. Stale/expired/superseded/current cases must be audited separately from recall; `lifecycle-audit` should identify revalidation, replacement, and tension-decision needs without mutating notes.
+4. **Conflict decision quality:** `npm run eval:conflict` passes. Same-note divergence, non-overlapping agent histories, and dirty local drafts should produce distinct read-only decision options without mutating Git state.
+5. **Live memory behavior:** at least 20 incidents drawn from real failures, with three isolated trials per tested setup. Record false-memory, secret handling, conflict handling, future-task utility, token use, latency, and human correction time.
+6. **Mixed graders:** deterministic contract graders for objective properties, model graders only for semantic rubrics, and human spot review to calibrate subjective judgments.
+7. **Failure publication:** report misses and confidence limits; do not publish only averages or silently promote a capability suite into a regression claim.
+
+These gates follow the evaluation distinction between reproducible code graders and non-deterministic agent trials. They also keep the synthetic capability set separate from real-world release evidence.
+
+Evaluation design references:
+
+- OpenAI, [How evals drive the next chapter in AI for businesses](https://openai.com/index/evals-drive-next-chapter-of-ai/): define a golden set, inspect 50-100 early outputs, test under realistic conditions, and keep domain experts involved.
+- Anthropic, [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents): start with 20-50 real tasks, use multiple isolated trials, separate capability from regression suites, and combine code, model, and human graders.
+- Anthropic, [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents): optimize for the smallest high-signal context and design tools that return bounded, unambiguous outputs.
+- Hu, Wang, and McAuley, [MemoryAgentBench](https://arxiv.org/abs/2507.05257): evaluate memory agents across accurate retrieval, test-time learning, long-range understanding, and selective forgetting.
+- Wu et al., [LongMemEval](https://arxiv.org/html/2410.10813v2): separate memory design into indexing, retrieval, and reading; measure information extraction, multi-session reasoning, temporal reasoning, knowledge updates, and abstention.
+- Robertson and Zaragoza, [The Probabilistic Relevance Framework: BM25 and Beyond](https://ir.webis.de/anthology/2009.ftir_journal-ir0anthology0volumeA3A4.0/): use BM25F-style weighted fields when document structure and metadata carry different relevance signals.
+- Chhikara et al., [Mem0](https://arxiv.org/abs/2504.19413): compare memory systems against RAG/full-context baselines and report accuracy, latency, and token-cost trade-offs.
+- Rasmussen et al., [Zep / Graphiti](https://arxiv.org/html/2501.13956v1): model dynamic memory with temporal validity, provenance, and relationship history.
+- Uddin et al., [Memora / FAMA](https://arxiv.org/html/2604.20006v1): penalize reliance on obsolete or invalidated memories rather than rewarding recall alone.
+
 This fixture is deliberately small and synthetic. It validates the benchmark code and exposes failure categories; it does not prove production retrieval quality.
 
 `npm run eval:report` runs the deterministic eval suite and writes a generated Markdown summary to `tmp/eval-report.md`.
 
+`npm run release:gate` runs `npm run check`, `npm run eval:report`, and `npm pack --dry-run --json`, then verifies that the package surface excludes private runtime artifacts and contains the runtime files needed by installed agents. It does not push or publish anything.
+
 A separate private real-vault evaluation is summarized in `cost-and-scale.md`. Its note contents and labeled queries are intentionally not committed.
+
+### Private Real-Vault Query Rules
+
+Real-vault retrieval should be scored in at least two modes:
+
+1. **Global recall:** no scope filter. This measures worst-case vault noise and is expected to be harder.
+2. **Scoped recall:** each query includes the known project or domain path, such as `02 Projects/example` or `03 Reference/Agent Engineering`. This better matches agentic use, where the lead agent usually knows the active project/domain before asking memory.
+
+Query labels may use either:
+
+- `relevant`: a flat list of exact gold note paths.
+- `relevant_groups`: a list of acceptable evidence groups. Any path in a group satisfies that group.
+
+Use grouped relevance only after human review. Do not add retrieved paths as "acceptable" merely because the current algorithm returned them. Grouped relevance is for genuine alternate canonical notes, MOCs, or policy summaries that answer the same memory need.
+
+If scoped recall is still below threshold, treat the miss as a curation signal before adding heavier retrieval infrastructure:
+
+- add or repair aliases/frontmatter on canonical notes,
+- link MOCs to the specific notes they summarize,
+- split overloaded notes,
+- mark raw/stale/superseded captures clearly,
+- then rerun the frozen query set.
+
+Use `brain-sync.mjs curation-recommend` on private eval reports to turn misses into bounded memory-structure tasks:
+
+```sh
+node scripts/brain-sync.mjs curation-recommend --report tmp/private-vault-report.json --queries tmp/private-vault-gold.json --method governed-bm25f-sections --json
+```
+
+The command classifies miss patterns such as buried gold, missing scope, no candidates, and vocabulary/gold ambiguity. It suggests aliases/frontmatter, MOC links, scope fixes, and grouped-gold review candidates. It does not edit memory or promote retrieved paths automatically.
+
+JSON output is a `curation-plan` derived contract. Each `patchCandidates` item records the target, proposed metadata/link change, originating miss evidence, `requiresHumanReview: true`, and `autoApplicable: false`. Agents may use this plan to prepare a bounded review, but must not treat it as canonical memory or apply it without validating the note and intent.
 
 ## Obsidian Memory Curator Eval
 

@@ -64,6 +64,25 @@ test("package text has no known private workspace markers", () => {
   }
 })
 
+test("package text has no mojibake or replacement characters", () => {
+  const mojibakePatterns = [
+    /\uFFFD/u,
+    /à¸/u,
+    /à¹/u,
+    /â€™|â€œ|â€\u009d|Ã©|Â/u,
+  ]
+  for (const entry of pkg.files) {
+    for (const file of listFiles(entry)) {
+      const ext = path.extname(file).toLowerCase()
+      if (![".md", ".json", ".mjs", ".js", ".yml", ".yaml", ".cff", ""].includes(ext)) continue
+      const content = fs.readFileSync(file, "utf8")
+      for (const pattern of mojibakePatterns) {
+        assert.equal(pattern.test(content), false, `${path.relative(root, file)} matched ${pattern}`)
+      }
+    }
+  }
+})
+
 test("public Markdown entry points have no UTF-8 BOM", () => {
   for (const file of ["README.md", "AGENTS.md", "docs/install.md", "docs/portable-brain-sync.md"]) {
     const content = fs.readFileSync(path.join(root, file))
@@ -102,15 +121,18 @@ test("agent package includes the shared-brain auto-pull contract", () => {
   assert.match(opencode, /conflict-assist --json/)
 })
 
-test("agent package preserves human-in-loop sync thresholds", () => {
+test("agent package preserves autonomy-first human-gated sync thresholds", () => {
   const agents = fs.readFileSync(path.join(root, "AGENTS.md"), "utf8")
   const portable = fs.readFileSync(path.join(root, "docs", "portable-brain-sync.md"), "utf8")
   const generic = fs.readFileSync(path.join(root, "adapters", "generic-agent", "INSTALL.md"), "utf8")
   assert.match(agents, /Human Judgment Gates/)
+  assert.match(agents, /autonomous loop engineering/)
+  assert.match(agents, /Stop only at decision gates/)
   assert.match(agents, /Do not push after every remembered item/)
   assert.match(agents, /3-7 small APPLIED patches/)
   assert.match(portable, /Sync thresholds/)
-  assert.match(portable, /full automatic synchronization/)
+  assert.match(portable, /not stop-and-ask synchronization/)
+  assert.match(portable, /reversible detect-act-verify-repair loops/)
   assert.match(generic, /Do not push every remembered item/)
   assert.match(generic, /healthy threshold/)
 })

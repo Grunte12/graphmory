@@ -21,7 +21,7 @@ The brain repo is a portable vault, not a second copy of the tool. A new desktop
 4. Recovery: bad memory patches can be reverted with normal Git tools.
 5. Safety: sync is gated by secret-like value scanning, dirty-worktree checks, and human judgment for important decisions.
 
-The goal is not full automatic synchronization. The goal is controlled portability: agents can keep memory current across machines and accounts while humans still decide setup, adoption, conflict resolution, and meaning-changing memory lifecycle choices.
+The goal is not stop-and-ask synchronization. The goal is controlled portability: agents keep running through reversible detect-act-verify-repair loops, while humans decide setup, adoption, conflict resolution, publication risk, and meaning-changing memory lifecycle choices.
 
 ## Setup
 
@@ -121,6 +121,34 @@ Check memory health before publishing durable changes:
 node scripts/brain-sync.mjs health --vault "C:\Users\you\YourBrain" --json
 ```
 
+Retrieve a bounded set of canonical note paths before asking an agent to read memory broadly:
+
+```powershell
+node scripts/brain-sync.mjs recall --vault "C:\Users\you\YourBrain" --query "what did we decide about deployment rollback?" --scope "02 Projects/example" --json
+```
+
+If normal recall is low-confidence, run the bounded diagnostic loop once:
+
+```powershell
+node scripts/brain-sync.mjs recall-loop --vault "C:\Users\you\YourBrain" --query "what did we decide about deployment rollback?" --scope "02 Projects/example" --json
+```
+
+If an eval report shows repeated misses, generate a curation plan instead of broad manual searching:
+
+```powershell
+node scripts/recommend-curation.mjs --report tmp/private-vault-report.json --queries tmp/private-vault-gold.json --json tmp/curation-recommendations.json
+```
+
+Raw inbox/clipping paths and stale, superseded, or archived lifecycle states are excluded by default. A low-confidence result returns an escalation plan instead of silently widening the context window.
+
+Before publishing a batch, ask for a read-only sync decision:
+
+```powershell
+node scripts/brain-sync.mjs sync-plan --vault "C:\Users\you\YourBrain" --patches 3 --json
+```
+
+The plan can recommend hold, pull-first, human-review, blocked, or push-ready. `push-ready` still requires explicit user approval.
+
 Push after a durable memory patch:
 
 ```powershell
@@ -149,7 +177,8 @@ The command is read-only. It fetches remote state, compares the common base, loc
 - local-only and remote-only memory changes,
 - dirty local drafts that must be committed/stashed before pull,
 - lifecycle hints such as APPLIED, TENSION, BLOCKED, SUPERSEDED, STALE, rollback, and provenance,
-- a next-decision prompt for the user or lead agent.
+- a next-decision prompt for the user or lead agent,
+- structured `decisionOptions` for lifecycle choices such as merge-compatible, prefer-local, prefer-remote, supersede-local, supersede-remote, create-tension, or blocked-needs-evidence.
 
 Resolution remains a human-approved Memory Patch decision:
 

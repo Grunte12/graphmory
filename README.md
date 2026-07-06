@@ -76,16 +76,19 @@ Run the retrieval and memory benchmarks:
 
 ```powershell
 npm run eval
+npm run release:gate
 node scripts/eval-retrieval.mjs --dataset eval/fixtures --k 3 --json tmp/report.json
 node scripts/eval-curator.mjs --candidate eval/curator/candidate.memory-patch.json
 npm run eval:curator:compare
+npm run eval:lifecycle
+npm run eval:conflict
 npm run eval:learning-loop
 npm run eval:future-task
 npm run eval:report
 node scripts/eval-agent-run.mjs --curator-output eval/curator/candidates/C-memory-patch.json --patches eval/patch-quality/candidates
 ```
 
-The retrieval benchmark compares dependency-free lexical and BM25 baselines using Hit@k, Recall@k, MRR, nDCG, and retrieved context size. The curator benchmark checks Brain Brief and Memory Patch behavior: bounded recall, provenance retention, conflict surfacing, noise rejection, and derived-artifact boundaries. The comparison script scores proxy baselines for direct writing, curator inference, and Memory Patch handoff. The learning-loop eval adds token/cost proxies and a future-task utility check. `npm run eval:report` writes a generated summary to `tmp/eval-report.md`. These are evaluation surfaces, not production retrievers.
+The retrieval benchmark compares dependency-free lexical and BM25 baselines using Hit@k, Recall@k, MRR, nDCG, and retrieved context size. The curator benchmark checks Brain Brief and Memory Patch behavior: bounded recall, provenance retention, conflict surfacing, noise rejection, and derived-artifact boundaries. The lifecycle and conflict evals test stale-memory detection and shared-brain sync decisions separately from retrieval. The comparison script scores proxy baselines for direct writing, curator inference, and Memory Patch handoff. The learning-loop eval adds token/cost proxies and a future-task utility check. `npm run eval:report` writes a generated summary to `tmp/eval-report.md`; `npm run release:gate` runs the full local release gate plus npm pack dry-run. These are evaluation surfaces, not production retrievers.
 
 Optional portable memory sync:
 
@@ -98,10 +101,34 @@ node scripts/brain-sync.mjs bootstrap `
 node scripts/brain-sync.mjs pull --vault "C:\path\to\your\BrainVault"
 node scripts/brain-sync.mjs status --vault "C:\path\to\your\BrainVault"
 node scripts/brain-sync.mjs health --vault "C:\path\to\your\BrainVault" --json
+node scripts/brain-sync.mjs lifecycle-audit --vault "C:\path\to\your\BrainVault" --json
+node scripts/brain-sync.mjs recall --vault "C:\path\to\your\BrainVault" --query "what did we decide about sync?" --scope "02 Projects/example" --json
+node scripts/brain-sync.mjs recall-loop --vault "C:\path\to\your\BrainVault" --query "what did we decide about sync?" --scope "02 Projects/example" --json
+node scripts/brain-sync.mjs curation-recommend --report tmp/private-vault-report.json --queries tmp/private-vault-gold.json --method governed-bm25f-sections --json
+node scripts/brain-sync.mjs sync-plan --vault "C:\path\to\your\BrainVault" --patches 3 --json
 node scripts/brain-sync.mjs push --vault "C:\path\to\your\BrainVault" --message "memory: update lessons"
 ```
 
-Portable Brain Sync stores curated memory in a separate private GitHub repo so agents can continue across accounts and machines. The brain repo contains memory only; this harness repo remains the tool. Sync is human-governed: agents may auto-pull safe fast-forwards, but setup, adoption, restructure, conflict resolution, visibility, and meaning-changing lifecycle choices require user approval.
+Portable Brain Sync stores curated memory in a separate private GitHub repo so agents can continue across accounts and machines. The brain repo contains memory only; this harness repo remains the tool. Sync is autonomy-first but gate-governed: agents should keep running through reversible detect-act-verify-repair loops, while setup, adoption, restructure, conflict resolution, visibility, and meaning-changing lifecycle choices require user approval.
+
+`recall` performs bounded lifecycle-aware retrieval with dependency-free, field-weighted BM25 section ranking by default: path, title, frontmatter, headings, and body remain separate signals, while raw inbox paths and stale/superseded notes stay out. Optional `--scope` keeps search inside a known project/domain, and low-confidence results tell the lead agent to reformulate or follow MOC/backlink context. `recall-loop` is a diagnostic fallback that fuses field-weighted and ordinary section BM25; keep `recall` as the normal low-token path unless measured misses require comparison. `sync-plan` turns batching policy into a read-only decision report; it never pushes automatically.
+
+If a frozen eval shows repeated paraphrase misses after curation, enable the optional semantic lane:
+
+```powershell
+npm install @huggingface/transformers
+node scripts/brain-sync.mjs recall-semantic --vault "C:\path\to\your\BrainVault" --query "what did we decide about sync?" --scope "02 Projects/example" --json
+```
+
+`recall-semantic` uses a local Transformers.js embedding model and fuses semantic results with BM25F. It is an escalation path, not the default: first-run model download and indexing cost are higher, and Markdown remains the canonical memory truth.
+
+When a frozen retrieval eval misses, generate a bounded curation plan instead of manually rereading the vault:
+
+```powershell
+node scripts/brain-sync.mjs curation-recommend --report tmp/private-vault-report.json --queries tmp/private-vault-gold.json --method governed-bm25f-sections --json > tmp/curation-recommendations.json
+```
+
+The recommender classifies misses such as buried gold, missing scope, no candidates, and vocabulary/gold ambiguity, then suggests aliases/frontmatter, scope fixes, MOC links, and human-reviewed grouped-gold candidates. Agents may apply small reversible metadata/link fixes when the evidence is explicit. They should ask before grouped-gold changes, note moves, deletion, conflict resolution, or any rewrite that changes meaning.
 
 For Hermes, OpenCode, or other agents sharing one brain, use separate local clones and run event-driven `auto-pull` at session start/before shared recall. Sync is fast-forward-only; push never auto-rebases competing memory.
 
@@ -109,13 +136,15 @@ Do not push every remembered item. Push at healthy thresholds: session end, acco
 
 Run `health` after conflict resolution, restructure, large intake triage, and before publishing durable memory. It gives agents a deterministic health report instead of making them manually rediscover unresolved links, duplicate titles, missing provenance, stale notes, inbox backlog, and secret-like values.
 
+Run `lifecycle-audit` when memory may have changed over time: after a vendor/API/policy change, before relying on old operational notes, before conflict resolution, or during periodic brain hygiene. It flags expired `valid_until`, due `revalidate_when`, active notes that contain stale language, superseded notes without replacement markers, and tension notes without decision paths. It is read-only: it creates a review/action plan, not automatic rewrites.
+
 If sync reports `diverged` or `REMOTE_CHANGED`, run read-only conflict assistance instead of merging blindly:
 
 ```bash
 node scripts/brain-sync.mjs conflict-assist --vault "C:\path\to\your\BrainVault" --json
 ```
 
-The command explains local-vs-remote memory changes, highlights same-note semantic conflicts, and asks for a human-approved lifecycle decision before any resolution.
+The command explains local-vs-remote memory changes, highlights same-note semantic conflicts, and returns structured `decisionOptions` such as `merge-compatible`, `prefer-local`, `prefer-remote`, `supersede-local`, `supersede-remote`, `create-tension`, and `blocked-needs-evidence`. Resolution still needs a human-approved lifecycle decision before any merge or rewrite.
 
 Existing Obsidian/custom memory is never restructured silently. The reviewed flow is `detect -> adoption-plan -> restructure-plan -> user approval -> dry-run -> apply -> verify`, with a clean-Git gate, local backup branch, exact migration record, and rollback support.
 
@@ -128,6 +157,7 @@ Existing Obsidian/custom memory is never restructured silently. The reviewed flo
 - [Live Model Evaluation](docs/live-model-eval.md): compare real model outputs against the deterministic evaluator.
 - [Live Model Results](docs/live-model-results.md): publish real model results separately from proxy fixtures.
 - [Evaluation](docs/evaluation.md): understand the retrieval, curator, patch-quality, and baseline comparison checks.
+- [Improvement Research](docs/improvement-research.md): research-backed roadmap for stale-memory audits, conflict decisions, curation-first retrieval, optional reranking, live-agent evals, and resume artifacts.
 - [Learning Loop](docs/learning-loop.md): v0.3 contract for verified behavior-changing lessons.
 - [Thai Strategy Guide](docs/thai-strategy-guide.md): strategy, process, use cases, trade-offs, and limitations for Thai readers.
 - [Repository Patterns](docs/repository-patterns.md): how this repo borrows packaging patterns from agent-tool projects without adding heavy dependencies.
@@ -265,7 +295,7 @@ See [Repository Patterns](docs/repository-patterns.md) for why optional graph, c
 
 Not yet in the conventional engineering sense.
 
-The current harness provides **agent-controlled memory retrieval**: a curator decides which linked Markdown notes are relevant and returns a bounded Brain Brief. It does not currently provide document chunking, embeddings, a vector or BM25 index, hybrid retrieval, reranking, or an iterative retrieval-quality loop.
+The current harness provides **agent-controlled memory retrieval**: a curator or lead agent asks scoped questions, receives bounded Markdown note paths, and turns them into a Brain Brief. The default path is dependency-free lexical/BM25F section retrieval with lifecycle filtering, scoped recall, diagnostic sparse-lane fusion, and curation recommendations. An optional local semantic hybrid lane is available when measured paraphrase misses justify embeddings, but it is not part of the core install and does not make generated indexes canonical memory.
 
 The most accurate description is:
 
@@ -273,7 +303,7 @@ The most accurate description is:
 
 Read the bilingual guide: [Where This Fits in the RAG Landscape](docs/rag-positioning.md).
 
-The first synthetic retrieval baseline is documented in [Evaluation](docs/evaluation.md). It found no Recall@3 improvement from BM25 over lexical retrieval, so BM25 remains an experimental baseline rather than a default dependency.
+The retrieval baseline is documented in [Evaluation](docs/evaluation.md). Synthetic stress tests currently support governed BM25 section retrieval as the default local recall path, while private real-vault tests still expose semantic/alias and vault-curation gaps.
 
 See [Cost and Scale](docs/cost-and-scale.md) for private real-vault results, honest vector-RAG trade-offs, and the current scalability boundary.
 

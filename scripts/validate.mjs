@@ -5,6 +5,7 @@ import process from "node:process"
 import {
   detectContract,
   validateBrainBrief,
+  validateCurationPlan,
   validateDerivedIndex,
   validateHotContextPack,
   validateLearningPacket,
@@ -36,8 +37,10 @@ const result =
       ? validateBrainBrief(value)
       : kind === "derived-index"
         ? validateDerivedIndex(value)
-        : kind === "hot-context-pack"
+      : kind === "hot-context-pack"
           ? validateHotContextPack(value)
+          : kind === "curation-plan"
+            ? validateCurationPlan(value)
           : { valid: false, errors: ["unable to detect contract type"] }
 
 if (!result.valid) {

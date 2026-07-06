@@ -3,6 +3,7 @@ import assert from "node:assert/strict"
 import fs from "node:fs"
 import {
   validateBrainBrief,
+  validateCurationPlan,
   validateDerivedIndex,
   validateHotContextPack,
   validateLearningPacket,
@@ -97,4 +98,26 @@ test("rejects unsupported learning packet selectors", () => {
   })
   assert.equal(result.valid, false)
   assert.match(result.errors.join("\n"), /selectors\.random_bucket/)
+})
+
+test("accepts a review-only curation plan", () => {
+  const plan = {
+    role: "curation-plan",
+    canonical_memory: false,
+    schema_version: "1.0",
+    method: "governed-bm25f-sections",
+    recommendations: [{
+      patchCandidates: [{
+        type: "alias-patch-candidate",
+        target: "notes/current.md",
+        proposed: { addAliases: ["shared brain"] },
+        evidence: { query: "shared brain", expected: ["notes/current.md"], retrieved: [], missKind: "no-candidates" },
+        requiresHumanReview: true,
+        autoApplicable: false,
+      }],
+    }],
+  }
+  assert.deepEqual(validateCurationPlan(plan), { valid: true, errors: [] })
+  assert.equal(validateCurationPlan({ ...plan, canonical_memory: true }).valid, false)
+  assert.equal(validateCurationPlan({ ...plan, recommendations: [{ patchCandidates: [{ ...plan.recommendations[0].patchCandidates[0], autoApplicable: true }] }] }).valid, false)
 })

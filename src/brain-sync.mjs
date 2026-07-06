@@ -34,6 +34,62 @@ export const HARNESS_FOLDERS = [
 
 export const RESTRUCTURE_MANIFEST_VERSION = 1
 
+export function buildSyncPlan({
+  changedFiles = 0,
+  verifiedPatches = 0,
+  commitsAhead = 0,
+  commitsBehind = 0,
+  healthCritical = 0,
+  secretFindings = 0,
+  restructureActive = false,
+  sessionEnd = false,
+  handoff = false,
+  highRiskPatch = false,
+} = {}) {
+  const triggers = []
+  if (sessionEnd) triggers.push("session-end")
+  if (handoff) triggers.push("account-machine-or-runtime-handoff")
+  if (highRiskPatch) triggers.push("high-risk-patch")
+  if (verifiedPatches >= 3) triggers.push("verified-patch-threshold")
+  if (changedFiles >= 7) triggers.push("changed-file-threshold")
+  if (commitsAhead > 0) triggers.push("local-commits-ahead")
+
+  let decision = "hold"
+  let reason = "Keep the small local batch until a healthy sync threshold is reached."
+  if (restructureActive || healthCritical > 0 || secretFindings > 0) {
+    decision = "blocked"
+    reason = "Memory safety or structure findings must be resolved before publishing."
+  } else if (commitsAhead > 0 && commitsBehind > 0) {
+    decision = "human-review"
+    reason = "Local and remote memory histories diverged; run conflict-assist and ask the user."
+  } else if (commitsBehind > 0) {
+    decision = "pull-first"
+    reason = "Remote memory is newer; fast-forward or review it before publishing local memory."
+  } else if (changedFiles === 0 && verifiedPatches === 0 && commitsAhead === 0) {
+    decision = "no-changes"
+    reason = "No durable memory change is waiting to sync."
+  } else if (triggers.length > 0) {
+    decision = "push-ready"
+    reason = "A healthy publication threshold has been reached; request user approval before push."
+  }
+
+  return {
+    decision,
+    reason,
+    requiresHumanApproval: ["push-ready", "human-review", "blocked"].includes(decision),
+    triggers,
+    observed: {
+      changedFiles,
+      verifiedPatches,
+      commitsAhead,
+      commitsBehind,
+      healthCritical,
+      secretFindings,
+      restructureActive,
+    },
+  }
+}
+
 const PROTECTED_MIGRATION_ROOTS = new Set([
   ".git",
   ".obsidian",

@@ -104,6 +104,11 @@ test("CLI help lists the complete restructure lifecycle", () => {
   assert.match(result.stdout, /restructure-rollback/)
   assert.match(result.stdout, /doctor/)
   assert.match(result.stdout, /health/)
+  assert.match(result.stdout, /recall/)
+  assert.match(result.stdout, /sync-plan/)
+  assert.match(result.stdout, /recall-semantic/)
+  assert.match(result.stdout, /curation-recommend/)
+  assert.match(result.stdout, /lifecycle-audit/)
   assert.match(result.stdout, /auto-pull/)
   assert.match(result.stdout, /conflict-assist/)
 })
@@ -183,6 +188,199 @@ test("health returns JSON findings for curator-safe vault inspection", () => {
   } finally {
     fs.rmSync(vault, { recursive: true, force: true })
   }
+})
+
+test("recall returns bounded canonical paths without raw or stale memory", () => {
+  const vault = tempRoot("mph-recall-")
+  fs.mkdirSync(path.join(vault, "00 Inbox"), { recursive: true })
+  fs.writeFileSync(path.join(vault, "current.md"), "---\nstatus: current\naliases: shared brain\n---\n# Sync Policy\n\nUse fast-forward-only synchronization.")
+  fs.writeFileSync(path.join(vault, "stale.md"), "---\nstatus: stale\n---\n# Old Sync\n\nshared brain automatic merge merge merge")
+  fs.writeFileSync(path.join(vault, "00 Inbox", "raw.md"), "# Capture\n\nshared brain raw dump")
+
+  const result = runCli(["recall", "--vault", vault, "--query", "shared brain", "--json"])
+  assert.equal(result.status, 0, result.stderr)
+  const report = JSON.parse(result.stdout)
+  assert.deepEqual(report.results.map((item) => item.path), ["current.md"])
+  assert.equal(report.scanned, 2)
+  assert.equal(report.excludedByLifecycle, 1)
+})
+
+test("recall can restrict search to a known memory scope", () => {
+  const vault = tempRoot("mph-recall-scope-")
+  fs.mkdirSync(path.join(vault, "02 Projects", "alpha"), { recursive: true })
+  fs.mkdirSync(path.join(vault, "02 Projects", "beta"), { recursive: true })
+  fs.writeFileSync(path.join(vault, "02 Projects", "alpha", "Policy.md"), "# Alpha Policy\nShared deployment rollback.")
+  fs.writeFileSync(path.join(vault, "02 Projects", "beta", "Policy.md"), "# Beta Policy\nShared deployment rollback.")
+
+  const result = runCli([
+    "recall",
+    "--vault",
+    vault,
+    "--query",
+    "shared deployment rollback",
+    "--scope",
+    "02 Projects/beta",
+    "--json",
+  ])
+  assert.equal(result.status, 0, result.stderr)
+  const report = JSON.parse(result.stdout)
+  assert.deepEqual(report.results.map((item) => item.path), ["02 Projects/beta/Policy.md"])
+  assert.equal(report.scanned, 1)
+})
+
+test("curation-recommend classifies retrieval misses for agent repair", () => {
+  const root = tempRoot("mph-curation-cli-")
+  try {
+    const report = path.join(root, "report.json")
+    const queries = path.join(root, "queries.json")
+    fs.writeFileSync(report, `${JSON.stringify({
+      k: 3,
+      methods: {
+        "governed-bm25f-sections": {
+          runs: [{
+            id: "buried-policy",
+            category: "routing",
+            metrics: { hit: 0, reciprocalRank: 0.2 },
+            retrieved: ["Memory/Summary.md"],
+          }],
+        },
+      },
+    })}\n`)
+    fs.writeFileSync(queries, `${JSON.stringify([{
+      id: "buried-policy",
+      category: "routing",
+      query: "Where is the decision about visual ownership?",
+      relevant: ["Memory/UI Ownership.md"],
+      scope: "Memory",
+    }])}\n`)
+
+    const result = runCli(["curation-recommend", "--report", report, "--queries", queries, "--json"])
+    assert.equal(result.status, 0, result.stderr)
+    const output = JSON.parse(result.stdout)
+    assert.equal(output.misses, 1)
+    assert.equal(output.recommendations[0].kind, "buried-gold")
+    assert.match(output.recommendations[0].actions.join("\n"), /aliases\/frontmatter/)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("recall-loop fuses bounded retrieval lanes for agent use", () => {
+  const vault = tempRoot("mph-recall-loop-")
+  fs.mkdirSync(path.join(vault, "Memory"), { recursive: true })
+  fs.writeFileSync(path.join(vault, "Memory", "Policy.md"), "---\nstatus: current\n---\n# Sync Policy\n\nUse human-reviewed conflict handling.")
+  fs.writeFileSync(path.join(vault, "Memory", "Old.md"), "---\nstatus: stale\n---\n# Old Policy\n\nAutomatically overwrite memory conflicts.")
+
+  const result = runCli([
+    "recall-loop",
+    "--vault",
+    vault,
+    "--query",
+    "human reviewed memory conflict",
+    "--scope",
+    "Memory",
+    "--json",
+  ])
+  assert.equal(result.status, 0, result.stderr)
+  const report = JSON.parse(result.stdout)
+  assert.equal(report.results[0].path, "Memory/Policy.md")
+  assert.deepEqual(report.results[0].lanes, ["bm25f-sections", "bm25f-focused-sections", "bm25-sections"])
+})
+
+test("recall-semantic explains the optional dependency when it is not installed", () => {
+  const vault = tempRoot("mph-recall-semantic-")
+  fs.writeFileSync(path.join(vault, "Memory.md"), "# Memory\n\nSemantic recall fixture.")
+
+  const result = runCli([
+    "recall-semantic",
+    "--vault",
+    vault,
+    "--query",
+    "semantic fixture",
+    "--json",
+  ])
+  assert.equal(result.status, 1)
+  assert.match(result.stderr, /OPTIONAL_DEPENDENCY_MISSING/)
+  assert.match(result.stderr, /@huggingface\/transformers/)
+})
+
+test("lifecycle-audit reports stale and conflict memory without applying changes", () => {
+  const vault = tempRoot()
+  try {
+    fs.mkdirSync(path.join(vault, "02 Projects", "Example"), { recursive: true })
+    fs.writeFileSync(path.join(vault, "02 Projects", "Example", "Current.md"), `---
+status: active
+valid_until: 2026-01-01
+---
+# Current
+
+This is the preferred endpoint.
+`)
+    fs.writeFileSync(path.join(vault, "02 Projects", "Example", "Old.md"), `---
+status: superseded
+---
+# Old
+
+Legacy endpoint note.
+`)
+    fs.writeFileSync(path.join(vault, "02 Projects", "Example", "Tension.md"), `---
+status: tension
+---
+# Tension
+
+TENSION
+`)
+    const result = runCli(["lifecycle-audit", "--vault", vault, "--now", "2026-07-06", "--json"])
+    assert.equal(result.status, 1)
+    const report = JSON.parse(result.stdout)
+    assert.equal(report.scanned, 3)
+    assert.equal(report.summary.high, 1)
+    assert.equal(report.findings.some((item) => item.kind === "expired-valid-until"), true)
+    assert.equal(report.findings.some((item) => item.kind === "obsolete-without-replacement"), true)
+    assert.equal(report.findings.some((item) => item.kind === "tension-without-decision-path"), true)
+    assert.equal(report.actions.some((item) => item.action === "revalidate"), true)
+    assert.equal(fs.existsSync(path.join(vault, ".memory-patch-harness")), false)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("lifecycle-audit can include raw paths for intake hygiene", () => {
+  const vault = tempRoot()
+  try {
+    fs.mkdirSync(path.join(vault, "03 Reference"), { recursive: true })
+    fs.writeFileSync(path.join(vault, "03 Reference", "Raw Capture.md"), `---
+status: raw
+---
+# Raw Capture
+
+Raw imported note.
+`)
+    const result = runCli(["lifecycle-audit", "--vault", vault, "--include-raw-paths", "--json"])
+    assert.equal(result.status, 0)
+    const report = JSON.parse(result.stdout)
+    assert.equal(report.findings.some((item) => item.kind === "raw-memory-outside-inbox"), true)
+    assert.equal(report.actions.some((item) => item.action === "triage-raw-memory"), true)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("recall reports a stable error for a missing vault", () => {
+  const missing = path.join(tempRoot("mph-missing-recall-"), "does-not-exist")
+  const result = runCli(["recall", "--vault", missing, "--query", "policy", "--json"])
+  assert.equal(result.status, 1)
+  assert.match(result.stderr, /VAULT_NOT_FOUND/)
+})
+
+test("sync-plan explains when a healthy memory batch is ready", () => {
+  const shared = initializeSharedBrain()
+  fs.writeFileSync(path.join(shared.second, "draft.md"), "---\nstatus: current\n---\n# Draft\n\nProvenance: user-approved test.\n")
+  const result = runCli(["sync-plan", "--vault", shared.second, "--patches", "3", "--json"])
+  assert.equal(result.status, 0, result.stderr)
+  const report = JSON.parse(result.stdout)
+  assert.equal(report.decision, "push-ready")
+  assert.equal(report.requiresHumanApproval, true)
 })
 
 test("CLI emits stable errors for missing and malformed plan files", () => {
@@ -274,6 +472,11 @@ test("conflict-assist explains same-note divergence without changing history", (
     assert.equal(report.files[0].review.type, "same-note-changed")
     assert.equal(report.files[0].review.semanticRisk, "high")
     assert.deepEqual(report.files[0].review.lifecycleSignals.sort(), ["APPLIED", "TENSION"].sort())
+    const optionIds = report.decisionOptions.map((item) => item.id)
+    assert.equal(optionIds.includes("create-tension"), true)
+    assert.equal(optionIds.includes("supersede-local"), true)
+    assert.equal(optionIds.includes("supersede-remote"), true)
+    assert.equal(optionIds.includes("blocked-needs-evidence"), true)
     assert.match(report.nextDecision, /Semantic conflict/)
     assert.equal(git(shared.second, ["rev-parse", "HEAD"]), before)
   } finally {
@@ -296,6 +499,7 @@ test("conflict-assist summarizes non-overlapping diverged histories for user dec
     assert.equal(report.summary.overlappingFiles, 0)
     assert.equal(report.summary.localOnlyFiles, 1)
     assert.equal(report.summary.remoteOnlyFiles, 1)
+    assert.equal(report.decisionOptions.some((item) => item.id === "prefer-remote"), true)
     assert.match(report.nextDecision, /ask user/i)
   } finally {
     fs.rmSync(shared.root, { recursive: true, force: true })

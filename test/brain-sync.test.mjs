@@ -9,6 +9,7 @@ import {
   assertSafeToBootstrap,
   buildAdoptionPlan,
   buildRestructureManifest,
+  buildSyncPlan,
   initialBrainFiles,
   inspectMemoryRoot,
   makeSyncConfig,
@@ -19,6 +20,7 @@ import {
   validateRestructureManifest,
   verifyRestructureRecord,
 } from "../src/brain-sync.mjs"
+import { loadVaultDocuments } from "../src/memory-recall.mjs"
 
 function tempRoot() {
   return fs.mkdtempSync(path.join(os.tmpdir(), "mph-brain-sync-test-"))
@@ -26,6 +28,15 @@ function tempRoot() {
 
 test("accepts OWNER/REPO GitHub repository names", () => {
   assert.equal(normalizeRepoName("example-owner/example-brain"), "example-owner/example-brain")
+})
+
+test("raw vault roots are marked noncanonical when deliberately included", () => {
+  const vault = tempRoot()
+  fs.mkdirSync(path.join(vault, "Clippings"), { recursive: true })
+  fs.writeFileSync(path.join(vault, "Clippings", "Article.md"), "# Article\nRaw web clipping.")
+  const documents = loadVaultDocuments(vault, { includeRawPaths: true })
+  assert.equal(documents[0].id, "Clippings/Article.md")
+  assert.equal(documents[0].metadata.status, "raw")
 })
 
 test("rejects repository names without an owner", () => {
@@ -542,4 +553,18 @@ test("refuses rollback when migration state has drifted", () => {
   } finally {
     fs.rmSync(root, { recursive: true, force: true })
   }
+})
+
+test("sync plan batches small changes and requests approval at healthy thresholds", () => {
+  assert.equal(buildSyncPlan({ changedFiles: 1 }).decision, "hold")
+  const ready = buildSyncPlan({ changedFiles: 3, verifiedPatches: 3 })
+  assert.equal(ready.decision, "push-ready")
+  assert.equal(ready.requiresHumanApproval, true)
+  assert.ok(ready.triggers.includes("verified-patch-threshold"))
+})
+
+test("sync plan blocks unsafe publication and escalates divergence", () => {
+  assert.equal(buildSyncPlan({ changedFiles: 8, healthCritical: 1 }).decision, "blocked")
+  assert.equal(buildSyncPlan({ commitsAhead: 1, commitsBehind: 1 }).decision, "human-review")
+  assert.equal(buildSyncPlan({ commitsBehind: 1 }).decision, "pull-first")
 })

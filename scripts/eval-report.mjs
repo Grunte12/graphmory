@@ -39,18 +39,24 @@ fs.mkdirSync(jsonDir, { recursive: true })
 const files = {
   retrieval: path.join(jsonDir, "retrieval.json"),
   curator: path.join(jsonDir, "curator.json"),
+  lifecycle: path.join(jsonDir, "lifecycle.json"),
+  conflict: path.join(jsonDir, "conflict.json"),
   patchQuality: path.join(jsonDir, "patch-quality.json"),
   learningLoop: path.join(jsonDir, "learning-loop.json"),
   futureTask: path.join(jsonDir, "future-task.json"),
 }
 
 run("retrieval eval", ["scripts/eval-retrieval.mjs", "--json", files.retrieval])
+run("lifecycle audit eval", ["scripts/eval-lifecycle-audit.mjs", "--json", files.lifecycle])
+run("conflict assist eval", ["scripts/eval-conflict-assist.mjs", "--json", files.conflict])
 run("curator eval", ["scripts/eval-curator.mjs", "--json", files.curator])
 run("patch quality eval", ["scripts/eval-patch-quality.mjs", "--json", files.patchQuality])
 run("learning loop eval", ["scripts/eval-learning-loop.mjs", "--json", files.learningLoop])
 run("future task eval", ["scripts/eval-future-task.mjs", "--json", files.futureTask])
 
 const retrieval = readJson(files.retrieval)
+const lifecycle = readJson(files.lifecycle)
+const conflict = readJson(files.conflict)
 const curator = readJson(files.curator)
 const patchQuality = readJson(files.patchQuality)
 const learningLoop = readJson(files.learningLoop)
@@ -70,7 +76,9 @@ lines.push("## Summary")
 lines.push("")
 lines.push("| Gate | Result | Notes |")
 lines.push("|---|---:|---|")
-lines.push(`| Retrieval baseline | ${retrieval.documents} notes / ${retrieval.queries} queries | BM25 sections avg context ${retrieval.methods["bm25-sections"].summary.averageContextCharacters.toFixed(0)} chars |`)
+lines.push(`| Retrieval baseline | ${retrieval.documents} notes / ${retrieval.queries} queries | BM25F sections avg context ${retrieval.methods["bm25f-sections"].summary.averageContextCharacters.toFixed(0)} chars |`)
+lines.push(`| Lifecycle audit | ${lifecycle.checks.filter((check) => check.pass).length}/${lifecycle.checks.length} | Stale, expired, raw, and tension gates |`)
+lines.push(`| Conflict assist | ${conflict.checks.filter((check) => check.pass).length}/${conflict.checks.length} | Diverged/dirty shared-brain decisions |`)
 lines.push(`| Curator behavior | ${curatorReport.summary.passed}/${curatorReport.summary.scenarios} | ${percent(curatorReport.summary.passRate)} pass rate |`)
 lines.push(`| Patch quality | ${patchRuns.filter((run) => run.pass).length}/${patchRuns.length} | Expected score ranges met |`)
 lines.push(`| Learning loop | ${learningRuns.filter((run) => run.pass).length}/${learningRuns.length} | Score and token ceilings met |`)
@@ -84,6 +92,13 @@ for (const [method, result] of Object.entries(retrieval.methods)) {
   const summary = result.summary
   lines.push(`| ${method} | ${percent(summary.hitAtK)} | ${percent(summary.recallAtK)} | ${summary.mrr.toFixed(3)} | ${summary.ndcgAtK.toFixed(3)} | ${summary.averageContextCharacters.toFixed(0)} |`)
 }
+lines.push("")
+lines.push("## Lifecycle And Conflict Gates")
+lines.push("")
+lines.push("| Eval | Passed | Total | Result |")
+lines.push("|---|---:|---:|---|")
+lines.push(`| Lifecycle audit | ${lifecycle.checks.filter((check) => check.pass).length} | ${lifecycle.checks.length} | ${lifecycle.checks.every((check) => check.pass) ? "PASS" : "FAIL"} |`)
+lines.push(`| Conflict assist | ${conflict.checks.filter((check) => check.pass).length} | ${conflict.checks.length} | ${conflict.checks.every((check) => check.pass) ? "PASS" : "FAIL"} |`)
 lines.push("")
 lines.push("## Learning Loop Cost Proxy")
 lines.push("")

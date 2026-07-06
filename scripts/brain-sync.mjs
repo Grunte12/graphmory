@@ -9,6 +9,7 @@ import {
   assertSafeToBootstrap,
   buildAdoptionPlan,
   buildRestructureManifest,
+  buildSyncPlan,
   initialBrainFiles,
   inspectMemoryRoot,
   makeSyncConfig,
@@ -18,6 +19,11 @@ import {
   validateRestructureManifest,
   verifyRestructureRecord,
 } from "../src/brain-sync.mjs"
+import { recallVault, recallVaultLoop } from "../src/memory-recall.mjs"
+import { recallVaultSemantic } from "../src/semantic-recall.mjs"
+import { buildCurationRecommendations, renderCurationRecommendations } from "../src/curation-recommendations.mjs"
+import { auditMemoryLifecycle } from "../src/memory-lifecycle-audit.mjs"
+import { writeFileAtomic, writeJsonAtomic } from "../src/atomic-write.mjs"
 
 const args = process.argv.slice(2)
 const command = args[0]
@@ -41,8 +47,14 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs detect --vault <path> [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs doctor [--vault <path>] [--json] [--require-github]\n`)
   out.write(`  node scripts/brain-sync.mjs health --vault <path> [--json] [--out <file>]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-loop --vault <path> --query <text> [--scope <path>] [--k 3] [--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs lifecycle-audit --vault <path> [--json] [--out <file>]\n`)
   out.write(`  node scripts/brain-sync.mjs init --vault <path> --repo <owner/repo> [--create-remote]\n`)
   out.write(`  node scripts/brain-sync.mjs status --vault <path>\n`)
+  out.write(`  node scripts/brain-sync.mjs sync-plan --vault <path> [--patches <count>] [--session-end] [--handoff] [--high-risk] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs auto-pull --vault <path> [--json] [--strict]\n`)
   out.write(`  node scripts/brain-sync.mjs conflict-assist --vault <path> [--json] [--out <file>]\n`)
   out.write(`  node scripts/brain-sync.mjs pull --vault <path>\n`)
@@ -114,8 +126,7 @@ function migrationRecordPath(vault, id) {
 }
 
 function writeJsonFile(file, value) {
-  fs.mkdirSync(path.dirname(file), { recursive: true })
-  fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`)
+  writeJsonAtomic(file, value)
 }
 
 function readConfig(vault) {
@@ -130,8 +141,7 @@ function writeConfig(vault, config, dryRun = false) {
     console.log(`[dry-run] write ${file}`)
     return
   }
-  fs.mkdirSync(path.dirname(file), { recursive: true })
-  fs.writeFileSync(file, `${JSON.stringify(config, null, 2)}\n`)
+  writeJsonAtomic(file, config)
 }
 
 function ensureGitRepo(vault, branch, dryRun) {
@@ -165,8 +175,7 @@ function writeInitialFiles(vault, dryRun, { adoptionMode = false } = {}) {
       console.log(`[dry-run] write ${target}`)
       continue
     }
-    fs.mkdirSync(path.dirname(target), { recursive: true })
-    fs.writeFileSync(target, content)
+    writeFileAtomic(target, content)
   }
 }
 
@@ -456,13 +465,50 @@ function health() {
   const content = json ? `${JSON.stringify(report, null, 2)}\n` : renderHealthMarkdown(report)
   if (out) {
     const target = path.resolve(out)
-    fs.mkdirSync(path.dirname(target), { recursive: true })
-    fs.writeFileSync(target, content)
+    writeFileAtomic(target, content)
     console.log(`Memory health report written: ${target}`)
     return
   }
   process.stdout.write(content)
   if (!report.ok) process.exitCode = 1
+}
+
+function recall() {
+  const vault = requireVault()
+  const query = requiredOption("--query")
+  const method = option("--method", "bm25f-sections")
+  const k = Number.parseInt(option("--k", "3"), 10)
+  const report = recallVault(vault, query, {
+    method,
+    k,
+    includeNoncanonical: flag("--include-noncanonical"),
+    includeRawPaths: flag("--include-raw-paths"),
+    scope: option("--scope", ""),
+  })
+  if (flag("--json")) {
+    console.log(JSON.stringify(report, null, 2))
+    return
+  }
+  console.log(`Memory recall: ${report.confidence} confidence; ${report.results.length} result(s)`)
+  for (const result of report.results) {
+    console.log(`- ${result.path} | ${result.title} | score ${result.score}`)
+  }
+  if (report.needsExpansion) {
+    console.log("Expansion required:")
+    for (const step of report.nextSteps) console.log(`- ${step}`)
+  }
+}
+
+function curationRecommend() {
+  const report = readJsonFile(requiredOption("--report"))
+  const queries = readJsonFile(requiredOption("--queries"))
+  const method = option("--method", "governed-bm25f-sections")
+  const result = buildCurationRecommendations(report, queries, { method })
+  if (flag("--json")) {
+    console.log(JSON.stringify(result, null, 2))
+    return
+  }
+  process.stdout.write(renderCurationRecommendations(result))
 }
 
 function renderHealthMarkdown(report) {
@@ -527,8 +573,7 @@ function adoptionPlan() {
   const content = json ? `${JSON.stringify(plan, null, 2)}\n` : renderAdoptionPlanMarkdown(plan)
   if (out) {
     const target = path.resolve(out)
-    fs.mkdirSync(path.dirname(target), { recursive: true })
-    fs.writeFileSync(target, content)
+    writeFileAtomic(target, content)
     console.log(`Adoption plan written: ${target}`)
     return
   }
@@ -626,6 +671,155 @@ function status() {
   }
 }
 
+function recallLoop() {
+  const vault = requireVault()
+  const query = requiredOption("--query")
+  const k = Number.parseInt(option("--k", "3"), 10)
+  const methods = option("--methods", "bm25f-sections,bm25f-focused-sections,bm25-sections")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
+  const report = recallVaultLoop(vault, query, {
+    methods,
+    k,
+    includeNoncanonical: flag("--include-noncanonical"),
+    includeRawPaths: flag("--include-raw-paths"),
+    scope: option("--scope", ""),
+  })
+  if (flag("--json")) {
+    console.log(JSON.stringify(report, null, 2))
+    return
+  }
+  console.log(`Memory recall loop: ${report.confidence} confidence; ${report.results.length} fused result(s)`)
+  for (const result of report.results) {
+    console.log(`- ${result.path} | ${result.title} | score ${result.score} | lanes ${result.lanes.join(",")}`)
+  }
+  if (report.needsExpansion) {
+    console.log("Expansion required:")
+    for (const step of report.nextSteps) console.log(`- ${step}`)
+  }
+}
+
+function lifecycleAudit() {
+  const vault = requireVault()
+  const out = option("--out")
+  const now = option("--now") ? new Date(option("--now")) : new Date()
+  if (Number.isNaN(now.getTime())) throw new Error("--now must be an ISO date")
+  const maxFiles = Number.parseInt(option("--max-files", "5000"), 10)
+  if (!Number.isInteger(maxFiles) || maxFiles < 1) throw new Error("--max-files must be a positive integer")
+  const report = auditMemoryLifecycle(vault, {
+    includeRawPaths: flag("--include-raw-paths"),
+    maxFiles,
+    now,
+  })
+  const content = flag("--json") ? `${JSON.stringify(report, null, 2)}\n` : renderLifecycleAuditMarkdown(report)
+  if (out) {
+    const target = path.resolve(out)
+    writeFileAtomic(target, content)
+    console.log(`Lifecycle audit written: ${target}`)
+    return
+  }
+  process.stdout.write(content)
+  if (report.summary.high > 0 || report.summary.medium > 0) process.exitCode = 1
+}
+
+function renderLifecycleAuditMarkdown(report) {
+  const lines = []
+  lines.push("# Memory Lifecycle Audit")
+  lines.push("")
+  lines.push(`Checked: ${report.checkedAt}`)
+  lines.push(`Scanned notes: ${report.scanned}`)
+  lines.push(`Findings: ${report.summary.total} (high ${report.summary.high}, medium ${report.summary.medium}, low ${report.summary.low}, info ${report.summary.info})`)
+  lines.push("")
+  lines.push("## Findings")
+  lines.push("")
+  if (!report.findings.length) {
+    lines.push("- None")
+  } else {
+    for (const item of report.findings) {
+      lines.push(`- [${item.severity}] ${item.kind}: \`${item.file}\` - ${item.detail}`)
+      lines.push(`  Recommendation: ${item.recommendation}`)
+    }
+  }
+  lines.push("")
+  lines.push("## Suggested Actions")
+  lines.push("")
+  if (!report.actions.length) {
+    lines.push("- None")
+  } else {
+    for (const item of report.actions) lines.push(`- ${item.action}: \`${item.file}\` - ${item.reason}`)
+  }
+  lines.push("")
+  return `${lines.join("\n")}\n`
+}
+
+async function recallSemantic() {
+  const vault = requireVault()
+  const query = requiredOption("--query")
+  const k = Number.parseInt(option("--k", "3"), 10)
+  const report = await recallVaultSemantic(vault, query, {
+    k,
+    includeNoncanonical: flag("--include-noncanonical"),
+    includeRawPaths: flag("--include-raw-paths"),
+    scope: option("--scope", ""),
+    model: option("--model", "Xenova/bge-small-en-v1.5"),
+    modelCache: option("--model-cache", ""),
+  })
+  if (flag("--json")) {
+    console.log(JSON.stringify(report, null, 2))
+    return
+  }
+  console.log(`Semantic memory recall: ${report.confidence} confidence; ${report.results.length} fused result(s)`)
+  for (const result of report.results) {
+    console.log(`- ${result.path} | ${result.title} | score ${result.score} | lanes ${result.lanes.join(",")}`)
+  }
+  if (report.needsExpansion) {
+    console.log("Expansion required:")
+    for (const step of report.nextSteps) console.log(`- ${step}`)
+  }
+}
+
+function syncPlan() {
+  const vault = requireVault()
+  const config = readConfig(vault)
+  const dirty = run("git", ["status", "--porcelain"], { cwd: vault }).stdout.trim()
+  const changedFiles = dirty ? dirty.split(/\r?\n/u).filter(Boolean).length : 0
+  const secretFindings = scanVault(vault).length
+  const health = analyzeVaultHealth(vault)
+  const remoteRef = `refs/remotes/origin/${config.branch}`
+  const counts = run("git", ["rev-list", "--left-right", "--count", `${remoteRef}...HEAD`], {
+    cwd: vault,
+    allowFail: true,
+  })
+  let commitsBehind = 0
+  let commitsAhead = 0
+  if (counts.status === 0) {
+    const [behind, ahead] = counts.stdout.trim().split(/\s+/u).map((value) => Number.parseInt(value, 10))
+    commitsBehind = Number.isInteger(behind) ? behind : 0
+    commitsAhead = Number.isInteger(ahead) ? ahead : 0
+  }
+  const verifiedPatches = Number.parseInt(option("--patches", "0"), 10)
+  if (!Number.isInteger(verifiedPatches) || verifiedPatches < 0) throw new Error("--patches must be a non-negative integer")
+  const report = buildSyncPlan({
+    changedFiles,
+    verifiedPatches,
+    commitsAhead,
+    commitsBehind,
+    healthCritical: health.summary.critical,
+    secretFindings,
+    restructureActive: fs.existsSync(path.join(vault, ".memory-patch-harness", "restructure.lock")),
+    sessionEnd: flag("--session-end"),
+    handoff: flag("--handoff"),
+    highRiskPatch: flag("--high-risk"),
+  })
+  if (flag("--json")) console.log(JSON.stringify(report, null, 2))
+  else {
+    console.log(`Sync plan: ${report.decision}`)
+    console.log(report.reason)
+    if (report.triggers.length) console.log(`Triggers: ${report.triggers.join(", ")}`)
+  }
+}
+
 function pull() {
   const vault = requireVault()
   const config = readConfig(vault)
@@ -702,8 +896,7 @@ function conflictAssist() {
   const content = json ? `${JSON.stringify(report, null, 2)}\n` : renderConflictAssistMarkdown(report)
   if (out) {
     const target = path.resolve(out)
-    fs.mkdirSync(path.dirname(target), { recursive: true })
-    fs.writeFileSync(target, content)
+    writeFileAtomic(target, content)
     console.log(`Conflict assist report written: ${target}`)
     return
   }
@@ -801,6 +994,7 @@ function buildConflictAssistReport(vault, config) {
       dirtyFiles: dirtyChanged.length,
     },
     files,
+    decisionOptions: buildConflictDecisionOptions({ files, dirty, localBehind, localAhead, overlapping }),
     nextDecision: conflictNextDecision({ dirty, overlapping, localBehind, localAhead, localHead, remoteHead }),
     guardrails: [
       "Do not auto-merge memory conflicts.",
@@ -881,6 +1075,89 @@ function recommendConflictAction({ localItem, remoteItem, dirtyItem, overlap }) 
   return "Review manually."
 }
 
+function buildConflictDecisionOptions({ files, dirty, localBehind, localAhead, overlapping }) {
+  const options = []
+  if (!dirty && localBehind && overlapping.length === 0) {
+    options.push(decisionOption(
+      "merge-compatible",
+      "Remote is ahead and no overlapping note conflict is detected.",
+      "Fast-forward pull is mechanically safe after ordinary health checks.",
+    ))
+  }
+  if (!dirty && !localBehind && !localAhead && overlapping.length === 0 && files.length > 0) {
+    options.push(decisionOption(
+      "merge-compatible",
+      "Local and remote histories diverged, but they changed different memory files.",
+      "Review both file sets, then merge both sides while preserving provenance.",
+    ))
+  }
+  if (localAhead && files.every((file) => !file.remoteStatus)) {
+    options.push(decisionOption(
+      "prefer-local",
+      "Local memory is ahead only.",
+      "Push after secret scan and user approval of durable memory publication.",
+    ))
+  }
+  if (files.some((file) => file.remoteStatus && !file.localStatus)) {
+    options.push(decisionOption(
+      "prefer-remote",
+      "Remote-only memory exists.",
+      "Pull or inspect remote-only notes when local worktree is clean.",
+    ))
+  }
+  if (overlapping.length > 0) {
+    options.push(
+      decisionOption(
+        "merge-compatible",
+        "Both sides changed the same note but the meanings may be additive.",
+        "Preserve provenance from both sides and verify no current/stale contradiction.",
+      ),
+      decisionOption(
+        "supersede-local",
+        "Remote memory is newer or better evidenced than local memory.",
+        "Mark local claim superseded instead of deleting it silently.",
+      ),
+      decisionOption(
+        "supersede-remote",
+        "Local memory is newer or better evidenced than remote memory.",
+        "Mark remote claim superseded instead of deleting it silently.",
+      ),
+      decisionOption(
+        "create-tension",
+        "Both sides may be true in different scopes or evidence is insufficient.",
+        "Keep both claims visible with TENSION and required evidence.",
+      ),
+      decisionOption(
+        "blocked-needs-evidence",
+        "Neither side has enough provenance to choose safely.",
+        "Stop sync resolution and ask for the smallest missing evidence.",
+      ),
+    )
+  }
+  if (dirty) {
+    options.push(decisionOption(
+      "blocked-needs-evidence",
+      "Working tree has uncommitted memory.",
+      "Commit, stash, or discard the local draft before sync decisions.",
+    ))
+  }
+  return dedupeDecisionOptions(options)
+}
+
+function decisionOption(id, when, action) {
+  return { id, when, action, requiresUserApproval: id !== "merge-compatible" }
+}
+
+function dedupeDecisionOptions(options) {
+  const seen = new Set()
+  return options.filter((option) => {
+    const key = `${option.id}:${option.when}`
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
 function conflictNextDecision({ dirty, overlapping, localBehind, localAhead, localHead, remoteHead }) {
   if (localHead === remoteHead && !dirty) return "No conflict: local and remote match."
   if (dirty) return "Working tree has uncommitted memory. Ask whether to commit, stash, or discard the draft before sync."
@@ -921,6 +1198,16 @@ function renderConflictAssistMarkdown(report) {
     lines.push("|---|---|---|---|---|")
     for (const file of report.files) {
       lines.push(`| ${file.path} | ${file.localStatus || "-"} | ${file.remoteStatus || "-"} | ${file.review.semanticRisk} | ${file.recommendation} |`)
+    }
+  }
+  if (report.decisionOptions?.length) {
+    lines.push("")
+    lines.push("## Decision Options")
+    lines.push("")
+    lines.push("| Option | When | Action | User approval |")
+    lines.push("|---|---|---|---|")
+    for (const option of report.decisionOptions) {
+      lines.push(`| ${option.id} | ${option.when} | ${option.action} | ${option.requiresUserApproval ? "yes" : "no"} |`)
     }
   }
   if (report.guardrails?.length) {
@@ -983,8 +1270,14 @@ try {
   else if (command === "detect") detect()
   else if (command === "doctor") doctor()
   else if (command === "health") health()
+  else if (command === "recall") recall()
+  else if (command === "recall-loop") recallLoop()
+  else if (command === "recall-semantic") await recallSemantic()
+  else if (command === "curation-recommend") curationRecommend()
+  else if (command === "lifecycle-audit") lifecycleAudit()
   else if (command === "init") init()
   else if (command === "status") status()
+  else if (command === "sync-plan") syncPlan()
   else if (command === "auto-pull") autoPull()
   else if (command === "conflict-assist") conflictAssist()
   else if (command === "pull") pull()
