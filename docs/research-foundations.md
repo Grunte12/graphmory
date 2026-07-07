@@ -53,6 +53,34 @@ Sources:
 - https://arxiv.org/abs/2501.09136
 - https://www.anthropic.com/research/contextual-retrieval
 
+## Performance And Efficiency Evidence Related To This Design
+
+This harness is not a full production Agentic RAG stack, so the evidence below should be read as support for individual design choices, not as proof that this repository outperforms every RAG architecture.
+
+| Research area | Reported idea or result | Harness implication |
+|---|---|---|
+| Agentic RAG | A-RAG studies hierarchical retrieval tools and reports improved multi-hop QA with comparable or lower retrieved-token usage. | Prefer bounded retrieval tools and granularity control over dumping full notes into context. |
+| Retrieval self-correction | CRAG adds a retrieval evaluator and corrective actions when retrieved documents are weak. | Retrieval should be scored and gated; this maps to retrieval eval, adversarial eval, and stale/raw pollution checks. |
+| Self-reflective retrieval | Self-RAG trains retrieve/generate/critique behavior through reflection tokens. | A memory layer should not treat retrieved context as automatically trusted. It needs critique/eval signals. |
+| Agentic RAG surveys | Agentic RAG literature frames planning, reflection, tool use, and iterative retrieval as upgrades over static one-shot RAG. | The harness keeps retrieval agent-controlled: recall, inspect exact paths, produce Brain Brief, then act. |
+| Cache-augmented generation | CAG argues that bounded, manageable knowledge can avoid retrieval latency and retrieval errors through cache/preload strategies. | Small, stable project memory can be reused as curated Markdown or Hot Context Packs, but stale control is mandatory. |
+| RAG serving cost | RAGCache identifies long knowledge-injected sequences as a bottleneck and reports latency/throughput gains from reusing knowledge states. | Repeated raw-context injection is expensive; the harness should prefer compact canonical context and exact note paths. |
+| Prompt reuse | Prompt Cache reports latency gains by reusing repeated prompt segments. | Stable instructions, memory packs, and recurring context should be structured for reuse rather than regenerated every turn. |
+| Long-term memory systems | MemoryBank, Mem0, and Graphiti/Zep all emphasize memory extraction, consolidation, lifecycle, provenance, and temporal/relationship awareness. | Markdown memory needs lifecycle fields, provenance, stale/superseded markers, conflict handling, and evals. |
+
+Sources:
+
+- A-RAG: https://arxiv.org/html/2602.03442v1
+- CRAG: https://arxiv.org/abs/2401.15884
+- Self-RAG: https://openreview.net/forum?id=hSyW5go0v8
+- Agentic RAG survey: https://arxiv.org/html/2501.09136v4
+- CAG: https://arxiv.org/abs/2412.15605
+- RAGCache: https://arxiv.org/abs/2404.12457
+- Prompt Cache: https://arxiv.org/abs/2311.04934
+- MemoryBank: https://arxiv.org/abs/2305.10250
+- Mem0: https://arxiv.org/abs/2504.19413
+- Graphiti/Zep: https://arxiv.org/html/2501.13956v1
+
 ## Project-Specific Hypothesis
 
 The following combination is original to this harness and requires local evaluation:

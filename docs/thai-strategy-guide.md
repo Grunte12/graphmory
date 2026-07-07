@@ -731,6 +731,40 @@ Hot Context Pack ช่วยประหยัด token แต่ต้อง i
 
 ห้ามใช้ cache เก่าเป็น truth ถ้า lifecycle บอกว่าต้อง revalidate
 
+## งานวิจัยที่ support เรื่อง performance / efficiency
+
+ต้องพูดให้ตรงก่อน: harness นี้ยังไม่ใช่ production Agentic RAG เต็มระบบ และยังไม่ควร claim ว่าเร็วหรือแม่นกว่า RAG ทุกแบบ
+
+แต่ paper หลายสายสนับสนุน design choice ที่เราใช้:
+
+| งานวิจัย / แนวคิด | สิ่งที่สนับสนุน | แปลเป็นระบบของเรา |
+|---|---|---|
+| A-RAG | agentic retrieval ที่มี tool หลายระดับช่วยงาน multi-hop และรายงานว่าใช้ retrieved tokens comparable หรือต่ำกว่าใน benchmark | อย่า dump note ทั้ง vault ให้ agent; ใช้ bounded recall, section retrieval, scope, exact path |
+| CRAG | retrieval ต้องมี evaluator เพราะ retrieved docs อาจไม่พอหรือผิด ต้อง corrective action | retrieval eval และ adversarial eval ต้องบอกให้ได้ว่า context ที่เจอเชื่อได้ไหม |
+| Self-RAG | model ควร retrieve, generate, critique ไม่ใช่ retrieve แล้วตอบเลย | Memory Curator/Lead agent ต้องมี critique gate เช่น APPLIED/TENSION/BLOCKED |
+| Agentic RAG survey | agentic RAG มี planning, reflection, tool use, iterative retrieval | harness ใช้ agent-controlled recall + Brain Brief ไม่ใช่ static one-shot retrieval |
+| CAG | knowledge ที่จำกัดและจัดการได้อาจ cache/preload ได้ ลด retrieval latency/error | Hot Context Pack ใช้กับ memory ที่ stable และต้องมี stale control |
+| RAGCache | long knowledge injection ทำให้ latency/throughput แย่ลง การ reuse knowledge state ช่วยได้ | ลด raw context ยาว ๆ ใช้ compact canonical memory + note path |
+| Prompt Cache | repeated prompt/context segment reuse ช่วยลด latency | memory/prompt ที่ stable ควรถูกจัดเป็น structure ไม่ regenerate ใหม่ทุก turn |
+| MemoryBank / Mem0 / Graphiti | long-term memory ต้องมี extraction, consolidation, lifecycle, provenance, temporal/relationship awareness | Markdown memory ต้องมี provenance, lifecycle, stale/superseded marker, conflict handling |
+
+สรุปแบบไม่ hype:
+
+```text
+RAG เหมาะกับการค้นเอกสารจำนวนมาก
+Agentic memory harness เหมาะกับการจำบทเรียนและ decision ที่เปลี่ยนพฤติกรรม agent
+Cache/Hot Context เหมาะกับข้อมูลที่ stable และใช้ซ้ำ
+Eval เป็นตัวบอกว่า memory ดีขึ้นจริงหรือแค่ดูดี
+```
+
+ดังนั้น performance ของเราไม่ได้มาจากการมีโมเดลใหญ่กว่า แต่มาจาก:
+
+- context ที่ส่งให้ agent เล็กลง
+- raw/stale note ไม่แย่ง canonical memory
+- lead agent ไม่ต้องเล่าเรื่องเดิมซ้ำทุก session
+- curator ไม่ต้องเดาความหมายเอง
+- eval บอกว่าชั้น retrieval/curation เริ่มพลาดตรงไหน
+
 ## ทำไมต้องมี eval
 
 ถ้าไม่มี eval ระบบ memory จะกลายเป็นแค่ไอเดียสวย ๆ

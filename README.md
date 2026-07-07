@@ -287,7 +287,7 @@ This repository is an original integration, not a claim to have invented agent m
 - optional Derived Index and Hot Context Pack contracts,
 - and deterministic contract audits.
 
-See [Research Foundations](docs/research-foundations.md) for sources and [Evaluation](docs/evaluation.md) for retrieval and curator behavior checks.
+See [Research Foundations](docs/research-foundations.md) for source-backed design rationale, including Agentic RAG, CAG, caching, prompt reuse, and long-term memory papers. See [Evaluation](docs/evaluation.md) for retrieval and curator behavior checks.
 
 See [Repository Patterns](docs/repository-patterns.md) for why optional graph, compression, MCP, and HTML layers are kept outside the core contracts.
 
