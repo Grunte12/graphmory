@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/memory-patch-harness/curation-plan.schema.json",
+  "title": "Curation Plan",
+  "type": "object",
+  "required": ["role", "canonical_memory", "schema_version", "method", "recommendations"],
+  "properties": {
+    "role": { "const": "curation-plan" },
+    "canonical_memory": { "const": false },
+    "schema_version": { "type": "string", "minLength": 1 },
+    "method": { "type": "string", "minLength": 2 },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["patchCandidates"],
+        "properties": {
+          "patchCandidates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["type", "target", "proposed", "evidence", "requiresHumanReview", "autoApplicable"],
+              "properties": {
+                "type": { "enum": ["alias-patch-candidate", "moc-link-candidate", "scope-fix-candidate", "grouped-gold-review"] },
+                "target": { "type": "string", "minLength": 2 },
+                "proposed": { "type": "object" },
+                "evidence": { "type": "object" },
+                "requiresHumanReview": { "const": true },
+                "autoApplicable": { "const": false }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

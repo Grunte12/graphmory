@@ -1,0 +1,4 @@
+interface:
+  display_name: "Memory Curator"
+  short_description: "Curate durable agent memory without invention"
+  default_prompt: "Use $memory-curator to retrieve a compact Brain Brief or apply a verified Memory Patch."

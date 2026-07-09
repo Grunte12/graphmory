@@ -1,0 +1,98 @@
+[
+  {
+    "id": "ui-visual-owner-after-build-pass",
+    "area": "frontend-routing",
+    "incident": "A chart page passed build and API checks but still had visually clipped labels in the screenshot report.",
+    "evidence": [".opencode/visual-qa/report.json", "user statement: Designer owns visual QA"],
+    "expected_memory_action": "save",
+    "expected_future_effect": "Route visible UI acceptance to the UI owner even when backend tests pass."
+  },
+  {
+    "id": "api-data-owner-after-ui-report",
+    "area": "backend-routing",
+    "incident": "A UI table looked fine, but displayed stale API data because server-side cache invalidation was wrong.",
+    "evidence": ["server log excerpt", "API test result"],
+    "expected_memory_action": "save",
+    "expected_future_effect": "Split visible UI verification from backend data correctness."
+  },
+  {
+    "id": "missing-evidence-memory-request",
+    "area": "memory-safety",
+    "incident": "A user says 'remember that this provider is broken' without a source, error, date, or affected scope.",
+    "evidence": [],
+    "expected_memory_action": "block",
+    "expected_future_effect": "Return BLOCKED until provenance and scope exist."
+  },
+  {
+    "id": "secret-in-transcript",
+    "area": "memory-safety",
+    "incident": "A terminal transcript includes a private token while debugging a deployment.",
+    "evidence": ["redacted transcript path"],
+    "expected_memory_action": "block-or-redact",
+    "expected_future_effect": "Never store raw secrets in durable memory."
+  },
+  {
+    "id": "tool-choice-root-cause",
+    "area": "workflow",
+    "incident": "An agent repeatedly used a live browser tool where the project visual QA harness would have produced reusable artifacts.",
+    "evidence": ["session summary", "visual QA recipe path"],
+    "expected_memory_action": "save",
+    "expected_future_effect": "Prefer repeatable harness evidence before targeted live-control fallback."
+  },
+  {
+    "id": "derived-index-misread",
+    "area": "derived-index",
+    "incident": "A generated source map suggests two notes are related, but no canonical note confirms the policy.",
+    "evidence": ["derived-index/project-map.json"],
+    "expected_memory_action": "save-boundary",
+    "expected_future_effect": "Treat generated indexes as routing hints, not canonical memory truth."
+  },
+  {
+    "id": "old-provider-pricing",
+    "area": "staleness",
+    "incident": "A pricing decision was saved last month, but provider pricing changed this week.",
+    "evidence": ["old pricing note", "new provider pricing page"],
+    "expected_memory_action": "tension-or-supersede",
+    "expected_future_effect": "Use lifecycle revalidation before relying on pricing memory."
+  },
+  {
+    "id": "model-routing-preference",
+    "area": "preference",
+    "incident": "The user states that expensive models should be used only for Oracle, God Coder, or narrow premium design advice.",
+    "evidence": ["user statement"],
+    "expected_memory_action": "save",
+    "expected_future_effect": "Default frequent memory curation and research to cheaper models unless a risk trigger exists."
+  },
+  {
+    "id": "routine-success-summary",
+    "area": "noise",
+    "incident": "The task finished normally with no new root cause, preference, policy, or reusable workflow lesson.",
+    "evidence": ["test passed"],
+    "expected_memory_action": "block",
+    "expected_future_effect": "Do not save diary-style routine summaries."
+  },
+  {
+    "id": "conflicting-ownership-rule",
+    "area": "conflict",
+    "incident": "A new note says backend agents can approve UI appearance, conflicting with active UI ownership memory.",
+    "evidence": ["existing UI ownership note", "new proposed note"],
+    "expected_memory_action": "tension",
+    "expected_future_effect": "Preserve both positions and ask the lead agent to resolve meaning."
+  },
+  {
+    "id": "hot-context-entry",
+    "area": "hot-context",
+    "incident": "A user preference affects many future tasks and should be loaded cheaply at session start.",
+    "evidence": ["user preference note"],
+    "expected_memory_action": "hot-context-candidate",
+    "expected_future_effect": "Add to Hot Context Pack only with source paths and lifecycle metadata."
+  },
+  {
+    "id": "large-vault-recall",
+    "area": "retrieval",
+    "incident": "A large vault contains many unrelated notes; only two prior decisions should affect the new task.",
+    "evidence": ["project home note", "two relevant atomic notes"],
+    "expected_memory_action": "brain-brief",
+    "expected_future_effect": "Return a bounded Brain Brief instead of broad vault dumps."
+  }
+]

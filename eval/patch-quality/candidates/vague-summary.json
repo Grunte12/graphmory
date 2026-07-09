@@ -1,0 +1,22 @@
+{
+  "name": "Vague Summary",
+  "expected_min_score": 0,
+  "expected_max_score": 69,
+  "patch": {
+    "claim": "Everything worked today.",
+    "why_it_matters": "Maybe this will help later.",
+    "scope": {
+      "applies": ["things"],
+      "excludes": []
+    },
+    "provenance": [
+      { "kind": "command", "value": "npm test" }
+    ],
+    "confidence": "low",
+    "suggested_type": "workflow",
+    "lifecycle": {
+      "status": "active",
+      "revalidate_when": []
+    }
+  }
+}

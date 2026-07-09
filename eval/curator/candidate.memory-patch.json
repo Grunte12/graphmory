@@ -1,0 +1,125 @@
+{
+  "name": "C - Memory Patch",
+  "description": "Reference Memory Patch harness output for deterministic Obsidian Memory Curator evaluation.",
+  "outputs": [
+    {
+      "id": "recall-visual-owner",
+      "output": {
+        "relevant_memory": [
+          {
+            "summary": "Visible UI ownership belongs to the UI owner; route visual correctness to the design lane.",
+            "path": "eval/fixtures/notes/ui-ownership.md"
+          },
+          {
+            "summary": "Visual verification uses saved artifacts and should not be treated as backend validation.",
+            "path": "eval/fixtures/notes/visual-verification.md"
+          }
+        ],
+        "constraints": ["Do not route visual acceptance to backend owners."],
+        "watchouts": [],
+        "note_paths": ["eval/fixtures/notes/ui-ownership.md", "eval/fixtures/notes/visual-verification.md"],
+        "direct_read_paths": ["eval/fixtures/notes/visual-verification.md"]
+      }
+    },
+    {
+      "id": "recall-ui-api-split",
+      "output": {
+        "relevant_memory": [
+          {
+            "summary": "Visible UI and visual QA belong to the design lane.",
+            "path": "eval/fixtures/notes/ui-ownership.md"
+          },
+          {
+            "summary": "Visual verification evidence belongs to the UI verification workflow.",
+            "path": "eval/fixtures/notes/visual-verification.md"
+          },
+          {
+            "summary": "Service auth, database behavior, and server-side correctness belong to the backend lane.",
+            "path": "eval/fixtures/notes/backend-boundary.md"
+          }
+        ],
+        "constraints": ["Split visible UI from API/data correctness before handoff."],
+        "watchouts": ["A single task can require separate UI and backend owners."],
+        "note_paths": [
+          "eval/fixtures/notes/ui-ownership.md",
+          "eval/fixtures/notes/visual-verification.md",
+          "eval/fixtures/notes/backend-boundary.md"
+        ],
+        "direct_read_paths": ["eval/fixtures/notes/ui-ownership.md", "eval/fixtures/notes/backend-boundary.md"]
+      }
+    },
+    {
+      "id": "recall-secret-policy",
+      "output": {
+        "relevant_memory": [
+          {
+            "summary": "Secrets, private tokens, and raw credentials must not be stored in durable memory.",
+            "path": "eval/fixtures/notes/secret-policy.md"
+          }
+        ],
+        "constraints": ["Never save raw secrets to canonical memory."],
+        "watchouts": ["Prefer redacted provenance or a pointer to a safe secret manager."],
+        "note_paths": ["eval/fixtures/notes/secret-policy.md"],
+        "direct_read_paths": ["eval/fixtures/notes/secret-policy.md"]
+      }
+    },
+    {
+      "id": "apply-verified-lesson",
+      "output": {
+        "status": "APPLIED",
+        "changed_paths": ["eval/fixtures/notes/visual-verification.md"],
+        "retained_provenance": [
+          { "kind": "artifact", "value": ".opencode/visual-qa/2026-06-27/report.json" },
+          { "kind": "user-statement", "value": "Designer owns visual QA for visible UI." }
+        ],
+        "stored_claim": "Designer owns visual QA for visible UI acceptance after implementation.",
+        "reason": "The patch is durable, scoped, and evidence-backed."
+      }
+    },
+    {
+      "id": "block-missing-provenance",
+      "output": {
+        "status": "BLOCKED",
+        "changed_paths": [],
+        "retained_provenance": [],
+        "stored_claim": "",
+        "reason": "The proposed memory lacks provenance and evidence, so the curator must not write it."
+      }
+    },
+    {
+      "id": "surface-conflict",
+      "output": {
+        "status": "TENSION",
+        "changed_paths": [],
+        "tension_paths": ["eval/fixtures/notes/visual-verification.md", "eval/fixtures/notes/backend-boundary.md"],
+        "retained_provenance": [
+          { "kind": "file", "value": "eval/fixtures/notes/visual-verification.md" }
+        ],
+        "stored_claim": "",
+        "reason": "The new claim conflicts with the active visual QA and backend ownership rules."
+      }
+    },
+    {
+      "id": "skip-routine-summary",
+      "output": {
+        "status": "BLOCKED",
+        "changed_paths": [],
+        "retained_provenance": [],
+        "stored_claim": "",
+        "reason": "Routine completion summaries are not durable memory."
+      }
+    },
+    {
+      "id": "preserve-derived-boundary",
+      "output": {
+        "status": "APPLIED",
+        "changed_paths": ["eval/fixtures/notes/graph-boundary.md"],
+        "retained_provenance": [
+          { "kind": "artifact", "value": "derived-index/project-graph.json" }
+        ],
+        "stored_claim": "Generated project graph output is derived index evidence. Canonical Markdown remains the operational memory source; generated graph artifacts are not memory truth.",
+        "reason": "The patch preserves the derived-view boundary."
+      }
+    }
+  ]
+}

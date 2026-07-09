@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Grunte12/memory-patch-harness/main/schemas/learning-packet.schema.json",
+  "title": "Learning Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "role",
+    "lesson",
+    "trigger",
+    "future_behavior_change",
+    "scope",
+    "evidence",
+    "verification",
+    "loop_trace",
+    "memory_action",
+    "confidence",
+    "lifecycle"
+  ],
+  "properties": {
+    "role": {
+      "const": "learning-packet"
+    },
+    "lesson": {
+      "type": "string",
+      "minLength": 16
+    },
+    "trigger": {
+      "type": "string",
+      "minLength": 12
+    },
+    "selectors": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 2
+          }
+        },
+        "file_globs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 2
+          }
+        },
+        "tool_names": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 2
+          }
+        },
+        "error_regex": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 2
+          }
+        }
+      }
+    },
+    "future_behavior_change": {
+      "type": "string",
+      "minLength": 16
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["applies", "excludes"],
+      "properties": {
+        "applies": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "excludes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        }
+      }
+    },
+    "evidence": {
+      "$ref": "#/$defs/evidenceArray"
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "result"],
+      "properties": {
+        "status": {
+          "enum": ["verified", "partially-verified", "blocked"]
+        },
+        "result": {
+          "type": "string",
+          "minLength": 8
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidenceArray"
+        }
+      }
+    },
+    "loop_trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recall", "action", "verification", "learning"],
+      "properties": {
+        "recall": {
+          "type": "string",
+          "minLength": 8
+        },
+        "action": {
+          "type": "string",
+          "minLength": 8
+        },
+        "verification": {
+          "type": "string",
+          "minLength": 8
+        },
+        "learning": {
+          "type": "string",
+          "minLength": 8
+        }
+      }
+    },
+    "memory_action": {
+      "enum": ["apply", "update", "deprecate", "tension", "reject"]
+    },
+    "confidence": {
+      "enum": ["high", "medium", "low"]
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "revalidate_when"],
+      "properties": {
+        "status": {
+          "enum": ["active", "superseded", "tension", "deprecated"]
+        },
+        "valid_until": {
+          "type": "string"
+        },
+        "revalidate_when": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 2
+          }
+        },
+        "supersedes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 2
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "evidenceArray": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "value"],
+        "properties": {
+          "kind": {
+            "enum": ["user-statement", "file", "command", "artifact", "url"]
+          },
+          "value": {
+            "type": "string",
+            "minLength": 2
+          }
+        }
+      }
+    }
+  }
+}

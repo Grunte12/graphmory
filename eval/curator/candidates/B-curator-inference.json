@@ -1,0 +1,106 @@
+{
+  "name": "B - Curator Inference",
+  "description": "Proxy baseline where a memory agent infers what to store from a task summary instead of receiving a structured Memory Patch.",
+  "outputs": [
+    {
+      "id": "recall-visual-owner",
+      "output": {
+        "relevant_memory": [
+          { "summary": "Visible UI ownership belongs to the UI owner.", "path": "eval/fixtures/notes/ui-ownership.md" },
+          { "summary": "Visual verification should inspect UI artifacts.", "path": "eval/fixtures/notes/visual-verification.md" }
+        ],
+        "constraints": ["Do not route visual acceptance to backend owners."],
+        "watchouts": [],
+        "note_paths": ["eval/fixtures/notes/ui-ownership.md", "eval/fixtures/notes/visual-verification.md"],
+        "direct_read_paths": ["eval/fixtures/notes/visual-verification.md"]
+      }
+    },
+    {
+      "id": "recall-ui-api-split",
+      "output": {
+        "relevant_memory": [
+          { "summary": "Visible UI belongs to design.", "path": "eval/fixtures/notes/ui-ownership.md" },
+          { "summary": "Visual artifacts verify appearance.", "path": "eval/fixtures/notes/visual-verification.md" },
+          { "summary": "Backend owns API/data correctness.", "path": "eval/fixtures/notes/backend-boundary.md" }
+        ],
+        "constraints": ["Split UI and API ownership."],
+        "watchouts": [],
+        "note_paths": [
+          "eval/fixtures/notes/ui-ownership.md",
+          "eval/fixtures/notes/visual-verification.md",
+          "eval/fixtures/notes/backend-boundary.md"
+        ],
+        "direct_read_paths": ["eval/fixtures/notes/ui-ownership.md", "eval/fixtures/notes/backend-boundary.md"]
+      }
+    },
+    {
+      "id": "recall-secret-policy",
+      "output": {
+        "relevant_memory": [
+          { "summary": "Secrets must not be stored in durable notes.", "path": "eval/fixtures/notes/secret-policy.md" }
+        ],
+        "constraints": ["Never save raw secrets."],
+        "watchouts": [],
+        "note_paths": ["eval/fixtures/notes/secret-policy.md"],
+        "direct_read_paths": ["eval/fixtures/notes/secret-policy.md"]
+      }
+    },
+    {
+      "id": "apply-verified-lesson",
+      "output": {
+        "status": "APPLIED",
+        "changed_paths": ["eval/fixtures/notes/visual-verification.md"],
+        "retained_provenance": [
+          { "kind": "artifact", "value": ".opencode/visual-qa/2026-06-27/report.json" }
+        ],
+        "stored_claim": "Designer owns visual QA after visible UI implementation.",
+        "reason": "The curator inferred this from the task summary."
+      }
+    },
+    {
+      "id": "block-missing-provenance",
+      "output": {
+        "status": "BLOCKED",
+        "changed_paths": [],
+        "retained_provenance": [],
+        "stored_claim": "",
+        "reason": "The proposed memory has no provenance or evidence."
+      }
+    },
+    {
+      "id": "surface-conflict",
+      "output": {
+        "status": "TENSION",
+        "changed_paths": [],
+        "tension_paths": ["eval/fixtures/notes/visual-verification.md", "eval/fixtures/notes/backend-boundary.md"],
+        "retained_provenance": [
+          { "kind": "file", "value": "eval/fixtures/notes/visual-verification.md" }
+        ],
+        "stored_claim": "",
+        "reason": "The claim conflicts with existing visual QA ownership."
+      }
+    },
+    {
+      "id": "skip-routine-summary",
+      "output": {
+        "status": "BLOCKED",
+        "changed_paths": [],
+        "retained_provenance": [],
+        "stored_claim": "",
+        "reason": "Routine task completion is not durable memory."
+      }
+    },
+    {
+      "id": "preserve-derived-boundary",
+      "output": {
+        "status": "APPLIED",
+        "changed_paths": ["eval/fixtures/notes/graph-boundary.md"],
+        "retained_provenance": [
+          { "kind": "artifact", "value": "derived-index/project-graph.json" }
+        ],
+        "stored_claim": "Generated graph output helps memory retrieval and should be linked.",
+        "reason": "The curator inferred a graph note from the artifact."
+      }
+    }
+  ]
+}

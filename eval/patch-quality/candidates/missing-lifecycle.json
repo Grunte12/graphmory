@@ -1,0 +1,18 @@
+{
+  "name": "Missing Lifecycle",
+  "expected_min_score": 0,
+  "expected_max_score": 79,
+  "patch": {
+    "claim": "The agent that owns visible UI also owns visual verification.",
+    "why_it_matters": "Future handoffs should keep implementation and visible correctness with one owner.",
+    "scope": {
+      "applies": ["visible interface implementation", "visual QA"],
+      "excludes": ["backend data correctness"]
+    },
+    "provenance": [
+      { "kind": "file", "value": "AGENTS.md" }
+    ],
+    "confidence": "high",
+    "suggested_type": "decision"
+  }
+}

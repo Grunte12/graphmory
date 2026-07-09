@@ -1,0 +1,18 @@
+{
+  "relevant_memory": [
+    {
+      "summary": "Visible UI and its visual verification share one owner.",
+      "path": "01 Decisions/UI ownership.md"
+    }
+  ],
+  "constraints": [
+    "Do not route visual correctness checks to backend agents."
+  ],
+  "watchouts": [],
+  "note_paths": [
+    "01 Decisions/UI ownership.md"
+  ],
+  "direct_read_paths": [
+    "01 Decisions/UI ownership.md"
+  ]
+}

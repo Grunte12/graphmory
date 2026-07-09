@@ -1,0 +1,50 @@
+name: Feature request
+description: Propose a contract, adapter, eval, or optional integration.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What failure mode or missing workflow does this address?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should change?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Memory Patch contract
+        - Brain Brief recall
+        - Memory Curator behavior
+        - Derived Index
+        - Hot Context Pack
+        - Agent adapter
+        - Evaluation
+        - Documentation
+        - Optional integration
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or precedent
+      description: Link sources, similar tools, benchmarks, or a small anonymized example.
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Boundaries
+      options:
+        - label: This does not require private data, raw transcripts, or secrets.
+          required: true
+        - label: This keeps Markdown memory canonical unless a contract change is explicitly proposed.
+          required: true
+

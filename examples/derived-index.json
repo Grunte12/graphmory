@@ -1,0 +1,52 @@
+{
+  "role": "derived-index",
+  "canonical_memory": false,
+  "generated_at": "2026-06-27T00:00:00Z",
+  "generator": {
+    "name": "example-local-indexer",
+    "version": "0.1.0"
+  },
+  "scope": {
+    "includes": ["notes/**/*.md", "src/**/*"],
+    "excludes": ["node_modules/**", ".git/**"]
+  },
+  "derived_from": [
+    {
+      "kind": "file",
+      "value": "notes/00 Project Home.md"
+    }
+  ],
+  "entries": [
+    {
+      "id": "note:visual-verification",
+      "kind": "note",
+      "label": "Visual verification policy note",
+      "path": "notes/visual-verification.md",
+      "confidence": "high",
+      "evidence_refs": [
+        {
+          "kind": "file",
+          "value": "notes/visual-verification.md"
+        }
+      ]
+    },
+    {
+      "id": "relation:ui-owns-visual-qa",
+      "kind": "relation",
+      "label": "UI ownership note relates to visual verification policy",
+      "from": "notes/ui-ownership.md",
+      "to": "notes/visual-verification.md",
+      "confidence": "medium",
+      "evidence_refs": [
+        {
+          "kind": "file",
+          "value": "notes/ui-ownership.md"
+        },
+        {
+          "kind": "file",
+          "value": "notes/visual-verification.md"
+        }
+      ]
+    }
+  ]
+}

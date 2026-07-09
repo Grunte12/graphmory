@@ -1,0 +1,26 @@
+[
+  {
+    "id": "visual-owner-routing",
+    "task": "A visible UI task has passed build checks. Decide the completion gate.",
+    "required_terms": ["visual evidence", "artifact path"],
+    "forbidden_terms": ["build is enough", "backend owner"]
+  },
+  {
+    "id": "stale-policy-check",
+    "task": "A tool/provider policy may have changed since the saved note. Decide whether to reuse memory.",
+    "required_terms": ["revalidate", "source"],
+    "forbidden_terms": ["trust cached", "assume current"]
+  },
+  {
+    "id": "noise-rejection",
+    "task": "A routine task finished successfully with no reusable behavior change. Decide whether to save durable memory.",
+    "required_terms": ["skip", "routine"],
+    "forbidden_terms": ["save summary", "diary"]
+  },
+  {
+    "id": "contradiction-handling",
+    "task": "A new memory claim conflicts with an active canonical note. Decide the memory action.",
+    "required_terms": ["tension", "conflict"],
+    "forbidden_terms": ["overwrite", "silently"]
+  }
+]

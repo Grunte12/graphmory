@@ -1,0 +1,21 @@
+{
+  "agent": {
+    "memory_curator": {
+      "description": "Retrieves bounded Brain Briefs and applies provenance-preserving Memory Patches.",
+      "mode": "all",
+      "prompt": "{paste the contents of memory-curator-prompt.md}",
+      "permission": {
+        "read": "allow",
+        "edit": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "external_directory": "allow",
+        "bash": "deny",
+        "task": "deny",
+        "webfetch": "deny",
+        "websearch": "deny"
+      }
+    }
+  }
+}

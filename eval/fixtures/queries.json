@@ -1,0 +1,92 @@
+[
+  {
+    "id": "exact-provenance",
+    "category": "exact",
+    "query": "What fields belong in a Memory Patch and who authors it?",
+    "relevant": ["memory-patch-protocol"]
+  },
+  {
+    "id": "exact-brain-brief",
+    "category": "exact",
+    "query": "How many direct-read paths may a Brain Brief contain?",
+    "relevant": ["brain-brief-protocol"]
+  },
+  {
+    "id": "visual-owner",
+    "category": "semantic",
+    "query": "Who should check whether the interface appearance is correct?",
+    "relevant": ["ui-ownership", "visual-verification"]
+  },
+  {
+    "id": "server-data",
+    "category": "semantic",
+    "query": "Which role handles service authentication and database correctness?",
+    "relevant": ["backend-boundary"]
+  },
+  {
+    "id": "contradiction",
+    "category": "conflict",
+    "query": "What happens when a new memory disagrees with the current decision?",
+    "relevant": ["conflict-handling"]
+  },
+  {
+    "id": "missing-evidence",
+    "category": "conflict",
+    "query": "Should the curator write a claim when supporting evidence is missing?",
+    "relevant": ["conflict-handling", "memory-patch-protocol"]
+  },
+  {
+    "id": "graph-truth",
+    "category": "distractor",
+    "query": "Is a generated dependency graph the source of truth for memory?",
+    "relevant": ["graph-boundary"]
+  },
+  {
+    "id": "credentials",
+    "category": "distractor",
+    "query": "Where should API passwords and private tokens be saved?",
+    "relevant": ["secret-policy"]
+  },
+  {
+    "id": "ui-api-split",
+    "category": "multi-hop",
+    "query": "A page looks wrong and its API returns bad data. Which ownership rules apply?",
+    "relevant": ["ui-ownership", "visual-verification", "backend-boundary"]
+  },
+  {
+    "id": "memory-recall-write",
+    "category": "multi-hop",
+    "query": "How does the system retrieve prior context and later preserve a verified lesson?",
+    "relevant": ["brain-brief-protocol", "memory-patch-protocol"]
+  },
+  {
+    "id": "hard-semantic-visual",
+    "category": "hard-semantic",
+    "query": "Who performs aesthetic acceptance when pixels must match the intended composition?",
+    "relevant": ["ui-ownership", "visual-verification"]
+  },
+  {
+    "id": "hard-semantic-backend",
+    "category": "hard-semantic",
+    "query": "Which specialist handles service-side identity and persistence correctness?",
+    "relevant": ["backend-boundary"]
+  },
+  {
+    "id": "hard-semantic-uncertainty",
+    "category": "hard-semantic",
+    "query": "How does the system avoid turning uncertain reconstruction into accepted knowledge?",
+    "relevant": ["memory-patch-protocol", "conflict-handling"]
+  },
+  {
+    "id": "hard-semantic-recall",
+    "category": "hard-semantic",
+    "query": "How is prior guidance surfaced without flooding the prompt?",
+    "relevant": ["brain-brief-protocol"]
+  },
+  {
+    "id": "hard-semantic-derived",
+    "category": "hard-semantic",
+    "query": "What status should machine-generated topology output have relative to trusted memory?",
+    "relevant": ["graph-boundary"]
+  }
+]

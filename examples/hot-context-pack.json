@@ -1,0 +1,53 @@
+{
+  "role": "hot-context-pack",
+  "canonical_memory": false,
+  "generated_at": "2026-06-27T00:00:00Z",
+  "derived_from": [
+    {
+      "kind": "file",
+      "value": "notes/00 Project Home.md"
+    },
+    {
+      "kind": "file",
+      "value": "notes/visual-verification.md"
+    }
+  ],
+  "entries": [
+    {
+      "id": "routing:visible-ui-owner",
+      "category": "routing",
+      "priority": "high",
+      "confidence": "high",
+      "summary": "Visible UI implementation and visual verification stay with the UI owner.",
+      "source_paths": [
+        "notes/ui-ownership.md",
+        "notes/visual-verification.md"
+      ],
+      "lifecycle": {
+        "status": "active",
+        "revalidate_when": [
+          "ownership policy changes",
+          "visual QA tool routing changes"
+        ],
+        "supersedes": []
+      }
+    },
+    {
+      "id": "safety:no-secret-memory",
+      "category": "policy",
+      "priority": "high",
+      "confidence": "high",
+      "summary": "Never store secrets, raw credentials, or private tokens in durable memory.",
+      "source_paths": [
+        "notes/secret-policy.md"
+      ],
+      "lifecycle": {
+        "status": "active",
+        "revalidate_when": [
+          "secret handling policy changes"
+        ],
+        "supersedes": []
+      }
+    }
+  ]
+}

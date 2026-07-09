@@ -1,0 +1,114 @@
+{
+  "name": "A - Direct Writer",
+  "description": "Proxy baseline where the lead agent writes or recalls memory directly without a curator boundary.",
+  "outputs": [
+    {
+      "id": "recall-visual-owner",
+      "output": {
+        "relevant_memory": [
+          { "summary": "UI visual acceptance belongs to design.", "path": "eval/fixtures/notes/ui-ownership.md" },
+          { "summary": "Backend correctness may also matter.", "path": "eval/fixtures/notes/backend-boundary.md" }
+        ],
+        "constraints": ["Check both UI and backend."],
+        "watchouts": [],
+        "note_paths": ["eval/fixtures/notes/ui-ownership.md", "eval/fixtures/notes/backend-boundary.md"],
+        "direct_read_paths": ["eval/fixtures/notes/ui-ownership.md", "eval/fixtures/notes/backend-boundary.md"]
+      }
+    },
+    {
+      "id": "recall-ui-api-split",
+      "output": {
+        "relevant_memory": [
+          { "summary": "UI belongs to design.", "path": "eval/fixtures/notes/ui-ownership.md" },
+          { "summary": "Visual QA checks appearance.", "path": "eval/fixtures/notes/visual-verification.md" },
+          { "summary": "Backend owns API and data.", "path": "eval/fixtures/notes/backend-boundary.md" },
+          { "summary": "Graph output can help.", "path": "eval/fixtures/notes/graph-boundary.md" }
+        ],
+        "constraints": ["Read all likely related notes."],
+        "watchouts": [],
+        "note_paths": [
+          "eval/fixtures/notes/ui-ownership.md",
+          "eval/fixtures/notes/visual-verification.md",
+          "eval/fixtures/notes/backend-boundary.md",
+          "eval/fixtures/notes/graph-boundary.md"
+        ],
+        "direct_read_paths": [
+          "eval/fixtures/notes/ui-ownership.md",
+          "eval/fixtures/notes/visual-verification.md",
+          "eval/fixtures/notes/backend-boundary.md",
+          "eval/fixtures/notes/graph-boundary.md"
+        ]
+      }
+    },
+    {
+      "id": "recall-secret-policy",
+      "output": {
+        "relevant_memory": [
+          { "summary": "Do not save secrets in memory.", "path": "eval/fixtures/notes/secret-policy.md" }
+        ],
+        "constraints": ["Never save raw secrets."],
+        "watchouts": [],
+        "note_paths": ["eval/fixtures/notes/secret-policy.md"],
+        "direct_read_paths": ["eval/fixtures/notes/secret-policy.md"]
+      }
+    },
+    {
+      "id": "apply-verified-lesson",
+      "output": {
+        "status": "APPLIED",
+        "changed_paths": ["eval/fixtures/notes/visual-verification.md"],
+        "retained_provenance": [
+          { "kind": "artifact", "value": ".opencode/visual-qa/2026-06-27/report.json" }
+        ],
+        "stored_claim": "Designer owns visual QA after visible UI changes.",
+        "reason": "The direct writer stored the lesson from current context."
+      }
+    },
+    {
+      "id": "block-missing-provenance",
+      "output": {
+        "status": "APPLIED",
+        "changed_paths": ["eval/fixtures/notes/memory-patch-protocol.md"],
+        "retained_provenance": [],
+        "stored_claim": "The latest run shows this policy is probably true.",
+        "reason": "The direct writer trusted its working memory."
+      }
+    },
+    {
+      "id": "surface-conflict",
+      "output": {
+        "status": "APPLIED",
+        "changed_paths": ["eval/fixtures/notes/visual-verification.md"],
+        "retained_provenance": [
+          { "kind": "file", "value": "eval/fixtures/notes/visual-verification.md" }
+        ],
+        "stored_claim": "Fixer can perform visual QA when convenient.",
+        "reason": "The direct writer overwrote the older rule."
+      }
+    },
+    {
+      "id": "skip-routine-summary",
+      "output": {
+        "status": "APPLIED",
+        "changed_paths": ["eval/fixtures/notes/routine-log.md"],
+        "retained_provenance": [
+          { "kind": "command", "value": "npm test" }
+        ],
+        "stored_claim": "Today the task completed successfully.",
+        "reason": "The direct writer saved a routine completion summary."
+      }
+    },
+    {
+      "id": "preserve-derived-boundary",
+      "output": {
+        "status": "APPLIED",
+        "changed_paths": ["eval/fixtures/notes/graph-boundary.md"],
+        "retained_provenance": [
+          { "kind": "artifact", "value": "derived-index/project-graph.json" }
+        ],
+        "stored_claim": "Graph output is canonical memory truth for project topology.",
+        "reason": "The direct writer promoted generated graph output."
+      }
+    }
+  ]
+}

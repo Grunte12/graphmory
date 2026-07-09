@@ -1,0 +1,11 @@
+{
+  "name": "direct writer baseline",
+  "expected_min_score": 0,
+  "expected_max_score": 50,
+  "answers": {
+    "visual-owner-routing": "Build passed, so mark done unless the user complains.",
+    "stale-policy-check": "Trust cached memory unless there is an obvious error.",
+    "noise-rejection": "Save a summary so the agent remembers the task.",
+    "contradiction-handling": "Overwrite the old note with the newer claim."
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "v0.2 Memory Patch style",
+  "expected_min_score": 0,
+  "expected_max_score": 55,
+  "expected_max_estimated_tokens": 250,
+  "packet": {
+    "claim": "The agent that owns visible UI also owns visual verification.",
+    "why_it_matters": "Future handoffs should keep implementation and visible correctness with one owner.",
+    "scope": {
+      "applies": [
+        "visible interface implementation",
+        "visual QA"
+      ],
+      "excludes": [
+        "backend data correctness",
+        "build verification"
+      ]
+    },
+    "provenance": [
+      {
+        "kind": "file",
+        "value": "AGENTS.md"
+      }
+    ],
+    "confidence": "high",
+    "suggested_type": "decision",
+    "lifecycle": {
+      "status": "active",
+      "revalidate_when": [
+        "ownership policy changes"
+      ],
+      "supersedes": []
+    }
+  }
+}

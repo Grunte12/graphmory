@@ -1,0 +1,11 @@
+{
+  "name": "learning packet guided",
+  "expected_min_score": 90,
+  "expected_max_score": 100,
+  "answers": {
+    "visual-owner-routing": "Require visual evidence before completion and attach the artifact path.",
+    "stale-policy-check": "Revalidate the saved memory against a current source before relying on it.",
+    "noise-rejection": "Skip durable memory for routine work that has no reusable behavior change.",
+    "contradiction-handling": "Return TENSION and name the conflict before any memory change."
+  }
+}

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "recall-visual-owner",
+    "mode": "recall",
+    "category": "recall-routing",
+    "query": "A visible chart looks visually wrong. Which prior memory should affect routing?",
+    "expected": {
+      "required_note_paths": ["notes/ui-ownership.md", "notes/visual-verification.md"],
+      "forbidden_note_paths": ["notes/backend-boundary.md"],
+      "max_direct_read_paths": 2
+    }
+  },
+  {
+    "id": "recall-ui-api-split",
+    "mode": "recall",
+    "category": "recall-multihop",
+    "query": "The UI is misaligned and the API returns stale data. Which ownership memories matter?",
+    "expected": {
+      "required_note_paths": ["notes/ui-ownership.md", "notes/visual-verification.md", "notes/backend-boundary.md"],
+      "max_direct_read_paths": 3
+    }
+  },
+  {
+    "id": "recall-secret-policy",
+    "mode": "recall",
+    "category": "recall-safety",
+    "query": "Where should API keys and private tokens be stored in memory?",
+    "expected": {
+      "required_note_paths": ["notes/secret-policy.md"],
+      "max_direct_read_paths": 1
+    }
+  },
+  {
+    "id": "apply-verified-lesson",
+    "mode": "consolidation",
+    "category": "write-apply",
+    "expected": {
+      "status": "APPLIED",
+      "required_changed_paths": ["notes/visual-verification.md"],
+      "required_provenance": [
+        { "kind": "artifact", "value_contains": ".opencode/visual-qa/" },
+        { "kind": "user-statement", "value_contains": "Designer owns visual QA" }
+      ],
+      "claim_terms": ["Designer", "visual QA", "visible UI"]
+    }
+  },
+  {
+    "id": "block-missing-provenance",
+    "mode": "consolidation",
+    "category": "write-block",
+    "expected": {
+      "status": "BLOCKED",
+      "must_not_write": true,
+      "reason_terms": ["provenance", "evidence"]
+    }
+  },
+  {
+    "id": "surface-conflict",
+    "mode": "consolidation",
+    "category": "write-conflict",
+    "expected": {
+      "status": "TENSION",
+      "must_not_write": true,
+      "required_tension_paths": ["notes/visual-verification.md", "notes/backend-boundary.md"],
+      "reason_terms": ["conflict", "visual QA"]
+    }
+  },
+  {
+    "id": "skip-routine-summary",
+    "mode": "consolidation",
+    "category": "write-noise",
+    "expected": {
+      "status": "BLOCKED",
+      "must_not_write": true,
+      "reason_terms": ["routine", "durable"]
+    }
+  },
+  {
+    "id": "preserve-derived-boundary",
+    "mode": "consolidation",
+    "category": "write-derived",
+    "expected": {
+      "status": "APPLIED",
+      "required_changed_paths": ["notes/graph-boundary.md"],
+      "required_provenance": [
+        { "kind": "artifact", "value_contains": "derived-index" }
+      ],
+      "claim_terms": ["derived", "canonical Markdown", "not memory truth"],
+      "forbidden_terms": ["graph output is canonical"]
+    }
+  }
+]

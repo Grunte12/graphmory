@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Grunte12/memory-patch-harness/main/schemas/brain-brief.schema.json",
+  "title": "Brain Brief",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "relevant_memory",
+    "constraints",
+    "watchouts",
+    "note_paths",
+    "direct_read_paths"
+  ],
+  "properties": {
+    "relevant_memory": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["summary", "path"],
+        "properties": {
+          "summary": {
+            "type": "string",
+            "minLength": 3
+          },
+          "path": {
+            "type": "string",
+            "minLength": 3
+          }
+        }
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "watchouts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "note_paths": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "direct_read_paths": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "role": "learning-packet",
+  "lesson": "Visible interface work must be verified by the owner of visible behavior, not inferred from non-visual checks.",
+  "trigger": "A task passed build checks but still needed visual verification before completion.",
+  "selectors": {
+    "tags": ["ui", "verification", "handoff"],
+    "file_globs": ["**/AGENTS.md", "**/DESIGN.md", ".opencode/visual-qa/**"],
+    "tool_names": ["visual_qa", "playwright"],
+    "error_regex": ["visual verification", "visible UI"]
+  },
+  "future_behavior_change": "Before marking visible UI work done, request or run owner-appropriate visual evidence and attach the artifact path.",
+  "scope": {
+    "applies": [
+      "visible UI implementation",
+      "visual review routing",
+      "agent handoff verification"
+    ],
+    "excludes": [
+      "backend-only data checks",
+      "package build success"
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "file",
+      "value": "AGENTS.md"
+    },
+    {
+      "kind": "artifact",
+      "value": ".opencode/visual-qa/example/report.json"
+    }
+  ],
+  "verification": {
+    "status": "verified",
+    "result": "The harness rule now distinguishes non-visual verification from visual ownership.",
+    "evidence": [
+      {
+        "kind": "command",
+        "value": "npm run check"
+      }
+    ]
+  },
+  "loop_trace": {
+    "recall": "Prior routing memory identified visible UI as designer-owned.",
+    "action": "The implementation owner completed the visible work and produced artifact paths.",
+    "verification": "The result was accepted only after visual evidence existed.",
+    "learning": "Future visible UI completion requires visual evidence, not only build evidence."
+  },
+  "memory_action": "apply",
+  "confidence": "high",
+  "lifecycle": {
+    "status": "active",
+    "revalidate_when": [
+      "visual verification ownership changes",
+      "agent role boundaries change"
+    ],
+    "supersedes": []
+  }
+}
