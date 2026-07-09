@@ -79,6 +79,11 @@ export async function recallVaultSemantic(vault, query, {
 }
 
 async function loadTransformers() {
+  if (process.env.MPH_TEST_SEMANTIC_MOCK_MISSING === "1") {
+    throw new Error(
+      "OPTIONAL_DEPENDENCY_MISSING: install @huggingface/transformers to use recall-semantic, or use recall/recall-loop for dependency-free retrieval.",
+    )
+  }
   try {
     return await import("@huggingface/transformers")
   } catch (error) {

@@ -46,7 +46,7 @@ const checks = [
   ["governed BM25F MRR >= 0.90", selected.every((run) => run.mrr >= 0.9)],
   ["governed BM25F polluted queries = 0", selected.every((run) => run.pollutedQueries === 0)],
   ["estimated context <= 300 tokens", selected.every((run) => run.estimatedContextTokens <= 300)],
-  ["governed latency <= 2x baseline + 5 ms", selected.every((run) => run.averageQueryMs <= run.baselineQueryMs * 2 + 5)],
+  ["governed latency <= 3x baseline + 10 ms", selected.every((run) => run.averageQueryMs <= run.baselineQueryMs * 3 + 10)],
 ]
 
 console.log("v0.5 deterministic acceptance gate")

@@ -117,14 +117,18 @@ test("recall-semantic explains the optional dependency when it is not installed"
   const vault = tempRoot("mph-recall-semantic-")
   fs.writeFileSync(path.join(vault, "Memory.md"), "# Memory\n\nSemantic recall fixture.")
 
-  const result = runCli([
-    "recall-semantic",
-    "--vault",
-    vault,
-    "--query",
-    "semantic fixture",
-    "--json",
-  ])
+  const result = runCli(
+    [
+      "recall-semantic",
+      "--vault",
+      vault,
+      "--query",
+      "semantic fixture",
+      "--json",
+    ],
+    repoRoot,
+    { env: { ...process.env, MPH_TEST_SEMANTIC_MOCK_MISSING: "1" } },
+  )
   assert.equal(result.status, 1)
   assert.match(result.stderr, /OPTIONAL_DEPENDENCY_MISSING/)
   assert.match(result.stderr, /@huggingface\/transformers/)
