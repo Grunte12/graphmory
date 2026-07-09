@@ -10,6 +10,7 @@ import {
   rank,
   scoreRun,
   scoreRunGroups,
+  sectionFocusRerank,
   splitMarkdownSections,
   tokenize,
 } from "../src/retrieval.mjs"
@@ -133,4 +134,72 @@ test("governed retrieval can rerank an already-matching linked note", () => {
   const linked = results.find((item) => item.id === "canonical")
   assert.match(linked.retrievalSource, /wikilink/)
   assert.ok(linked.score > rank([hub, noise, canonical], "rollback procedure", "bm25f-sections").find((item) => item.id === "canonical").score)
+})
+
+test("sectionFocusRerank returns results with rerankApplied flag", () => {
+  const docs = [
+    parseMarkdown("alpha", "# Alpha\nUse provenance for durable claims.\n\n## Verification\nAlways check the source."),
+  ]
+  const results = [{ id: "alpha", title: "Alpha", score: 2.5 }]
+  const reranked = sectionFocusRerank(results, "provenance claims", docs)
+  assert.equal(reranked.length, 1)
+  assert.ok("rerankApplied" in reranked[0])
+  assert.ok("rerankSignals" in reranked[0])
+  assert.ok(reranked[0].rerankApplied === true)
+  assert.ok(typeof reranked[0].rerankSignals.sectionFocus === "number")
+  assert.ok(typeof reranked[0].rerankSignals.boost === "number")
+})
+
+test("sectionFocusRerank boosts heading-matched documents over body-only matches", () => {
+  const headingMatch = parseMarkdown("policy.md", "# Rollback Procedure\n\nUse the verified rollback.")
+  const bodyOnly = parseMarkdown("notes.md", "# General Notes\n\nrollback procedure rollback procedure")
+  const results = governedRank([headingMatch, bodyOnly], "rollback procedure", "bm25f-sections").results
+  assert.equal(results.length, 2)
+  const reranked = sectionFocusRerank(results, "rollback procedure", [headingMatch, bodyOnly])
+  assert.equal(reranked[0].id, "policy.md")
+  assert.ok(reranked[0].rerankSignals.headingMatches >= 1)
+  assert.ok(reranked[0].score > reranked[1].score)
+})
+
+test("sectionFocusRerank applies boost from co-occurring query terms in one section", () => {
+  const focused = parseMarkdown(
+    "focused.md",
+    "# Root Cause\n\nAnalyze the root cause of each failure. Apply bounded retrieval.",
+  )
+  const scattered = parseMarkdown(
+    "scattered.md",
+    "# General Notes\n\n## Root\nSome root analysis notes here.\n\n## Cause\nDifferent cause examples.\n\n## Apply\nApply the policy carefully.\n\n## Retrieval\nRetrieval methods vary.",
+  )
+  const results = rank([focused, scattered], "root cause retrieval apply", "bm25f-sections").slice(0, 2)
+  const reranked = sectionFocusRerank(results, "root cause retrieval apply", [focused, scattered])
+  const focusedResult = reranked.find((r) => r.id === "focused.md")
+  assert.ok(focusedResult.rerankApplied)
+  assert.ok(focusedResult.rerankSignals.coOccurrenceMatches >= 2)
+})
+
+test("sectionFocusRerank preserves order for empty or stopword-only queries", () => {
+  const docs = [
+    parseMarkdown("a", "# A\nSome content here."),
+    parseMarkdown("b", "# B\nOther content there."),
+  ]
+  const results = [{ id: "a", title: "A", score: 1 }, { id: "b", title: "B", score: 2 }]
+  const reranked = sectionFocusRerank(results, "a an the", docs)
+  assert.equal(reranked.length, 2)
+  assert.equal(reranked[0].rerankApplied, false)
+})
+
+test("sectionFocusRerank returns original results when documents are missing", () => {
+  const results = [{ id: "unknown", title: "Missing", score: 1.5 }]
+  const reranked = sectionFocusRerank(results, "test query", [])
+  assert.equal(reranked.length, 1)
+  assert.equal(reranked[0].rerankApplied, false)
+})
+
+test("sectionFocusRerank handles document with only one section", () => {
+  const doc = parseMarkdown("flat.md", "# Content Policy\n\nAlways verify provenance before storing claims.")
+  const results = [{ id: "flat.md", title: "Content Policy", score: 2 }]
+  const reranked = sectionFocusRerank(results, "provenance claims", [doc])
+  assert.equal(reranked.length, 1)
+  assert.ok("rerankApplied" in reranked[0])
+  assert.ok("rerankSignals" in reranked[0])
 })

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process"
+import crypto from "node:crypto"
 import fs from "node:fs"
 import path from "node:path"
 import process from "node:process"
@@ -7,11 +8,14 @@ import {
   analyzeVaultHealth,
   applyRestructureManifest,
   assertSafeToBootstrap,
+  auditVaultSchema,
   buildAdoptionPlan,
+  buildBrainSessionBrief,
   buildRestructureManifest,
   buildSyncPlan,
   initialBrainFiles,
   inspectMemoryRoot,
+  lintVaultMemory,
   makeSyncConfig,
   renderAdoptionPlanMarkdown,
   rollbackRestructureRecord,
@@ -47,9 +51,10 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs detect --vault <path> [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs doctor [--vault <path>] [--json] [--require-github]\n`)
   out.write(`  node scripts/brain-sync.mjs health --vault <path> [--json] [--out <file>]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall-loop --vault <path> --query <text> [--scope <path>] [--k 3] [--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--rerank] [--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-loop --vault <path> --query <text> [--scope <path>] [--k 3] [--rerank] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs lifecycle-audit --vault <path> [--json] [--out <file>]\n`)
   out.write(`  node scripts/brain-sync.mjs init --vault <path> --repo <owner/repo> [--create-remote]\n`)
@@ -58,11 +63,17 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs auto-pull --vault <path> [--json] [--strict]\n`)
   out.write(`  node scripts/brain-sync.mjs conflict-assist --vault <path> [--json] [--out <file>]\n`)
   out.write(`  node scripts/brain-sync.mjs pull --vault <path>\n`)
-  out.write(`  node scripts/brain-sync.mjs push --vault <path> [--message <msg>]\n\n`)
+  out.write(`  node scripts/brain-sync.mjs push --vault <path> [--message <msg>]\n`)
+  out.write(`  node scripts/brain-sync.mjs audit --vault <path> [--json] [--out <file>]\n`)
+  out.write(`  node scripts/brain-sync.mjs lint --vault <path> [--json] [--out <file>]\n`)
+  out.write(`  node scripts/brain-sync.mjs brain-session-brief --vault <path> [--json] [--out <file>]\n\n`)
   out.write(`  node scripts/brain-sync.mjs restructure-plan --vault <path> [--out <file>]\n`)
   out.write(`  node scripts/brain-sync.mjs restructure-apply --vault <path> --plan <file> --approve\n`)
   out.write(`  node scripts/brain-sync.mjs restructure-verify --vault <path> --record <file>\n`)
-  out.write(`  node scripts/brain-sync.mjs restructure-rollback --vault <path> --record <file> --approve\n\n`)
+  out.write(`  node scripts/brain-sync.mjs restructure-rollback --vault <path> --record <file> --approve\n`)
+  out.write(`  node scripts/brain-sync.mjs conflict-plan --conflict-report <file> --out <file>\n`)
+  out.write(`  node scripts/brain-sync.mjs conflict-apply --vault <path> --plan <file> --approve\n`)
+  out.write(`  node scripts/brain-sync.mjs curation-apply --plan <file> --approve\n\n`)
   out.write(`Defaults: private GitHub repo, branch main, no public repo creation unless --allow-public is present.\n`)
   out.write(`Agent flow: detect -> ask user when adoption is required -> bootstrap -> status.\n`)
   out.write(`Existing memory flow: adoption-plan first; never restructure silently.\n`)
@@ -92,9 +103,9 @@ function run(bin, commandArgs, { cwd = process.cwd(), dryRun = false, allowFail 
 }
 
 function requireVault() {
-  const vault = option("--vault")
+  const vault = option("--vault") || process.env.OBSIDIAN_VAULT
   if (!vault) {
-    console.error("Missing --vault")
+    console.error("Missing --vault (or set OBSIDIAN_VAULT environment variable)")
     process.exit(2)
   }
   return path.resolve(vault)
@@ -352,7 +363,7 @@ function detect() {
 }
 
 function doctor() {
-  const vaultOption = option("--vault")
+  const vaultOption = option("--vault") || process.env.OBSIDIAN_VAULT
   const vault = vaultOption ? path.resolve(vaultOption) : null
   const requireGithub = flag("--require-github")
   const json = flag("--json")
@@ -484,14 +495,18 @@ function recall() {
     includeNoncanonical: flag("--include-noncanonical"),
     includeRawPaths: flag("--include-raw-paths"),
     scope: option("--scope", ""),
+    rerank: flag("--rerank"),
   })
   if (flag("--json")) {
     console.log(JSON.stringify(report, null, 2))
     return
   }
-  console.log(`Memory recall: ${report.confidence} confidence; ${report.results.length} result(s)`)
+  console.log(`Memory recall: ${report.confidence} confidence; ${report.results.length} result(s)${report.reranked ? " (reranked)" : ""}`)
   for (const result of report.results) {
-    console.log(`- ${result.path} | ${result.title} | score ${result.score}`)
+    const signals = result.rerankApplied && result.rerankSignals
+      ? ` [focus=${result.rerankSignals.sectionFocus} headings=${result.rerankSignals.headingMatches} boost=${result.rerankSignals.boost}]`
+      : ""
+    console.log(`- ${result.path} | ${result.title} | score ${result.score}${signals}`)
   }
   if (report.needsExpansion) {
     console.log("Expansion required:")
@@ -685,12 +700,13 @@ function recallLoop() {
     includeNoncanonical: flag("--include-noncanonical"),
     includeRawPaths: flag("--include-raw-paths"),
     scope: option("--scope", ""),
+    rerank: flag("--rerank"),
   })
   if (flag("--json")) {
     console.log(JSON.stringify(report, null, 2))
     return
   }
-  console.log(`Memory recall loop: ${report.confidence} confidence; ${report.results.length} fused result(s)`)
+  console.log(`Memory recall loop: ${report.confidence} confidence; ${report.results.length} fused result(s)${report.reranked ? " (reranked)" : ""}`)
   for (const result of report.results) {
     console.log(`- ${result.path} | ${result.title} | score ${result.score} | lanes ${result.lanes.join(",")}`)
   }
@@ -723,6 +739,121 @@ function lifecycleAudit() {
   if (report.summary.high > 0 || report.summary.medium > 0) process.exitCode = 1
 }
 
+function audit() {
+  const vault = requireVault()
+  const json = flag("--json")
+  const out = option("--out")
+  const report = auditVaultSchema(vault)
+  const content = json ? `${JSON.stringify(report, null, 2)}\n` : renderAuditMarkdown(report)
+  if (out) {
+    const target = path.resolve(out)
+    writeFileAtomic(target, content)
+    console.log(`Schema audit written: ${target}`)
+    return
+  }
+  process.stdout.write(content)
+  if (!report.ok) process.exitCode = 1
+}
+
+function renderAuditMarkdown(report) {
+  const lines = []
+  lines.push("# Memory Schema Audit")
+  lines.push("")
+  lines.push(`Checked: ${report.checkedAt}`)
+  lines.push(`Findings: ${report.summary.total} (warning ${report.summary.warning}, info ${report.summary.info})`)
+  lines.push(`OK: ${report.ok ? "yes" : "no"}`)
+  lines.push("")
+  if (!report.findings.length) {
+    lines.push("- No findings")
+  } else {
+    for (const item of report.findings) {
+      lines.push(`- [${item.severity.toUpperCase()}] ${item.kind}: \`${item.file}\``)
+      lines.push(`  Detail: ${item.detail}`)
+      lines.push(`  Recommendation: ${item.recommendation}`)
+    }
+  }
+  lines.push("")
+  return `${lines.join("\n")}\n`
+}
+
+function lint() {
+  const vault = requireVault()
+  const json = flag("--json")
+  const out = option("--out")
+  const report = lintVaultMemory(vault)
+  const content = json ? `${JSON.stringify(report, null, 2)}\n` : renderLintMarkdown(report)
+  if (out) {
+    const target = path.resolve(out)
+    writeFileAtomic(target, content)
+    console.log(`Memory lint written: ${target}`)
+    return
+  }
+  process.stdout.write(content)
+  if (!report.ok) process.exitCode = 1
+}
+
+function renderLintMarkdown(report) {
+  const lines = []
+  lines.push("# Memory Lint Report")
+  lines.push("")
+  lines.push(`Checked: ${report.checkedAt}`)
+  lines.push(`Findings: ${report.summary.total} (warning ${report.summary.warning}, info ${report.summary.info})`)
+  lines.push(`OK: ${report.ok ? "yes" : "no"}`)
+  lines.push("")
+  if (!report.findings.length) {
+    lines.push("- No findings")
+  } else {
+    for (const item of report.findings) {
+      lines.push(`- [${item.severity.toUpperCase()}] ${item.kind}: \`${item.file}\``)
+      lines.push(`  Detail: ${item.detail}`)
+      lines.push(`  Recommendation: ${item.recommendation}`)
+    }
+  }
+  lines.push("")
+  return `${lines.join("\n")}\n`
+}
+
+function brainSessionBrief() {
+  const vault = requireVault()
+  const json = flag("--json")
+  const out = option("--out")
+  const brief = buildBrainSessionBrief(vault)
+  const content = json ? `${JSON.stringify(brief, null, 2)}\n` : renderBrainSessionBriefMarkdown(brief)
+  if (out) {
+    const target = path.resolve(out)
+    writeFileAtomic(target, content)
+    console.log(`Brain session brief written: ${target}`)
+    return
+  }
+  process.stdout.write(content)
+}
+
+function renderBrainSessionBriefMarkdown(brief) {
+  const lines = []
+  lines.push("# Brain Session Brief")
+  lines.push("")
+  lines.push(`Generated: ${brief.checkedAt}`)
+  lines.push(`Vault: ${brief.vault}`)
+  lines.push("")
+  if (brief.sync.configured) {
+    lines.push(`Sync: configured (repo: ${brief.sync.repo}, branch: ${brief.sync.branch})`)
+  } else {
+    lines.push("Sync: not configured")
+  }
+  lines.push("")
+  lines.push("## Health Summary")
+  lines.push("")
+  lines.push(`- Score: ${brief.health.score}/100`)
+  lines.push(`- Status: ${brief.health.ok ? "OK" : "Issues found"}`)
+  lines.push(`- Markdown files: ${brief.health.markdownFiles}`)
+  lines.push(`- Critical: ${brief.health.critical}`)
+  lines.push(`- Warning: ${brief.health.warning}`)
+  lines.push(`- Info: ${brief.health.info}`)
+  lines.push(`- Inbox count: ${brief.health.inboxCount}`)
+  lines.push("")
+  return `${lines.join("\n")}\n`
+}
+
 function renderLifecycleAuditMarkdown(report) {
   const lines = []
   lines.push("# Memory Lifecycle Audit")
@@ -751,6 +882,39 @@ function renderLifecycleAuditMarkdown(report) {
   }
   lines.push("")
   return `${lines.join("\n")}\n`
+}
+
+function recallRerank() {
+  const vault = requireVault()
+  const query = requiredOption("--query")
+  const method = option("--method", "bm25f-sections")
+  const k = Number.parseInt(option("--k", "3"), 10)
+  const report = recallVault(vault, query, {
+    method,
+    k,
+    includeNoncanonical: flag("--include-noncanonical"),
+    includeRawPaths: flag("--include-raw-paths"),
+    scope: option("--scope", ""),
+    rerank: true,
+  })
+  if (flag("--json")) {
+    console.log(JSON.stringify(report, null, 2))
+    return
+  }
+  console.log(`Memory recall with rerank: ${report.confidence} confidence; ${report.results.length} result(s)`)
+  for (const result of report.results) {
+    const signals = result.rerankSignals
+      ? ` [focus=${result.rerankSignals.sectionFocus} headings=${result.rerankSignals.headingMatches} boost=${result.rerankSignals.boost}]`
+      : ""
+    console.log(`- ${result.path} | ${result.title} | score ${result.score}${signals}`)
+  }
+  if (report.reranked) {
+    console.log(`Rerank applied: section-focus + heading-affinity + co-occurrence boost`)
+  }
+  if (report.needsExpansion) {
+    console.log("Expansion required:")
+    for (const step of report.nextSteps) console.log(`- ${step}`)
+  }
 }
 
 async function recallSemantic() {
@@ -1232,7 +1396,7 @@ function pushUnlocked(vault, config, message) {
   if (findings.length) {
     console.error("Refusing to push because secret-like values were found:")
     for (const finding of findings) console.error(`- ${finding.file}: ${finding.name} (${finding.sample})`)
-    process.exit(1)
+    throw new Error("SECRET_FOUND: push aborted due to secret-like values in vault")
   }
   const remoteBranch = run("git", ["ls-remote", "--exit-code", "--heads", "origin", config.branch], {
     cwd: vault,
@@ -1263,6 +1427,258 @@ function pushUnlocked(vault, config, message) {
   console.log("Brain memory pushed.")
 }
 
+function conflictPlan() {
+  const reportFile = requiredOption("--conflict-report")
+  const out = option("--out")
+  if (!out) throw new Error("Missing --out for conflict plan output")
+  const report = readJsonFile(reportFile)
+
+  if (!Array.isArray(report.decisionOptions)) {
+    throw new Error("INVALID_CONFLICT_REPORT: missing decisionOptions array")
+  }
+
+  // Determine which files have same-note semantic conflicts
+  const sameNoteConflictFiles = new Set(
+    (report.files || [])
+      .filter((f) => f.review?.type === "same-note-changed")
+      .map((f) => f.path),
+  )
+
+  // Categorize files by change type
+  const overlappingFiles = new Set(
+    (report.files || [])
+      .filter((f) => f.localStatus && f.remoteStatus)
+      .map((f) => f.path),
+  )
+  const localOnlyFiles = new Set(
+    (report.files || [])
+      .filter((f) => f.localStatus && !f.remoteStatus)
+      .map((f) => f.path),
+  )
+  const remoteOnlyFiles = new Set(
+    (report.files || [])
+      .filter((f) => f.remoteStatus && !f.localStatus)
+      .map((f) => f.path),
+  )
+  const dirtyFiles = (report.files || []).filter((f) => f.dirty).map((f) => f.path).sort()
+
+  // Deterministic hash from report content for repeatable plan IDs
+  const hash = crypto.createHash("sha256").update(JSON.stringify({
+    decisionOptions: report.decisionOptions,
+    files: (report.files || []).map((f) => `${f.path}:${f.localStatus}:${f.remoteStatus}:${f.review?.type}`),
+  })).digest("hex").slice(0, 12)
+
+  const entries = report.decisionOptions.map((option) => {
+    let affectedFiles = []
+    let hasSameNoteConflict = false
+
+    if (option.id === "merge-compatible" && report.relationship === "behind") {
+      // Fast-forward safe: all remote-changed files
+      affectedFiles = [...new Set([...overlappingFiles, ...remoteOnlyFiles])].sort()
+      hasSameNoteConflict = false
+    } else if (option.id === "merge-compatible" && report.relationship === "diverged") {
+      affectedFiles = [...new Set([...overlappingFiles, ...localOnlyFiles, ...remoteOnlyFiles])].sort()
+      hasSameNoteConflict = overlappingFiles.size > 0 && sameNoteConflictFiles.size > 0
+    } else if (option.id === "prefer-local") {
+      affectedFiles = [...localOnlyFiles].sort()
+      hasSameNoteConflict = false
+    } else if (option.id === "prefer-remote") {
+      affectedFiles = [...remoteOnlyFiles].sort()
+      hasSameNoteConflict = false
+    } else if (["supersede-local", "supersede-remote", "create-tension", "blocked-needs-evidence"].includes(option.id)) {
+      affectedFiles = [...overlappingFiles].sort()
+      hasSameNoteConflict = sameNoteConflictFiles.size > 0
+    }
+
+    return {
+      optionId: option.id,
+      when: option.when,
+      action: option.action,
+      affectedFiles,
+      hasSameNoteConflict,
+      requiresUserApproval: option.requiresUserApproval !== false,
+      approved: false,
+    }
+  })
+
+  const plan = {
+    version: 1,
+    id: `conflict-plan-${hash}`,
+    generatedAt: new Date().toISOString(),
+    conflictCheckedAt: report.checkedAt || "",
+    vault: report.vault || "",
+    relationship: report.relationship || "",
+    guardrails: report.guardrails || [],
+    dirtyFiles,
+    entries,
+  }
+
+  const target = path.resolve(out)
+  writeJsonFile(target, plan)
+  console.log(`Conflict plan written: ${target}`)
+  console.log("Review each entry and set approved=true only for the user-approved resolution decisions.")
+}
+
+function conflictApply() {
+  const vault = requireVault()
+  const planFile = requiredOption("--plan")
+  const dryRun = flag("--dry-run")
+
+  if (!flag("--approve") && !dryRun) {
+    throw new Error("Refusing conflict apply without --approve after explicit user approval")
+  }
+
+  const plan = readJsonFile(planFile)
+  if (!Array.isArray(plan.entries)) {
+    throw new Error("INVALID_CONFLICT_PLAN: missing entries array")
+  }
+
+  // Dynamic worktree check: don't trust stale plan.dirtyFiles metadata
+  // Only check tracked changes — untracked files (like the plan itself) don't block
+  const statusResult = run("git", ["status", "--porcelain"], { cwd: vault, allowFail: true })
+  const dirtyFiles = statusResult.status === 0 && statusResult.stdout.trim()
+    ? statusResult.stdout.trim().split(/\r?\n/u).filter(Boolean).filter((l) => !l.startsWith("??"))
+    : []
+  if (dirtyFiles.length > 0 && !dryRun) {
+    throw new Error(`Working tree has uncommitted changes. Commit/stash before applying conflict plan: ${dirtyFiles.join(", ")}`)
+  }
+
+  const approved = plan.entries.filter((e) => e.approved === true)
+  if (approved.length === 0) {
+    console.log("No approved entries in the conflict plan. Nothing to apply.")
+    return
+  }
+
+  // Block any approved entry that involves same-note semantic conflict
+  const semanticBlocked = approved.filter((e) => e.hasSameNoteConflict)
+  if (semanticBlocked.length > 0) {
+    console.error("BLOCKED: The following approved entries involve same-note semantic conflicts that require manual resolution:")
+    for (const entry of semanticBlocked) {
+      console.error(`  - ${entry.optionId}: ${entry.when}`)
+      console.error(`    Affected files: ${entry.affectedFiles.join(", ")}`)
+      console.error(`    Manual action: ${entry.action}`)
+    }
+    throw new Error("SEMANTIC_CONFLICT_BLOCKED: Apply the user's lifecycle decision to each affected note file manually; this command cannot auto-resolve same-note semantic conflicts.")
+  }
+
+  const safeEntries = approved.filter((e) => !e.hasSameNoteConflict)
+  if (safeEntries.length === 0) {
+    console.log("No safely applicable entries remain after blocking semantic conflicts.")
+    return
+  }
+
+  if (dryRun) {
+    console.log(`Conflict apply dry-run: ${safeEntries.length} safe approved entry/entries`)
+    for (const entry of safeEntries) {
+      console.log(`  [${entry.optionId}] ${entry.action}`)
+    }
+    return
+  }
+
+  // Apply mechanically safe entries
+  let applied = 0
+  for (const entry of safeEntries) {
+    if (entry.optionId === "merge-compatible" && plan.relationship === "behind") {
+      const config = readConfig(vault)
+      const branch = config.branch || "main"
+      run("git", ["pull", "--ff-only", "origin", branch], { cwd: vault })
+      console.log(`Applied: fast-forward pull from origin/${branch}`)
+      applied++
+    } else if (entry.optionId === "prefer-remote" && plan.relationship === "behind") {
+      const config = readConfig(vault)
+      const branch = config.branch || "main"
+      run("git", ["pull", "--ff-only", "origin", branch], { cwd: vault })
+      console.log(`Applied: fast-forward pull from origin/${branch}`)
+      applied++
+    } else {
+      console.log(`Skipped: ${entry.optionId} (${entry.action}) - requires separate command or manual steps.`)
+    }
+  }
+
+  console.log(`Conflict apply complete: ${applied} action(s) applied, ${safeEntries.length - applied} action(s) skipped.`)
+}
+
+function curationApply() {
+  const planFile = requiredOption("--plan")
+
+  if (!flag("--approve")) {
+    throw new Error("Refusing curation apply without --approve after explicit user approval")
+  }
+
+  const plan = readJsonFile(planFile)
+
+  // Find auto-applicable approved candidates across all recommendations
+  const candidates = []
+  if (Array.isArray(plan.recommendations)) {
+    for (const rec of plan.recommendations) {
+      if (Array.isArray(rec.patchCandidates)) {
+        for (const candidate of rec.patchCandidates) {
+          if (candidate.autoApplicable === true && candidate.requiresHumanReview === false && candidate.approved === true) {
+            candidates.push({ recommendationId: rec.id, ...candidate })
+          }
+        }
+      }
+    }
+  }
+
+  if (candidates.length === 0) {
+    console.log("No auto-applicable candidates found.")
+    console.log("Only candidates with autoApplicable: true, requiresHumanReview: false, and approved: true can be applied.")
+    console.log("The current curation recommender does not emit auto-applicable candidates.")
+    console.log("To apply: edit the plan file and set the three required flags on desired patchCandidates.")
+    return
+  }
+
+  // Apply auto-applicable candidates
+  let applied = 0
+  let skipped = 0
+
+  for (const candidate of candidates) {
+    if (candidate.type === "alias-patch-candidate") {
+      const targetPath = path.resolve(candidate.target)
+      if (!fs.existsSync(targetPath)) {
+        console.log(`Skipped alias-patch: target file not found: ${targetPath}`)
+        skipped++
+        continue
+      }
+      const aliases = candidate.proposed?.addAliases
+      if (!Array.isArray(aliases) || aliases.length === 0) {
+        console.log(`Skipped alias-patch: no aliases to add for ${candidate.target}`)
+        skipped++
+        continue
+      }
+      let content = fs.readFileSync(targetPath, "utf8")
+      const fmMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/)
+      if (fmMatch) {
+        if (fmMatch[1].includes("aliases:")) {
+          console.log(`Skipped alias-patch: ${candidate.target} already has aliases in frontmatter.`)
+          skipped++
+          continue
+        }
+        const aliasLine = `aliases: [${aliases.map((a) => `"${a.replace(/"/gu, '\\"')}"`).join(", ")}]`
+        // Preserve original line ending style from frontmatter block
+        const lineEnding = fmMatch[0].includes("\r\n") ? "\r\n" : "\n"
+        const newContent = content.replace(fmMatch[0], `---${lineEnding}${fmMatch[1]}${lineEnding}${aliasLine}${lineEnding}---`)
+        fs.writeFileSync(targetPath, newContent)
+        console.log(`Applied alias-patch: added aliases to ${candidate.target}`)
+        applied++
+      } else {
+        // No frontmatter — add it
+        const aliasLine = `aliases: [${aliases.map((a) => `"${a.replace(/"/gu, '\\"')}"`).join(", ")}]`
+        const newContent = `---\n${aliasLine}\n---\n${content}`
+        fs.writeFileSync(targetPath, newContent)
+        console.log(`Applied alias-patch: added frontmatter with aliases to ${candidate.target}`)
+        applied++
+      }
+    } else {
+      console.log(`Skipped: ${candidate.type} - not yet auto-applicable. Requires manual review or a separate tool.`)
+      skipped++
+    }
+  }
+
+  console.log(`Curation apply complete: ${applied} applied, ${skipped} skipped.`)
+}
+
 try {
   if (!command || command === "--help" || command === "-h" || flag("--help") || command === "help") usage(0)
   if (command === "adoption-plan") adoptionPlan()
@@ -1272,6 +1688,7 @@ try {
   else if (command === "health") health()
   else if (command === "recall") recall()
   else if (command === "recall-loop") recallLoop()
+  else if (command === "recall-rerank") recallRerank()
   else if (command === "recall-semantic") await recallSemantic()
   else if (command === "curation-recommend") curationRecommend()
   else if (command === "lifecycle-audit") lifecycleAudit()
@@ -1284,10 +1701,20 @@ try {
   else if (command === "push") push()
   else if (command === "restructure-plan") restructurePlan()
   else if (command === "restructure-apply") restructureApply()
+  else if (command === "audit") audit()
+  else if (command === "lint") lint()
+  else if (command === "brain-session-brief") brainSessionBrief()
   else if (command === "restructure-verify") restructureVerify()
   else if (command === "restructure-rollback") restructureRollback()
+  else if (command === "conflict-plan") conflictPlan()
+  else if (command === "conflict-apply") conflictApply()
+  else if (command === "curation-apply") curationApply()
   else usage(2)
 } catch (error) {
-  console.error(error.message)
+  if (flag("--verbose")) {
+    console.error(error.stack || error.message)
+  } else {
+    console.error(error.message)
+  }
   process.exit(1)
 }

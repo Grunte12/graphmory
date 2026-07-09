@@ -19,10 +19,19 @@ export const DEFAULT_SYNC_CONFIG = {
 
 export const SECRET_PATTERNS = [
   { name: "generic api key", regex: /\b(api[_-]?key|secret|token|password)\b\s*[:=]\s*['"]?[A-Za-z0-9_\-./+=]{12,}/i },
-  { name: "openai key", regex: /\bsk-[A-Za-z0-9]{20,}\b/ },
+  { name: "openai / anthropic key", regex: /\b(sk-[A-Za-z0-9]{20,}|sk-ant-[A-Za-z0-9-]{20,})\b/ },
   { name: "github token", regex: /\bgh[pousr]_[A-Za-z0-9_]{30,}\b/ },
   { name: "private key block", regex: /-----BEGIN [A-Z ]*PRIVATE KEY-----/ },
   { name: "jwt", regex: /\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/ },
+  { name: "aws access key", regex: /\b(AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16})\b/ },
+  { name: "aws secret key", regex: /\b(?:aws[_-]?secret[_-]?access[_-]?key)\b\s*[:=]\s*['"]?[A-Za-z0-9/+=]{40}['"]?/i },
+  { name: "azure connection string", regex: /(DefaultEndpointsProtocol|AccountName|AccountKey|BlobEndpoint|QueueEndpoint|TableEndpoint|FileEndpoint)\s*=[^;\s]{10,}/ },
+  { name: "azure subscription key", regex: /\b(SubscriptionId|subscription-id|azure_subscription)\s*[:=]\s*['"]?[a-f0-9-]{36}['"]?/i },
+  { name: "gcp service account", regex: /"type"\s*:\s*"service_account"/i },
+  { name: "heroku api key", regex: /\b(h?:[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}|heroku_api_key)\b/i },
+  { name: "slack token", regex: /\b(xox[baprs]-[0-9A-Za-z-]{10,})\b/ },
+  { name: "discord bot token", regex: /\b[MN][A-Za-z\d_-]{18,30}\.[A-Za-z\d_-]{6,10}\.[A-Za-z\d_-]{27,40}\b/ },
+  { name: "env file export", regex: /^export\s+[A-Z_]+=\$?['"]?[A-Za-z0-9_\-./+=]{12,}['"]?$/m },
 ]
 
 export const HARNESS_FOLDERS = [
@@ -547,6 +556,7 @@ export function analyzeVaultHealth(root, { fsApi = defaultFs, inboxWarningThresh
       outgoing: extractNoteLinks(text),
     }
   })
+  const resolveNoteLink = createNoteLinkResolver(notes)
   const notePaths = new Set(notes.map((note) => normalizeLinkTarget(note.path)))
   const titleMap = new Map()
   const inbound = new Map(notes.map((note) => [note.path, 0]))
@@ -558,9 +568,19 @@ export function analyzeVaultHealth(root, { fsApi = defaultFs, inboxWarningThresh
     titleMap.get(titleKey).push(note.path)
 
     for (const link of note.outgoing) {
-      const resolved = resolveNoteLink(link, note.path)
-      if (!resolved) continue
-      if (!notePaths.has(resolved)) {
+      const result = resolveNoteLink(link, note.path)
+      if (!result.resolved && result.reason === "external") continue
+      if (result.reason === "ambiguous") {
+        findings.push({
+          severity: "warning",
+          kind: "ambiguous-link",
+          file: note.path,
+          detail: link,
+          recommendation: `Multiple notes match this link: ${result.ambiguity.join(", ")}. Use a path-qualified link like [[${result.ambiguity.map((p) => p.replace(/\.md$/iu, "")).join("]] or [[")}]].`,
+        })
+        continue
+      }
+      if (!result.resolved || !notePaths.has(result.path)) {
         findings.push({
           severity: "warning",
           kind: "unresolved-link",
@@ -569,7 +589,7 @@ export function analyzeVaultHealth(root, { fsApi = defaultFs, inboxWarningThresh
           recommendation: "Create the target note, fix the link, or remove stale navigation.",
         })
       } else {
-        const matched = notes.find((candidate) => normalizeLinkTarget(candidate.path) === resolved)
+        const matched = notes.find((candidate) => normalizeLinkTarget(candidate.path) === result.path)
         if (matched) inbound.set(matched.path, (inbound.get(matched.path) ?? 0) + 1)
       }
     }
@@ -674,6 +694,372 @@ export function analyzeVaultHealth(root, { fsApi = defaultFs, inboxWarningThresh
     summary,
     findings,
     checkedAt: new Date().toISOString(),
+  }
+}
+
+/**
+ * Read-only schema audit: checks required metadata, invalid controlled values,
+ * raw clipping outside inbox, stale/superseded lifecycle mismatch,
+ * unresolved/ambiguous links, and oversized project hubs.
+ */
+export function auditVaultSchema(root, { fsApi = defaultFs, maxFiles = 5000 } = {}) {
+  const vault = path.resolve(root)
+  const markdownFiles = listMarkdownFiles(fsApi, vault, maxFiles)
+  const notes = markdownFiles.map((file) => {
+    const fullPath = path.join(vault, file)
+    const text = fsApi.readFileSync(fullPath, "utf8")
+    return {
+      path: file,
+      title: extractTitle(file, text),
+      text,
+      outgoing: extractNoteLinks(text),
+      frontmatter: extractFrontmatter(text),
+    }
+  })
+  const resolveNoteLink = createNoteLinkResolver(notes)
+  const notePaths = new Set(notes.map((note) => normalizeLinkTarget(note.path)))
+  const findings = []
+
+  // Controlled value sets from contracts
+  const VALID_STATUSES = new Set(["active", "superseded", "tension", "deprecated", "current", "applied", "stale", "archived", "raw", "unknown"])
+  const VALID_PATCH_TYPES = new Set(["decision", "root-cause", "workflow", "preference", "source-map", "tension"])
+  const VALID_PROVENANCE_TYPES = new Set(["user-statement", "file", "command", "artifact", "url"])
+  const VALID_CATEGORIES = new Set(["policy", "preference", "workflow", "routing", "gotcha", "stale-warning", "open-question"])
+
+  for (const note of notes) {
+    const meta = note.frontmatter
+
+    // Required metadata: canonical notes should have status/lifecycle
+    if (isCanonicalMemory(note.path)) {
+      const hasStatus = "status" in meta || "lifecycle" in meta
+      if (!hasStatus) {
+        findings.push({
+          severity: "warning",
+          kind: "missing-required-metadata",
+          file: note.path,
+          detail: "Canonical note lacks required status/lifecycle frontmatter.",
+          recommendation: "Add status (active/superseded/tension/deprecated) to frontmatter.",
+        })
+      }
+      if (!hasProvenance(note.text)) {
+        findings.push({
+          severity: "warning",
+          kind: "missing-required-metadata",
+          file: note.path,
+          detail: "Canonical note lacks provenance marker.",
+          recommendation: "Add provenance, source, or evidence field.",
+        })
+      }
+    }
+
+    // Invalid controlled values in frontmatter
+    if ("status" in meta && typeof meta.status === "string" && !VALID_STATUSES.has(meta.status.toLowerCase())) {
+      findings.push({
+        severity: "warning",
+        kind: "invalid-controlled-value",
+        file: note.path,
+        detail: `Invalid status value: "${meta.status}"`,
+        recommendation: `Use one of: ${[...VALID_STATUSES].join(", ")}`,
+      })
+    }
+    if ("suggested_type" in meta && typeof meta.suggested_type === "string" && !VALID_PATCH_TYPES.has(meta.suggested_type)) {
+      findings.push({
+        severity: "info",
+        kind: "invalid-controlled-value",
+        file: note.path,
+        detail: `Invalid patch type: "${meta.suggested_type}"`,
+        recommendation: `Use one of: ${[...VALID_PATCH_TYPES].join(", ")}`,
+      })
+    }
+    if ("category" in meta && typeof meta.category === "string" && !VALID_CATEGORIES.has(meta.category)) {
+      findings.push({
+        severity: "info",
+        kind: "invalid-controlled-value",
+        file: note.path,
+        detail: `Invalid category: "${meta.category}"`,
+        recommendation: `Use one of: ${[...VALID_CATEGORIES].join(", ")}`,
+      })
+    }
+
+    // Raw clipping outside inbox
+    if (!note.path.toLowerCase().startsWith("00 inbox/") && /clipping|raw[_-]?capture|transcript|dump/iu.test(note.path)) {
+      findings.push({
+        severity: "warning",
+        kind: "raw-clipping-outside-inbox",
+        file: note.path,
+        detail: "Raw/clipping note is not in the 00 Inbox folder.",
+        recommendation: "Move raw captures to 00 Inbox or promote into curated memory.",
+      })
+    }
+
+    // Stale/superseded lifecycle mismatch: status says stale/superseded but content doesn't indicate it
+    const status = (meta.status || meta.lifecycle || "unknown").toString().toLowerCase()
+    if (["stale", "superseded", "deprecated", "archived"].includes(status)) {
+      const hasStaleContent = /\b(stale|superseded|deprecated|no longer valid|replaced by)\b/iu.test(note.text)
+      if (!hasStaleContent) {
+        findings.push({
+          severity: "warning",
+          kind: "stale-lifecycle-mismatch",
+          file: note.path,
+          detail: `Note is "${status}" but content lacks explicit stale/obsolete language.`,
+          recommendation: "Add a clear statement of why this note is stale and what replaced it.",
+        })
+      }
+    }
+
+    // Links: unresolved or ambiguous
+    for (const link of note.outgoing) {
+      const result = resolveNoteLink(link, note.path)
+      if (!result.resolved && result.reason === "external") continue
+      if (result.reason === "ambiguous") {
+        findings.push({
+          severity: "warning",
+          kind: "ambiguous-link",
+          file: note.path,
+          detail: `Ambiguous link: [[${link}]]`,
+          recommendation: `Use a path-qualified link like [[${result.ambiguity.map((p) => p.replace(/\.md$/iu, "")).join("]] or [[")}]].`,
+        })
+        continue
+      }
+      if (!result.resolved || !notePaths.has(result.path)) {
+        findings.push({
+          severity: "warning",
+          kind: "unresolved-link",
+          file: note.path,
+          detail: `Unresolved link: [[${link}]]`,
+          recommendation: "Create the target note or fix the link reference.",
+        })
+      }
+    }
+
+    // Oversized project hubs: notes with excessive outgoing links (>50)
+    if (isCanonicalMemory(note.path) && note.outgoing.length > 50) {
+      findings.push({
+        severity: "info",
+        kind: "oversized-project-hub",
+        file: note.path,
+        detail: `${note.outgoing.length} outgoing links detected.`,
+        recommendation: "Consider splitting into focused sub-notes or a structured index with curated summaries.",
+      })
+    }
+  }
+
+  const summary = {
+    total: findings.length,
+    warning: findings.filter((f) => f.severity === "warning").length,
+    info: findings.filter((f) => f.severity === "info").length,
+  }
+
+  return {
+    ok: summary.warning === 0,
+    summary,
+    findings,
+    checkedAt: new Date().toISOString(),
+  }
+}
+
+/**
+ * Read-only memory lint: duplicate titles, missing provenance,
+ * stale lifecycle triggers, derived outputs promoted as truth,
+ * orphan/vague claims without links.
+ */
+export function lintVaultMemory(root, { fsApi = defaultFs, maxFiles = 5000 } = {}) {
+  const vault = path.resolve(root)
+  const markdownFiles = listMarkdownFiles(fsApi, vault, maxFiles)
+  const notes = markdownFiles.map((file) => {
+    const fullPath = path.join(vault, file)
+    const text = fsApi.readFileSync(fullPath, "utf8")
+    return {
+      path: file,
+      title: extractTitle(file, text),
+      text,
+      outgoing: extractNoteLinks(text),
+      frontmatter: extractFrontmatter(text),
+    }
+  })
+  const resolveNoteLink = createNoteLinkResolver(notes)
+  const inbound = new Map(notes.map((note) => [note.path, 0]))
+  const titleMap = new Map()
+  const findings = []
+
+  // Duplicate titles
+  for (const note of notes) {
+    const titleKey = note.title.toLowerCase()
+    if (!titleMap.has(titleKey)) titleMap.set(titleKey, [])
+    titleMap.get(titleKey).push(note.path)
+  }
+  for (const [title, files] of titleMap.entries()) {
+    if (title && files.length > 1) {
+      findings.push({
+        severity: "warning",
+        kind: "duplicate-title",
+        file: files.join(", "),
+        detail: `Title "${title}" appears in ${files.length} notes.`,
+        recommendation: "Deduplicate, rename, or link notes with the same title.",
+      })
+    }
+  }
+
+  for (const note of notes) {
+    // Missing provenance
+    if (isCanonicalMemory(note.path) && !hasProvenance(note.text)) {
+      findings.push({
+        severity: "warning",
+        kind: "missing-provenance",
+        file: note.path,
+        detail: "Canonical note lacks source/provenance.",
+        recommendation: "Add provenance, source, or evidence marker.",
+      })
+    }
+
+    // Stale lifecycle triggers (stale-without-revalidation)
+    if (/(stale|superseded|tension|blocked)/iu.test(note.text) && !/(revalidate|valid_until|supersedes|replacement)/iu.test(note.text)) {
+      findings.push({
+        severity: "warning",
+        kind: "stale-without-revalidation",
+        file: note.path,
+        detail: "Stale/conflict language found without revalidation or replacement marker.",
+        recommendation: "Add revalidate_when, valid_until, supersedes, or replacement guidance.",
+      })
+    }
+
+    // Derived outputs promoted as truth
+    const meta = note.frontmatter
+    if (meta.canonical_memory === false && isCanonicalMemory(note.path) && !note.path.split("/").some((seg) => seg.toLowerCase() === "derived")) {
+      findings.push({
+        severity: "warning",
+        kind: "derived-promoted-as-truth",
+        file: note.path,
+        detail: "Non-canonical (canonical_memory: false) note is outside inbox/templates and may be treated as canonical.",
+        recommendation: "Move derived outputs to an explicit derived/ subfolder or mark with a clear reference to the source canonical note.",
+      })
+    }
+    if (meta.role === "derived-index" && !note.path.toLowerCase().includes("derived")) {
+      findings.push({
+        severity: "info",
+        kind: "derived-promoted-as-truth",
+        file: note.path,
+        detail: "Derived index placed outside a 'derived' folder path.",
+        recommendation: "Move to a derived/ subfolder to prevent confusion with canonical memory.",
+      })
+    }
+
+    // Track inbound links
+    for (const link of note.outgoing) {
+      const result = resolveNoteLink(link, note.path)
+      if (result.resolved && notePathsSet(notes).has(result.path)) {
+        const matched = notes.find((candidate) => normalizeLinkTarget(candidate.path) === result.path)
+        if (matched) inbound.set(matched.path, (inbound.get(matched.path) ?? 0) + 1)
+      }
+    }
+  }
+
+  // Note isolation / vague claims (orphan notes with short content)
+  for (const note of notes) {
+    const hasInbound = (inbound.get(note.path) ?? 0) > 0
+    const hasOutbound = note.outgoing.length > 0
+    if (isCanonicalMemory(note.path) && !hasInbound && !hasOutbound) {
+      const wordCount = note.text.split(/\s+/u).filter(Boolean).length
+      if (wordCount < 20) {
+        findings.push({
+          severity: "info",
+          kind: "vague-isolated-note",
+          file: note.path,
+          detail: `Short orphan note (${wordCount} words) with no inbound or outbound links.`,
+          recommendation: "Provide more context, add links, or integrate into broader memory structure.",
+        })
+      }
+    }
+  }
+
+  const summary = {
+    total: findings.length,
+    warning: findings.filter((f) => f.severity === "warning").length,
+    info: findings.filter((f) => f.severity === "info").length,
+  }
+
+  return {
+    ok: summary.warning === 0,
+    summary,
+    findings,
+    checkedAt: new Date().toISOString(),
+  }
+}
+
+function notePathsSet(notes) {
+  return new Set(notes.map((note) => normalizeLinkTarget(note.path)))
+}
+
+/**
+ * Extract YAML-like frontmatter from Markdown text.
+ * Returns a plain object with known keys.
+ */
+function extractFrontmatter(text) {
+  const result = {}
+  if (!text.startsWith("---")) return result
+  const end = text.indexOf("---", 3)
+  if (end === -1) return result
+  const block = text.slice(3, end).trim()
+  for (const line of block.split(/\r?\n/u)) {
+    const match = line.match(/^(\w[\w_-]*)\s*:\s*(.+)$/u)
+    if (match) {
+      let value = match[2].trim()
+      // Try boolean/number parsing
+      if (value === "true") value = true
+      else if (value === "false") value = false
+      else if (/^\d+$/.test(value)) value = Number.parseInt(value, 10)
+      else if (/^\d+\.\d+$/.test(value)) value = Number.parseFloat(value)
+      result[match[1]] = value
+    }
+  }
+  return result
+}
+
+/**
+ * Compose sync/health/recall state into a compact handoff brief.
+ * Read-only, deterministic, no network required.
+ */
+export function buildBrainSessionBrief(vault, { fsApi = defaultFs, maxFiles = 200, configPath = null } = {}) {
+  const root = path.resolve(vault)
+  const health = analyzeVaultHealth(root, { fsApi })
+  const configFile = configPath || path.join(root, ".memory-patch-harness", "brain-sync.json")
+  const hasConfig = fsApi.existsSync(configFile)
+  let config = null
+  if (hasConfig) {
+    try {
+      config = readJsonFileWithFs(configFile, fsApi)
+    } catch {
+      config = { error: "unreadable-config" }
+    }
+  }
+
+  const brief = {
+    checkedAt: new Date().toISOString(),
+    vault: root,
+    sync: config
+      ? { configured: true, repo: config.repo || "unknown", branch: config.branch || "main" }
+      : { configured: false },
+    health: {
+      ok: health.ok,
+      score: health.score,
+      markdownFiles: health.summary.markdownFiles,
+      critical: health.summary.critical,
+      warning: health.summary.warning,
+      info: health.summary.info,
+      inboxCount: health.summary.inboxCount,
+    },
+  }
+
+  return brief
+}
+
+function readJsonFileWithFs(file, fsApi) {
+  const target = path.resolve(file)
+  if (!fsApi.existsSync(target)) throw new Error(`INPUT_NOT_FOUND: ${target}`)
+  try {
+    return JSON.parse(fsApi.readFileSync(target, "utf8"))
+  } catch (error) {
+    throw new Error(`INVALID_JSON: ${target}: ${error.message}`)
   }
 }
 
@@ -821,13 +1207,46 @@ function extractTitle(file, text) {
 
 function extractNoteLinks(text) {
   const links = []
-  for (const match of text.matchAll(/\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|[^\]]+)?\]\]/gu)) {
+  // Strip fenced code blocks to avoid false-positive wiki-link matches in code
+  const stripped = text.replace(/```[\s\S]*?```/gu, "").replace(/`[^`]+`/gu, "")
+  for (const match of stripped.matchAll(/\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|[^\]]+)?\]\]/gu)) {
     links.push(match[1].trim())
   }
-  for (const match of text.matchAll(/\[[^\]]+\]\(([^)]+\.md(?:#[^)]+)?)\)/giu)) {
+  for (const match of stripped.matchAll(/\[[^\]]+\]\(([^)]+\.md(?:#[^)]+)?)\)/giu)) {
     links.push(decodeURIComponent(match[1].split("#")[0].trim()))
   }
   return links.filter(Boolean)
+}
+
+function extractAliases(text) {
+  if (!text.startsWith("---")) return []
+  const frontmatter = text.split("---", 3)[1] ?? ""
+  const aliases = []
+  let inAliases = false
+  for (const line of frontmatter.split(/\r?\n/u)) {
+    const single = line.match(/^alias(?:es)?:\s*(.*)$/u)
+    if (single) {
+      const raw = single[1].trim()
+      if (raw.startsWith("[") && raw.endsWith("]")) {
+        const items = raw.slice(1, -1).split(",").map((s) => s.trim().replace(/^['"]|['"]$/gu, "")).filter(Boolean)
+        aliases.push(...items)
+      } else if (!raw) {
+        inAliases = true
+      } else {
+        aliases.push(raw.replace(/^['"]|['"]$/gu, ""))
+      }
+      continue
+    }
+    if (inAliases) {
+      const item = line.match(/^\s+-\s+(.+?)\s*$/u)
+      if (item) {
+        aliases.push(item[1].replace(/^['"]|['"]$/gu, ""))
+      } else if (line.trim()) {
+        inAliases = false
+      }
+    }
+  }
+  return [...new Set(aliases)]
 }
 
 function normalizeLinkTarget(value) {
@@ -835,11 +1254,92 @@ function normalizeLinkTarget(value) {
   return normalized.toLowerCase().endsWith(".md") ? normalized : `${normalized}.md`
 }
 
-function resolveNoteLink(link, fromFile) {
-  if (/^[a-z]+:\/\//iu.test(link) || link.startsWith("#")) return null
-  const clean = link.replaceAll("\\", "/").replace(/^\/+/u, "")
-  if (clean.includes("/")) return normalizeLinkTarget(path.posix.normalize(clean))
-  return normalizeLinkTarget(path.posix.join(path.posix.dirname(fromFile.replaceAll("\\", "/")), clean))
+/**
+ * Creates a wiki-link resolver for Obsidian-style [[links]] with full context.
+ * Returns a function that resolves a single link and returns an object:
+ *   { resolved: true,  path: "normalized.md", method: "exact-path"|"relative"|"basename"|"title"|"alias" }
+ *   { resolved: false, path: null,              reason: "ambiguous", ambiguity: ["a.md","b.md"] }
+ *   { resolved: false, path: null,              reason: "unresolved" }
+ *   { resolved: false, path: null,              reason: "external" }
+ */
+export function createNoteLinkResolver(notes) {
+  const notePaths = new Set(notes.map((note) => normalizeLinkTarget(note.path)))
+  const byBasename = new Map()
+  const byTitle = new Map()
+  const byAlias = new Map()
+
+  for (const note of notes) {
+    const pathLower = note.path.toLowerCase()
+    const ext = path.extname(pathLower)
+    const basename = path.basename(pathLower, ext)
+    if (!byBasename.has(basename)) byBasename.set(basename, [])
+    byBasename.get(basename).push(note.path)
+
+    const titleKey = note.title.toLowerCase()
+    if (!byTitle.has(titleKey)) byTitle.set(titleKey, [])
+    byTitle.get(titleKey).push(note.path)
+
+    for (const alias of extractAliases(note.text)) {
+      const aliasKey = alias.toLowerCase()
+      if (!byAlias.has(aliasKey)) byAlias.set(aliasKey, [])
+      byAlias.get(aliasKey).push(note.path)
+    }
+  }
+
+  return function resolveNoteLink(link, fromFile) {
+    if (/^[a-z]+:\/\//iu.test(link) || link.startsWith("#")) {
+      return { resolved: false, path: null, reason: "external" }
+    }
+
+    const clean = link.replaceAll("\\", "/").replace(/^\/+/u, "")
+    if (!clean) return { resolved: false, path: null, reason: "unresolved" }
+
+    const normalizedClean = normalizeLinkTarget(clean)
+    const fromDir = path.posix.dirname(fromFile.replaceAll("\\", "/"))
+
+    // Step 1: Exact vault-relative path when path separator present
+    if (clean.includes("/") && notePaths.has(normalizedClean)) {
+      return { resolved: true, path: normalizedClean, method: "exact-path" }
+    }
+
+    // Step 2: Relative to current note's directory
+    const relativePath = normalizeLinkTarget(path.posix.join(fromDir, clean))
+    if (notePaths.has(relativePath)) {
+      return { resolved: true, path: relativePath, method: "relative" }
+    }
+
+    const linkKey = clean.toLowerCase().replace(/\.md$/iu, "")
+
+    // Step 3a: Unique basename match
+    const basenameMatches = byBasename.get(linkKey)
+    if (basenameMatches?.length === 1) {
+      return { resolved: true, path: normalizeLinkTarget(basenameMatches[0]), method: "basename" }
+    }
+    if (basenameMatches?.length > 1) {
+      return { resolved: false, path: null, reason: "ambiguous", ambiguity: [...basenameMatches] }
+    }
+
+    // Step 3b: Unique title match
+    const titleMatches = byTitle.get(linkKey)
+    if (titleMatches?.length === 1) {
+      return { resolved: true, path: normalizeLinkTarget(titleMatches[0]), method: "title" }
+    }
+    if (titleMatches?.length > 1) {
+      return { resolved: false, path: null, reason: "ambiguous", ambiguity: [...titleMatches] }
+    }
+
+    // Step 4: Unique alias match
+    const aliasMatches = byAlias.get(linkKey)
+    if (aliasMatches?.length === 1) {
+      return { resolved: true, path: normalizeLinkTarget(aliasMatches[0]), method: "alias" }
+    }
+    if (aliasMatches?.length > 1) {
+      return { resolved: false, path: null, reason: "ambiguous", ambiguity: [...aliasMatches] }
+    }
+
+    // Step 5: Completely unresolved — return the expected path so the caller can report it
+    return { resolved: false, path: normalizedClean, reason: "unresolved" }
+  }
 }
 
 function isCanonicalMemory(file) {

@@ -55,6 +55,8 @@ Patch-quality candidates can be a single file or a directory of files shaped lik
 
 ## Score A Run
 
+### Quick Score (deterministic proxy)
+
 ```sh
 node scripts/eval-agent-run.mjs \
   --curator-output path/to/curator-output.json \
@@ -63,7 +65,20 @@ node scripts/eval-agent-run.mjs \
 
 Use `--allow-failures` when collecting comparison data without failing CI.
 
-Use `eval/live-agent/run-template.md` as a copyable worksheet for recording model, prompt, token budget, failures, and human correction time.
+### Structured Score (weighted rubric)
+
+```sh
+node scripts/eval-live-agent-score.mjs \
+  --run-dir ./tmp/live-agent-runs/<run-id> \
+  --incidents eval/live-agent/incidents.json \
+  --json
+```
+
+Requires `curator-output.json` in the run directory. Optionally reads `patches/`, `tool-calls.json`, and `metadata.json` for richer metrics. The rubric scores action correctness (30%), provenance (20%), scope (15%), lifecycle (15%), no fabrication (10%), and no leakage (10%).
+
+### Worksheet
+
+Use `eval/live-agent/run-template.md` as a copyable worksheet for recording model, prompt, token budget, tool calls, correction count, human-time metrics, and the rubric score. The template now includes structured sections for each of these fields, plus an error-classification table.
 
 ## Recommended Report
 

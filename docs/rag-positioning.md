@@ -6,7 +6,7 @@
 
 Memory Patch Harness is **not a complete Agentic RAG system today**.
 
-It is an **agent-controlled memory retrieval architecture** over a canonical, linked Markdown wiki. It has some agentic retrieval behavior, but it does not yet include the indexing and ranking pipeline normally expected from a production RAG system.
+It is an **agent-controlled memory retrieval architecture** over a canonical, linked Markdown wiki. It has some agentic retrieval behavior and a dependency-free BM25F section retrieval pipeline, but it does not yet include the full iterative retrieval loop, persistent search index, or reranking-by-model pipeline normally expected from a production Agentic RAG system.
 
 ### A practical RAG taxonomy
 
@@ -32,9 +32,9 @@ The names below overlap in the literature. Treat them as architectural patterns,
 | Conflict handling | Yes | `TENSION` rather than silent overwrite |
 | Chunking | No | Notes are already human/agent-sized semantic units |
 | Embeddings/vector database | No | Not needed at the current scale |
-| BM25/full-text index | No | Filesystem search and maps are sufficient initially |
-| Hybrid sparse+dense retrieval | No | Future option |
-| Reranking | No | Curator judgment currently performs small-set selection |
+| BM25/full-text section retrieval | Yes (default) | Dependency-free BM25F section ranking with lifecycle filtering and scope narrowing |
+| Hybrid sparse+dense retrieval | Optional | `recall-semantic` fuses BM25F with local Transformers.js embeddings; optional install, not core default |
+| Section-focus reranking | Optional | `sectionFocusRerank` via `--rerank` flag; deterministic section-heading signal, not a learned model |
 | Automated retrieval-quality loop | No | The curator does not yet score sufficiency and retry systematically |
 
 ### So what should we call it?
@@ -72,8 +72,8 @@ Do not add a component because it is considered "advanced." Add it when an evalu
 Phase 1 - Current
 Project map + wikilinks + bounded curator recall
 
-Phase 2 - Deterministic search
-Add full-text/BM25 only when file count or missed exact matches justify it
+Phase 2 - Deterministic search (current default)
+Dependency-free BM25F section retrieval with lifecycle filtering, scope narrowing, and release-gate thresholds. Persistent indexing is deferred until per-query BM25F latency becomes the bottleneck.
 
 Phase 3 - Hybrid retrieval
 Add embeddings plus BM25 when semantic recall failures are measured
@@ -90,7 +90,7 @@ Use code graph or source-map tools as derived indexes, never as evidentiary trut
 
 Context compression and graph/source-map tools may complement this architecture later, but neither should silently replace canonical Markdown or provenance.
 
-The repository now includes a lexical/BM25 evaluation baseline. On the initial synthetic dataset, BM25 improved nDCG slightly but did not improve Recall@3. It therefore remains an experiment, not the production default.
+The repository uses governed BM25F section retrieval as the default recall path. On synthetic stress tests, it meets the release gate thresholds (Recall@3 >= 0.90, current-memory accuracy >= 0.90, MRR >= 0.90, zero polluted queries). Reranking, hybrid semantic lanes, and persistent indexing are deferred until evaluation measures a gap that those components fix.
 
 ### Sources
 
@@ -133,9 +133,9 @@ Memory Patch Harness **ยังไม่ใช่ Agentic RAG แบบเต�
 | จัดการข้อมูลขัดแย้ง | มี | ใช้ `TENSION` แทนการเขียนทับ |
 | Chunking | ไม่มี | Atomic notes ทำหน้าที่เป็น semantic chunk อยู่แล้ว |
 | Embedding/vector database | ไม่มี | ยังไม่จำเป็นกับขนาดปัจจุบัน |
-| BM25/full-text index | ไม่มี | เริ่มจาก filesystem search และ project map |
-| Hybrid sparse+dense retrieval | ไม่มี | เป็นตัวเลือกในอนาคต |
-| Reranking | ไม่มี | ตอนนี้ Curator คัดจาก candidate set ขนาดเล็ก |
+| BM25/full-text section retrieval | มี (ค่าเริ่มต้น) | Dependency-free BM25F section ranking พร้อม lifecycle filtering และ scope narrowing |
+| Hybrid sparse+dense retrieval | มีเป็นตัวเลือก | `recall-semantic` ใช้ BM25F ผสานกับ local Transformers.js embeddings |
+| Section-focus reranking | มีเป็นตัวเลือก | `sectionFocusRerank` ผ่าน `--rerank` flag ใช้สัญญาณจากหัวข้อ section |
 | Retrieval-quality loop อัตโนมัติ | ไม่มี | Curator ยังไม่ได้ให้คะแนนความเพียงพอและ retry อย่างเป็นระบบ |
 
 ### ควรเรียกระบบนี้ว่าอะไร
@@ -169,8 +169,8 @@ Memory Patch Harness **ยังไม่ใช่ Agentic RAG แบบเต�
 Phase 1 - ตอนนี้
 Project map + wikilinks + bounded curator recall
 
-Phase 2 - Deterministic search
-เพิ่ม full-text/BM25 เมื่อ note มากขึ้นหรือ exact recall เริ่มพลาด
+Phase 2 - Deterministic search (ค่าเริ่มต้นปัจจุบัน)
+Dependency-free BM25F section retrieval พร้อม lifecycle filtering, scope narrowing และ release-gate thresholds
 
 Phase 3 - Hybrid retrieval
 เพิ่ม embedding + BM25 เมื่อพบ semantic recall failure จริง
@@ -187,7 +187,7 @@ Phase 6 - Graph-assisted retrieval
 
 context compression และ graph/source-map tools สามารถเสริมระบบนี้ภายหลังได้ แต่ไม่ควรแทน canonical Markdown หรือ provenance แบบเงียบ ๆ
 
-ตอนนี้ repo มี lexical/BM25 evaluation baseline แล้ว ผลจาก synthetic dataset รอบแรกคือ BM25 ทำให้ nDCG ดีขึ้นเล็กน้อย แต่ Recall@3 ไม่ดีขึ้น จึงยังคงเป็นเครื่องมือทดลอง ไม่ใช่ production default
+ตอนนี้ governed BM25F section retrieval เป็นค่าเริ่มต้นของระบบ recall บน synthetic stress tests ผ่าน release gate thresholds (Recall@3 >= 0.90, current-memory accuracy >= 0.90, MRR >= 0.90, ไม่มี polluted queries)
 
 ### แหล่งอ้างอิง
 

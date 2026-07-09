@@ -194,12 +194,19 @@ Success metrics:
 
 Priority: medium.
 
-## Recommended Next Build Order
+## Implementation Status
 
-1. Add `memory-lifecycle-audit` for stale/current/conflict review.
-2. Add conflict decision artifact/schema on top of `conflict-assist`.
-3. Expand `curation-recommend` into reversible patch candidates.
-4. Add live-agent eval templates and scoring wrappers.
-5. Prototype optional reranking only after curation improves the frozen private eval.
+All five items below are now implemented. The order was followed and the harness remains simple while addressing the key failure modes.
 
-This order keeps the harness simple while improving the most important failure modes first: stale truth, semantic conflict, poor memory structure, and unmeasured live behavior.
+| # | Item | Status | Key command/file pointers |
+|---|---|---|---|
+| 1 | `memory-lifecycle-audit` for stale/current/conflict review | **IMPLEMENTED** | `brain-sync.mjs lifecycle-audit --vault <path>`, `scripts/eval-lifecycle-audit.mjs` |
+| 2 | Conflict decision artifact/schema on top of `conflict-assist` | **IMPLEMENTED** | `brain-sync.mjs conflict-assist` (with `decisionOptions`), `conflict-plan`, `conflict-apply`, `scripts/eval-conflict-assist.mjs` |
+| 3 | `curation-recommend` expanded into reversible patch candidates | **IMPLEMENTED** | `brain-sync.mjs curation-recommend`, `curation-apply --plan <file> --approve`, `scripts/recommend-curation.mjs` |
+| 4 | Live-agent eval templates and scoring wrappers | **IMPLEMENTED** | `eval/live-agent/run-template.md`, `scripts/eval-live-agent-score.mjs`, `eval/live-agent/incidents.json` |
+| 5 | Optional reranking (prototyped after curation improvements) | **IMPLEMENTED** | `brain-sync.mjs recall-rerank`, `recall --rerank`, `scripts/eval-rerank.mjs`, `eval:rerank` npm script |
+
+### Remaining roadmap items
+
+- **Live-model benchmark results**: all evaluation infrastructure is in place (`eval/live-agent/`, scoring scripts, worksheet template), but real model runs have not been completed. See `docs/live-model-results.md`.
+- **Write lock helper**: deferred until an automated apply-to-vault path is added (no change from original plan).

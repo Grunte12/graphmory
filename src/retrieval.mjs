@@ -531,3 +531,91 @@ export function summarizeRuns(runs) {
     averageContextCharacters: average("contextCharacters"),
   }
 }
+
+/**
+ * Deterministic section-aware rerank for retrieval results.
+ *
+ * Re-orders candidates with a lightweight structural pass that is
+ * orthogonal to BM25F field weighting. Uses three transparent signals:
+ *
+ * 1. Section focus: what fraction of unique query tokens appear in the
+ *    single best-matching section of a document.  Rewards documents
+ *    where relevant content is concentrated rather than scattered.
+ * 2. Heading affinity: how many distinct query tokens appear in any
+ *    section heading of the document.
+ * 3. Co-occurrence: how many query tokens appear together (>=2 per
+ *    section) across sections.
+ *
+ * No LLMs, no paid APIs, no external calls.  Each result gains a
+ * `rerankApplied` boolean and a `rerankSignals` object documenting
+ * the structural scores that contributed to the new rank.
+ *
+ * @param {import("./retrieval.mjs").RankedResult[]} results
+ * @param {string} query
+ * @param {import("./retrieval.mjs").ParsedDocument[]} documents
+ * @returns {import("./retrieval.mjs").RankedResult[]}
+ */
+export function sectionFocusRerank(results, query, documents) {
+  const docById = new Map()
+  for (const doc of documents) docById.set(doc.id, doc)
+
+  const queryTokens = [...new Set(tokenize(query).filter((t) => !QUERY_STOPWORDS.has(t)))]
+  if (!queryTokens.length) {
+    return results.map((r) => ({ ...r, rerankApplied: false, rerankSignals: null }))
+  }
+
+  const scored = results.map((result) => {
+    const doc = docById.get(result.id)
+    if (!doc) {
+      return { ...result, score: Math.max(result.score, 0), rerankApplied: false, rerankSignals: null }
+    }
+
+    const sections = splitMarkdownSections(doc)
+    if (!sections.length) {
+      return { ...result, score: Math.max(result.score, 0), rerankApplied: false, rerankSignals: null }
+    }
+
+    let bestSectionFocus = 0
+    let headingMatchCount = 0
+    let coOccurrenceCount = 0
+
+    for (const section of sections) {
+      const sectionTokens = [...new Set(section.tokens)]
+      const matched = queryTokens.filter((t) => sectionTokens.includes(t))
+
+      if (matched.length >= 2) {
+        coOccurrenceCount += matched.length
+      }
+
+      const matchedFraction = matched.length / Math.max(queryTokens.length, 1)
+      if (matchedFraction > bestSectionFocus) {
+        bestSectionFocus = matchedFraction
+      }
+
+      const headingTokens = [...new Set(tokenize(section.title))]
+      const headingMatches = queryTokens.filter((t) => headingTokens.includes(t))
+      headingMatchCount += headingMatches.length
+    }
+
+    const focusBoost = bestSectionFocus * 0.25
+    const headingBoost = Math.min(headingMatchCount / Math.max(queryTokens.length, 1), 1) * 0.2
+    const coOccurrenceBoost = Math.min(coOccurrenceCount / (Math.max(queryTokens.length, 1) * 2), 1) * 0.1
+
+    const boost = 1 + focusBoost + headingBoost + coOccurrenceBoost
+    const originalScore = Math.max(result.score, 0)
+
+    return {
+      ...result,
+      score: originalScore * boost,
+      rerankApplied: true,
+      rerankSignals: {
+        sectionFocus: Number(bestSectionFocus.toFixed(3)),
+        headingMatches: headingMatchCount,
+        coOccurrenceMatches: coOccurrenceCount,
+        boost: Number(boost.toFixed(4)),
+      },
+    }
+  })
+
+  return scored.sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
+}

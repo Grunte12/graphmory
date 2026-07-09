@@ -1,6 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
-import { governedRank, parseMarkdown } from "./retrieval.mjs"
+import { governedRank, parseMarkdown, sectionFocusRerank } from "./retrieval.mjs"
 
 const SKIP_DIRECTORIES = new Set([".git", ".obsidian", ".memory-patch-harness", "node_modules"])
 const RAW_ROOTS = new Set(["00 inbox", "clippings"])
@@ -42,12 +42,17 @@ export function recallVault(vault, query, {
   includeRawPaths = false,
   maxFiles = 5000,
   scope = "",
+  rerank = false,
 } = {}) {
   if (!query?.trim()) throw new Error("query is required")
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be between 1 and 10")
   if (!Number.isInteger(maxFiles) || maxFiles < 1) throw new Error("maxFiles must be positive")
   const documents = filterByScope(loadVaultDocuments(vault, { includeRawPaths, maxFiles }), scope)
   const retrieval = governedRank(documents, query, method, { includeNoncanonical })
+  let results = retrieval.results
+  if (rerank) {
+    results = sectionFocusRerank(results, query, documents)
+  }
   return {
     query,
     method,
@@ -58,11 +63,13 @@ export function recallVault(vault, query, {
     confidence: retrieval.confidence,
     needsExpansion: retrieval.needsExpansion,
     nextSteps: retrieval.nextSteps,
-    results: retrieval.results.slice(0, k).map((item) => ({
+    reranked: rerank,
+    results: results.slice(0, k).map((item) => ({
       path: item.id,
       title: item.title,
       score: Number(item.score.toFixed(4)),
       status: item.metadata?.status ?? item.metadata?.lifecycle ?? "current",
+      ...(item.rerankApplied !== undefined ? { rerankApplied: item.rerankApplied, rerankSignals: item.rerankSignals } : {}),
     })),
   }
 }
@@ -75,17 +82,22 @@ export function recallVaultLoop(vault, query, {
   maxFiles = 5000,
   scope = "",
   perMethodLimit = 8,
+  rerank = false,
 } = {}) {
   if (!query?.trim()) throw new Error("query is required")
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be between 1 and 10")
   const documents = filterByScope(loadVaultDocuments(vault, { includeRawPaths, maxFiles }), scope)
   const lanes = methods.map((method) => {
     const retrieval = governedRank(documents, query, method, { includeNoncanonical })
+    let laneResults = retrieval.results
+    if (rerank) {
+      laneResults = sectionFocusRerank(laneResults, query, documents)
+    }
     return {
       method,
       confidence: retrieval.confidence,
       needsExpansion: retrieval.needsExpansion,
-      results: retrieval.results.slice(0, perMethodLimit),
+      results: laneResults.slice(0, perMethodLimit),
       excluded: retrieval.excluded,
     }
   })
@@ -105,6 +117,7 @@ export function recallVaultLoop(vault, query, {
     excludedByLifecycle: Math.max(...lanes.map((lane) => lane.excluded), 0),
     confidence,
     needsExpansion: confidence !== "bounded",
+    reranked: rerank,
     nextSteps: confidence === "bounded"
       ? []
       : [

@@ -12,6 +12,9 @@
     "url": "https://github.com/Grunte12/memory-patch-harness/issues"
   },
   "homepage": "https://github.com/Grunte12/memory-patch-harness#readme",
+  "optionalDependencies": {
+    "@huggingface/transformers": "^3.4.0"
+  },
   "engines": {
     "node": ">=20"
   },
@@ -59,6 +62,8 @@
     "eval:v05-gate": "node scripts/eval-v05-gate.mjs",
     "eval:lifecycle": "node scripts/eval-lifecycle-audit.mjs",
     "eval:conflict": "node scripts/eval-conflict-assist.mjs",
+    "eval:rerank": "node scripts/eval-rerank.mjs",
+    "eval:live-agent-score": "node scripts/eval-live-agent-score.mjs",
     "eval:vault": "node scripts/eval-vault-retrieval.mjs",
     "eval:curator": "node scripts/eval-curator.mjs",
     "eval:curator:compare": "node scripts/eval-curator.mjs --candidate eval/curator/candidates --allow-failures",

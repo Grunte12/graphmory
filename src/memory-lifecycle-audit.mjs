@@ -121,18 +121,21 @@ function summarizeFindings(findings) {
 function summarizeLifecycleActions(findings) {
   const actions = []
   for (const item of findings) {
-    if (item.kind === "expired-valid-until" || item.kind === "revalidation-due") {
-      actions.push({ action: "revalidate", file: item.file, reason: item.detail })
+    const base = { file: item.file, reason: item.detail }
+    if (item.kind === "expired-valid-until") {
+      actions.push({ ...base, action: "revalidate", type: "expired-valid-until", target: "valid_until" })
+    } else if (item.kind === "revalidation-due") {
+      actions.push({ ...base, action: "revalidate", type: "revalidation-due", target: "revalidate_when" })
     } else if (item.kind === "obsolete-without-replacement") {
-      actions.push({ action: "add-replacement-marker", file: item.file, reason: item.detail })
+      actions.push({ ...base, action: "add-replacement-marker", type: "obsolete-without-replacement", target: "supersedes/superseded_by" })
     } else if (item.kind === "active-note-has-stale-language") {
-      actions.push({ action: "split-or-mark-tension", file: item.file, reason: item.detail })
+      actions.push({ ...base, action: "split-or-mark-tension", type: "active-note-has-stale-language", target: "content" })
     } else if (item.kind === "tension-without-decision-path") {
-      actions.push({ action: "add-decision-path", file: item.file, reason: item.detail })
+      actions.push({ ...base, action: "add-decision-path", type: "tension-without-decision-path", target: "content" })
     } else if (item.kind === "raw-memory-outside-inbox") {
-      actions.push({ action: "triage-raw-memory", file: item.file, reason: item.detail })
+      actions.push({ ...base, action: "triage-raw-memory", type: "raw-memory-outside-inbox", target: "file-location" })
     } else if (item.kind === "missing-lifecycle-status") {
-      actions.push({ action: "add-lifecycle-when-durable", file: item.file, reason: item.detail })
+      actions.push({ ...base, action: "add-lifecycle-when-durable", type: "missing-lifecycle-status", target: "frontmatter" })
     }
   }
   return actions

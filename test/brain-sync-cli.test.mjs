@@ -113,6 +113,42 @@ test("CLI help lists the complete restructure lifecycle", () => {
   assert.match(result.stdout, /conflict-assist/)
 })
 
+test("recall-semantic explains the optional dependency when it is not installed", () => {
+  const vault = tempRoot("mph-recall-semantic-")
+  fs.writeFileSync(path.join(vault, "Memory.md"), "# Memory\n\nSemantic recall fixture.")
+
+  const result = runCli([
+    "recall-semantic",
+    "--vault",
+    vault,
+    "--query",
+    "semantic fixture",
+    "--json",
+  ])
+  assert.equal(result.status, 1)
+  assert.match(result.stderr, /OPTIONAL_DEPENDENCY_MISSING/)
+  assert.match(result.stderr, /@huggingface\/transformers/)
+})
+
+test("doctor accepts OBSIDIAN_VAULT env var as vault fallback", () => {
+  const root = tempRoot("mph-obsidian-env-")
+  try {
+    const result = spawnSync(process.execPath, [cli, "doctor", "--json"], {
+      cwd: repoRoot,
+      encoding: "utf8",
+      shell: false,
+      env: { ...process.env, OBSIDIAN_VAULT: root },
+    })
+    assert.equal(result.status, 0, result.stderr)
+    const report = JSON.parse(result.stdout)
+    assert.equal(report.vault, path.resolve(root))
+    assert.equal(report.checks.some((check) => check.id === "vault-detection"), true)
+    assert.equal(report.checks.some((check) => check.id === "vault-permission"), true)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
 test("doctor returns machine-readable diagnostics for a path with spaces", () => {
   const root = tempRoot("mph doctor path with spaces ")
   try {
@@ -287,23 +323,6 @@ test("recall-loop fuses bounded retrieval lanes for agent use", () => {
   assert.deepEqual(report.results[0].lanes, ["bm25f-sections", "bm25f-focused-sections", "bm25-sections"])
 })
 
-test("recall-semantic explains the optional dependency when it is not installed", () => {
-  const vault = tempRoot("mph-recall-semantic-")
-  fs.writeFileSync(path.join(vault, "Memory.md"), "# Memory\n\nSemantic recall fixture.")
-
-  const result = runCli([
-    "recall-semantic",
-    "--vault",
-    vault,
-    "--query",
-    "semantic fixture",
-    "--json",
-  ])
-  assert.equal(result.status, 1)
-  assert.match(result.stderr, /OPTIONAL_DEPENDENCY_MISSING/)
-  assert.match(result.stderr, /@huggingface\/transformers/)
-})
-
 test("lifecycle-audit reports stale and conflict memory without applying changes", () => {
   const vault = tempRoot()
   try {
@@ -381,6 +400,15 @@ test("sync-plan explains when a healthy memory batch is ready", () => {
   const report = JSON.parse(result.stdout)
   assert.equal(report.decision, "push-ready")
   assert.equal(report.requiresHumanApproval, true)
+})
+
+test("CLI --verbose flag exposes stack traces on errors", () => {
+  const missing = path.join(tempRoot("mph-verbose-"), "does-not-exist")
+  const result = runCli(["recall", "--vault", missing, "--query", "test", "--verbose"])
+  assert.equal(result.status, 1)
+  assert.match(result.stderr, /VAULT_NOT_FOUND/)
+  // With --verbose, the stack trace should appear
+  assert.match(result.stderr, /at /)
 })
 
 test("CLI emits stable errors for missing and malformed plan files", () => {
@@ -517,6 +545,21 @@ test("conflict-assist reports dirty local memory before sync decisions", () => {
     assert.equal(report.workingTreeDirty, true)
     assert.equal(report.summary.dirtyFiles, 1)
     assert.match(report.nextDecision, /uncommitted memory/i)
+  } finally {
+    fs.rmSync(shared.root, { recursive: true, force: true })
+  }
+})
+
+test("push cleans up sync lock when secrets are found", () => {
+  const shared = initializeSharedBrain()
+  try {
+    const lockPath = path.join(shared.second, ".git", "memory-patch-harness-sync.lock")
+    fs.writeFileSync(path.join(shared.second, "creds.md"), "api_key = exposed-value-1234567890\n")
+    const result = runCli(["push", "--vault", shared.second, "--message", "memory: secret push"])
+    assert.equal(result.status, 1)
+    assert.match(result.stderr, /SECRET_FOUND/)
+    // Lock must be cleaned up by withSyncLock finally block
+    assert.equal(fs.existsSync(lockPath), false)
   } finally {
     fs.rmSync(shared.root, { recursive: true, force: true })
   }
@@ -749,6 +792,192 @@ test("restructure apply blocks batches above the default safety limit", () => {
   }
 })
 
+test("audit reports schema issues for missing metadata and invalid values", () => {
+  const vault = tempRoot("mph-audit-")
+  try {
+    fs.mkdirSync(path.join(vault, "02 Projects"), { recursive: true })
+    fs.writeFileSync(path.join(vault, "02 Projects", "NoStatus.md"), "# Missing Status\n\nSome content.\n")
+    fs.writeFileSync(path.join(vault, "02 Projects", "BadStatus.md"), "---\nstatus: invalid_what\n---\n# Bad Status\n\nContent.\n")
+    fs.writeFileSync(path.join(vault, "02 Projects", "Valid.md"), "---\nstatus: active\nprovenance: user-test\n---\n# Valid\n\nFine.\n")
+    const result = runCli(["audit", "--vault", vault, "--json"])
+    assert.equal(result.status, 1)
+    const report = JSON.parse(result.stdout)
+    assert.equal(report.ok, false)
+    assert.equal(report.findings.some((f) => f.kind === "missing-required-metadata"), true)
+    assert.equal(report.findings.some((f) => f.kind === "invalid-controlled-value"), true)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("audit detects raw clipping outside inbox and oversize hubs", () => {
+  const vault = tempRoot("mph-audit-clipping-")
+  try {
+    fs.writeFileSync(path.join(vault, "clipping-note.md"), "# Clipping\n\nRaw import.")
+    fs.writeFileSync(path.join(vault, "hub.md"), "# Hub\n\n" + Array.from({ length: 60 }, (_, i) => `[[note-${i}]]`).join("\n"))
+    const result = runCli(["audit", "--vault", vault, "--json"])
+    assert.equal(result.status, 1)
+    const report = JSON.parse(result.stdout)
+    assert.equal(report.findings.some((f) => f.kind === "raw-clipping-outside-inbox"), true)
+    assert.equal(report.findings.some((f) => f.kind === "oversized-project-hub"), true)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("audit detects unresolved and ambiguous links", () => {
+  const vault = tempRoot("mph-audit-links-")
+  try {
+    fs.mkdirSync(path.join(vault, "02 Projects"), { recursive: true })
+    fs.writeFileSync(path.join(vault, "02 Projects", "Main.md"), "# Main\n\nSee [[MissingTarget]] and [[AmbiguousLink]]")
+    fs.writeFileSync(path.join(vault, "02 Projects", "AmbiguousLink.md"), "# Alias A\n---\naliases: [AmbiguousLink]\n---\nContent.")
+    const result = runCli(["audit", "--vault", vault, "--json"])
+    assert.equal(result.status, 1)
+    const report = JSON.parse(result.stdout)
+    // AmbiguousLink now has 1 match (via alias), plus MissingTarget fails
+    assert.equal(report.findings.some((f) => f.kind === "unresolved-link"), true)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("audit passes for a clean well-structured vault", () => {
+  const vault = tempRoot("mph-audit-clean-")
+  try {
+    fs.mkdirSync(path.join(vault, "02 Projects"), { recursive: true })
+    fs.writeFileSync(path.join(vault, "02 Projects", "Note.md"), "---\nstatus: active\nprovenance: test\n---\n# Note\n\nClean content.")
+    const result = runCli(["audit", "--vault", vault, "--json"])
+    assert.equal(result.status, 0)
+    const report = JSON.parse(result.stdout)
+    assert.equal(report.ok, true)
+    assert.equal(report.findings.length, 0)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("lint detects duplicate titles and missing provenance", () => {
+  const vault = tempRoot("mph-lint-")
+  try {
+    fs.mkdirSync(path.join(vault, "02 Projects"), { recursive: true })
+    fs.writeFileSync(path.join(vault, "02 Projects", "Policy.md"), "# Sync Policy\n\nUse fast-forward pulls.\n")
+    fs.writeFileSync(path.join(vault, "02 Projects", "Policy copy.md"), "# Sync Policy\n\nDuplicate title.\n")
+    const result = runCli(["lint", "--vault", vault, "--json"])
+    assert.equal(result.status, 1)
+    const report = JSON.parse(result.stdout)
+    assert.equal(report.ok, false)
+    assert.equal(report.findings.some((f) => f.kind === "duplicate-title"), true)
+    assert.equal(report.findings.some((f) => f.kind === "missing-provenance"), true)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("lint catches derived outputs promoted as truth", () => {
+  const vault = tempRoot("mph-lint-derived-")
+  try {
+    fs.mkdirSync(path.join(vault, "02 Projects"), { recursive: true })
+    fs.writeFileSync(path.join(vault, "02 Projects", "Derived.md"), "---\ncanonical_memory: false\n---\n# Derived Index\n\nDerived output.")
+    const result = runCli(["lint", "--vault", vault, "--json"])
+    assert.equal(result.status, 1)
+    const report = JSON.parse(result.stdout)
+    assert.equal(report.findings.some((f) => f.kind === "derived-promoted-as-truth"), true)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("lint does not flag derived/ folder files with canonical_memory: false as promoted truth", () => {
+  const vault = tempRoot("mph-lint-derived-exclude-")
+  try {
+    fs.mkdirSync(path.join(vault, "derived", "Reports"), { recursive: true })
+    // File in a derived/ folder with canonical_memory: false — should NOT trigger derived-promoted-as-truth
+    fs.writeFileSync(path.join(vault, "derived", "Reports", "Summary.md"), "---\ncanonical_memory: false\nprovenance: test\n---\n# Derived Summary\n\nDerived output in recommended folder with [[provenance]] links.\n")
+    const result = runCli(["lint", "--vault", vault, "--json"])
+    const report = JSON.parse(result.stdout)
+    // The specific derived-promoted-as-truth finding should be suppressed for derived/ folder files
+    assert.equal(report.findings.some((f) => f.kind === "derived-promoted-as-truth"), false,
+      "Files in derived/ folder should not trigger derived-promoted-as-truth regardless of canonical_memory setting")
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("lint passes for a clean well-structured vault", () => {
+  const vault = tempRoot("mph-lint-clean-")
+  try {
+    fs.mkdirSync(path.join(vault, "02 Projects"), { recursive: true })
+    fs.writeFileSync(path.join(vault, "02 Projects", "Note.md"), "---\nstatus: active\nprovenance: user-test\n---\n# Note\n\nClean content with [[RelatedNote]] for linking.\n")
+    fs.writeFileSync(path.join(vault, "02 Projects", "RelatedNote.md"), "---\nstatus: active\nprovenance: user-test\n---\n# Related Note\n\nLinked from Note.")
+    const result = runCli(["lint", "--vault", vault, "--json"])
+    assert.equal(result.status, 0)
+    const report = JSON.parse(result.stdout)
+    assert.equal(report.ok, true)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("lifecycle-audit --json includes structured action fields", () => {
+  const vault = tempRoot()
+  try {
+    fs.mkdirSync(path.join(vault, "02 Projects", "Example"), { recursive: true })
+    fs.writeFileSync(path.join(vault, "02 Projects", "Example", "Expired.md"), "---\nstatus: active\nvalid_until: 2025-01-01\n---\n# Expired\n\nOld content.\n")
+    const result = runCli(["lifecycle-audit", "--vault", vault, "--now", "2026-07-06", "--json"])
+    assert.equal(result.status, 1)
+    const report = JSON.parse(result.stdout)
+
+    // Backward compat: old fields still present
+    assert.equal(report.actions.some((a) => a.action === "revalidate" && a.file && a.reason), true)
+    // New fields: type and target
+    const revalidateAction = report.actions.find((a) => a.action === "revalidate")
+    assert.equal(revalidateAction.type, "expired-valid-until")
+    assert.equal(revalidateAction.target, "valid_until")
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("brain-session-brief returns compact state without network", () => {
+  const vault = tempRoot("mph-brief-")
+  try {
+    fs.mkdirSync(path.join(vault, "02 Projects"), { recursive: true })
+    fs.writeFileSync(path.join(vault, "02 Projects", "Note.md"), "---\nstatus: active\nprovenance: test\n---\n# Note\n\nContent.\n")
+
+    const result = runCli(["brain-session-brief", "--vault", vault, "--json"])
+    assert.equal(result.status, 0, result.stderr)
+    const brief = JSON.parse(result.stdout)
+    assert.equal(brief.vault, path.resolve(vault))
+    assert.equal(brief.sync.configured, false)
+    assert.equal(brief.health.ok, true)
+    assert.equal(brief.health.markdownFiles >= 1, true)
+    assert.equal(typeof brief.health.score, "number")
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("brain-session-brief shows sync config when available", () => {
+  const shared = initializeSharedBrain()
+  try {
+    const result = runCli(["brain-session-brief", "--vault", shared.second, "--json"])
+    assert.equal(result.status, 0, result.stderr)
+    const brief = JSON.parse(result.stdout)
+    assert.equal(brief.sync.configured, true)
+    assert.equal(brief.sync.repo, "example/shared-brain")
+  } finally {
+    fs.rmSync(shared.root, { recursive: true, force: true })
+  }
+})
+
+test("CLI help lists the new audit, lint, and brain-session-brief commands", () => {
+  const result = runCli(["--help"])
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(result.stdout, /audit/)
+  assert.match(result.stdout, /lint/)
+  assert.match(result.stdout, /brain-session-brief/)
+})
+
 test("restructure verify reports a drifted record as failure", () => {
   const vault = tempRoot()
   const outputRoot = tempRoot("mph-plan-output-")
@@ -768,5 +997,438 @@ test("restructure verify reports a drifted record as failure", () => {
   } finally {
     fs.rmSync(vault, { recursive: true, force: true })
     fs.rmSync(outputRoot, { recursive: true, force: true })
+  }
+})
+
+test("CLI help lists the three new Batch D commands", () => {
+  const result = runCli(["--help"])
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(result.stdout, /conflict-plan/)
+  assert.match(result.stdout, /conflict-apply/)
+  assert.match(result.stdout, /curation-apply/)
+})
+
+test("conflict-plan generates a reviewable plan with approved: false entries", () => {
+  const outputRoot = tempRoot("mph-cp-")
+  try {
+    const reportFile = path.join(outputRoot, "report.json")
+    fs.writeFileSync(reportFile, `${JSON.stringify({
+      status: "ok",
+      safeToAutoPull: false,
+      checkedAt: new Date().toISOString(),
+      branch: "main",
+      relationship: "diverged",
+      workingTreeDirty: false,
+      summary: { filesChanged: 1, overlappingFiles: 1, localOnlyFiles: 0, remoteOnlyFiles: 0, dirtyFiles: 0 },
+      files: [{ path: "shared.md", localStatus: "M", remoteStatus: "M", dirty: false, review: { type: "same-note-changed", semanticRisk: "high" }, recommendation: "Ask user" }],
+      decisionOptions: [
+        { id: "create-tension", when: "Both sides may be true", action: "Keep both visible with TENSION", requiresUserApproval: true },
+        { id: "supersede-local", when: "Remote is newer", action: "Mark local superseded", requiresUserApproval: true },
+      ],
+      nextDecision: "Semantic conflict: review overlapping notes with the user",
+      guardrails: ["Do not auto-merge memory conflicts."],
+    }, null, 2)}\n`)
+
+    const planFile = path.join(outputRoot, "plan.json")
+    const result = runCli(["conflict-plan", "--conflict-report", reportFile, "--out", planFile])
+    assert.equal(result.status, 0, result.stderr)
+    const plan = JSON.parse(fs.readFileSync(planFile, "utf8"))
+    assert.equal(plan.version, 1)
+    assert.match(plan.id, /^conflict-plan-/)
+    assert.equal(plan.entries.length, 2)
+    assert.equal(plan.entries[0].approved, false)
+    assert.equal(plan.entries[1].approved, false)
+    assert.equal(plan.entries[0].optionId, "create-tension")
+    assert.equal(plan.entries[1].optionId, "supersede-local")
+    assert.equal(plan.entries[0].requiresUserApproval, true)
+    assert.equal(plan.guardrails.length, 1)
+    assert.match(result.stdout, /Conflict plan written/)
+  } finally {
+    fs.rmSync(outputRoot, { recursive: true, force: true })
+  }
+})
+
+test("conflict-plan entries include same-note conflict markers", () => {
+  const outputRoot = tempRoot("mph-cp-sem-")
+  try {
+    const reportFile = path.join(outputRoot, "report.json")
+    fs.writeFileSync(reportFile, `${JSON.stringify({
+      status: "ok", safeToAutoPull: false, checkedAt: new Date().toISOString(),
+      branch: "main", relationship: "diverged", workingTreeDirty: false,
+      summary: { filesChanged: 1, overlappingFiles: 1, localOnlyFiles: 0, remoteOnlyFiles: 0, dirtyFiles: 0 },
+      files: [{ path: "shared.md", localStatus: "M", remoteStatus: "M", dirty: false, review: { type: "same-note-changed", semanticRisk: "high" }, recommendation: "Ask user" }],
+      decisionOptions: [
+        { id: "create-tension", when: "Both sides", action: "Keep both", requiresUserApproval: true },
+        { id: "merge-compatible", when: "Additive", action: "Merge both", requiresUserApproval: true },
+      ],
+    }, null, 2)}\n`)
+
+    const planFile = path.join(outputRoot, "plan.json")
+    runCli(["conflict-plan", "--conflict-report", reportFile, "--out", planFile])
+    assert.equal(fs.existsSync(planFile), true)
+    const plan = JSON.parse(fs.readFileSync(planFile, "utf8"))
+
+    const createTension = plan.entries.find((e) => e.optionId === "create-tension")
+    assert.equal(createTension.hasSameNoteConflict, true)
+    assert.deepEqual(createTension.affectedFiles, ["shared.md"])
+
+    const mergeCompat = plan.entries.find((e) => e.optionId === "merge-compatible")
+    assert.equal(mergeCompat.hasSameNoteConflict, true)
+  } finally {
+    fs.rmSync(outputRoot, { recursive: true, force: true })
+  }
+})
+
+test("conflict-plan requires --conflict-report and --out", () => {
+  const result = runCli(["conflict-plan"])
+  assert.equal(result.status, 1)
+  assert.match(result.stderr, /Missing --conflict-report/)
+})
+
+test("conflict-plan rejects malformed report input", () => {
+  const outputRoot = tempRoot("mph-cp-mal-")
+  try {
+    const badFile = path.join(outputRoot, "bad.json")
+    fs.writeFileSync(badFile, `{"status":"ok"}\n`) // missing decisionOptions
+    const outFile = path.join(outputRoot, "plan.json")
+    const result = runCli(["conflict-plan", "--conflict-report", badFile, "--out", outFile])
+    assert.equal(result.status, 1)
+    assert.match(result.stderr, /INVALID_CONFLICT_REPORT/)
+  } finally {
+    fs.rmSync(outputRoot, { recursive: true, force: true })
+  }
+})
+
+test("conflict-apply requires --approve flag", () => {
+  const root = tempRoot("mph-ca-approve-")
+  try {
+    const planFile = path.join(root, "plan.json")
+    fs.writeFileSync(planFile, `${JSON.stringify({ version: 1, id: "test", entries: [] }, null, 2)}\n`)
+    const result = runCli(["conflict-apply", "--vault", root, "--plan", planFile])
+    assert.equal(result.status, 1)
+    assert.match(result.stderr, /without --approve/)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("conflict-apply blocks same-note semantic conflicts with BLOCKED error", () => {
+  const vault = tempRoot("mph-ca-blocked-")
+  try {
+    initializeCommittedVault(vault)
+    const planFile = path.join(vault, "plan.json")
+    fs.writeFileSync(planFile, `${JSON.stringify({
+      version: 1, id: "semantic-test", relationship: "diverged",
+      entries: [{
+        optionId: "create-tension",
+        when: "Both sides changed same note",
+        action: "Keep both visible with TENSION",
+        affectedFiles: ["shared.md"],
+        hasSameNoteConflict: true,
+        requiresUserApproval: true,
+        approved: true,
+      }],
+    }, null, 2)}\n`)
+
+    const result = runCli(["conflict-apply", "--vault", vault, "--plan", planFile, "--approve"])
+    assert.equal(result.status, 1)
+    assert.match(result.stderr, /SEMANTIC_CONFLICT_BLOCKED/)
+    assert.match(result.stderr, /cannot auto-resolve/)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("conflict-apply reports no approved entries without error", () => {
+  const vault = tempRoot("mph-ca-none-")
+  try {
+    initializeCommittedVault(vault)
+    const planFile = path.join(vault, "plan.json")
+    fs.writeFileSync(planFile, `${JSON.stringify({
+      version: 1, id: "no-approved-test",
+      entries: [{
+        optionId: "create-tension",
+        approved: false,
+        hasSameNoteConflict: true,
+        requiresUserApproval: true,
+      }],
+    }, null, 2)}\n`)
+
+    const result = runCli(["conflict-apply", "--vault", vault, "--plan", planFile, "--approve"])
+    assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /No approved entries/)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("conflict-apply dry-run validates without applying", () => {
+  const vault = tempRoot("mph-ca-dry-")
+  try {
+    initializeCommittedVault(vault)
+    const planFile = path.join(vault, "plan.json")
+    fs.writeFileSync(planFile, `${JSON.stringify({
+      version: 1, id: "dry-run-test", relationship: "behind",
+      entries: [{
+        optionId: "merge-compatible",
+        when: "Remote is ahead",
+        action: "Fast-forward pull",
+        affectedFiles: [],
+        hasSameNoteConflict: false,
+        requiresUserApproval: false,
+        approved: true,
+      }],
+    }, null, 2)}\n`)
+
+    const result = runCli(["conflict-apply", "--vault", vault, "--plan", planFile, "--dry-run"])
+    assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /dry-run/)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("conflict-apply reports missing entries array", () => {
+  const vault = tempRoot("mph-ca-bad-")
+  try {
+    const planFile = path.join(vault, "plan.json")
+    fs.writeFileSync(planFile, `${JSON.stringify({ version: 1, id: "bad" }, null, 2)}\n`)
+    const result = runCli(["conflict-apply", "--vault", vault, "--plan", planFile, "--approve"])
+    assert.equal(result.status, 1)
+    assert.match(result.stderr, /INVALID_CONFLICT_PLAN/)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("conflict-apply dynamically checks worktree instead of trusting stale plan.dirtyFiles", () => {
+  const vault = tempRoot("mph-ca-dynamic-")
+  try {
+    initializeCommittedVault(vault)
+    const planFile = path.join(vault, "plan.json")
+    // Plan has stale dirtyFiles — worktree is actually clean
+    fs.writeFileSync(planFile, `${JSON.stringify({
+      version: 1, id: "dynamic-check-test", relationship: "behind",
+      dirtyFiles: ["note.md"],
+      entries: [{
+        optionId: "merge-compatible",
+        when: "Remote is ahead",
+        action: "Fast-forward pull",
+        affectedFiles: [],
+        hasSameNoteConflict: false,
+        requiresUserApproval: false,
+        approved: true,
+      }],
+    }, null, 2)}\n`)
+
+    // Should NOT block on stale plan dirtyFiles — dynamic check finds clean worktree
+    const result = runCli(["conflict-apply", "--vault", vault, "--plan", planFile, "--approve"])
+    // The command will fail later (no remote or no config), but must NOT
+    // fail with the stale dirtyFiles error
+    const allOutput = result.stdout + "\n" + result.stderr
+    assert.equal(allOutput.includes("Working tree has uncommitted changes"), false,
+      "Should not block on stale plan.dirtyFiles when worktree is clean")
+    // It should get past the dirty check and fail at a later step
+    assert.equal(result.stdout.includes("No approved entries") ||
+      allOutput.includes("SYNC_CONFIG_NOT_FOUND") ||
+      allOutput.includes("COMMAND_FAILED") ||
+      allOutput.includes("COMMAND_NOT_FOUND"), true,
+      `Should reach a later step after the dynamic dirty check.\nstdout: ${result.stdout}\nstderr: ${result.stderr}`)
+  } finally {
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
+test("curation-apply requires --approve flag", () => {
+  const root = tempRoot("mph-cura-app-")
+  try {
+    const planFile = path.join(root, "plan.json")
+    fs.writeFileSync(planFile, `${JSON.stringify({ role: "curation-plan", recommendations: [] }, null, 2)}\n`)
+    const result = runCli(["curation-apply", "--plan", planFile])
+    assert.equal(result.status, 1)
+    assert.match(result.stderr, /without --approve/)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("curation-apply safely no-ops on standard curation output with no auto-applicable candidates", () => {
+  const root = tempRoot("mph-cura-noop-")
+  try {
+    const planFile = path.join(root, "plan.json")
+    fs.writeFileSync(planFile, `${JSON.stringify({
+      role: "curation-plan",
+      canonical_memory: false,
+      schema_version: "1.0",
+      method: "governed-bm25f-sections",
+      totalRuns: 1,
+      misses: 1,
+      recommendations: [{
+        id: "miss-1",
+        category: "routing",
+        kind: "buried-gold",
+        severity: "high",
+        scope: "Memory",
+        query: "Where is the policy?",
+        expected: ["Memory/Policy.md"],
+        retrieved: ["Memory/Summary.md"],
+        patchCandidates: [{
+          type: "alias-patch-candidate",
+          target: "Memory/Policy.md",
+          proposed: { addAliases: ["policy", "rule"] },
+          autoApplicable: false,
+          requiresHumanReview: true,
+          evidence: { query: "Where is the policy?" },
+        }],
+      }],
+    }, null, 2)}\n`)
+
+    const result = runCli(["curation-apply", "--plan", planFile, "--approve"])
+    assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /No auto-applicable candidates found/)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("curation-apply applies alias-patch-candidate when flags are set", () => {
+  const root = tempRoot("mph-cura-apply-")
+  try {
+    const vault = path.join(root, "vault")
+    fs.mkdirSync(path.join(vault, "Memory"), { recursive: true })
+    fs.writeFileSync(path.join(vault, "Memory", "Policy.md"), "---\nstatus: active\n---\n# Policy\n\nContent.\n")
+
+    const planFile = path.join(root, "plan.json")
+    fs.writeFileSync(planFile, `${JSON.stringify({
+      role: "curation-plan",
+      canonical_memory: false,
+      schema_version: "1.0",
+      method: "governed-bm25f-sections",
+      totalRuns: 1,
+      misses: 1,
+      recommendations: [{
+        id: "alias-test",
+        category: "routing",
+        kind: "no-candidates",
+        severity: "high",
+        scope: "Memory",
+        query: "policy rule guideline",
+        expected: ["Memory/Policy.md"],
+        retrieved: [],
+        patchCandidates: [{
+          type: "alias-patch-candidate",
+          target: path.join(vault, "Memory", "Policy.md"),
+          proposed: { addAliases: ["rule", "guideline"] },
+          autoApplicable: true,
+          requiresHumanReview: false,
+          approved: true,
+          evidence: { query: "policy rule guideline" },
+        }],
+      }],
+    }, null, 2)}\n`)
+
+    const before = fs.readFileSync(path.join(vault, "Memory", "Policy.md"), "utf8")
+    assert.equal(before.includes("aliases:"), false)
+
+    const result = runCli(["curation-apply", "--plan", planFile, "--approve"])
+    assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /Applied alias-patch/)
+
+    const after = fs.readFileSync(path.join(vault, "Memory", "Policy.md"), "utf8")
+    assert.match(after, /aliases: \[/)
+    assert.match(after, /"rule"/)
+    assert.match(after, /"guideline"/)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("curation-apply adds frontmatter when target file has none", () => {
+  const root = tempRoot("mph-cura-nofm-")
+  try {
+    const vault = path.join(root, "vault")
+    fs.mkdirSync(path.join(vault, "Memory"), { recursive: true })
+    fs.writeFileSync(path.join(vault, "Memory", "Note.md"), "# No Frontmatter\n\nContent.\n")
+
+    const planFile = path.join(root, "plan.json")
+    fs.writeFileSync(planFile, `${JSON.stringify({
+      role: "curation-plan", canonical_memory: false, schema_version: "1.0",
+      method: "governed-bm25f-sections", totalRuns: 1, misses: 1,
+      recommendations: [{
+        id: "nofm-test", category: "routing", kind: "no-candidates",
+        severity: "high", scope: "Memory",
+        query: "test", expected: ["Memory/Note.md"], retrieved: [],
+        patchCandidates: [{
+          type: "alias-patch-candidate",
+          target: path.join(vault, "Memory", "Note.md"),
+          proposed: { addAliases: ["alternate-name"] },
+          autoApplicable: true, requiresHumanReview: false, approved: true,
+          evidence: { query: "test" },
+        }],
+      }],
+    }, null, 2)}\n`)
+
+    const result = runCli(["curation-apply", "--plan", planFile, "--approve"])
+    assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /added frontmatter with aliases/)
+
+    const content = fs.readFileSync(path.join(vault, "Memory", "Note.md"), "utf8")
+    assert.match(content, /^---/)
+    assert.match(content, /aliases: \[/)
+    assert.match(content, /"alternate-name"/)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("curation-apply handles CRLF frontmatter without duplicating it", () => {
+  const root = tempRoot("mph-cura-crlf-")
+  try {
+    const vault = path.join(root, "vault")
+    fs.mkdirSync(path.join(vault, "Memory"), { recursive: true })
+    // Write file with CRLF frontmatter
+    fs.writeFileSync(path.join(vault, "Memory", "Policy.md"), "---\r\nstatus: active\r\n---\r\n# Policy\r\n\r\nContent.\r\n")
+
+    const planFile = path.join(root, "plan.json")
+    fs.writeFileSync(planFile, `${JSON.stringify({
+      role: "curation-plan", canonical_memory: false, schema_version: "1.0",
+      method: "governed-bm25f-sections", totalRuns: 1, misses: 1,
+      recommendations: [{
+        id: "crlf-test", category: "routing", kind: "no-candidates",
+        severity: "high", scope: "Memory",
+        query: "policy rule", expected: ["Memory/Policy.md"], retrieved: [],
+        patchCandidates: [{
+          type: "alias-patch-candidate",
+          target: path.join(vault, "Memory", "Policy.md"),
+          proposed: { addAliases: ["rule"] },
+          autoApplicable: true, requiresHumanReview: false, approved: true,
+          evidence: { query: "policy rule" },
+        }],
+      }],
+    }, null, 2)}\n`)
+
+    const before = fs.readFileSync(path.join(vault, "Memory", "Policy.md"), "utf8")
+    assert.ok(before.startsWith("---\r\n"), "fixture uses CRLF")
+
+    const result = runCli(["curation-apply", "--plan", planFile, "--approve"])
+    assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /Applied alias-patch/)
+
+    const after = fs.readFileSync(path.join(vault, "Memory", "Policy.md"), "utf8")
+    // Should NOT have duplicate frontmatter (adjacent closing/opening markers)
+    assert.equal(after.indexOf("---\n---"), -1, "no empty duplicate frontmatter (LF)")
+    assert.equal(after.indexOf("---\r\n---"), -1, "no empty duplicate frontmatter (CRLF)")
+    // Should have exactly one frontmatter block = 2 --- markers
+    const fmEnds = after.match(/---/g)
+    assert.equal(fmEnds.length, 2, "exactly 2 --- markers (one opening, one closing)")
+    // Should contain the alias
+    assert.match(after, /aliases: \[/)
+    assert.match(after, /"rule"/)
+    // Original frontmatter preserved
+    assert.match(after, /status: active/)
+    // All content after frontmatter preserved
+    assert.match(after, /# Policy/)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
   }
 })

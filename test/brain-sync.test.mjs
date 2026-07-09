@@ -10,6 +10,7 @@ import {
   buildAdoptionPlan,
   buildRestructureManifest,
   buildSyncPlan,
+  createNoteLinkResolver,
   initialBrainFiles,
   inspectMemoryRoot,
   makeSyncConfig,
@@ -73,6 +74,55 @@ test("does not flag normal Markdown links as secrets", () => {
   assert.deepEqual(findings, [])
 })
 
+test("detects AWS access keys", () => {
+  const findings = scanTextForSecrets("AWS_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE")
+  assert.ok(findings.some((f) => f.name === "aws access key"))
+})
+
+test("detects AWS secret keys", () => {
+  const findings = scanTextForSecrets("aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY")
+  assert.ok(findings.some((f) => f.name === "aws secret key"))
+})
+
+test("detects Azure connection strings", () => {
+  const findings = scanTextForSecrets("DefaultEndpointsProtocol=https;AccountName=myaccount;AccountKey=mykey1234567890")
+  assert.ok(findings.some((f) => f.name === "azure connection string"))
+})
+
+test("detects Azure subscription IDs", () => {
+  const findings = scanTextForSecrets("SubscriptionId: 123e4567-e89b-12d3-a456-426614174000")
+  assert.ok(findings.some((f) => f.name === "azure subscription key"))
+})
+
+test("detects GCP service account keys", () => {
+  const findings = scanTextForSecrets('"type": "service_account"')
+  assert.ok(findings.some((f) => f.name === "gcp service account"))
+})
+
+test("detects Slack tokens", () => {
+  // Assemble at runtime to avoid push protection matching the literal
+  const token = "xoxb-" + "123456789012-abcdefghijklmnopqrst"
+  const findings = scanTextForSecrets(token)
+  assert.ok(findings.some((f) => f.name === "slack token"))
+})
+
+test("detects Discord bot tokens", () => {
+  // Assemble at runtime to avoid push protection matching the literal
+  const token = "MTA2" + "NzM5MzY4NzE2MjM5OTM2OA.Gd4R5k." + "abcdefghijklmnopqrstuvwxyz123456"
+  const findings = scanTextForSecrets(token)
+  assert.ok(findings.some((f) => f.name === "discord bot token"))
+})
+
+test("detects .env export lines", () => {
+  const findings = scanTextForSecrets("export MY_SECRET_KEY=super-secret-value-abcdef")
+  assert.ok(findings.some((f) => f.name === "env file export"))
+})
+
+test("detects Anthropic API keys", () => {
+  const findings = scanTextForSecrets("sk-ant-api03-abcdefghijklmnopqrstuvwxyz123456")
+  assert.ok(findings.some((f) => f.name === "openai / anthropic key"))
+})
+
 test("analyzes a healthy linked vault without critical findings", () => {
   const root = tempRoot()
   try {
@@ -123,6 +173,218 @@ test("detects vault health issues that should guide a curator", () => {
     assert.equal(kinds.includes("duplicate-title"), true)
     assert.equal(kinds.includes("missing-provenance"), true)
     assert.equal(kinds.includes("stale-without-revalidation"), true)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
+// ─── Wiki-link resolution contract tests ────────────────────────────────
+
+function fixtureNote(path, title, text, frontmatter) {
+  const fm = frontmatter ? `---\n${frontmatter}\n---\n\n` : ""
+  return {
+    path,
+    title,
+    text: fm + text,
+    outgoing: [],
+  }
+}
+
+test("createNoteLinkResolver: bare title from nested note resolves to root note", () => {
+  const notes = [
+    fixtureNote("Root.md", "Root Note", "Content.", "status: active\nprovenance: fixture"),
+    fixtureNote("02 Projects/Sub/Detail.md", "Detail", "See [[Root Note]]."),
+  ]
+  const resolver = createNoteLinkResolver(notes)
+  const result = resolver("Root Note", "02 Projects/Sub/Detail.md")
+  assert.equal(result.resolved, true)
+  assert.equal(result.path, "Root.md")
+  assert.equal(result.method, "title")
+})
+
+test("createNoteLinkResolver: nested unique bare title resolves to nested note", () => {
+  const notes = [
+    fixtureNote("Root.md", "Root Note", "Content."),
+    fixtureNote("02 Projects/UniqueName.md", "Unique Name", "See [[Unique Name]]."),
+  ]
+  const resolver = createNoteLinkResolver(notes)
+  const result = resolver("Unique Name", "Root.md")
+  assert.equal(result.resolved, true)
+  assert.equal(result.path, "02 Projects/UniqueName.md")
+  assert.equal(result.method, "title")
+})
+
+test("createNoteLinkResolver: duplicate ambiguous title is not resolved", () => {
+  const notes = [
+    fixtureNote("02 Projects/A.md", "Same Title", "Content A."),
+    fixtureNote("03 Reference/B.md", "Same Title", "Content B."),
+  ]
+  const resolver = createNoteLinkResolver(notes)
+  const result = resolver("Same Title", "02 Projects/A.md")
+  assert.equal(result.resolved, false)
+  assert.equal(result.reason, "ambiguous")
+  assert.ok(result.ambiguity.length >= 2)
+})
+
+test("createNoteLinkResolver: exact path-qualified link resolves", () => {
+  const notes = [
+    fixtureNote("Root.md", "Root Note", "Content."),
+    fixtureNote("02 Projects/Sub/Detail.md", "Detail", "See [[02 Projects/Sub/Detail]]."),
+  ]
+  const resolver = createNoteLinkResolver(notes)
+  const result = resolver("02 Projects/Sub/Detail", "Root.md")
+  assert.equal(result.resolved, true)
+  assert.equal(result.path, "02 Projects/Sub/Detail.md")
+  assert.equal(result.method, "exact-path")
+})
+
+test("createNoteLinkResolver: current-note-relative link resolves", () => {
+  const notes = [
+    fixtureNote("02 Projects/Home.md", "Home", "See [[Sibling]]."),
+    fixtureNote("02 Projects/Sibling.md", "Sibling", "Content."),
+  ]
+  const resolver = createNoteLinkResolver(notes)
+  const result = resolver("Sibling", "02 Projects/Home.md")
+  assert.equal(result.resolved, true)
+  assert.equal(result.path, "02 Projects/Sibling.md")
+  assert.equal(result.method, "relative")
+})
+
+test("createNoteLinkResolver: heading anchor is stripped and still resolves", () => {
+  const notes = [
+    fixtureNote("Note.md", "Note", "Content."),
+  ]
+  const resolver = createNoteLinkResolver(notes)
+  const result = resolver("Note", "Any.md")
+  assert.equal(result.resolved, true)
+  assert.equal(result.path, "Note.md")
+  // resolves by relative path since "Note" without path prefix and Any.md is in same dir
+  assert.equal(result.method, "relative")
+})
+
+test("createNoteLinkResolver: unique alias from frontmatter resolves", () => {
+  const notes = [
+    fixtureNote("02 Projects/Config.md", "Configuration Guide", "Content.", "aliases:\n  - cfg\n  - setup-guide"),
+    fixtureNote("Other.md", "Other", "Different."),
+  ]
+  const resolver = createNoteLinkResolver(notes)
+  const result = resolver("cfg", "Root.md")
+  assert.equal(result.resolved, true)
+  assert.equal(result.path, "02 Projects/Config.md")
+  assert.equal(result.method, "alias")
+})
+
+test("createNoteLinkResolver: alias with single-line string format", () => {
+  const notes = [
+    fixtureNote("LongName.md", "A Very Long Title", "Content.", "aliases: shorty"),
+  ]
+  const resolver = createNoteLinkResolver(notes)
+  const result = resolver("shorty", "Root.md")
+  assert.equal(result.resolved, true)
+  assert.equal(result.path, "LongName.md")
+  assert.equal(result.method, "alias")
+})
+
+test("createNoteLinkResolver: duplicate ambiguous alias is not resolved", () => {
+  const notes = [
+    fixtureNote("A.md", "Note A", "Content.", "aliases: [shared-alias]"),
+    fixtureNote("B.md", "Note B", "Content.", "aliases: [shared-alias]"),
+  ]
+  const resolver = createNoteLinkResolver(notes)
+  const result = resolver("shared-alias", "Root.md")
+  assert.equal(result.resolved, false)
+  assert.equal(result.reason, "ambiguous")
+  assert.ok(result.ambiguity.length >= 2)
+})
+
+test("createNoteLinkResolver: external URL and pure anchors return external", () => {
+  const notes = [fixtureNote("Note.md", "Note", "Content.")]
+  const resolver = createNoteLinkResolver(notes)
+  assert.deepEqual(resolver("https://example.com", "Note.md"), { resolved: false, path: null, reason: "external" })
+  assert.deepEqual(resolver("ftp://files", "Note.md"), { resolved: false, path: null, reason: "external" })
+  assert.deepEqual(resolver("#local-heading", "Note.md"), { resolved: false, path: null, reason: "external" })
+})
+
+test("createNoteLinkResolver: missing link returns unresolved", () => {
+  const notes = [fixtureNote("Note.md", "Note", "Content.")]
+  const resolver = createNoteLinkResolver(notes)
+  const result = resolver("NonExistent", "Note.md")
+  assert.equal(result.resolved, false)
+  assert.equal(result.reason, "unresolved")
+  assert.ok(result.path)
+})
+
+test("createNoteLinkResolver: basename takes priority over title for same match", () => {
+  const notes = [
+    fixtureNote("Matching.md", "Other Title", "Content."),
+    fixtureNote("Other.md", "Matching", "A note whose title matches but file does not."),
+  ]
+  const resolver = createNoteLinkResolver(notes)
+  // "Matching" should match basename "matching" not title "Matching" from Other.md
+  // But since basename and title are on different notes, only one should win
+  const result = resolver("Matching", "Root.md")
+  assert.equal(result.resolved, true)
+  // basename check passes first for matching.md
+  assert.equal(result.path, "Matching.md")
+})
+
+test("analyzeVaultHealth: code blocks with wikilink syntax do not cause false unresolved-link findings", () => {
+  const root = tempRoot()
+  try {
+    fs.writeFileSync(path.join(root, "RealNote.md"), [
+      "# Real Note",
+      "status: active",
+      "provenance: fixture",
+      "",
+      "Some real content.",
+      "",
+    ].join("\n"))
+    fs.writeFileSync(path.join(root, "Main.md"), [
+      "# Main",
+      "status: active",
+      "provenance: fixture",
+      "",
+      "Normal link to [[RealNote]].",
+      "",
+      "```js",
+      "// This is not a real wikilink: [[NonExistentTarget]]",
+      "const x = 1;",
+      "```",
+      "",
+      "Inline `[[AlsoNotReal]]` too.",
+    ].join("\n"))
+    const report = analyzeVaultHealth(root)
+    const unresolved = report.findings.filter((f) => f.kind === "unresolved-link")
+    const ambiguous = report.findings.filter((f) => f.kind === "ambiguous-link")
+    // The only link extracted should be [[RealNote]] which resolves fine
+    assert.equal(unresolved.length, 0, "should have no unresolved links from code blocks")
+    assert.equal(ambiguous.length, 0, "should have no ambiguous links")
+    assert.equal(report.ok, true)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("analyzeVaultHealth: ambiguous duplicate title is detected as ambiguous-link not unresolved-link", () => {
+  const root = tempRoot()
+  try {
+    fs.writeFileSync(path.join(root, "NoteA.md"), [
+      "# Shared Title",
+      "status: active",
+      "provenance: fixture",
+      "See [[Shared Title]].",
+    ].join("\n"))
+    fs.writeFileSync(path.join(root, "NoteB.md"), [
+      "# Shared Title",
+      "status: active",
+      "provenance: fixture",
+      "Content.",
+    ].join("\n"))
+    const report = analyzeVaultHealth(root)
+    const ambiguous = report.findings.filter((f) => f.kind === "ambiguous-link")
+    assert.equal(ambiguous.length, 1, "should flag ambiguous title")
+    const unresolved = report.findings.filter((f) => f.kind === "unresolved-link")
+    assert.equal(unresolved.length, 0, "should NOT be unresolved since note exists")
   } finally {
     fs.rmSync(root, { recursive: true, force: true })
   }

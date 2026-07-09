@@ -17,7 +17,19 @@ npm run check
 node scripts/install.mjs --target "$HOME/.config/opencode"
 ```
 
-The installer copies `skills/memory-curator/` only. It does not edit `opencode.json`.
+The installer copies `skills/memory-curator/`, `src/` modules, and the `brain-sync.mjs` CLI binary (`bin/memory-patch-harness.mjs`). It does not edit `opencode.json`.
+
+To verify the CLI works after install:
+```sh
+node "$(dirname $(which node))/../lib/node_modules/@memory-patch-harness/bin/memory-patch-harness.mjs" doctor --json
+# or, if the target bin/ directory is on your PATH:
+memory-patch-harness.mjs doctor --json
+```
+
+Use `--check` to preview what would change during an upgrade:
+```sh
+node scripts/install.mjs --target "$HOME/.config/opencode" --check
+```
 
 ## Initialize A Project Memory Area
 

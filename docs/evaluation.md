@@ -68,19 +68,48 @@ npm install @huggingface/transformers
 node scripts/eval-semantic-retrieval.mjs --vault <vault> --queries <frozen-queries.json> --scope <scope> --json tmp/semantic-report.json
 ```
 
+### Section-Focus Rerank
+
+`npm run eval:rerank` applies the deterministic `sectionFocusRerank` on top of BM25F section retrieval using the synthetic fixture. The rerank is a lightweight structural pass that boosts documents where:
+
+- **Section focus:** unique query tokens concentrate in the single best-matching section,
+- **Heading affinity:** query tokens appear in section headings,
+- **Co-occurrence:** multiple query tokens appear together in the same section.
+
+No LLMs, no paid APIs, no external calls. Each result reports `rerankApplied` and `rerankSignals` for transparency. Use `--rerank` with `recall` or `recall-loop`, or `recall-rerank` as a standalone command.
+
+The rerank is a v0.6 candidate. It is evaluated separately from the v0.5 retrieval gate because it changes result ordering rather than candidate set composition. `npm run eval:rerank -- --json tmp/rerank-report.json` produces a side-by-side baseline-vs-reranked comparison.
+
+### Live-Agent Scoring
+
+`npm run eval:live-agent-score` scores a completed agent run against the incident dataset. It requires a run directory with `curator-output.json` and optionally `patches/`, `tool-calls.json`, and `metadata.json`. Use the expanded `eval/live-agent/run-template.md` worksheet for structured recording.
+
+The scorer computes a weighted rubric over: action correctness (30%), provenance accuracy (20%), scope boundedness (15%), lifecycle completeness (15%), fabrication avoidance (10%), and leakage prevention (10%). It classifies false-memory, conflict-handling, and lifecycle-omission failures independently.
+
+```sh
+node scripts/eval-live-agent-score.mjs \
+  --run-dir ./tmp/live-agent-runs/<run-id> \
+  --incidents eval/live-agent/incidents.json \
+  --json
+```
+
+The scoring wrapper is deterministic and uses only the incident expected-answer data. Live model benchmark results and filled TBD tables belong in `docs/live-model-results.md` only after real runs exist.
+
 ## v0.5 Release Evidence Gate
 
 `0.5.0` remains a release candidate until all applicable layers are reported separately:
 
-1. **Deterministic regression:** `npm run check`, `npm run eval:v05-gate`, and `npm run release:gate` pass with no critical safety regression.
-2. **Human-labeled retrieval:** at least 30 private or anonymized real-vault questions, frozen before tuning, with Recall@3 >= 0.90, MRR >= 0.80, zero stale/raw pollution, and bounded context.
-3. **Lifecycle correctness:** `npm run eval:lifecycle` passes. Stale/expired/superseded/current cases must be audited separately from recall; `lifecycle-audit` should identify revalidation, replacement, and tension-decision needs without mutating notes.
-4. **Conflict decision quality:** `npm run eval:conflict` passes. Same-note divergence, non-overlapping agent histories, and dirty local drafts should produce distinct read-only decision options without mutating Git state.
-5. **Live memory behavior:** at least 20 incidents drawn from real failures, with three isolated trials per tested setup. Record false-memory, secret handling, conflict handling, future-task utility, token use, latency, and human correction time.
-6. **Mixed graders:** deterministic contract graders for objective properties, model graders only for semantic rubrics, and human spot review to calibrate subjective judgments.
-7. **Failure publication:** report misses and confidence limits; do not publish only averages or silently promote a capability suite into a regression claim.
+1. **Deterministic regression:** `npm run check`, `npm run eval:v05-gate`, and `npm run release:gate` pass with no critical safety regression. **Implemented** — `scripts/release-gate.mjs`, `scripts/eval-v05-gate.mjs`.
+2. **Human-labeled retrieval:** at least 30 private or anonymized real-vault questions, frozen before tuning, with Recall@3 >= 0.90, MRR >= 0.80, zero stale/raw pollution, and bounded context. **Infrastructure ready** — see `docs/cost-and-scale.md` for private-vault results; public incident set at `eval/live-agent/incidents.json`.
+3. **Lifecycle correctness:** `npm run eval:lifecycle` passes. Stale/expired/superseded/current cases must be audited separately from recall; `lifecycle-audit` should identify revalidation, replacement, and tension-decision needs without mutating notes. **Implemented** — `scripts/eval-lifecycle-audit.mjs`, `brain-sync.mjs lifecycle-audit`.
+4. **Conflict decision quality:** `npm run eval:conflict` passes. Same-note divergence, non-overlapping agent histories, and dirty local drafts should produce distinct read-only decision options without mutating Git state. **Implemented** — `scripts/eval-conflict-assist.mjs`, `brain-sync.mjs conflict-assist` (with `decisionOptions`), `conflict-plan`, `conflict-apply`.
+5. **Live memory behavior:** at least 20 incidents drawn from real failures, with three isolated trials per tested setup. Record false-memory, secret handling, conflict handling, future-task utility, token use, latency, and human correction time. **Infrastructure ready** — `eval/live-agent/incidents.json` (20+ scenarios), `eval/live-agent/run-template.md`, `scripts/eval-live-agent-score.mjs`. **Blocked on live-model runs** — no real model comparisons published yet.
+6. **Mixed graders:** deterministic contract graders for objective properties, model graders only for semantic rubrics, and human spot review to calibrate subjective judgments. **Infrastructure ready** — `scripts/eval-curator.mjs`, `scripts/eval-patch-quality.mjs`, `scripts/eval-agent-run.mjs`.
+7. **Failure publication:** report misses and confidence limits; do not publish only averages or silently promote a capability suite into a regression claim. **Infrastructure ready** — `scripts/eval-report.mjs`, generated reports in `tmp/eval-report.md`; `npm run release:gate` includes npm pack dry-run.
 
 These gates follow the evaluation distinction between reproducible code graders and non-deterministic agent trials. They also keep the synthetic capability set separate from real-world release evidence.
+
+**Remaining blocker for v0.5 release:** item 5 (live memory behavior) requires real model runs that have not been completed. All evaluation infrastructure and scoring tooling is in place.
 
 Evaluation design references:
 

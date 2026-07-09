@@ -14,6 +14,12 @@ Memory Patch Harness adds a durable Markdown memory layer for coding agents. The
 4. If setup or a command fails, run `doctor --json` and follow `docs/troubleshooting.md`.
 5. Do not edit the user's agent config until you know which adapter they use.
 
+## Local Development Handoff
+
+- If `docs/development-handoff-obsidian-database.md` exists, read it before continuing local resolver, schema-audit, or real-vault validation work.
+- The handoff may contain private local paths and unreleased observations. Do not stage, commit, push, publish, or sync it without explicit user approval.
+- Public tests, fixtures, examples, and documentation must remain synthetic and generic.
+
 ## Safe Setup Flow
 
 Use deterministic commands. Do not guess paths or GitHub repositories.

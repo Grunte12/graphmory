@@ -52,7 +52,9 @@ npm test
 node scripts/install.mjs --target "$HOME/.config/opencode"
 ```
 
-The installer copies only the `memory-curator` skill. It does not overwrite `opencode.json` or agent prompts. Review the generated instructions, then apply the files under `adapters/opencode/`.
+The installer copies the `memory-curator` skill, the `src/` modules, and the `brain-sync.mjs` CLI to the target directory. It does not overwrite `opencode.json` or agent prompts. Review the generated instructions, then apply the files under `adapters/opencode/`.
+
+After installation, add the target's `bin/` directory to your `PATH` to run `memory-patch-harness.mjs` from anywhere. Try `node <target>/bin/memory-patch-harness.mjs doctor --json` to verify the CLI works.
 
 Initialize a project memory area:
 
@@ -303,7 +305,7 @@ The most accurate description is:
 
 Read the bilingual guide: [Where This Fits in the RAG Landscape](docs/rag-positioning.md).
 
-The retrieval baseline is documented in [Evaluation](docs/evaluation.md). Synthetic stress tests currently support governed BM25 section retrieval as the default local recall path, while private real-vault tests still expose semantic/alias and vault-curation gaps.
+The retrieval baseline is documented in [Evaluation](docs/evaluation.md). Synthetic stress tests support governed BM25F section retrieval as the default local recall path. Earlier private real-vault evals exposed semantic/alias and vault-curation gaps that should be re-evaluated with the latest governed BM25F section retrieval and `curation-recommend` tooling before making public claims about private-vault effectiveness.
 
 See [Cost and Scale](docs/cost-and-scale.md) for private real-vault results, honest vector-RAG trade-offs, and the current scalability boundary.
 
