@@ -53,3 +53,52 @@ test("agent package documents autonomy-first human gates", () => {
   assert.match(agents, /Stop only at decision gates/)
   assert.match(agents, /clearly reversible metadata\/link improvements/)
 })
+
+test("install.mjs copies skill, src, and CLI to target and CLI runs without a vault", { timeout: 30_000 }, () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mph-installer-smoke-"))
+  try {
+    const installScript = path.resolve("scripts", "install.mjs")
+    const target = path.join(tmp, "target")
+
+    // Run the installer
+    const install = spawnSync(process.execPath, [installScript, "--target", target, "--force"], {
+      cwd: path.resolve("."),
+      encoding: "utf8",
+      shell: false,
+    })
+    assert.equal(install.status, 0, `installer failed: ${install.stderr}`)
+
+    // Verify skill was copied
+    const skillPath = path.join(target, "skills", "memory-curator", "SKILL.md")
+    assert.ok(fs.existsSync(skillPath), "skills/memory-curator/SKILL.md should exist after install")
+
+    // Verify src module was copied
+    const srcPath = path.join(target, "src", "brain-sync.mjs")
+    assert.ok(fs.existsSync(srcPath), "src/brain-sync.mjs should exist after install")
+
+    // Verify CLI was copied
+    const cliPath = path.join(target, "bin", "memory-patch-harness.mjs")
+    assert.ok(fs.existsSync(cliPath), "bin/memory-patch-harness.mjs should exist after install")
+
+    // Verify installed CLI runs doctor without a vault
+    const doctor = spawnSync(process.execPath, [cliPath, "doctor", "--json"], {
+      cwd: tmp,
+      encoding: "utf8",
+      shell: false,
+    })
+    assert.equal(doctor.status, 0, `doctor failed: ${doctor.stderr}`)
+    const report = JSON.parse(doctor.stdout)
+    assert.equal(report.ok, true, "doctor should report ok: true")
+
+    // Verify installed CLI can print help
+    const help = spawnSync(process.execPath, [cliPath, "--help"], {
+      cwd: tmp,
+      encoding: "utf8",
+      shell: false,
+    })
+    assert.equal(help.status, 0, `--help failed: ${help.stderr}`)
+    assert.match(help.stdout, /doctor/)
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true })
+  }
+})

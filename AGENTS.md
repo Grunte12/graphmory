@@ -9,10 +9,26 @@ Memory Patch Harness adds a durable Markdown memory layer for coding agents. The
 ## First Actions
 
 1. Run `npm test` to verify the repo works.
-2. Read `docs/install.md` for installation steps.
-3. If the user wants portable memory across machines/accounts, read `docs/portable-brain-sync.md`.
-4. If setup or a command fails, run `doctor --json` and follow `docs/troubleshooting.md`.
-5. Do not edit the user's agent config until you know which adapter they use.
+2. Read `docs/install.md` for full installation steps.
+3. Run the installer to copy the skill, CLI, and source modules:
+   ```sh
+   node scripts/install.mjs --target "<agent-config-root>"
+   ```
+   Replace `<agent-config-root>` with the target configuration directory (e.g. `~/.config/opencode` for OpenCode). The installer copies `skills/memory-curator/`, `src/` modules, and `bin/memory-patch-harness.mjs`. It does **not** edit your agent config.
+4. Verify the CLI works after installation:
+   ```sh
+   node <target>/bin/memory-patch-harness.mjs doctor --json
+   # or, after adding <target>/bin/ to your PATH:
+   memory-patch-harness.mjs doctor --json
+   ```
+5. Apply the adapter for your runtime. For OpenCode, review and apply the files under `adapters/opencode/`:
+   - Merge `AGENTS.snippet.md` into the lead agent instructions.
+   - Use `memory-curator-prompt.md` as the `memory_curator` sub-agent prompt.
+   - Use `opencode.agent.example.json` as a template for the sub-agent configuration.
+   See `docs/install.md#opencode-adapter` for detailed instructions.
+6. If the user wants portable memory across machines/accounts, read `docs/portable-brain-sync.md`.
+7. If setup or a command fails, run `doctor --json` and follow `docs/troubleshooting.md`.
+8. Do not edit the user's agent config until you know which adapter they use.
 
 ## Local Development Handoff
 
@@ -72,6 +88,23 @@ The apply command requires a clean Git worktree and baseline commit, creates a l
 - Memory Curator: retrieves, places, links, deduplicates, and validates memory without inventing missing facts.
 - Markdown/Obsidian vault: canonical operational memory.
 - GitHub brain repo: optional private sync target for portable memory.
+
+## Using The Memory Curator Skill
+
+The harness ships an installable `memory-curator` skill at `skills/memory-curator/SKILL.md`. After the installer copies it to your target directory, load or reference it in your agent runtime:
+
+- **OpenCode**: the runtime's skill system automatically discovers skills under `<target>/skills/`. Load the skill when memory recall or consolidation is needed.
+- **Other runtimes**: read `skills/memory-curator/SKILL.md` and embed it as a role/function definition.
+
+The installer (`node scripts/install.mjs --target <dir>`) copies three components to the target directory:
+
+| Component | Destination | Purpose |
+|-----------|-------------|---------|
+| `skills/memory-curator/` | `<target>/skills/memory-curator/` | Agent skill with protocol, schema, and authority rules |
+| `src/` | `<target>/src/` | Reusable runtime modules (recall, sync, lifecycle, contracts, etc.) |
+| `bin/memory-patch-harness.mjs` | `<target>/bin/memory-patch-harness.mjs` | CLI entry point for `doctor`, `recall`, `health`, `push`, etc. |
+
+Adapters (under `adapters/`) configure the runtime — they do not overwrite agent config, merge prompts, or install system packages. Choose the adapter for your platform and apply the files as documented.
 
 ## Tool-Assisted Memory Work
 

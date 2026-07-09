@@ -56,6 +56,8 @@ The installer copies the `memory-curator` skill, the `src/` modules, and the `br
 
 After installation, add the target's `bin/` directory to your `PATH` to run `memory-patch-harness.mjs` from anywhere. Try `node <target>/bin/memory-patch-harness.mjs doctor --json` to verify the CLI works.
 
+The package also exposes `memory-patch-harness` and `mph` CLI commands when installed globally via `npm install -g .` or installed as a project dependency.
+
 Initialize a project memory area:
 
 ```powershell
