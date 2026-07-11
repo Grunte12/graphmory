@@ -64,6 +64,7 @@ function assertPackIsClean(packReport) {
   }
   const required = [
     "AGENTS.md",
+    "CLAUDE.md",
     "README.md",
     "scripts/brain-sync.mjs",
     "scripts/install.mjs",

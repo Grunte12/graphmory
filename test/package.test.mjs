@@ -21,7 +21,9 @@ function listFiles(entry) {
 
 test("package ships the AI-agent entry instructions", () => {
   assert.equal(pkg.files.includes("AGENTS.md"), true)
+  assert.equal(pkg.files.includes("CLAUDE.md"), true)
   assert.equal(fs.existsSync(path.join(root, "AGENTS.md")), true)
+  assert.equal(fs.readFileSync(path.join(root, "CLAUDE.md"), "utf8").trim(), "@AGENTS.md")
 })
 
 test("package exposes portable brain sync CLI aliases", () => {
@@ -84,7 +86,7 @@ test("package text has no mojibake or replacement characters", () => {
 })
 
 test("public Markdown entry points have no UTF-8 BOM", () => {
-  for (const file of ["README.md", "AGENTS.md", "docs/install.md", "docs/portable-brain-sync.md"]) {
+  for (const file of ["README.md", "AGENTS.md", "CLAUDE.md", "docs/install.md", "docs/portable-brain-sync.md"]) {
     const content = fs.readFileSync(path.join(root, file))
     const hasBom = content[0] === 0xef && content[1] === 0xbb && content[2] === 0xbf
     assert.equal(hasBom, false, `${file} contains a UTF-8 BOM`)

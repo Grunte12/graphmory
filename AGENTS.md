@@ -2,6 +2,24 @@
 
 Use this file when a user gives this repository to an AI coding agent and asks it to install, connect, or use the harness.
 
+## Cross-Agent Coordination
+
+- `AGENTS.md` is the single repository-wide instruction source for Codex,
+  OpenCode, and other compatible coding agents.
+- Claude Code loads the same instructions through the root `CLAUDE.md`, which
+  imports this file. Keep `CLAUDE.md` as a thin compatibility file; do not
+  duplicate rules there.
+- Before continuing substantial or handed-off work, read the root `HANDOFF.md`
+  when it exists. Treat it as current working context and verify its claims
+  against the repository before making changes.
+- Store detailed implementation plans under `docs/plans/`. Keep active status
+  and immediate next actions in `HANDOFF.md`.
+- Do not create nested agent-output or result directories for project
+  coordination. Summarize useful outcomes in `HANDOFF.md`, an appropriate plan,
+  or normal project documentation.
+- Runtime-specific directories are adapters only. Project state belongs in the
+  repository workspace, not in a Claude, Codex, or OpenCode configuration home.
+
 ## Goal
 
 Memory Patch Harness adds a durable Markdown memory layer for coding agents. The tool repo is not the memory repo. A user's brain repo or Obsidian vault stores the memory.

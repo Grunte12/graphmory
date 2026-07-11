@@ -43,7 +43,11 @@ Raw evidence is the immutable evidentiary source of truth. Markdown is canonical
 
 Requirements: Node.js 20 or newer.
 
-If you are an AI coding agent installing this for a user, read [AGENTS.md](AGENTS.md) first.
+If you are an AI coding agent installing this for a user, read
+[AGENTS.md](AGENTS.md) first. It is the repository-wide instruction source for
+Codex and OpenCode. Claude Code loads the same file through the root
+[`CLAUDE.md`](CLAUDE.md) compatibility import. Ongoing work may be summarized in
+`HANDOFF.md`, with longer implementation plans under `docs/plans/`.
 
 ```powershell
 git clone https://github.com/Grunte12/memory-patch-harness.git
