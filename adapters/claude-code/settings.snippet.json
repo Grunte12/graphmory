@@ -1,0 +1,28 @@
+{
+  "_comment_readme": "This is a documentation snippet, not a full settings.json. `<CLAUDE_HOME>` means wherever you installed the harness and this adapter's agent/skill/script files, typically `%USERPROFILE%\\.claude` on Windows. `<path-to-your-vault>` is your Obsidian (or plain Markdown) memory vault. `<your-memory-scope>` is the relative folder inside that vault where this harness's notes live, e.g. `02 Projects\\Claude Code Memory`. Merge the `env` and `hooks` keys below into your existing `<CLAUDE_HOME>\\settings.json` -- do not overwrite the whole file, and remove this `_comment_readme` key before merging since real settings.json does not support comments. This single hook is optional: the adapter works with zero hooks if you only want the memory-curator skill/subagent and manual recall/handoff scripts.",
+  "env": {
+    "OBSIDIAN_VAULT": "<path-to-your-vault>",
+    "MEMORY_PATCH_HARNESS_HOME": "<CLAUDE_HOME>\\tools\\memory-patch-harness",
+    "MEMORY_PATCH_HARNESS_SCOPE": "<your-memory-scope>"
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "<CLAUDE_HOME>\\scripts\\brain-brief-hook.ps1"
+            ],
+            "timeout": 8
+          }
+        ]
+      }
+    ]
+  }
+}

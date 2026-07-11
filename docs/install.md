@@ -14,10 +14,14 @@ Memory Patch Harness is file-first. It installs a skill and gives you adapter sn
 git clone https://github.com/Grunte12/memory-patch-harness.git
 cd memory-patch-harness
 npm run check
-node scripts/install.mjs --target "$HOME/.config/opencode"
+node scripts/install.mjs --target "$HOME/.config/opencode" --vault "/path/to/YourBrain"
 ```
 
-The installer copies `skills/memory-curator/`, `src/` modules, and the `brain-sync.mjs` CLI binary (`bin/memory-patch-harness.mjs`). It does not edit `opencode.json`.
+The installer copies `skills/memory-curator/`, `src/` modules, the
+`brain-sync.mjs` CLI binary (`bin/memory-patch-harness.mjs`), and a global
+Markdown agent at `agents/memory_curator.md`. It does not edit `opencode.json`.
+The installed agent uses explicit permissions for the configured Brain and the
+installed CLI; it denies task spawning, web access, and arbitrary shell.
 
 To verify the CLI works after install:
 ```sh
@@ -28,8 +32,13 @@ memory-patch-harness.mjs doctor --json
 
 Use `--check` to preview what would change during an upgrade:
 ```sh
-node scripts/install.mjs --target "$HOME/.config/opencode" --check
+node scripts/install.mjs --target "$HOME/.config/opencode" --vault "/path/to/YourBrain" --check
 ```
+
+`--dry-run` prints the same file plan without writing. A normal rerun preserves
+existing differing files. `--upgrade` updates harness-managed files and an
+unchanged installer-managed curator. An unmanaged or locally modified curator
+is preserved even during `--upgrade`; replacing it requires explicit `--force`.
 
 ## Initialize A Project Memory Area
 
@@ -67,16 +76,22 @@ The memory repo should contain only curated Markdown memory and temporary inbox 
 
 ## OpenCode Adapter
 
-After the installer has copied the skill, CLI, and src modules to `<target>`, apply the adapter files under `adapters/opencode/` to your OpenCode runtime:
+After the installer has copied the skill, CLI, source modules, and wildcard
+curator to `<target>`, complete the lead-agent integration:
 
 1. **Merge `AGENTS.snippet.md` into your lead agent instructions.**
    Open `adapters/opencode/AGENTS.snippet.md` and insert its durable-memory rules into the main agent or orchestrator prompt. This gives the lead agent the memory protocol (auto-pull, Brain Briefs, Memory Patches, health checks, conflict assist, etc.).
 
-2. **Use `memory-curator-prompt.md` as the `memory_curator` sub-agent prompt.**
-   Set this file's full content as the prompt for your `memory_curator` sub-agent. It defines the three recall/synthesis/consolidation modes and the `APPLIED`/`TENSION`/`BLOCKED` return contract.
+2. **Review the installed `agents/memory_curator.md`.**
+   OpenCode discovers global Markdown agents under
+   `~/.config/opencode/agents/`; the installer renders this file from
+   `adapters/opencode/agents/memory_curator.md` with exact Brain and CLI paths.
+   It defines the recall/synthesis/consolidation modes and the
+   `APPLIED`/`TENSION`/`BLOCKED` return contract.
 
-3. **Use `opencode.agent.example.json` as a sub-agent configuration template.**
-   Copy the agent definition from this file and adjust the `prompt` field to paste the contents of `memory-curator-prompt.md`. The example grants `read`, `edit`, `glob`, `grep`, `list`, and `external_directory` permissions while denying `bash`, `task`, `webfetch`, and `websearch`.
+3. **Keep `opencode.agent.example.json` only as a legacy JSON example.**
+   New installs use the runtime-native Markdown agent and current `permission`
+   syntax. Do not mutate `opencode.json` merely to register the curator.
 
 4. **Add `<target>/bin/` to your `PATH`** so you can run `memory-patch-harness.mjs` from any directory without `node <target>/bin/...`.
 
@@ -94,11 +109,29 @@ Markdown / Obsidian -> canonical operational memory
 Derived Index / Hot Context Pack -> rebuildable views
 ```
 
-The installer intentionally does not edit `opencode.json` or any agent prompt. All adapter changes are manual review-and-apply steps so you control exactly what gets configured.
+The installer intentionally does not edit `opencode.json` or lead-agent
+instructions. It creates or safely upgrades only the dedicated Markdown curator
+file; merge `AGENTS.snippet.md` manually so project conventions remain yours.
+
+## Claude Code Adapter
+
+For [Claude Code](https://claude.com/claude-code), follow
+`adapters/claude-code/INSTALL.md` — it wires the harness into a skill, a
+curator subagent, and an optional recall hook instead of a single
+`AGENTS.md`-style prompt.
+
+## Codex Adapter
+
+For the OpenAI Codex CLI, follow `adapters/codex/INSTALL.md` — it merges a
+slim durable-memory-and-safety block into `~/.codex/AGENTS.md` (global)
+and/or the repo-root `AGENTS.md` (per-project), installs `memory-curator` as
+a native Codex skill, and invokes the harness CLI through Codex's shell tool.
+If Codex is running as a review lane inside another orchestrator, keep it
+read-only (`recall`/`health`/`lifecycle-audit` only).
 
 ## Any-Agent Adapter
 
-For coding agents that are not OpenCode, start with:
+For coding agents that are not OpenCode, Claude Code, or Codex, start with:
 
 - `AGENTS.md`
 - `adapters/generic-agent/INSTALL.md`

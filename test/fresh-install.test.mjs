@@ -54,14 +54,16 @@ test("agent package documents autonomy-first human gates", () => {
   assert.match(agents, /clearly reversible metadata\/link improvements/)
 })
 
-test("install.mjs copies skill, src, and CLI to target and CLI runs without a vault", { timeout: 30_000 }, () => {
+test("install.mjs copies OpenCode agent, skill, src, and CLI and the CLI runs", { timeout: 30_000 }, () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mph-installer-smoke-"))
   try {
     const installScript = path.resolve("scripts", "install.mjs")
     const target = path.join(tmp, "target")
+    const vault = path.join(tmp, "Brain")
+    fs.mkdirSync(vault, { recursive: true })
 
     // Run the installer
-    const install = spawnSync(process.execPath, [installScript, "--target", target, "--force"], {
+    const install = spawnSync(process.execPath, [installScript, "--target", target, "--vault", vault], {
       cwd: path.resolve("."),
       encoding: "utf8",
       shell: false,
@@ -71,6 +73,12 @@ test("install.mjs copies skill, src, and CLI to target and CLI runs without a va
     // Verify skill was copied
     const skillPath = path.join(target, "skills", "memory-curator", "SKILL.md")
     assert.ok(fs.existsSync(skillPath), "skills/memory-curator/SKILL.md should exist after install")
+    assert.equal(fs.existsSync(path.join(target, "skills", "brain-ingest")), false)
+    assert.equal(fs.existsSync(path.join(target, "skills", "brain-update")), false)
+
+    // Verify OpenCode discovers exactly one installed wildcard curator.
+    const agents = fs.readdirSync(path.join(target, "agents")).filter((file) => file.endsWith(".md"))
+    assert.deepEqual(agents, ["memory_curator.md"])
 
     // Verify src module was copied
     const srcPath = path.join(target, "src", "brain-sync.mjs")

@@ -49,10 +49,14 @@ If you are an AI coding agent installing this for a user, read [AGENTS.md](AGENT
 git clone https://github.com/Grunte12/memory-patch-harness.git
 cd memory-patch-harness
 npm test
-node scripts/install.mjs --target "$HOME/.config/opencode"
+node scripts/install.mjs --target "$HOME/.config/opencode" --vault "/path/to/YourBrain"
 ```
 
-The installer copies the `memory-curator` skill, the `src/` modules, and the `brain-sync.mjs` CLI to the target directory. It does not overwrite `opencode.json` or agent prompts. Review the generated instructions, then apply the files under `adapters/opencode/`.
+The installer copies the `memory-curator` skill, the `src/` modules, the
+`brain-sync.mjs` CLI, and one discoverable global OpenCode agent at
+`agents/memory_curator.md`. It does not edit `opencode.json`. Existing or
+locally modified curator agents are preserved unless you explicitly select the
+documented upgrade/force behavior.
 
 After installation, add the target's `bin/` directory to your `PATH` to run `memory-patch-harness.mjs` from anywhere. Try `node <target>/bin/memory-patch-harness.mjs doctor --json` to verify the CLI works.
 
@@ -151,6 +155,13 @@ node scripts/brain-sync.mjs conflict-assist --vault "C:\path\to\your\BrainVault"
 The command explains local-vs-remote memory changes, highlights same-note semantic conflicts, and returns structured `decisionOptions` such as `merge-compatible`, `prefer-local`, `prefer-remote`, `supersede-local`, `supersede-remote`, `create-tension`, and `blocked-needs-evidence`. Resolution still needs a human-approved lifecycle decision before any merge or rewrite.
 
 Existing Obsidian/custom memory is never restructured silently. The reviewed flow is `detect -> adoption-plan -> restructure-plan -> user approval -> dry-run -> apply -> verify`, with a clean-Git gate, local backup branch, exact migration record, and rollback support.
+
+## Adapters
+
+- [OpenCode](adapters/opencode/README.md): sub-agent + skill wiring for the OpenCode platform.
+- [Claude Code](adapters/claude-code/README.md): skill, curator subagent, and optional recall hook for Anthropic's Claude Code CLI.
+- [Codex](adapters/codex/README.md): `AGENTS.md` snippet plus a native curator skill for the OpenAI Codex CLI, including read-only reviewer mode.
+- [Generic Agent](adapters/generic-agent/README.md): filesystem-only pattern for any other coding agent.
 
 ## Guides
 

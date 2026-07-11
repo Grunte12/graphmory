@@ -1,174 +1,220 @@
 #!/usr/bin/env node
+import crypto from "node:crypto"
 import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import process from "node:process"
 import { fileURLToPath } from "node:url"
-import { spawnSync } from "node:child_process"
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(here, "..")
 const args = process.argv.slice(2)
 
-function option(name, fallback) {
+function option(name, fallback = null) {
   const index = args.indexOf(name)
-  return index >= 0 ? args[index + 1] : fallback
+  if (index < 0) return fallback
+  const value = args[index + 1]
+  if (!value || value.startsWith("--")) {
+    console.error(`${name} requires a value`)
+    process.exit(1)
+  }
+  return value
 }
 
 function flag(name) {
   return args.includes(name)
 }
 
-const targetRoot = path.resolve(option("--target", path.join(os.homedir(), ".config", "opencode")))
-const force = args.includes("--force")
-const dryRun = flag("--dry-run")
-
-// --- Read installed manifest if present ---
-const manifestPath = path.join(targetRoot, "skills", "memory-curator", ".install-manifest.json")
-let oldVersion = null
-if (fs.existsSync(manifestPath)) {
-  try {
-    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"))
-    oldVersion = manifest.version || null
-  } catch { /* ignore malformed */ }
+function slash(value) {
+  return value.replaceAll("\\", "/")
 }
 
-const ownVersion = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version
+function digest(content) {
+  return crypto.createHash("sha256").update(content).digest("hex")
+}
 
-// --- Warn on upgrade / downgrade ---
-if (oldVersion && oldVersion !== ownVersion) {
-  console.log(`Existing install: v${oldVersion}, repository: v${ownVersion}`)
-  if (!force) {
-    console.log("Run with --force to overwrite, or --upgrade to apply a safe migration.")
+function listFiles(directory) {
+  if (!fs.existsSync(directory)) return []
+  return fs.readdirSync(directory, { recursive: true, withFileTypes: true })
+    .filter((entry) => entry.isFile())
+    .map((entry) => path.join(entry.parentPath || entry.path, entry.name))
+}
+
+function renderAgent(template, values) {
+  let rendered = template
+  for (const [name, value] of Object.entries(values)) {
+    rendered = rendered.replaceAll(`{{${name}}}`, value)
   }
+  const unresolved = rendered.match(/\{\{[A-Z0-9_]+\}\}/gu)
+  if (unresolved) throw new Error(`Unresolved OpenCode agent placeholders: ${unresolved.join(", ")}`)
+  return rendered
 }
 
-// --- Upgrade mode: diff known config changes ---
-const upgradeMode = force || flag("--upgrade")
-if (oldVersion && !upgradeMode && !flag("--check")) {
-  console.error(`Existing install detected (v${oldVersion}) at ${targetRoot}`)
-  console.error("Use --upgrade to apply a safe migration, or --force to overwrite.")
-  console.error("Use --check to see what would change without installing.")
+const targetRoot = path.resolve(option("--target", path.join(os.homedir(), ".config", "opencode")))
+const vaultInput = option("--vault", process.env.OBSIDIAN_VAULT)
+if (!vaultInput) {
+  console.error("A configured Brain path is required. Pass --vault <path> or set OBSIDIAN_VAULT.")
   process.exit(1)
 }
+const vaultRoot = path.resolve(vaultInput)
+const runtime = option("--runtime", "opencode")
+if (!new Set(["opencode", "core"]).has(runtime)) {
+  console.error("--runtime must be opencode or core")
+  process.exit(1)
+}
+const force = flag("--force")
+const upgrade = flag("--upgrade")
+const check = flag("--check")
+const dryRun = flag("--dry-run")
+const replaceManagedFiles = force || upgrade
 
-// --- Check mode: diff what would change ---
-if (flag("--check")) {
-  const check = { version: ownVersion, installed: oldVersion, changes: [] }
-  const installedSkill = path.join(targetRoot, "skills", "memory-curator")
-  if (fs.existsSync(installedSkill)) {
-    const skillFiles = fs.readdirSync(path.join(root, "skills", "memory-curator"), { recursive: true })
-    for (const file of skillFiles) {
-      const repoFile = path.join(root, "skills", "memory-curator", file)
-      const targetFile = path.join(installedSkill, file)
-      if (!fs.existsSync(targetFile)) {
-        check.changes.push({ action: "add", file: `skills/memory-curator/${file}` })
-      } else if (
-        fs.statSync(repoFile).isFile() &&
-        fs.readFileSync(repoFile, "utf8") !== fs.readFileSync(targetFile, "utf8")
-      ) {
-        check.changes.push({ action: "update", file: `skills/memory-curator/${file}` })
-      }
-    }
-    for (const file of fs.readdirSync(installedSkill, { recursive: true })) {
-      if (!fs.existsSync(path.join(root, "skills", "memory-curator", file))) {
-        check.changes.push({ action: "remove", file: `skills/memory-curator/${file}` })
-      }
-    }
+const ownVersion = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version
+const manifestPath = path.join(targetRoot, "skills", "memory-curator", ".install-manifest.json")
+let oldManifest = null
+if (fs.existsSync(manifestPath)) {
+  try {
+    oldManifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"))
+  } catch {
+    oldManifest = null
   }
-  const srcDest = path.join(targetRoot, "src")
-  if (fs.existsSync(srcDest)) {
-    const srcFiles = fs.readdirSync(path.join(root, "src"), { recursive: true })
-    for (const file of srcFiles) {
-      const repoFile = path.join(root, "src", file)
-      const targetFile = path.join(srcDest, file)
-      if (!fs.existsSync(targetFile)) {
-        check.changes.push({ action: "add", file: `src/${file}` })
-      } else if (
-        fs.statSync(repoFile).isFile() &&
-        fs.readFileSync(repoFile, "utf8") !== fs.readFileSync(targetFile, "utf8")
-      ) {
-        check.changes.push({ action: "update", file: `src/${file}` })
-      }
-    }
-  } else {
-    check.changes.push({ action: "add", file: "src/ (directory)" })
-  }
-  const cliTarget = path.join(targetRoot, "bin", "memory-patch-harness.mjs")
-  if (!fs.existsSync(cliTarget)) {
-    check.changes.push({ action: "add", file: "bin/memory-patch-harness.mjs (CLI launcher)" }
+}
+
+const cliTarget = path.join(targetRoot, "bin", "memory-patch-harness.mjs")
+const agentTarget = path.join(targetRoot, "agents", "memory_curator.md")
+const normalizedVault = slash(vaultRoot)
+const normalizedTarget = slash(targetRoot)
+const normalizedCli = slash(cliTarget)
+const renderedAgent = runtime === "opencode"
+  ? renderAgent(
+      fs.readFileSync(path.join(root, "adapters", "opencode", "agents", "memory_curator.md"), "utf8"),
+      {
+        VAULT_GLOB_JSON: JSON.stringify(`${normalizedVault}/**`),
+        TARGET_GLOB_JSON: JSON.stringify(`${normalizedTarget}/**`),
+        CLI_COMMAND_GLOB_JSON: JSON.stringify(`node \"${normalizedCli}\" *`),
+        VAULT_PATH_JSON: JSON.stringify(normalizedVault),
+        CLI_PATH_JSON: JSON.stringify(normalizedCli),
+      },
     )
-  }
-  console.log(JSON.stringify(check, null, 2))
-  if (!check.changes.length) console.log("No changes needed.")
-  process.exit(0)
-}
+  : null
 
-// --- Copy skill ---
-const skillSource = path.join(root, "skills", "memory-curator")
-const skillDest = path.join(targetRoot, "skills", "memory-curator")
-if (fs.existsSync(skillDest)) {
-  if (!upgradeMode) {
-    console.error(`Refusing to overwrite ${skillDest}`)
-    console.error("Review the existing skill or rerun with --force.")
-    process.exit(1)
+const planned = []
+const fileOperations = []
+
+function planManagedFile(source, destination, display) {
+  const content = fs.readFileSync(source)
+  if (!fs.existsSync(destination)) {
+    planned.push({ action: "add", file: display })
+    fileOperations.push({ destination, content })
+    return
   }
-  if (dryRun) {
-    console.log(`[dry-run] would overwrite ${skillDest}`)
+  const installed = fs.readFileSync(destination)
+  if (installed.equals(content)) return
+  if (replaceManagedFiles) {
+    planned.push({ action: "update", file: display })
+    fileOperations.push({ destination, content })
   } else {
-    fs.rmSync(skillDest, { recursive: true, force: true })
+    planned.push({ action: "preserve", file: display, reason: "use --upgrade or --force to replace" })
   }
 }
-if (!dryRun) {
-  fs.mkdirSync(path.dirname(skillDest), { recursive: true })
-  fs.cpSync(skillSource, skillDest, { recursive: true, force: upgradeMode })
-  console.log(`Installed skill: ${skillDest}`)
+
+for (const source of listFiles(path.join(root, "skills", "memory-curator"))) {
+  const relative = path.relative(path.join(root, "skills", "memory-curator"), source)
+  planManagedFile(
+    source,
+    path.join(targetRoot, "skills", "memory-curator", relative),
+    slash(path.join("skills", "memory-curator", relative)),
+  )
 }
 
-// --- Copy src/ modules so the CLI can run ---
-const srcSource = path.join(root, "src")
-const srcDest = path.join(targetRoot, "src")
-if (!dryRun) {
-  fs.mkdirSync(srcDest, { recursive: true })
-  for (const entry of fs.readdirSync(srcSource, { recursive: true })) {
-    const sourceFile = path.join(srcSource, entry)
-    const targetFile = path.join(srcDest, entry)
-    if (!fs.statSync(sourceFile).isFile()) continue
-    fs.mkdirSync(path.dirname(targetFile), { recursive: true })
-    fs.cpSync(sourceFile, targetFile, { force: upgradeMode })
+for (const source of listFiles(path.join(root, "src"))) {
+  const relative = path.relative(path.join(root, "src"), source)
+  planManagedFile(source, path.join(targetRoot, "src", relative), slash(path.join("src", relative)))
+}
+
+planManagedFile(
+  path.join(root, "scripts", "brain-sync.mjs"),
+  cliTarget,
+  "bin/memory-patch-harness.mjs",
+)
+
+const existingAgent = runtime === "opencode" && fs.existsSync(agentTarget)
+  ? fs.readFileSync(agentTarget, "utf8")
+  : null
+const expectedManagedAgentHash = oldManifest?.agent?.sha256 || null
+const agentIsUnchangedManaged = existingAgent !== null && expectedManagedAgentHash === digest(existingAgent)
+let agentOperation = null
+
+if (runtime === "opencode" && existingAgent === null) {
+  planned.push({ action: "add", file: "agents/memory_curator.md" })
+  agentOperation = { destination: agentTarget, content: renderedAgent }
+} else if (runtime === "opencode" && existingAgent !== renderedAgent) {
+  if (force || (upgrade && agentIsUnchangedManaged)) {
+    planned.push({ action: "update", file: "agents/memory_curator.md" })
+    agentOperation = { destination: agentTarget, content: renderedAgent }
+  } else {
+    planned.push({
+      action: "preserve",
+      file: "agents/memory_curator.md",
+      reason: agentIsUnchangedManaged
+        ? "use --upgrade or --force to replace the managed agent"
+        : "existing agent is unmanaged or locally modified; use --force to replace",
+    })
   }
-  console.log(`Installed src modules: ${srcDest}`)
 }
 
-// --- Install CLI launcher ---
-const binDir = path.join(targetRoot, "bin")
-const cliSource = path.join(root, "scripts", "brain-sync.mjs")
-if (!dryRun) {
-  fs.mkdirSync(binDir, { recursive: true })
-  fs.cpSync(cliSource, path.join(binDir, "memory-patch-harness.mjs"), { force: upgradeMode })
-  console.log(`Installed CLI: ${path.join(binDir, "memory-patch-harness.mjs")}`)
+const report = {
+  version: ownVersion,
+  installed: oldManifest?.version || null,
+  runtime,
+  target: targetRoot,
+  vault: vaultRoot,
+  changes: planned,
 }
 
-// --- Write install manifest ---
-if (!dryRun) {
-  const manifest = {
-    version: ownVersion,
-    installedAt: new Date().toISOString(),
-    target: targetRoot,
-    components: ["skills/memory-curator", "src/", "bin/memory-patch-harness.mjs"],
-  }
-  fs.writeFileSync(path.join(skillDest, ".install-manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`)
-}
-
-if (dryRun) {
-  console.log(`[dry-run] installation skipped (use without --dry-run to apply)`)
+if (check || dryRun) {
+  console.log(JSON.stringify(report, null, 2))
+  if (dryRun) console.log("Dry run only; no files were changed.")
   process.exit(0)
 }
 
-console.log("")
-console.log("Manual OpenCode integration:")
-console.log(`1. Review ${path.join(root, "adapters", "opencode", "AGENTS.snippet.md")}`)
-console.log(`2. Review ${path.join(root, "adapters", "opencode", "memory-curator-prompt.md")}`)
-console.log(`3. Merge the example agent using only fields supported by your OpenCode version.`)
-console.log(`4. To run the CLI from anywhere, add ${binDir} to your PATH.`)
-console.log("The installer intentionally does not edit opencode.json.")
+for (const operation of fileOperations) {
+  fs.mkdirSync(path.dirname(operation.destination), { recursive: true })
+  fs.writeFileSync(operation.destination, operation.content)
+}
+if (agentOperation) {
+  fs.mkdirSync(path.dirname(agentOperation.destination), { recursive: true })
+  fs.writeFileSync(agentOperation.destination, agentOperation.content)
+}
+
+const installedAgentHash = runtime === "opencode" && fs.existsSync(agentTarget)
+  ? digest(fs.readFileSync(agentTarget, "utf8"))
+  : null
+const agentWasPreservedUnmanaged = existingAgent !== null && !agentOperation && !agentIsUnchangedManaged
+const manifest = {
+  version: ownVersion,
+  installedAt: new Date().toISOString(),
+  target: targetRoot,
+  vault: vaultRoot,
+  components: [
+    "skills/memory-curator",
+    "src/",
+    "bin/memory-patch-harness.mjs",
+    ...(runtime === "opencode" ? ["agents/memory_curator.md"] : []),
+  ],
+  agent: runtime === "opencode"
+    ? {
+        path: "agents/memory_curator.md",
+        sha256: agentWasPreservedUnmanaged ? expectedManagedAgentHash : installedAgentHash,
+      }
+    : null,
+}
+fs.mkdirSync(path.dirname(manifestPath), { recursive: true })
+fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`)
+
+for (const change of planned) {
+  const suffix = change.reason ? ` (${change.reason})` : ""
+  console.log(`${change.action}: ${path.join(targetRoot, change.file)}${suffix}`)
+}
+if (!planned.length) console.log("No managed file changes were needed.")
+if (runtime === "opencode") console.log(`Installed OpenCode wildcard curator: ${agentTarget}`)
+console.log("The installer did not modify opencode.json.")

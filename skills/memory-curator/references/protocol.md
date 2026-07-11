@@ -45,3 +45,26 @@ Return:
 - `watchouts`
 - `note_paths`
 - `direct_read_paths`: 0-3 exact paths
+- `intake_status`: bounded queue summary with counts, up to five metadata-only
+  candidate paths, secret-scan state, and recommended route (`none`,
+  `review-provisional-evidence`, or `blocked-secret-scan`)
+
+## Intake Sweep
+
+Every curator task owns a bounded intake check before canonical recall and
+before/after a consolidation attempt:
+
+```text
+intake-sweep --vault <vault> --scope <active-project-or-domain> --limit 5 --json
+```
+
+The sweep lists untrusted raw candidates from Inbox/Clippings and deliberately
+excludes archive, automation, and raw patch paths. It must not include raw body
+text in the Brain Brief. The curator names at most three task-relevant
+candidates as provisional evidence. It may inspect a raw body only when the
+lead explicitly names it as provenance. Only the lead may author a Memory Patch
+or Learning Packet, and raw evidence never becomes canonical by implication.
+
+Do not auto-move, auto-link, delete, promote, or mark raw evidence triaged.
+Health/lifecycle audits run after a meaningful intake or patch batch, not on
+every recall.
