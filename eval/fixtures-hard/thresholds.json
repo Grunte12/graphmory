@@ -1,0 +1,21 @@
+{
+  "_comment": "Placeholder thresholds. All values are null (gate disabled) until the lead sets real numbers from the first measured baseline. --gate becomes a no-op while every threshold below is null.",
+  "overall": {
+    "hitAtK": null,
+    "recallAtK": null,
+    "mrr": null,
+    "ndcgAtK": null
+  },
+  "categories": {
+    "decoy": null,
+    "paraphrase-zero-overlap": null,
+    "near-duplicate": null,
+    "scope-leakage": null,
+    "temporal": null,
+    "multilingual": null,
+    "multilingual-crosslingual": null,
+    "abstention": null,
+    "long-note": null
+  },
+  "abstentionAccuracy": null
+}

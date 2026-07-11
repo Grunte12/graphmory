@@ -81,6 +81,82 @@ Sources:
 - Mem0: https://arxiv.org/abs/2504.19413
 - Graphiti/Zep: https://arxiv.org/html/2501.13956v1
 
+## Agentic Retrieval Pipeline Evidence (2026-07)
+
+Evidence supporting the query-understanding -> planner ladder -> answer-composition -> ingestion pipeline documented in `agentic-rag-pipeline-design.md`.
+
+### Query understanding and corpus-internal expansion
+
+Adaptive-RAG routes retrieval strategy by a query-complexity classifier rather than always doing the same amount of work; this harness's cheap-first classification (script/lang detection, temporal/aggregation regex, vault-mined alias expansion before any semantic rung) follows the same adaptive-effort spirit with deterministic rules instead of a trained router. doc2query shows corpus-internal expansion (generating/matching terms drawn from the corpus itself) improves retrieval without hallucinating outside vocabulary, which is why this harness's alias expansion is mined from vault frontmatter rather than LLM-generated. The Elasticsearch ICU tokenizer documents dictionary-based segmentation as the standard fix for non-spaced scripts (Thai, CJK), which is the same problem this harness's `Intl.Segmenter`-based Thai tokenization solves.
+
+Sources:
+
+- Adaptive-RAG: https://arxiv.org/abs/2403.14403
+- doc2query: https://arxiv.org/abs/1904.08375
+- LLM-assisted PRF survey (RM3 lineage): https://arxiv.org/pdf/2601.11238
+- Elasticsearch ICU tokenizer: https://www.elastic.co/guide/en/elasticsearch/plugins/8.19/analysis-icu-tokenizer.html
+
+**Caution:** query expansion driven by an LLM (rather than the corpus itself) has been reported to fail for unfamiliar or ambiguous queries and can hurt worst-case topics even when it helps on average. This is direct evidence for this harness's conservative choice of corpus-internal, vault-mined expansion only, not LLM-generated expansion terms.
+
+Source: https://arxiv.org/abs/2505.12694
+
+### Planner ladder (staged retrieval effort, active/self-reflective retrieval)
+
+FLARE argues retrieval should be triggered only when the model's own confidence signals warrant it ("active" retrieval). Self-RAG trains reflection tokens to critique whether retrieval was needed and whether retrieved content was used correctly. Both are precedent for *adaptive effort* — spend more retrieval work only on queries that need it — not for their specific mechanism (LLM-judged reflection tokens or confidence scores), which this harness deliberately replaces with deterministic staged budgets (rung 1 lexical, rung 2 alias retry, rung 3+ reserved) so the ladder stays auditable and free of per-call model judgment. RRF gives a simple, well-established way to combine multiple ranked lists deterministically if/when the ladder adds a second retrieval method. BEIR's finding that BM25 is a strong, hard-to-beat zero-shot baseline across domains supports keeping BM25F as rung 1 rather than defaulting straight to a heavier method. Anthropic's Contextual Retrieval reports hybrid BM25+embeddings with contextual chunking cut failed retrievals by 49%, which is the direction a later semantic rung in this ladder would take.
+
+Sources:
+
+- FLARE: https://arxiv.org/abs/2305.06983
+- Self-RAG: https://arxiv.org/abs/2310.11511
+- CRAG: https://arxiv.org/abs/2401.15884 (also cited above)
+- Adaptive-RAG: https://arxiv.org/abs/2403.14403
+- RRF: https://dl.acm.org/doi/10.1145/1571941.1572114
+- BEIR: https://arxiv.org/abs/2104.08663
+- Anthropic Contextual Retrieval: https://www.anthropic.com/engineering/contextual-retrieval
+
+**Caution:** CRAG, Self-RAG, and FLARE all use LLM-judged loop control (a model scores its own confidence or critiques its own retrieval and decides whether to continue). This harness deliberately does not adopt that mechanism — it is cited here only as precedent that *adaptive effort itself* is a sound idea, not as endorsement of LLM-judged control loops, which this harness replaces with deterministic staged budgets (fixed rungs, fixed retry conditions, no per-call model judgment call in the retrieval loop).
+
+### Answer composition and attribution
+
+Attributed QA and the ALCE benchmark both treat citation/attribution as a first-class, separately measurable property of an answer, not a byproduct of retrieval. Atlas shows an 11B-parameter model with strong retrieval beats a 540B-parameter model without it on Natural Questions, supporting this harness's bet on small-model-plus-good-retrieval over model scale. REPLUG shows retrieval and generation can be tuned somewhat independently, supporting a pipeline that composes answers from a separately-scored retrieval stage rather than fusing the two into one opaque step.
+
+Sources:
+
+- Attributed QA: https://arxiv.org/abs/2212.08037
+- ALCE: https://arxiv.org/abs/2305.14627
+- Atlas: https://arxiv.org/abs/2208.03299
+- REPLUG: https://arxiv.org/abs/2301.12652
+
+### Abstention
+
+SQuAD 2.0 established that knowing when a question is unanswerable from the given context is a distinct, learnable skill, not a side effect of QA accuracy — this harness's separate abstention-accuracy metric (as opposed to folding abstention into Hit@k) follows that framing. Selective QA under domain shift finds that a single confidence signal does not cover every abstention case across distribution shift, which is evidence for this harness's multi-signal confidence bands (`bounded`/`low`/`none`) rather than one scalar threshold.
+
+Sources:
+
+- SQuAD 2.0: https://arxiv.org/abs/1806.03822
+- Selective QA under domain shift: https://arxiv.org/abs/2006.09462
+
+### Ingestion and memory lifecycle
+
+Mem0's extraction-plus-consolidation approach and MemGPT/Letta's tiered memory (working vs. archival) both inform this harness's separation of raw episodic notes from curated/consolidated semantic memory. Zep/Graphiti's temporal knowledge graph work is the precedent for tracking validity windows and supersession rather than treating memory as a flat, timeless store. Lilian Weng's autonomous-agents survey frames memory as one of several first-class agent subsystems (alongside planning and tool use), which is the framing this harness's ingestion pipeline follows.
+
+Sources:
+
+- Mem0: https://github.com/mem0ai/mem0
+- MemGPT/Letta: https://arxiv.org/abs/2310.08560
+- Zep/Graphiti: https://arxiv.org/abs/2501.13956
+- Lilian Weng, LLM Powered Autonomous Agents: https://lilianweng.github.io/posts/2023-06-23-agent/
+
+### Eval gates
+
+Hamel Husain's "Your AI Product Needs Evals" argues that systematic evals, not vibes, should gate changes to an LLM/retrieval pipeline — this harness's hard-fixtures gate (`eval/fixtures-hard`) with per-category floors follows that argument directly. RAGAS gives a concrete example of decomposing RAG quality into separately measurable metrics rather than one blended score, which this harness's per-category Hit@k/Recall@k/MRR/nDCG breakdown follows. BEIR is cited again here as precedent for evaluating retrieval across multiple distinct query distributions (this harness's decoy/paraphrase/near-duplicate/temporal/multilingual/long-note/abstention categories) rather than one aggregate number.
+
+Sources:
+
+- Hamel Husain, Your AI Product Needs Evals: https://hamel.dev/blog/posts/evals/
+- RAGAS: https://arxiv.org/abs/2309.15217
+- BEIR: https://arxiv.org/abs/2104.08663 (also cited above)
+
 ## Project-Specific Hypothesis
 
 The following combination is original to this harness and requires local evaluation:

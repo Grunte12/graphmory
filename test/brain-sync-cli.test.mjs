@@ -849,7 +849,10 @@ test("audit passes for a clean well-structured vault", () => {
   const vault = tempRoot("mph-audit-clean-")
   try {
     fs.mkdirSync(path.join(vault, "02 Projects"), { recursive: true })
-    fs.writeFileSync(path.join(vault, "02 Projects", "Note.md"), "---\nstatus: active\nprovenance: test\n---\n# Note\n\nClean content.")
+    fs.writeFileSync(path.join(vault, "02 Projects", "Note.md"), "\uFEFF---\nstatus: deployed\nprovenance: test\n---\n# Note\n\nClean content.")
+    const rawInbox = path.join(vault, "02 Projects", "Example", "inbox", "archive")
+    fs.mkdirSync(rawInbox, { recursive: true })
+    fs.writeFileSync(path.join(rawInbox, "Session.md"), "\uFEFF---\nstatus: active\n---\n# Session\n\nUnverified stale handoff.")
     const result = runCli(["audit", "--vault", vault, "--json"])
     assert.equal(result.status, 0)
     const report = JSON.parse(result.stdout)

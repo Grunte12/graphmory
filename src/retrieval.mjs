@@ -1,4 +1,30 @@
 const WORD = /[\p{L}\p{M}\p{N}_-]+/gu
+// Thai (and, by extension, other scripts without inter-word spaces) run range.
+// Kept as a small, named constant so extending to additional non-space-delimited
+// scripts later is a one-line change rather than new locale branching in tokenize().
+const NON_LATIN_SEGMENTABLE_RUN = /[฀-๿]/u
+let cachedThaiSegmenter
+
+// Intl.Segmenter construction is comparatively expensive, so the instance is
+// built once and reused for every non-Latin token across a process lifetime.
+function thaiSegmenter() {
+  if (!cachedThaiSegmenter) cachedThaiSegmenter = new Intl.Segmenter("th", { granularity: "word" })
+  return cachedThaiSegmenter
+}
+
+// Segments a single WORD-matched token that contains Thai script into its
+// constituent words. Thai (and CJK scripts generally) has no inter-word
+// spaces, so without this a whole Thai phrase indexes/queries as one giant
+// token and never matches anything. Non-word-like segments (whitespace,
+// punctuation remnants) are dropped.
+function segmentNonLatinRun(token) {
+  const segments = []
+  for (const { segment, isWordLike } of thaiSegmenter().segment(token)) {
+    if (isWordLike && segment) segments.push(segment)
+  }
+  return segments.length ? segments : [token]
+}
+
 const SECTION_CACHE = Symbol("memoryPatchHarness.sections")
 const FIELD_COUNTS_CACHE = Symbol("memoryPatchHarness.fieldCounts")
 const FREQUENCY_CACHE = new WeakMap()
@@ -14,6 +40,8 @@ export function tokenize(value) {
     .match(WORD)
     ?.filter((token) => token.length > 1) ?? []
   return tokens.flatMap((token) => {
+    // Latin path stays byte-identical to the pre-segmentation behavior.
+    if (NON_LATIN_SEGMENTABLE_RUN.test(token)) return segmentNonLatinRun(token)
     const parts = token.split(/[-_]/u).filter((part) => part.length > 1)
     return parts.length > 1 ? [token, ...parts] : [token]
   })
@@ -29,19 +57,20 @@ function retrievalTokens(value) {
 }
 
 export function parseMarkdown(id, markdown) {
-  const title = markdown.match(/^#\s+(.+)$/m)?.[1]?.trim() ?? id
-  const frontmatter = markdown.startsWith("---")
-    ? markdown.split("---", 3)[1] ?? ""
+  const source = markdown.startsWith("\uFEFF") ? markdown.slice(1) : markdown
+  const title = source.match(/^#\s+(.+)$/m)?.[1]?.trim() ?? id
+  const frontmatter = source.startsWith("---")
+    ? source.split("---", 3)[1] ?? ""
     : ""
   const metadata = parseFrontmatter(frontmatter)
   return {
     id,
     title,
     metadata,
-    text: `${id}\n${frontmatter}\n${markdown}`,
-    tokens: tokenize(`${id}\n${title}\n${frontmatter}\n${markdown}`),
-    characters: markdown.length,
-    markdown,
+    text: `${id}\n${frontmatter}\n${source}`,
+    tokens: tokenize(`${id}\n${title}\n${frontmatter}\n${source}`),
+    characters: source.length,
+    markdown: source,
   }
 }
 
@@ -77,13 +106,18 @@ function cleanScalar(value) {
   return String(value).trim().replace(/^['"]|['"]$/gu, "")
 }
 
-const EXCLUDED_LIFECYCLES = new Set(["raw", "stale", "superseded", "archived"])
+const EXCLUDED_LIFECYCLES = new Set(["raw", "inbox", "stale", "superseded", "archived"])
 
 export function isRetrievable(document, { includeNoncanonical = false } = {}) {
   const status = String(document.metadata?.status ?? document.metadata?.lifecycle ?? "current").toLowerCase()
   if (!includeNoncanonical && EXCLUDED_LIFECYCLES.has(status)) return false
   return true
 }
+
+// Below this share of top-candidate score mass, the top result no longer
+// stands out from the rest of the ranked set and is treated as incidental
+// overlap rather than a real answer (see governedRank confidence gate).
+const NONE_SHARE_FLOOR = 0.105
 
 export function governedRank(documents, query, method, options = {}) {
   const eligible = eligibleDocuments(documents, options)
@@ -94,7 +128,14 @@ export function governedRank(documents, query, method, options = {}) {
   const minimumResults = options.minimumResults ?? 1
   const topScore = results[0]?.score ?? 0
   const secondScore = results[1]?.score ?? 0
-  const confidence = topScore <= 0
+  // Diffuse, noisy candidate sets (many documents with similar incidental-overlap
+  // scores, none standing out) are the lexical signature of a query with no real
+  // answer in the corpus. `topShare` is scale-invariant (works across corpus
+  // sizes, unlike an absolute score floor) and catches those cases even when the
+  // top score is well above zero.
+  const totalScore = results.reduce((sum, item) => sum + Math.max(item.score, 0), 0)
+  const topShare = totalScore > 0 ? topScore / totalScore : 0
+  const confidence = topScore <= 0 || (results.length > 2 && topShare < NONE_SHARE_FLOOR)
     ? "none"
     : results.length < minimumResults || (secondScore > 0 && topScore / secondScore < 1.15)
       ? "low"
@@ -170,13 +211,25 @@ function documentReferenceIndex(documents) {
   const byId = new Map(documents.map((document) => [document.id, document]))
   const byReference = new Map()
   for (const document of documents) {
-    for (const reference of [document.id, document.title, document.id.replace(/\.md$/iu, ""), document.id.split("/").at(-1)?.replace(/\.md$/iu, "")]) {
+    for (const reference of [
+      document.id,
+      document.title,
+      document.id.replace(/\.md$/iu, ""),
+      document.id.split("/").at(-1)?.replace(/\.md$/iu, ""),
+      ...aliasList(document),
+    ]) {
       if (reference) byReference.set(normalizeReference(reference), document)
     }
   }
   const index = { byId, byReference }
   REFERENCE_INDEX_CACHE.set(documents, index)
   return index
+}
+
+function aliasList(document) {
+  const aliases = document.metadata?.aliases
+  if (!aliases) return []
+  return (Array.isArray(aliases) ? aliases : [aliases]).map((alias) => String(alias).trim()).filter(Boolean)
 }
 
 function normalizeReference(value) {
@@ -197,9 +250,14 @@ export function splitMarkdownSections(document) {
   function flush() {
     const content = body.join("\n").trim()
     if (!content) return
-    const metadata = Object.entries(document.metadata ?? {}).map(([key, value]) => `${key}: ${value}`).join("\n")
+    const metadataAll = Object.entries(document.metadata ?? {}).map(([key, value]) => `${key}: ${value}`).join("\n")
+    const metadataForField = Object.entries(document.metadata ?? {})
+      .filter(([key]) => key !== "aliases")
+      .map(([key, value]) => `${key}: ${value}`)
+      .join("\n")
+    const aliasText = aliasList(document).join("\n")
     const headingTrail = headingStack.map((item) => item.text).join(" > ")
-    const text = `${document.id}\n${document.title}\n${metadata}\n${headingTrail}\n${heading}\n${content}`
+    const text = `${document.id}\n${document.title}\n${metadataAll}\n${headingTrail}\n${heading}\n${content}`
     sections.push({
       id: document.id,
       chunkId: `${document.id}#${sections.length + 1}`,
@@ -211,7 +269,8 @@ export function splitMarkdownSections(document) {
       fields: {
         path: retrievalTokens(document.id),
         title: retrievalTokens(document.title),
-        metadata: retrievalTokens(metadata),
+        aliases: retrievalTokens(aliasText),
+        metadata: retrievalTokens(metadataForField),
         headings: retrievalTokens(headingTrail),
         body: retrievalTokens(content),
       },
@@ -330,6 +389,7 @@ function bm25Corpus(documents) {
 const DEFAULT_FIELD_WEIGHTS = Object.freeze({
   path: 1.5,
   title: 4,
+  aliases: 4,
   metadata: 3,
   headings: 2.5,
   body: 1,
@@ -389,11 +449,19 @@ function bm25fCorpus(documents) {
     document,
     counts: fieldCounts(document, fieldNames),
   }))
-  const averages = Object.fromEntries(fieldNames.map((field) => [
-    field,
-    documents.reduce((sum, document) => sum + (document.fields?.[field]?.length ?? 0), 0) /
-      Math.max(documents.length, 1),
-  ]))
+  const averages = Object.fromEntries(fieldNames.map((field) => {
+    // Average over documents where the field is populated, not the whole corpus.
+    // Sparse fields (e.g. aliases, present on only a few notes) would otherwise
+    // collapse to a near-zero corpus-wide average and get penalized by the
+    // length-normalization term instead of rewarded for an alias match.
+    const lengths = documents
+      .map((document) => document.fields?.[field]?.length ?? 0)
+      .filter((length) => length > 0)
+    const average = lengths.length
+      ? lengths.reduce((sum, length) => sum + length, 0) / lengths.length
+      : 0
+    return [field, average]
+  }))
   const tokenIndex = new Map()
   prepared.forEach(({ counts }, index) => {
     const tokens = new Set()

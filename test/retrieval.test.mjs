@@ -24,6 +24,26 @@ test("tokenizes words and compound identifiers", () => {
   assert.deepEqual(tokenize("Brain Brief and root-cause"), ["brain", "brief", "and", "root-cause", "root", "cause"])
 })
 
+test("Latin tokenization stays byte-identical alongside Thai segmentation support", () => {
+  assert.deepEqual(
+    tokenize("Root cause analysis for deploy_rollback failures"),
+    ["root", "cause", "analysis", "for", "deploy_rollback", "deploy", "rollback", "failures"],
+  )
+})
+
+test("segments a spaceless Thai phrase into multiple word tokens", () => {
+  const tokens = tokenize("พนักงานทำงานจากที่บ้านได้สัปดาห์ละกี่วัน")
+  assert.ok(tokens.length > 1, "Thai phrase should segment into more than one token")
+  assert.ok(tokens.includes("พนักงาน"))
+  assert.ok(tokens.includes("บ้าน"))
+})
+
+test("segments Thai text mixed with Latin words without disturbing the Latin tokens", () => {
+  const tokens = tokenize("password ต้องยาวอย่างน้อยกี่ตัวอักษรตามนโยบายความปลอดภัย")
+  assert.equal(tokens[0], "password")
+  assert.ok(tokens.length > 2, "Thai run should still segment into multiple tokens")
+})
+
 test("BM25F conservatively matches regular English plurals", () => {
   const note = parseMarkdown("quality.md", "# Option Quality Flag\n\nA crossed market is unreliable.")
   assert.equal(rank([note], "options quality flags", "bm25f-sections")[0].id, note.id)
@@ -103,17 +123,19 @@ test("section retrieval indexes Obsidian YAML list aliases", () => {
   assert.equal(rank([aliased], "finite attention budget", "bm25f-sections")[0].id, aliased.id)
 })
 
-test("governed retrieval excludes stale and raw memory", () => {
+test("governed retrieval excludes inbox, stale, and raw memory", () => {
   const current = parseMarkdown("current", "---\nstatus: current\naliases: shared brain\n---\n# Sync Policy\n\nUse reviewed fast-forward synchronization.")
   const stale = parseMarkdown("stale", "---\nstatus: stale\n---\n# Old Sync\n\nshared brain shared brain automatic merge")
   const raw = parseMarkdown("raw", "---\nstatus: raw\n---\n# Capture\n\nshared brain terminal dump")
+  const inbox = parseMarkdown("inbox", "\uFEFF---\nstatus: inbox\n---\n# Handoff\n\nshared brain unverified session summary")
 
   assert.equal(isRetrievable(current), true)
   assert.equal(isRetrievable(stale), false)
   assert.equal(isRetrievable(raw), false)
-  const result = governedRank([stale, raw, current], "shared brain", "bm25")
+  assert.equal(isRetrievable(inbox), false)
+  const result = governedRank([stale, raw, inbox, current], "shared brain", "bm25")
   assert.deepEqual(result.results.map((item) => item.id), ["current"])
-  assert.equal(result.excluded, 2)
+  assert.equal(result.excluded, 3)
 })
 
 test("governed retrieval follows one bounded wikilink hop", () => {

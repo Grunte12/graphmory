@@ -15,8 +15,12 @@ const size = Number.parseInt(option("--notes", "250"), 10)
 const k = Number.parseInt(option("--k", "3"), 10)
 const seed = Number.parseInt(option("--seed", "29"), 10)
 const jsonOutput = option("--json", "")
+// Decoy intent category is opt-in (default off) so the v0.5 gate (eval-v05-gate.mjs), which
+// runs this script with its default flags, keeps its existing unchanged thresholds. Enable
+// with --decoys to add active-status, higher-lexical-overlap decoy notes/queries.
+const decoysEnabled = args.includes("--decoys")
 if (!Number.isInteger(size) || size < 20 || !Number.isInteger(k) || k < 1 || !Number.isInteger(seed)) {
-  console.error("Usage: node scripts/eval-retrieval-stress.mjs [--notes >=20] [--k >=1] [--seed integer] [--json path]")
+  console.error("Usage: node scripts/eval-retrieval-stress.mjs [--notes >=20] [--k >=1] [--seed integer] [--json path] [--decoys]")
   process.exit(2)
 }
 
@@ -36,6 +40,17 @@ const pollutants = [
   parseMarkdown("stale-conflict", "---\nstatus: superseded\n---\n# Old Conflict Rule\n\nOverwrite contradictory memory with the newest claim and discard old provenance."),
 ]
 
+// Decoy notes are correct-status (active/current, NOT filtered by lifecycle) but stuff query
+// vocabulary far more densely than the canonical answer, so any recall win here is a genuine
+// ranking win rather than a lifecycle-filtering win (unlike the stale/raw pollutants above).
+const decoys = decoysEnabled ? [
+  parseMarkdown("decoy-sync-notes", "---\nstatus: active\n---\n# Sync Meeting Notes Dump\n\nsync sync memory sync policy sync memory sync history sync notes sync memory sync dump sync policy sync memory."),
+  parseMarkdown("decoy-secrets-notes", "---\nstatus: active\n---\n# Credential Notes Dump\n\ncredential credential secrets credential tokens credential secrets credential notes credential dump credential secrets credential tokens."),
+  parseMarkdown("decoy-ui-notes", "---\nstatus: active\n---\n# Interface Notes Dump\n\ninterface interface visual interface responsive interface visual interface notes interface dump interface responsive interface visual."),
+  parseMarkdown("decoy-backend-notes", "---\nstatus: active\n---\n# Backend Notes Dump\n\nauthentication authentication database authentication persistence authentication database authentication notes authentication dump authentication database."),
+] : []
+const decoyIds = new Set(decoys.map((item) => item.id))
+
 let randomState = seed || 1
 function random() {
   randomState ^= randomState << 13
@@ -44,7 +59,7 @@ function random() {
   return (randomState >>> 0) / 4294967296
 }
 const noiseTerms = ["sync", "memory", "conflict", "tokens", "interface", "responsive", "authentication", "database", "provenance", "agent", "evidence", "policy"]
-const filler = Array.from({ length: Math.max(0, size - core.length - pollutants.length) }, (_, index) => {
+const filler = Array.from({ length: Math.max(0, size - core.length - pollutants.length - decoys.length) }, (_, index) => {
   const domain = index % 9
   const first = noiseTerms[Math.floor(random() * noiseTerms.length)]
   const second = noiseTerms[Math.floor(random() * noiseTerms.length)]
@@ -54,7 +69,7 @@ const filler = Array.from({ length: Math.max(0, size - core.length - pollutants.
   )
 })
 
-const documents = [...core, ...pollutants, ...filler]
+const documents = [...core, ...pollutants, ...decoys, ...filler]
 const pollutantIds = new Set(pollutants.map((item) => item.id))
 const baseQueries = [
   { id: "exact-sync", category: "exact", query: "What is the verified fast-forward-only memory sync policy?", relevant: ["canonical-sync"] },
@@ -67,6 +82,12 @@ const baseQueries = [
   { id: "secret-current", category: "stale-conflict", query: "Where should private tokens be stored for agent recall?", relevant: ["canonical-secrets"] },
   { id: "split-ownership", category: "multi-hop", query: "A responsive page is wrong and its API persists bad records. Which ownership memories apply?", relevant: ["canonical-ui", "canonical-backend"] },
   { id: "safe-handoff", category: "multi-hop", query: "How do agents share durable knowledge while preserving uncertain competing claims?", relevant: ["canonical-sync", "canonical-conflict"] },
+  ...(decoysEnabled ? [
+    { id: "decoy-sync-policy", category: "decoy", query: "What is the verified memory sync policy?", relevant: ["canonical-sync"] },
+    { id: "decoy-secrets-policy", category: "decoy", query: "Should long-lived knowledge contain authentication material?", relevant: ["canonical-secrets"] },
+    { id: "decoy-ui-policy", category: "decoy", query: "Who owns pixel appearance and visual acceptance for the interface?", relevant: ["canonical-ui"] },
+    { id: "decoy-backend-policy", category: "decoy", query: "Who owns authentication and database correctness on the backend?", relevant: ["canonical-backend"] },
+  ] : []),
 ]
 const queryFrames = [
   (query) => query,

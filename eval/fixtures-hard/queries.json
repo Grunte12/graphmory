@@ -1,0 +1,291 @@
+[
+  {
+    "id": "decoy-deploy-rollback",
+    "category": "decoy",
+    "query": "What is the deployment rollback policy?",
+    "relevant": ["atlas-deploy-rollback"]
+  },
+  {
+    "id": "decoy-oncall-escalation",
+    "category": "decoy",
+    "query": "Describe the on-call escalation path for incident response.",
+    "relevant": ["atlas-oncall-escalation"]
+  },
+  {
+    "id": "decoy-migration-approval",
+    "category": "decoy",
+    "query": "Who approves a database migration before merge?",
+    "relevant": ["atlas-migration-approval"]
+  },
+  {
+    "id": "decoy-flag-naming",
+    "category": "decoy",
+    "query": "What naming convention applies to feature flags?",
+    "relevant": ["atlas-flag-naming"]
+  },
+  {
+    "id": "decoy-flag-naming-v2",
+    "category": "decoy",
+    "query": "Which document governs how feature flags are named?",
+    "relevant": ["atlas-flag-naming"]
+  },
+  {
+    "id": "paraphrase-latency-pure",
+    "category": "paraphrase-zero-overlap",
+    "query": "How swiftly does the system have to answer a call before it is considered sluggish?",
+    "relevant": ["quasar-latency-budget"]
+  },
+  {
+    "id": "paraphrase-latency-alias",
+    "category": "paraphrase-zero-overlap",
+    "query": "What is the performance guardrail here?",
+    "relevant": ["quasar-latency-budget"]
+  },
+  {
+    "id": "paraphrase-retry-pure",
+    "category": "paraphrase-zero-overlap",
+    "query": "How many extra tries does a broken outgoing connection get prior to giving up for good?",
+    "relevant": ["quasar-retry-limit"]
+  },
+  {
+    "id": "paraphrase-cache-pure",
+    "category": "paraphrase-zero-overlap",
+    "query": "How long does a saved copy stay valid before it must be looked up fresh again?",
+    "relevant": ["quasar-cache-ttl"]
+  },
+  {
+    "id": "paraphrase-cache-alias",
+    "category": "paraphrase-zero-overlap",
+    "query": "What is the freshness window here?",
+    "relevant": ["quasar-cache-ttl"]
+  },
+  {
+    "id": "paraphrase-quota-alias",
+    "category": "paraphrase-zero-overlap",
+    "query": "When does the allowance refill happen?",
+    "relevant": ["quasar-quota-reset"]
+  },
+  {
+    "id": "near-duplicate-review-turnaround",
+    "category": "near-duplicate",
+    "query": "What is the standard code review turnaround time?",
+    "relevant": ["orion-review-turnaround"]
+  },
+  {
+    "id": "near-duplicate-review-turnaround-v2",
+    "category": "near-duplicate",
+    "query": "When must a pull request receive its first review response?",
+    "relevant": ["orion-review-turnaround"]
+  },
+  {
+    "id": "near-duplicate-postmortem-timing",
+    "category": "near-duplicate",
+    "query": "How soon must a Sev1 postmortem be published?",
+    "relevant": ["orion-postmortem-timing"]
+  },
+  {
+    "id": "near-duplicate-api-versioning",
+    "category": "near-duplicate",
+    "query": "How are breaking changes handled in API versioning?",
+    "relevant": ["orion-api-versioning"]
+  },
+  {
+    "id": "near-duplicate-secrets-rotation",
+    "category": "near-duplicate",
+    "query": "How often should production secrets be rotated?",
+    "relevant": ["orion-secrets-rotation"]
+  },
+  {
+    "id": "scope-leakage-nimbus-deploy",
+    "category": "scope-leakage",
+    "query": "When can Nimbus deploy to production?",
+    "scope": "nimbus",
+    "relevant": ["nimbus-deploy-window"]
+  },
+  {
+    "id": "scope-leakage-vertex-deploy",
+    "category": "scope-leakage",
+    "query": "What is Vertex's deployment window?",
+    "scope": "vertex",
+    "relevant": ["vertex-deploy-window"]
+  },
+  {
+    "id": "scope-leakage-vertex-oncall",
+    "category": "scope-leakage",
+    "query": "How long is a Vertex on-call rotation?",
+    "scope": "vertex",
+    "relevant": ["vertex-oncall-rotation"]
+  },
+  {
+    "id": "scope-leakage-vertex-budget",
+    "category": "scope-leakage",
+    "query": "What purchase amount requires approval at Vertex?",
+    "scope": "vertex",
+    "relevant": ["vertex-budget-threshold"]
+  },
+  {
+    "id": "scope-leakage-nimbus-support",
+    "category": "scope-leakage",
+    "query": "What is Nimbus's support response SLA for priority-one tickets?",
+    "scope": "nimbus",
+    "relevant": ["nimbus-support-sla"]
+  },
+  {
+    "id": "temporal-ratelimit",
+    "category": "temporal",
+    "query": "What is the current API rate limit?",
+    "relevant": ["orion-ratelimit-current"]
+  },
+  {
+    "id": "temporal-node-version",
+    "category": "temporal",
+    "query": "Which Node.js version is currently supported?",
+    "relevant": ["orion-node-version-current"]
+  },
+  {
+    "id": "temporal-node-version-v2",
+    "category": "temporal",
+    "query": "As of now, which Node runtime does CI test against?",
+    "relevant": ["orion-node-version-current"]
+  },
+  {
+    "id": "temporal-database-engine",
+    "category": "temporal",
+    "query": "What database engine is currently used as the primary datastore?",
+    "relevant": ["orion-database-engine-current"]
+  },
+  {
+    "id": "temporal-pricing-tiers",
+    "category": "temporal",
+    "query": "What are the current pricing tier names?",
+    "relevant": ["orion-pricing-tiers-current"]
+  },
+  {
+    "id": "multilingual-remote-work-th",
+    "category": "multilingual",
+    "query": "พนักงานทำงานจากที่บ้านได้สัปดาห์ละกี่วัน",
+    "relevant": ["globex-remote-work-policy"]
+  },
+  {
+    "id": "multilingual-expense-th",
+    "category": "multilingual",
+    "query": "ต้องส่งใบเสร็จเพื่อเบิกค่าใช้จ่ายภายในกี่วัน",
+    "relevant": ["globex-expense-reimbursement"]
+  },
+  {
+    "id": "multilingual-password-mixed",
+    "category": "multilingual",
+    "query": "password ต้องยาวอย่างน้อยกี่ตัวอักษรตามนโยบายความปลอดภัย",
+    "relevant": ["globex-password-policy"]
+  },
+  {
+    "id": "multilingual-parental-mixed",
+    "category": "multilingual",
+    "query": "parental leave มีให้กี่สัปดาห์สำหรับพนักงานประจำ",
+    "relevant": ["globex-parental-leave"]
+  },
+  {
+    "id": "multilingual-password-th",
+    "category": "multilingual",
+    "query": "ต้องเปลี่ยนรหัสผ่านทุกกี่วัน",
+    "relevant": ["globex-password-policy"]
+  },
+  {
+    "id": "multilingual-parental-th",
+    "category": "multilingual",
+    "query": "พนักงานที่เพิ่งมีลูกได้ลาแบบรับเงินเดือนกี่สัปดาห์",
+    "relevant": ["globex-parental-leave"]
+  },
+  {
+    "id": "multilingual-remote-work-mixed",
+    "category": "multilingual",
+    "query": "ทำงาน remote ได้กี่วันต่อสัปดาห์ก่อนต้องเข้า office",
+    "relevant": ["globex-remote-work-policy"]
+  },
+  {
+    "id": "crosslingual-vuln-ack-th",
+    "category": "multilingual-crosslingual",
+    "query": "ต้องรอกี่วันกว่าจะได้รับการตอบรับหลังแจ้งช่องโหว่ด้านความปลอดภัย",
+    "relevant": ["helix-security-handbook"],
+    "_comment": "Documented gap: no Thai vocabulary anywhere in this note or its aliases. Pure-Thai query against an English-only note is cross-lingual retrieval, which no lexical method (BM25F, alias expansion) can pass; kept separate from the bilingual-aliased multilingual category to avoid conflating the two. See eval/fixtures-hard/README.md."
+  },
+  {
+    "id": "crosslingual-retry-th",
+    "category": "multilingual-crosslingual",
+    "query": "ระบบพยายามส่งคำขออีกกี่ครั้งก่อนที่จะยอมแพ้",
+    "relevant": ["quasar-retry-limit"],
+    "_comment": "Documented gap: this note's aliases are English-only (\"second chance count\", \"do-over cap\"), no Thai. Same documented cross-lingual gap as crosslingual-vuln-ack-th."
+  },
+  {
+    "id": "abstention-contractor-leave",
+    "category": "abstention",
+    "query": "What is the maternity leave policy for contractors?",
+    "relevant": []
+  },
+  {
+    "id": "abstention-retry-backoff",
+    "category": "abstention",
+    "query": "What is the retry backoff strategy for failed background jobs?",
+    "relevant": []
+  },
+  {
+    "id": "abstention-vacation-days",
+    "category": "abstention",
+    "query": "How many vacation days do employees accrue per year?",
+    "relevant": []
+  },
+  {
+    "id": "abstention-laptop-upgrade",
+    "category": "abstention",
+    "query": "What is the process for requesting a company laptop upgrade?",
+    "relevant": []
+  },
+  {
+    "id": "abstention-encryption-algorithm",
+    "category": "abstention",
+    "query": "What encryption algorithm is used for data at rest?",
+    "relevant": []
+  },
+  {
+    "id": "abstention-oncall-pay",
+    "category": "abstention",
+    "query": "How is on-call compensation calculated in dollars?",
+    "relevant": []
+  },
+  {
+    "id": "long-note-backup-retention",
+    "category": "long-note",
+    "query": "How long are Helix database backups retained?",
+    "relevant": ["helix-platform-runbook"]
+  },
+  {
+    "id": "long-note-backup-time",
+    "category": "long-note",
+    "query": "What time does the nightly backup run?",
+    "relevant": ["helix-platform-runbook"]
+  },
+  {
+    "id": "long-note-refund-days",
+    "category": "long-note",
+    "query": "How many business days does a Helix refund take to appear?",
+    "relevant": ["helix-billing-runbook"]
+  },
+  {
+    "id": "long-note-refund-cap",
+    "category": "long-note",
+    "query": "Is there a cap on the refund amount?",
+    "relevant": ["helix-billing-runbook"]
+  },
+  {
+    "id": "long-note-vuln-ack",
+    "category": "long-note",
+    "query": "How quickly does Helix acknowledge a reported security vulnerability?",
+    "relevant": ["helix-security-handbook"]
+  },
+  {
+    "id": "long-note-bounty-timing",
+    "category": "long-note",
+    "query": "When is a bug bounty paid after a fix ships?",
+    "relevant": ["helix-security-handbook"]
+  }
+]

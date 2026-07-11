@@ -624,7 +624,7 @@ export function analyzeVaultHealth(root, { fsApi = defaultFs, inboxWarningThresh
       })
     }
 
-    if (/(stale|superseded|tension|blocked)/iu.test(note.text) && !/(revalidate|valid_until|supersedes|replacement)/iu.test(note.text)) {
+    if (isCanonicalMemory(note.path) && /(stale|superseded|tension|blocked)/iu.test(note.text) && !/(revalidate|valid_until|supersedes|replacement)/iu.test(note.text)) {
       findings.push({
         severity: "warning",
         kind: "stale-without-revalidation",
@@ -634,7 +634,7 @@ export function analyzeVaultHealth(root, { fsApi = defaultFs, inboxWarningThresh
       })
     }
 
-    if (!note.path.toLowerCase().startsWith("00 inbox/") && /clipping|raw capture|transcript/iu.test(note.path)) {
+    if (!isInboxMemory(note.path) && /clipping|raw capture|transcript/iu.test(note.path)) {
       findings.push({
         severity: "warning",
         kind: "raw-capture-outside-inbox",
@@ -669,7 +669,7 @@ export function analyzeVaultHealth(root, { fsApi = defaultFs, inboxWarningThresh
     }
   }
 
-  const inboxCount = notes.filter((note) => note.path.toLowerCase().startsWith("00 inbox/")).length
+  const inboxCount = notes.filter((note) => isInboxMemory(note.path)).length
   if (inboxCount > inboxWarningThreshold) {
     findings.push({
       severity: "warning",
@@ -721,7 +721,12 @@ export function auditVaultSchema(root, { fsApi = defaultFs, maxFiles = 5000 } = 
   const findings = []
 
   // Controlled value sets from contracts
-  const VALID_STATUSES = new Set(["active", "superseded", "tension", "deprecated", "current", "applied", "stale", "archived", "raw", "unknown"])
+  const VALID_STATUSES = new Set([
+    "raw", "inbox", "triaged", "processed",
+    "active", "current", "stable", "proposed", "blocked",
+    "complete", "resolved", "deployed", "applied",
+    "tension", "stale", "superseded", "deprecated", "archived", "unknown",
+  ])
   const VALID_PATCH_TYPES = new Set(["decision", "root-cause", "workflow", "preference", "source-map", "tension"])
   const VALID_PROVENANCE_TYPES = new Set(["user-statement", "file", "command", "artifact", "url"])
   const VALID_CATEGORIES = new Set(["policy", "preference", "workflow", "routing", "gotcha", "stale-warning", "open-question"])
@@ -782,7 +787,7 @@ export function auditVaultSchema(root, { fsApi = defaultFs, maxFiles = 5000 } = 
     }
 
     // Raw clipping outside inbox
-    if (!note.path.toLowerCase().startsWith("00 inbox/") && /clipping|raw[_-]?capture|transcript|dump/iu.test(note.path)) {
+    if (!isInboxMemory(note.path) && /clipping|raw[_-]?capture|transcript|dump/iu.test(note.path)) {
       findings.push({
         severity: "warning",
         kind: "raw-clipping-outside-inbox",
@@ -794,7 +799,7 @@ export function auditVaultSchema(root, { fsApi = defaultFs, maxFiles = 5000 } = 
 
     // Stale/superseded lifecycle mismatch: status says stale/superseded but content doesn't indicate it
     const status = (meta.status || meta.lifecycle || "unknown").toString().toLowerCase()
-    if (["stale", "superseded", "deprecated", "archived"].includes(status)) {
+    if (isCanonicalMemory(note.path) && ["stale", "superseded", "deprecated", "archived"].includes(status)) {
       const hasStaleContent = /\b(stale|superseded|deprecated|no longer valid|replaced by)\b/iu.test(note.text)
       if (!hasStaleContent) {
         findings.push({
@@ -913,7 +918,7 @@ export function lintVaultMemory(root, { fsApi = defaultFs, maxFiles = 5000 } = {
     }
 
     // Stale lifecycle triggers (stale-without-revalidation)
-    if (/(stale|superseded|tension|blocked)/iu.test(note.text) && !/(revalidate|valid_until|supersedes|replacement)/iu.test(note.text)) {
+    if (isCanonicalMemory(note.path) && /(stale|superseded|tension|blocked)/iu.test(note.text) && !/(revalidate|valid_until|supersedes|replacement)/iu.test(note.text)) {
       findings.push({
         severity: "warning",
         kind: "stale-without-revalidation",
@@ -996,10 +1001,11 @@ function notePathsSet(notes) {
  */
 function extractFrontmatter(text) {
   const result = {}
-  if (!text.startsWith("---")) return result
-  const end = text.indexOf("---", 3)
+  const source = text.startsWith("\uFEFF") ? text.slice(1) : text
+  if (!source.startsWith("---")) return result
+  const end = source.indexOf("---", 3)
   if (end === -1) return result
-  const block = text.slice(3, end).trim()
+  const block = source.slice(3, end).trim()
   for (const line of block.split(/\r?\n/u)) {
     const match = line.match(/^(\w[\w_-]*)\s*:\s*(.+)$/u)
     if (match) {
@@ -1342,12 +1348,21 @@ export function createNoteLinkResolver(notes) {
   }
 }
 
+const NONCANONICAL_PATH_SEGMENTS = new Set(["00 inbox", "inbox", "clippings", "archive", "auto-triggers", "memory-patches", "99 templates"])
+
+function memoryPathSegments(file) {
+  return file.replaceAll("\\", "/").toLowerCase().split("/")
+}
+
+function isInboxMemory(file) {
+  return memoryPathSegments(file).some((segment) => segment === "00 inbox" || segment === "inbox")
+}
+
 function isCanonicalMemory(file) {
-  const lowered = file.toLowerCase()
-  return lowered.endsWith(".md") &&
-    !lowered.startsWith("00 inbox/") &&
-    !lowered.startsWith("99 templates/") &&
-    !lowered.endsWith("readme.md")
+  const segments = memoryPathSegments(file)
+  return segments.at(-1)?.endsWith(".md") &&
+    !segments.some((segment) => NONCANONICAL_PATH_SEGMENTS.has(segment)) &&
+    !segments.at(-1)?.endsWith("readme.md")
 }
 
 function hasProvenance(text) {

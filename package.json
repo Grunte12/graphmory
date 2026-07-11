@@ -58,6 +58,7 @@
     "validate:examples": "node scripts/validate.mjs examples/memory-patch.json && node scripts/validate.mjs examples/brain-brief.json && node scripts/validate.mjs examples/derived-index.json && node scripts/validate.mjs examples/hot-context-pack.json && node scripts/validate.mjs examples/learning-packet.json",
     "eval:retrieval": "node scripts/eval-retrieval.mjs",
     "eval:retrieval:stress": "node scripts/eval-retrieval-stress.mjs",
+    "eval:retrieval:hard": "node scripts/eval-retrieval-hard.mjs",
     "eval:retrieval:semantic": "node scripts/eval-semantic-retrieval.mjs",
     "eval:v05-gate": "node scripts/eval-v05-gate.mjs",
     "eval:lifecycle": "node scripts/eval-lifecycle-audit.mjs",

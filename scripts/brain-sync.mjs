@@ -27,6 +27,7 @@ import { recallVault, recallVaultLoop } from "../src/memory-recall.mjs"
 import { recallVaultSemantic } from "../src/semantic-recall.mjs"
 import { buildCurationRecommendations, renderCurationRecommendations } from "../src/curation-recommendations.mjs"
 import { auditMemoryLifecycle } from "../src/memory-lifecycle-audit.mjs"
+import { buildIntakeSweep } from "../src/intake-sweep.mjs"
 import { writeFileAtomic, writeJsonAtomic } from "../src/atomic-write.mjs"
 
 const args = process.argv.slice(2)
@@ -51,12 +52,13 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs detect --vault <path> [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs doctor [--vault <path>] [--json] [--require-github]\n`)
   out.write(`  node scripts/brain-sync.mjs health --vault <path> [--json] [--out <file>]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--rerank] [--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--rerank] [--escalate auto] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-loop --vault <path> --query <text> [--scope <path>] [--k 3] [--rerank] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs lifecycle-audit --vault <path> [--json] [--out <file>]\n`)
+  out.write(`  node scripts/brain-sync.mjs intake-sweep --vault <path> [--scope <path>] [--limit 5] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs init --vault <path> --repo <owner/repo> [--create-remote]\n`)
   out.write(`  node scripts/brain-sync.mjs status --vault <path>\n`)
   out.write(`  node scripts/brain-sync.mjs sync-plan --vault <path> [--patches <count>] [--session-end] [--handoff] [--high-risk] [--json]\n`)
@@ -484,24 +486,30 @@ function health() {
   if (!report.ok) process.exitCode = 1
 }
 
-function recall() {
+async function recall() {
   const vault = requireVault()
   const query = requiredOption("--query")
   const method = option("--method", "bm25f-sections")
   const k = Number.parseInt(option("--k", "3"), 10)
-  const report = recallVault(vault, query, {
+  const report = await recallVault(vault, query, {
     method,
     k,
     includeNoncanonical: flag("--include-noncanonical"),
     includeRawPaths: flag("--include-raw-paths"),
     scope: option("--scope", ""),
     rerank: flag("--rerank"),
+    escalate: option("--escalate", "off"),
   })
   if (flag("--json")) {
     console.log(JSON.stringify(report, null, 2))
     return
   }
-  console.log(`Memory recall: ${report.confidence} confidence; ${report.results.length} result(s)${report.reranked ? " (reranked)" : ""}`)
+  const escalationLabel = report.escalated
+    ? ` (escalated: ${report.escalationMethod})`
+    : report.escalationSkipped
+      ? ` (escalation skipped: ${report.escalationSkipped})`
+      : ""
+  console.log(`Memory recall: ${report.confidence} confidence; ${report.results.length} result(s)${report.reranked ? " (reranked)" : ""}${escalationLabel}`)
   for (const result of report.results) {
     const signals = result.rerankApplied && result.rerankSignals
       ? ` [focus=${result.rerankSignals.sectionFocus} headings=${result.rerankSignals.headingMatches} boost=${result.rerankSignals.boost}]`
@@ -739,6 +747,29 @@ function lifecycleAudit() {
   if (report.summary.high > 0 || report.summary.medium > 0) process.exitCode = 1
 }
 
+function intakeSweep() {
+  const vault = requireVault()
+  const limit = Number.parseInt(option("--limit", "5"), 10)
+  const maxFiles = Number.parseInt(option("--max-files", "5000"), 10)
+  if (!Number.isInteger(maxFiles) || maxFiles < 1) throw new Error("--max-files must be a positive integer")
+  const report = buildIntakeSweep(vault, {
+    scope: option("--scope", ""),
+    limit,
+    maxFiles,
+  })
+  if (flag("--json")) {
+    console.log(JSON.stringify(report, null, 2))
+  } else {
+    console.log(`Intake sweep: ${report.summary.pending} pending candidate(s); ${report.summary.excludedArchiveOrAutomation} archive/automation item(s) excluded.`)
+    for (const candidate of report.candidates) {
+      console.log(`- [${candidate.kind}] ${candidate.path}${candidate.secretLike ? " (secret-like; do not ingest)" : ""}`)
+    }
+    if (report.omittedCandidates > 0) console.log(`- ${report.omittedCandidates} additional candidate(s) omitted by --limit`)
+    console.log(`Next: ${report.recommendedAction}`)
+  }
+  if (report.recommendedAction === "blocked-secret-scan") process.exitCode = 1
+}
+
 function audit() {
   const vault = requireVault()
   const json = flag("--json")
@@ -884,12 +915,12 @@ function renderLifecycleAuditMarkdown(report) {
   return `${lines.join("\n")}\n`
 }
 
-function recallRerank() {
+async function recallRerank() {
   const vault = requireVault()
   const query = requiredOption("--query")
   const method = option("--method", "bm25f-sections")
   const k = Number.parseInt(option("--k", "3"), 10)
-  const report = recallVault(vault, query, {
+  const report = await recallVault(vault, query, {
     method,
     k,
     includeNoncanonical: flag("--include-noncanonical"),
@@ -1686,12 +1717,13 @@ try {
   else if (command === "detect") detect()
   else if (command === "doctor") doctor()
   else if (command === "health") health()
-  else if (command === "recall") recall()
+  else if (command === "recall") await recall()
   else if (command === "recall-loop") recallLoop()
-  else if (command === "recall-rerank") recallRerank()
+  else if (command === "recall-rerank") await recallRerank()
   else if (command === "recall-semantic") await recallSemantic()
   else if (command === "curation-recommend") curationRecommend()
   else if (command === "lifecycle-audit") lifecycleAudit()
+  else if (command === "intake-sweep") intakeSweep()
   else if (command === "init") init()
   else if (command === "status") status()
   else if (command === "sync-plan") syncPlan()

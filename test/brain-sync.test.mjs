@@ -40,6 +40,20 @@ test("raw vault roots are marked noncanonical when deliberately included", () =>
   assert.equal(documents[0].metadata.status, "raw")
 })
 
+test("nested inbox and archive paths are excluded by default and raw when included", () => {
+  const vault = tempRoot()
+  const nested = path.join(vault, "02 Projects", "Example", "inbox", "auto-triggers", "archive")
+  fs.mkdirSync(nested, { recursive: true })
+  fs.writeFileSync(
+    path.join(nested, "Session.md"),
+    "\uFEFF---\nstatus: active\n---\n# Session\nUnverified raw handoff.",
+  )
+
+  assert.deepEqual(loadVaultDocuments(vault), [])
+  const documents = loadVaultDocuments(vault, { includeRawPaths: true })
+  assert.equal(documents[0].metadata.status, "raw")
+})
+
 test("rejects repository names without an owner", () => {
   assert.equal(normalizeRepoName("my-brain"), null)
 })

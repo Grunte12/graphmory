@@ -1,9 +1,17 @@
 import fs from "node:fs"
 import path from "node:path"
 import { governedRank, parseMarkdown, sectionFocusRerank } from "./retrieval.mjs"
+import { analyzeQuery, buildAliasMap } from "./query-understanding.mjs"
 
 const SKIP_DIRECTORIES = new Set([".git", ".obsidian", ".memory-patch-harness", "node_modules"])
-const RAW_ROOTS = new Set(["00 inbox", "clippings"])
+const RAW_DIRECTORIES = new Set(["00 inbox", "inbox", "clippings", "archive", "auto-triggers", "memory-patches"])
+
+function isRawPath(relative) {
+  return relative
+    .replaceAll("\\", "/")
+    .split("/")
+    .some((segment) => RAW_DIRECTORIES.has(segment.toLowerCase()))
+}
 
 export function loadVaultDocuments(vault, { includeRawPaths = false, maxFiles = 5000 } = {}) {
   const root = path.resolve(vault)
@@ -17,7 +25,7 @@ export function loadVaultDocuments(vault, { includeRawPaths = false, maxFiles = 
       if (entry.isDirectory()) {
         if (SKIP_DIRECTORIES.has(entry.name)) continue
         const relative = path.relative(root, path.join(directory, entry.name)).replaceAll("\\", "/")
-        if (!includeRawPaths && RAW_ROOTS.has(relative.split("/")[0].toLowerCase())) continue
+        if (!includeRawPaths && isRawPath(relative)) continue
         stack.push(path.join(directory, entry.name))
         continue
       }
@@ -25,8 +33,8 @@ export function loadVaultDocuments(vault, { includeRawPaths = false, maxFiles = 
       const file = path.join(directory, entry.name)
       const relative = path.relative(root, file).replaceAll("\\", "/")
       const document = parseMarkdown(relative, fs.readFileSync(file, "utf8"))
-      if (RAW_ROOTS.has(relative.split("/")[0].toLowerCase())) {
-        document.metadata = { ...document.metadata, status: document.metadata.status ?? "raw" }
+      if (isRawPath(relative)) {
+        document.metadata = { ...document.metadata, status: "raw" }
       }
       documents.push(document)
       if (documents.length >= maxFiles) break
@@ -35,7 +43,7 @@ export function loadVaultDocuments(vault, { includeRawPaths = false, maxFiles = 
   return documents.sort((a, b) => a.id.localeCompare(b.id))
 }
 
-export function recallVault(vault, query, {
+export async function recallVault(vault, query, {
   method = "bm25f-sections",
   k = 3,
   includeNoncanonical = false,
@@ -43,17 +51,37 @@ export function recallVault(vault, query, {
   maxFiles = 5000,
   scope = "",
   rerank = false,
+  escalate = "off",
 } = {}) {
   if (!query?.trim()) throw new Error("query is required")
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be between 1 and 10")
   if (!Number.isInteger(maxFiles) || maxFiles < 1) throw new Error("maxFiles must be positive")
   const documents = filterByScope(loadVaultDocuments(vault, { includeRawPaths, maxFiles }), scope)
-  const retrieval = governedRank(documents, query, method, { includeNoncanonical })
+  const analysis = analyzeQuery(query, { aliasMap: buildAliasMap(documents) })
+
+  let retrieval = governedRank(documents, query, method, { includeNoncanonical })
+  let retrievalRung = 1
+  let expansionsUsed = []
+
+  // Rung 2: one cheap alias-expanded retry before semantic escalation. Only
+  // taken when rung 1 is not already bounded, and only kept when it reaches
+  // "bounded" confidence itself (otherwise rung 1's result stays authoritative
+  // so escalation still sees the same signal it saw before this rung existed).
+  if ((retrieval.confidence === "low" || retrieval.confidence === "none") && analysis.variants.length) {
+    const retryQuery = analysis.variants[0]
+    const retry = governedRank(documents, retryQuery, method, { includeNoncanonical })
+    if (retry.confidence === "bounded") {
+      retrieval = retry
+      retrievalRung = 2
+      expansionsUsed = analysis.expansions.map((expansion) => expansion.term)
+    }
+  }
+
   let results = retrieval.results
   if (rerank) {
     results = sectionFocusRerank(results, query, documents)
   }
-  return {
+  const report = {
     query,
     method,
     k,
@@ -64,6 +92,11 @@ export function recallVault(vault, query, {
     needsExpansion: retrieval.needsExpansion,
     nextSteps: retrieval.nextSteps,
     reranked: rerank,
+    escalated: false,
+    escalationMethod: null,
+    escalationSkipped: null,
+    queryAnalysis: { lang: analysis.lang, classes: analysis.classes, expansionsUsed },
+    retrievalRung,
     results: results.slice(0, k).map((item) => ({
       path: item.id,
       title: item.title,
@@ -71,6 +104,38 @@ export function recallVault(vault, query, {
       status: item.metadata?.status ?? item.metadata?.lifecycle ?? "current",
       ...(item.rerankApplied !== undefined ? { rerankApplied: item.rerankApplied, rerankSignals: item.rerankSignals } : {}),
     })),
+  }
+
+  if (escalate === "auto" && (retrieval.confidence === "low" || retrieval.confidence === "none")) {
+    return escalateWithSemanticRecall(report, vault, query, { k, scope, includeNoncanonical, includeRawPaths, maxFiles })
+  }
+  return report
+}
+
+// Confidence-gated semantic escalation (opt-in via --escalate auto). Fails closed:
+// when the optional @huggingface/transformers dependency is not installed,
+// recallVaultSemantic throws an OPTIONAL_DEPENDENCY_MISSING error which is caught
+// here and degrades to the original lexical-only report with no crash.
+async function escalateWithSemanticRecall(report, vault, query, options) {
+  try {
+    const { recallVaultSemantic } = await import("./semantic-recall.mjs")
+    const semantic = await recallVaultSemantic(vault, query, options)
+    return {
+      ...report,
+      confidence: semantic.confidence,
+      needsExpansion: semantic.needsExpansion,
+      nextSteps: semantic.nextSteps,
+      escalated: true,
+      escalationMethod: "semantic-hybrid",
+      escalationSkipped: null,
+      retrievalRung: "semantic",
+      results: semantic.results,
+    }
+  } catch (error) {
+    if (/OPTIONAL_DEPENDENCY_MISSING/u.test(error?.message ?? "")) {
+      return { ...report, escalated: false, escalationMethod: null, escalationSkipped: "OPTIONAL_DEPENDENCY_MISSING" }
+    }
+    throw error
   }
 }
 
