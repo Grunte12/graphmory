@@ -1,8 +1,18 @@
 # eval/fixtures-hard
 
 Hard retrieval regression fixtures for `scripts/eval-retrieval-hard.mjs`. See
-`queries.json` for query cases and `thresholds.json` for the (currently
-disabled, all-null) gate thresholds.
+`queries.json` for query cases and `thresholds.json` for frozen regression
+floors. Run `npm run eval:retrieval:hard:gate` to enforce them.
+
+The gate separates ranking from answerability. `abstentionAccuracy` measures
+correct refusal on the six unanswerable cases, while
+`answerableAcceptanceAccuracy` penalizes false refusal on answerable cases.
+`selectiveAccuracy` is stricter: an answerable case counts only when it is both
+accepted and retrieved in the top `k`; an unanswerable case counts only when it
+is refused. This prevents an "abstain on everything" policy from looking good.
+Each JSON run also records the lexical confidence signals and thresholds used
+for its decision, so future calibration can inspect score share and top/second
+separation without reverse-engineering the ranking output.
 
 ## Multilingual category split (2026-07)
 

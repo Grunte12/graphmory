@@ -4,6 +4,7 @@ import path from "node:path"
 import process from "node:process"
 import { filterByScope } from "../src/memory-recall.mjs"
 import { governedRank, parseMarkdown, scoreRun, scoreRunGroups, summarizeRuns } from "../src/retrieval.mjs"
+import { summarizeSelectiveRetrieval } from "../src/retrieval-evaluation.mjs"
 import { analyzeQuery, buildAliasMap } from "../src/query-understanding.mjs"
 
 const args = process.argv.slice(2)
@@ -89,14 +90,15 @@ for (const item of queries) {
     }
   }
   const results = retrieval.results
+  const abstained = retrieval.confidence === "none" || results.length === 0
 
   if (isAbstention) {
-    const abstained = retrieval.confidence === "none" || results.length === 0
     abstentionRuns.push({
       id: item.id,
       category: item.category,
       query: item.query,
       confidence: retrieval.confidence,
+      confidenceSignals: retrieval.confidenceSignals,
       retrievalRung,
       retrieved: results.slice(0, k).map((result) => result.id),
       abstained,
@@ -115,6 +117,8 @@ for (const item of queries) {
     relevant: item.relevant ?? item.relevant_groups,
     goldMode: hasGroups ? "groups" : "flat",
     confidence: retrieval.confidence,
+    confidenceSignals: retrieval.confidenceSignals,
+    abstained,
     retrievalRung,
     queryAnalysis: { lang: analysis.lang, classes: analysis.classes },
     retrieved: results.slice(0, k).map((result) => ({ id: result.id, score: Number(result.score.toFixed(4)) })),
@@ -122,9 +126,8 @@ for (const item of queries) {
   })
 }
 
-const abstentionAccuracy = abstentionRuns.length
-  ? abstentionRuns.filter((run) => run.abstained).length / abstentionRuns.length
-  : 1
+const answerability = summarizeSelectiveRetrieval(scoredRuns, abstentionRuns)
+const abstentionAccuracy = answerability.abstentionAccuracy
 
 const categories = [...new Set(queries.map((item) => item.category))]
 const categorySummaries = {}
@@ -154,6 +157,7 @@ const report = {
   abstentionQueries: abstentionRuns.length,
   overall: overallSummary,
   abstentionAccuracy,
+  answerability,
   categories: categorySummaries,
   misses,
   abstentionFailures,
@@ -165,6 +169,7 @@ const percent = (value) => `${(value * 100).toFixed(1)}%`
 console.log(`Hard eval: ${report.documents} notes, ${report.queries} queries (${report.scoredQueries} scored, ${report.abstentionQueries} abstention), method=${METHOD_LABEL}, k=${k}`)
 console.log("")
 console.log(`Overall: Hit@${k} ${percent(overallSummary.hitAtK)} | Recall@${k} ${percent(overallSummary.recallAtK)} | MRR ${overallSummary.mrr.toFixed(3)} | nDCG@${k} ${overallSummary.ndcgAtK.toFixed(3)} | Abstention accuracy ${percent(abstentionAccuracy)}`)
+console.log(`Selective: answerable acceptance ${percent(answerability.answerableAcceptanceAccuracy)} | answerability decisions ${percent(answerability.answerabilityDecisionAccuracy)} | joint retrieval/abstention ${percent(answerability.selectiveAccuracy)}`)
 console.log("")
 console.log("| Category | Queries | Hit@k | Recall@k | MRR | nDCG@k |")
 console.log("|---|---:|---:|---:|---:|---:|")
@@ -212,6 +217,10 @@ if (gateEnabled) {
   }
   if (thresholds.abstentionAccuracy !== null && thresholds.abstentionAccuracy !== undefined) {
     checks.push([`abstentionAccuracy >= ${thresholds.abstentionAccuracy}`, abstentionAccuracy >= thresholds.abstentionAccuracy])
+  }
+  for (const [metric, threshold] of Object.entries(thresholds.answerability ?? {})) {
+    if (threshold === null || threshold === undefined) continue
+    checks.push([`answerability ${metric} >= ${threshold}`, answerability[metric] >= threshold])
   }
 
   console.log("")

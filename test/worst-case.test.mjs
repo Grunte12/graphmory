@@ -43,6 +43,10 @@ test("alias collisions produce low confidence instead of false certainty", () =>
   const result = governedRank([first, second], "shared policy", "bm25f-sections", { followLinks: false })
   assert.equal(result.confidence, "low")
   assert.equal(result.needsExpansion, true)
+  assert.equal(result.confidenceSignals.candidateCount, 2)
+  assert.equal(result.confidenceSignals.topSecondRatio, 1)
+  assert.equal(result.confidenceSignals.thresholds.noneShareFloor, 0.105)
+  assert.equal(result.confidenceSignals.thresholds.lowTopSecondRatioFloor, 1.15)
 })
 
 test("atomic write preserves the original file and cleans temporary output on failure", () => {

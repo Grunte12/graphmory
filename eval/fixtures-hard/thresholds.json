@@ -1,21 +1,26 @@
 {
-  "_comment": "Placeholder thresholds. All values are null (gate disabled) until the lead sets real numbers from the first measured baseline. --gate becomes a no-op while every threshold below is null.",
+  "_comment": "Frozen regression floors derived from the 2026-07-11 governed BM25F baseline. These prevent measured quality from silently regressing; they are not production capability targets.",
   "overall": {
-    "hitAtK": null,
-    "recallAtK": null,
-    "mrr": null,
-    "ndcgAtK": null
+    "hitAtK": 0.87,
+    "recallAtK": 0.87,
+    "mrr": 0.81,
+    "ndcgAtK": 0.83
   },
   "categories": {
-    "decoy": null,
-    "paraphrase-zero-overlap": null,
-    "near-duplicate": null,
-    "scope-leakage": null,
-    "temporal": null,
-    "multilingual": null,
+    "decoy": 1.0,
+    "paraphrase-zero-overlap": 0.5,
+    "near-duplicate": 1.0,
+    "scope-leakage": 1.0,
+    "temporal": 1.0,
+    "multilingual": 1.0,
     "multilingual-crosslingual": null,
-    "abstention": null,
-    "long-note": null
+    "abstention": 0.33,
+    "long-note": 1.0
   },
-  "abstentionAccuracy": null
+  "abstentionAccuracy": 0.33,
+  "answerability": {
+    "answerableAcceptanceAccuracy": 1.0,
+    "answerabilityDecisionAccuracy": 0.91,
+    "selectiveAccuracy": 0.80
+  }
 }

@@ -118,6 +118,7 @@ export function isRetrievable(document, { includeNoncanonical = false } = {}) {
 // stands out from the rest of the ranked set and is treated as incidental
 // overlap rather than a real answer (see governedRank confidence gate).
 const NONE_SHARE_FLOOR = 0.105
+const LOW_TOP_SECOND_RATIO_FLOOR = 1.15
 
 export function governedRank(documents, query, method, options = {}) {
   const eligible = eligibleDocuments(documents, options)
@@ -135,14 +136,26 @@ export function governedRank(documents, query, method, options = {}) {
   // top score is well above zero.
   const totalScore = results.reduce((sum, item) => sum + Math.max(item.score, 0), 0)
   const topShare = totalScore > 0 ? topScore / totalScore : 0
+  const topSecondRatio = secondScore > 0 ? topScore / secondScore : null
   const confidence = topScore <= 0 || (results.length > 2 && topShare < NONE_SHARE_FLOOR)
     ? "none"
-    : results.length < minimumResults || (secondScore > 0 && topScore / secondScore < 1.15)
+    : results.length < minimumResults || (topSecondRatio !== null && topSecondRatio < LOW_TOP_SECOND_RATIO_FLOOR)
       ? "low"
       : "bounded"
   return {
     results,
     confidence,
+    confidenceSignals: {
+      candidateCount: results.length,
+      topScore,
+      secondScore,
+      topSecondRatio,
+      topShare,
+      thresholds: {
+        noneShareFloor: NONE_SHARE_FLOOR,
+        lowTopSecondRatioFloor: LOW_TOP_SECOND_RATIO_FLOOR,
+      },
+    },
     needsExpansion: confidence !== "bounded",
     excluded: documents.length - eligible.length,
     nextSteps: confidence === "bounded"

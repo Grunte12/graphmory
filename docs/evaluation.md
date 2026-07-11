@@ -30,6 +30,32 @@ Interpretation:
 
 Decision: keep BM25 as an evaluation baseline. Do not make it the production default until a larger real-vault dataset shows a meaningful gain.
 
+### Hard Retrieval Regression Gate
+
+Run `npm run eval:retrieval:hard:gate` to enforce the frozen difficult-query
+baseline. The gate covers decoys, zero-overlap paraphrases, near duplicates,
+scope leakage, temporal updates, Thai retrieval, true cross-language gaps,
+unanswerable questions, and long notes. It is also part of `npm run eval` and
+therefore `npm run check`.
+
+The 2026-07-11 governed BM25F baseline is Hit@3 87.8%, MRR 0.819, and
+abstention accuracy 33.3%. Ranking and refusal are evaluated jointly:
+
+- `answerableAcceptanceAccuracy` is 100.0% and detects false refusals on
+  answerable cases.
+- `answerabilityDecisionAccuracy` is 91.5% across answerable and unanswerable
+  cases.
+- `selectiveAccuracy` is 80.9%; an answerable case counts only when accepted
+  and retrieved in the top three, while an unanswerable case counts only when
+  refused.
+
+This prevents an always-abstain policy from gaming the refusal metric. JSON
+reports include candidate count, top score, second score, top/second ratio,
+top-score share, and the active lexical thresholds for calibration. The frozen
+floors are regression guards, not claims of production readiness; the
+cross-language category remains measured but ungated until a non-lexical lane
+is evaluated.
+
 ### Stress Baseline
 
 Run `npm run eval:retrieval:stress` to evaluate a larger generated vault containing canonical notes, stale guidance, raw captures, and unrelated distractors. Unlike the original scale benchmark, this diagnostic measures retrieval quality and contamination as well as speed:
