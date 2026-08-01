@@ -1287,7 +1287,7 @@ test("curation-apply safely no-ops on standard curation output with no auto-appl
       }],
     }, null, 2)}\n`)
 
-    const result = runCli(["curation-apply", "--plan", planFile, "--approve"])
+    const result = runCli(["curation-apply", "--vault", root, "--plan", planFile, "--approve"])
     assert.equal(result.status, 0, result.stderr)
     assert.match(result.stdout, /No auto-applicable candidates found/)
   } finally {
@@ -1321,7 +1321,7 @@ test("curation-apply applies alias-patch-candidate when flags are set", () => {
         retrieved: [],
         patchCandidates: [{
           type: "alias-patch-candidate",
-          target: path.join(vault, "Memory", "Policy.md"),
+          target: "Memory/Policy.md",
           proposed: { addAliases: ["rule", "guideline"] },
           autoApplicable: true,
           requiresHumanReview: false,
@@ -1334,7 +1334,7 @@ test("curation-apply applies alias-patch-candidate when flags are set", () => {
     const before = fs.readFileSync(path.join(vault, "Memory", "Policy.md"), "utf8")
     assert.equal(before.includes("aliases:"), false)
 
-    const result = runCli(["curation-apply", "--plan", planFile, "--approve"])
+    const result = runCli(["curation-apply", "--vault", vault, "--plan", planFile, "--approve"])
     assert.equal(result.status, 0, result.stderr)
     assert.match(result.stdout, /Applied alias-patch/)
 
@@ -1364,7 +1364,7 @@ test("curation-apply adds frontmatter when target file has none", () => {
         query: "test", expected: ["Memory/Note.md"], retrieved: [],
         patchCandidates: [{
           type: "alias-patch-candidate",
-          target: path.join(vault, "Memory", "Note.md"),
+          target: "Memory/Note.md",
           proposed: { addAliases: ["alternate-name"] },
           autoApplicable: true, requiresHumanReview: false, approved: true,
           evidence: { query: "test" },
@@ -1372,7 +1372,7 @@ test("curation-apply adds frontmatter when target file has none", () => {
       }],
     }, null, 2)}\n`)
 
-    const result = runCli(["curation-apply", "--plan", planFile, "--approve"])
+    const result = runCli(["curation-apply", "--vault", vault, "--plan", planFile, "--approve"])
     assert.equal(result.status, 0, result.stderr)
     assert.match(result.stdout, /added frontmatter with aliases/)
 
@@ -1403,7 +1403,7 @@ test("curation-apply handles CRLF frontmatter without duplicating it", () => {
         query: "policy rule", expected: ["Memory/Policy.md"], retrieved: [],
         patchCandidates: [{
           type: "alias-patch-candidate",
-          target: path.join(vault, "Memory", "Policy.md"),
+          target: "Memory/Policy.md",
           proposed: { addAliases: ["rule"] },
           autoApplicable: true, requiresHumanReview: false, approved: true,
           evidence: { query: "policy rule" },
@@ -1414,7 +1414,7 @@ test("curation-apply handles CRLF frontmatter without duplicating it", () => {
     const before = fs.readFileSync(path.join(vault, "Memory", "Policy.md"), "utf8")
     assert.ok(before.startsWith("---\r\n"), "fixture uses CRLF")
 
-    const result = runCli(["curation-apply", "--plan", planFile, "--approve"])
+    const result = runCli(["curation-apply", "--vault", vault, "--plan", planFile, "--approve"])
     assert.equal(result.status, 0, result.stderr)
     assert.match(result.stdout, /Applied alias-patch/)
 
@@ -1432,6 +1432,79 @@ test("curation-apply handles CRLF frontmatter without duplicating it", () => {
     assert.match(after, /status: active/)
     // All content after frontmatter preserved
     assert.match(after, /# Policy/)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("curation-apply rejects a target that escapes the vault root", () => {
+  const root = tempRoot("mph-cura-escape-")
+  try {
+    const vault = path.join(root, "vault")
+    fs.mkdirSync(path.join(vault, "Memory"), { recursive: true })
+    const outsideFile = path.join(root, "outside.md")
+    fs.writeFileSync(outsideFile, "# Outside\n\nContent.\n")
+
+    const planFile = path.join(root, "plan.json")
+    fs.writeFileSync(planFile, `${JSON.stringify({
+      role: "curation-plan", canonical_memory: false, schema_version: "1.0",
+      method: "governed-bm25f-sections", totalRuns: 1, misses: 1,
+      recommendations: [{
+        id: "escape-test", category: "routing", kind: "no-candidates",
+        severity: "high", scope: "Memory",
+        query: "test", expected: ["Memory/Note.md"], retrieved: [],
+        patchCandidates: [{
+          type: "alias-patch-candidate",
+          target: "../outside.md",
+          proposed: { addAliases: ["escape"] },
+          autoApplicable: true, requiresHumanReview: false, approved: true,
+          evidence: { query: "test" },
+        }],
+      }],
+    }, null, 2)}\n`)
+
+    const result = runCli(["curation-apply", "--vault", vault, "--plan", planFile, "--approve"])
+    assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /Skipped alias-patch: unsafe target/)
+
+    const after = fs.readFileSync(outsideFile, "utf8")
+    assert.equal(after, "# Outside\n\nContent.\n", "file outside the vault must be untouched")
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("curation-apply rejects an absolute path target", () => {
+  const root = tempRoot("mph-cura-abs-")
+  try {
+    const vault = path.join(root, "vault")
+    fs.mkdirSync(path.join(vault, "Memory"), { recursive: true })
+    fs.writeFileSync(path.join(vault, "Memory", "Policy.md"), "---\nstatus: active\n---\n# Policy\n\nContent.\n")
+
+    const planFile = path.join(root, "plan.json")
+    fs.writeFileSync(planFile, `${JSON.stringify({
+      role: "curation-plan", canonical_memory: false, schema_version: "1.0",
+      method: "governed-bm25f-sections", totalRuns: 1, misses: 1,
+      recommendations: [{
+        id: "abs-test", category: "routing", kind: "no-candidates",
+        severity: "high", scope: "Memory",
+        query: "test", expected: ["Memory/Policy.md"], retrieved: [],
+        patchCandidates: [{
+          type: "alias-patch-candidate",
+          target: path.join(vault, "Memory", "Policy.md"),
+          proposed: { addAliases: ["absolute"] },
+          autoApplicable: true, requiresHumanReview: false, approved: true,
+          evidence: { query: "test" },
+        }],
+      }],
+    }, null, 2)}\n`)
+
+    const result = runCli(["curation-apply", "--vault", vault, "--plan", planFile, "--approve"])
+    assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /Skipped alias-patch: unsafe target/)
+
+    const after = fs.readFileSync(path.join(vault, "Memory", "Policy.md"), "utf8")
+    assert.equal(after.includes("aliases:"), false, "absolute-path target must not be applied")
   } finally {
     fs.rmSync(root, { recursive: true, force: true })
   }

@@ -1081,7 +1081,7 @@ function joinPath(...parts) {
   return parts.join("/").replace(/\/+/g, "/")
 }
 
-function safeMigrationPath(value, label) {
+export function safeMigrationPath(value, label) {
   if (typeof value !== "string" || value.trim() === "") throw new Error(`${label} is required`)
   if (path.isAbsolute(value) || value.includes("\0")) throw new Error(`${label} must be a safe relative path`)
   const normalized = path.posix.normalize(value.replaceAll("\\", "/"))
@@ -1100,7 +1100,7 @@ function samePath(left, right) {
   return process.platform === "win32" ? a.toLowerCase() === b.toLowerCase() : a === b
 }
 
-function assertRealPathInsideVault(fsApi, vault, candidate, label) {
+export function assertRealPathInsideVault(fsApi, vault, candidate, label) {
   if (typeof fsApi.realpathSync !== "function") return
   const rootReal = fsApi.realpathSync(path.resolve(vault))
   let existing = path.resolve(candidate)

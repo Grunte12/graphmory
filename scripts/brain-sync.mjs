@@ -7,6 +7,7 @@ import process from "node:process"
 import {
   analyzeVaultHealth,
   applyRestructureManifest,
+  assertRealPathInsideVault,
   assertSafeToBootstrap,
   auditVaultSchema,
   buildAdoptionPlan,
@@ -19,6 +20,7 @@ import {
   makeSyncConfig,
   renderAdoptionPlanMarkdown,
   rollbackRestructureRecord,
+  safeMigrationPath,
   scanTextForSecrets,
   validateRestructureManifest,
   verifyRestructureRecord,
@@ -73,7 +75,7 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs restructure-rollback --vault <path> --record <file> --approve\n`)
   out.write(`  node scripts/brain-sync.mjs conflict-plan --conflict-report <file> --out <file>\n`)
   out.write(`  node scripts/brain-sync.mjs conflict-apply --vault <path> --plan <file> --approve\n`)
-  out.write(`  node scripts/brain-sync.mjs curation-apply --plan <file> --approve\n\n`)
+  out.write(`  node scripts/brain-sync.mjs curation-apply --vault <path> --plan <file> --approve\n\n`)
   out.write(`Defaults: private GitHub repo, branch main, no public repo creation unless --allow-public is present.\n`)
   out.write(`Agent flow: detect -> ask user when adoption is required -> bootstrap -> status.\n`)
   out.write(`Existing memory flow: adoption-plan first; never restructure silently.\n`)
@@ -1605,6 +1607,7 @@ function curationApply() {
     throw new Error("Refusing curation apply without --approve after explicit user approval")
   }
 
+  const vault = requireVault()
   const plan = readJsonFile(planFile)
 
   // Find auto-applicable approved candidates across all recommendations
@@ -1635,7 +1638,16 @@ function curationApply() {
 
   for (const candidate of candidates) {
     if (candidate.type === "alias-patch-candidate") {
-      const targetPath = path.resolve(candidate.target)
+      let targetPath
+      try {
+        const safeRelative = safeMigrationPath(candidate.target, "curation candidate target")
+        targetPath = path.join(vault, safeRelative)
+        assertRealPathInsideVault(fs, vault, targetPath, "curation candidate target")
+      } catch (error) {
+        console.log(`Skipped alias-patch: unsafe target ${candidate.target} (${error.message})`)
+        skipped++
+        continue
+      }
       if (!fs.existsSync(targetPath)) {
         console.log(`Skipped alias-patch: target file not found: ${targetPath}`)
         skipped++
@@ -1659,14 +1671,14 @@ function curationApply() {
         // Preserve original line ending style from frontmatter block
         const lineEnding = fmMatch[0].includes("\r\n") ? "\r\n" : "\n"
         const newContent = content.replace(fmMatch[0], `---${lineEnding}${fmMatch[1]}${lineEnding}${aliasLine}${lineEnding}---`)
-        fs.writeFileSync(targetPath, newContent)
+        writeFileAtomic(targetPath, newContent)
         console.log(`Applied alias-patch: added aliases to ${candidate.target}`)
         applied++
       } else {
         // No frontmatter — add it
         const aliasLine = `aliases: [${aliases.map((a) => `"${a.replace(/"/gu, '\\"')}"`).join(", ")}]`
         const newContent = `---\n${aliasLine}\n---\n${content}`
-        fs.writeFileSync(targetPath, newContent)
+        writeFileAtomic(targetPath, newContent)
         console.log(`Applied alias-patch: added frontmatter with aliases to ${candidate.target}`)
         applied++
       }
