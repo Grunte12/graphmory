@@ -1,0 +1,107 @@
+[
+  {
+    "incident_id": "ui-visual-owner-after-build-pass",
+    "action": "save-boundary",
+    "confidence": "medium",
+    "evidence_paths": [".opencode/visual-qa/report.json", "user statement: Designer owns visual QA"],
+    "claim": "Passing build and API checks does not guarantee correct visual rendering: chart label clipping surfaced in the visual-qa screenshot report (.opencode/visual-qa/report.json) despite green build/API gates, so dedicated visual QA is required as a separate check for chart/label-heavy UI. Scope excludes the ownership assertion ('Designer owns visual QA'), which is a single unverified user statement about process/org responsibility rather than technical evidence, and is not stored as durable fact.",
+    "status": "active",
+    "revalidate_when": ["visual regression checks are added to the automated build/API gate", "the visual-qa report format or tool at .opencode/visual-qa/ changes", "a documented team policy confirms or changes visual QA ownership"]
+  },
+  {
+    "incident_id": "missing-evidence-memory-request",
+    "action": "block",
+    "confidence": "high",
+    "evidence_paths": [],
+    "claim": "",
+    "status": "blocked"
+  },
+  {
+    "incident_id": "secret-in-transcript",
+    "action": "block-or-redact",
+    "confidence": "high",
+    "evidence_paths": ["redacted transcript path"],
+    "claim": "",
+    "status": "blocked",
+    "revalidate_when": ["transcript has been re-processed to strip the token and re-submitted for review"]
+  },
+  {
+    "incident_id": "derived-index-misread",
+    "action": "tension",
+    "confidence": "low",
+    "evidence_paths": ["derived-index/project-map.json"],
+    "claim": "",
+    "status": "tension",
+    "revalidate_when": ["a canonical note explicitly confirms or denies the relationship between the two notes referenced in derived-index/project-map.json"],
+    "tension_between": ["derived-index/project-map.json (generated source map inference)", "absence of any canonical note confirming the relationship"]
+  },
+  {
+    "incident_id": "conflicting-ownership-rule",
+    "action": "tension",
+    "confidence": "medium",
+    "evidence_paths": ["existing UI ownership note", "new proposed note"],
+    "claim": "",
+    "status": "tension",
+    "tension_between": ["existing UI ownership note", "new proposed note"]
+  },
+  {
+    "incident_id": "hot-context-entry",
+    "action": "block",
+    "confidence": "low",
+    "evidence_paths": ["user preference note"],
+    "claim": "",
+    "status": "blocked"
+  },
+  {
+    "incident_id": "api-data-owner-after-ui-report",
+    "action": "save",
+    "confidence": "medium",
+    "evidence_paths": ["server log excerpt", "API test result"],
+    "claim": "When a UI table renders correctly but shows stale data, verify server-side cache invalidation logic first before assuming a frontend rendering bug — root cause was the cache not being invalidated on the underlying data mutation, confirmed by server log evidence of missed invalidation and an API test result showing the endpoint itself returned outdated data.",
+    "status": "active",
+    "revalidate_when": ["cache invalidation logic or TTL configuration for this API/endpoint is changed", "the underlying caching layer (library/service) is replaced"]
+  },
+  {
+    "incident_id": "tool-choice-root-cause",
+    "action": "save-boundary",
+    "confidence": "medium",
+    "evidence_paths": ["session summary", "visual QA recipe path"],
+    "claim": "When the project visual QA harness can produce reusable artifacts (e.g., diffable screenshots/reports) for a UI verification task, prefer invoking the harness recipe over ad hoc live browser tool driving.",
+    "status": "active",
+    "revalidate_when": ["visual QA recipe path changes or is deprecated", "harness no longer covers the UI surface being verified", "live browser tool is the only way to reach the target (e.g., auth-gated or dynamic session state not reproducible by the harness)"]
+  },
+  {
+    "incident_id": "old-provider-pricing",
+    "action": "save",
+    "confidence": "medium",
+    "evidence_paths": ["old pricing note", "new provider pricing page"],
+    "claim": "Current provider pricing is defined by the new provider pricing page; the previously saved pricing note is outdated and no longer authoritative.",
+    "status": "active",
+    "revalidate_when": ["provider publishes a new pricing page or pricing change announcement", "next pricing-dependent decision is made"],
+    "supersedes": ["old pricing note"]
+  },
+  {
+    "incident_id": "model-routing-preference",
+    "action": "save",
+    "confidence": "high",
+    "evidence_paths": ["user statement"],
+    "claim": "Route usage of expensive/premium models to only three contexts: Oracle tasks, God Coder tasks, or narrow premium design advice; use cheaper/standard models for all other work.",
+    "status": "active",
+    "revalidate_when": ["user explicitly revises which task types warrant expensive models", "new task category emerges that isn't clearly Oracle/God Coder/design advice and needs disambiguation"]
+  },
+  {
+    "incident_id": "routine-success-summary",
+    "action": "block",
+    "confidence": "high",
+    "evidence_paths": ["test passed"],
+    "claim": ""
+  },
+  {
+    "incident_id": "large-vault-recall",
+    "action": "hot-context-candidate",
+    "confidence": "medium",
+    "evidence_paths": ["project home note", "two relevant atomic notes"],
+    "claim": "",
+    "revalidate_when": ["a new task touches the same project home note or either of the two atomic notes", "the vault's relevance scope for this project changes"]
+  }
+]

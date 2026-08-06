@@ -18,7 +18,7 @@ Use this guide when an AI coding agent is asked to install or connect Memory Pat
    node scripts/brain-sync.mjs doctor --vault "<vault-path>" --json
    ```
 
-   Use `--require-github` only when GitHub sync is requested. Follow `docs/troubleshooting.md` if a required check fails.
+   Use `--require-github` only when GitHub sync is requested. Follow `docs/guides/troubleshooting.md` if a required check fails.
    For an undocumented or partially applied failure, follow its `Unknown Failure Protocol`; do not invent a recovery command.
 
 3. Detect the vault:

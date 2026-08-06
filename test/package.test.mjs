@@ -84,7 +84,7 @@ test("package text has no mojibake or replacement characters", () => {
 })
 
 test("public Markdown entry points have no UTF-8 BOM", () => {
-  for (const file of ["README.md", "AGENTS.md", "docs/install.md", "docs/portable-brain-sync.md"]) {
+  for (const file of ["README.md", "AGENTS.md", "docs/guides/install.md", "docs/guides/portable-brain-sync.md"]) {
     const content = fs.readFileSync(path.join(root, file))
     const hasBom = content[0] === 0xef && content[1] === 0xbb && content[2] === 0xbf
     assert.equal(hasBom, false, `${file} contains a UTF-8 BOM`)
@@ -93,7 +93,7 @@ test("public Markdown entry points have no UTF-8 BOM", () => {
 
 test("agent package includes an unknown-failure recovery contract", () => {
   const agents = fs.readFileSync(path.join(root, "AGENTS.md"), "utf8")
-  const troubleshooting = fs.readFileSync(path.join(root, "docs", "troubleshooting.md"), "utf8")
+  const troubleshooting = fs.readFileSync(path.join(root, "docs", "guides", "troubleshooting.md"), "utf8")
   assert.match(agents, /Unknown Failure Protocol/)
   assert.match(troubleshooting, /Freeze state/)
   assert.match(troubleshooting, /Protect the only copy/)
@@ -103,7 +103,7 @@ test("agent package includes an unknown-failure recovery contract", () => {
 
 test("agent package includes the shared-brain auto-pull contract", () => {
   const agents = fs.readFileSync(path.join(root, "AGENTS.md"), "utf8")
-  const portable = fs.readFileSync(path.join(root, "docs", "portable-brain-sync.md"), "utf8")
+  const portable = fs.readFileSync(path.join(root, "docs", "guides", "portable-brain-sync.md"), "utf8")
   const opencode = fs.readFileSync(path.join(root, "adapters", "opencode", "AGENTS.snippet.md"), "utf8")
   const readme = fs.readFileSync(path.join(root, "README.md"), "utf8")
   assert.match(agents, /auto-pull --vault/)
@@ -123,7 +123,7 @@ test("agent package includes the shared-brain auto-pull contract", () => {
 
 test("agent package preserves autonomy-first human-gated sync thresholds", () => {
   const agents = fs.readFileSync(path.join(root, "AGENTS.md"), "utf8")
-  const portable = fs.readFileSync(path.join(root, "docs", "portable-brain-sync.md"), "utf8")
+  const portable = fs.readFileSync(path.join(root, "docs", "guides", "portable-brain-sync.md"), "utf8")
   const generic = fs.readFileSync(path.join(root, "adapters", "generic-agent", "INSTALL.md"), "utf8")
   assert.match(agents, /Human Judgment Gates/)
   assert.match(agents, /autonomous loop engineering/)

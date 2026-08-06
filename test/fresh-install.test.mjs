@@ -11,9 +11,20 @@ function npmCommand(args, options) {
     path.join(path.dirname(process.execPath), "node_modules", "npm", "bin", "npm-cli.js"),
   ].filter(Boolean)
   const npmCli = candidates.find((candidate) => fs.existsSync(candidate))
+  // A fresh-machine simulation must not inherit the developer's own npm
+  // config (e.g. an allow-scripts entry newer npm rejects in project-scoped
+  // installs) — neither via ~/.npmrc nor via the npm_config_* env vars the
+  // parent `npm test` process exports.
+  const env = Object.fromEntries(
+    Object.entries({ ...process.env, ...options?.env }).filter(
+      ([key]) => !/^npm_config_/i.test(key),
+    ),
+  )
+  env.NPM_CONFIG_USERCONFIG = os.devNull
+  const merged = { ...options, env, shell: false }
   return npmCli
-    ? spawnSync(process.execPath, [npmCli, ...args], { ...options, shell: false })
-    : spawnSync("npm", args, { ...options, shell: false })
+    ? spawnSync(process.execPath, [npmCli, ...args], merged)
+    : spawnSync("npm", args, merged)
 }
 
 test("packed harness installs on a fresh machine surface and exposes agent commands", { timeout: 60_000 }, () => {

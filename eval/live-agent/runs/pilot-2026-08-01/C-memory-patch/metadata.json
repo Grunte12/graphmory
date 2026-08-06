@@ -1,0 +1,7 @@
+{
+  "model": "claude-sonnet-5",
+  "strategy": "C-memory-patch",
+  "date": "2026-08-01",
+  "trial": 1,
+  "note": "Single-model pilot: same model plays all three strategies in fresh, isolated agent sessions per incident (no shared context between strategies or between incidents). Not a cross-model comparison."
+}

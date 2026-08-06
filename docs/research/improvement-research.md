@@ -208,5 +208,5 @@ All five items below are now implemented. The order was followed and the harness
 
 ### Remaining roadmap items
 
-- **Live-model benchmark results**: all evaluation infrastructure is in place (`eval/live-agent/`, scoring scripts, worksheet template), but real model runs have not been completed. See `docs/live-model-results.md`.
+- **Live-model benchmark results**: all evaluation infrastructure is in place (`eval/live-agent/`, scoring scripts, worksheet template), but real model runs have not been completed. See `docs/evaluation/live-model-results.md`.
 - **Write lock helper**: deferred until an automated apply-to-vault path is added (no change from original plan).

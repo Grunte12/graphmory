@@ -30,6 +30,16 @@ Interpretation:
 
 Decision: keep BM25 as an evaluation baseline. Do not make it the production default until a larger real-vault dataset shows a meaningful gain.
 
+> **Update (2026-08-01):** the numbers above are the *original* v0.4-era baseline table and are kept as-is for historical comparison — do not edit them in place. A fresh reproduction of the same synthetic fixture on 2026-08-01, after the field-weighted BM25F section retrieval work described below had already shipped, measured higher numbers on the same eight-note/fifteen-query fixture:
+>
+> | Method | Hit@3 | Recall@3 | MRR | nDCG@3 | Avg context chars |
+> |---|---:|---:|---:|---:|---:|
+> | BM25 | 93.3% | 84.4% | 0.839 | 0.806 | 1147 |
+> | BM25 (section-scoped) | 93.3% | 84.4% | 0.828 | 0.797 | 676 |
+> | **BM25F (field-weighted, sections)** | **93.3%** | **84.4%** | **0.861** | **0.807** | **674** |
+>
+> This is not a re-measurement error or fixture drift — it reflects real code improvement between when the original table was written and 2026-08-01 (frontmatter-as-metadata indexing, heading hierarchy, field-weighted BM25F, conservative plural normalization, bounded wikilink boosting — see "Section and Field-Weighted Retrieval (v0.5)" below). Reproduce with the same two commands above on the current `main`; the live-model pilot numbers this reproduction accompanied live in `docs/evaluation/live-model-results.md`.
+
 ### Stress Baseline
 
 Run `npm run eval:retrieval:stress` to evaluate a larger generated vault containing canonical notes, stale guidance, raw captures, and unrelated distractors. Unlike the original scale benchmark, this diagnostic measures retrieval quality and contamination as well as speed:
@@ -93,14 +103,14 @@ node scripts/eval-live-agent-score.mjs \
   --json
 ```
 
-The scoring wrapper is deterministic and uses only the incident expected-answer data. Live model benchmark results and filled TBD tables belong in `docs/live-model-results.md` only after real runs exist.
+The scoring wrapper is deterministic and uses only the incident expected-answer data. Live model benchmark results and filled TBD tables belong in `docs/evaluation/live-model-results.md` only after real runs exist.
 
 ## v0.5 Release Evidence Gate
 
 `0.5.0` remains a release candidate until all applicable layers are reported separately:
 
 1. **Deterministic regression:** `npm run check`, `npm run eval:v05-gate`, and `npm run release:gate` pass with no critical safety regression. **Implemented** — `scripts/release-gate.mjs`, `scripts/eval-v05-gate.mjs`.
-2. **Human-labeled retrieval:** at least 30 private or anonymized real-vault questions, frozen before tuning, with Recall@3 >= 0.90, MRR >= 0.80, zero stale/raw pollution, and bounded context. **Infrastructure ready** — see `docs/cost-and-scale.md` for private-vault results; public incident set at `eval/live-agent/incidents.json`.
+2. **Human-labeled retrieval:** at least 30 private or anonymized real-vault questions, frozen before tuning, with Recall@3 >= 0.90, MRR >= 0.80, zero stale/raw pollution, and bounded context. **Infrastructure ready** — see `docs/evaluation/cost-and-scale.md` for private-vault results; public incident set at `eval/live-agent/incidents.json`.
 3. **Lifecycle correctness:** `npm run eval:lifecycle` passes. Stale/expired/superseded/current cases must be audited separately from recall; `lifecycle-audit` should identify revalidation, replacement, and tension-decision needs without mutating notes. **Implemented** — `scripts/eval-lifecycle-audit.mjs`, `brain-sync.mjs lifecycle-audit`.
 4. **Conflict decision quality:** `npm run eval:conflict` passes. Same-note divergence, non-overlapping agent histories, and dirty local drafts should produce distinct read-only decision options without mutating Git state. **Implemented** — `scripts/eval-conflict-assist.mjs`, `brain-sync.mjs conflict-assist` (with `decisionOptions`), `conflict-plan`, `conflict-apply`.
 5. **Live memory behavior:** at least 20 incidents drawn from real failures, with three isolated trials per tested setup. Record false-memory, secret handling, conflict handling, future-task utility, token use, latency, and human correction time. **Infrastructure ready** — `eval/live-agent/incidents.json` (20+ scenarios), `eval/live-agent/run-template.md`, `scripts/eval-live-agent-score.mjs`. **Blocked on live-model runs** — no real model comparisons published yet.

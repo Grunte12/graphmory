@@ -1,0 +1,729 @@
+{
+  "vault": "[private]",
+  "querySet": "queries.json",
+  "documents": 54,
+  "k": 3,
+  "summary": {
+    "total": 34,
+    "stillPass": 28,
+    "fixed": 1,
+    "regression": 2,
+    "stillFail": 3
+  },
+  "rows": [
+    {
+      "id": "exact-memgpt",
+      "category": "exact",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/packer2023memgpt.md",
+          "03 Reference/Papers/mody2026cranimem.md",
+          "03 Reference/Papers/zhong2023memorybank.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/packer2023memgpt.md",
+          "03 Reference/Papers/langchain2025contextengineering.md",
+          "03 Reference/Papers/humanlayer2025twelvefactor.md"
+        ]
+      }
+    },
+    {
+      "id": "exact-bm25",
+      "category": "exact",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/robertson2009bm25.md",
+          "03 Reference/Papers/spencer2026groundtruthfirst.md",
+          "03 Reference/Papers/cormack2009rrf.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/robertson2009bm25.md",
+          "03 Reference/Papers/spencer2026groundtruthfirst.md",
+          "03 Reference/Papers/cormack2009rrf.md"
+        ]
+      }
+    },
+    {
+      "id": "exact-rrf",
+      "category": "exact",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/cormack2009rrf.md",
+          "03 Reference/Papers/robertson2009bm25.md",
+          "03 Reference/Papers/spencer2026groundtruthfirst.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/cormack2009rrf.md",
+          "03 Reference/hybrid-retrieval-moc.md",
+          "03 Reference/agentic-retrieval-moc.md"
+        ]
+      }
+    },
+    {
+      "id": "exact-toki",
+      "category": "exact",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/wang2026toki.md",
+          "03 Reference/Papers/shutova2026structmemeval.md",
+          "03 Reference/Papers/hu2025memoryagentbench.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/wang2026toki.md",
+          "03 Reference/context-engineering-moc.md",
+          "03 Reference/Papers/shutova2026structmemeval.md"
+        ]
+      }
+    },
+    {
+      "id": "exact-longmemeval",
+      "category": "exact",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/wu2024longmemeval.md",
+          "03 Reference/Papers/zhong2023memorybank.md",
+          "03 Reference/Papers/chhikara2025mem0.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/wu2024longmemeval.md",
+          "03 Reference/Papers/thakur2021beir.md",
+          "03 Reference/Papers/zhong2023memorybank.md"
+        ]
+      }
+    },
+    {
+      "id": "exact-zettelkasten",
+      "category": "exact",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/xu2025amem.md",
+          "03 Reference/Papers/rasmussen2025zep.md",
+          "03 Reference/agent-memory-architecture-moc.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/xu2025amem.md",
+          "03 Reference/Papers/shutova2026structmemeval.md",
+          "03 Reference/agent-memory-architecture-moc.md"
+        ]
+      }
+    },
+    {
+      "id": "semantic-forgetting",
+      "category": "semantic",
+      "outcome": "REGRESSION",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/chao2026stale.md",
+          "03 Reference/Papers/anthropic2024contextualretrieval.md",
+          "03 Reference/Papers/mishra2026soktagenticrag.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 0,
+        "top": [
+          "03 Reference/agentic-retrieval-moc.md",
+          "03 Reference/memory-degradation-staleness-moc.md",
+          "03 Reference/Papers/asai2024selfrag.md"
+        ]
+      }
+    },
+    {
+      "id": "semantic-degradation",
+      "category": "semantic",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/zhang2026faultymemory.md",
+          "03 Reference/Papers/wang2026sage.md",
+          "03 Reference/Papers/yan2024crag.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/zhang2026faultymemory.md",
+          "03 Reference/Papers/chao2026stale.md",
+          "03 Reference/Papers/asai2024selfrag.md"
+        ]
+      }
+    },
+    {
+      "id": "semantic-graph-vs-markdown",
+      "category": "semantic",
+      "outcome": "REGRESSION",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/vogel2026codebasememory.md",
+          "03 Reference/Papers/spencer2026groundtruthfirst.md",
+          "03 Reference/Papers/packer2023memgpt.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 0,
+        "top": [
+          "03 Reference/graph-code-retrieval-moc.md",
+          "03 Reference/Papers/vogel2026codebasememory.md",
+          "03 Reference/Papers/rasmussen2025zep.md"
+        ]
+      }
+    },
+    {
+      "id": "semantic-production-memory",
+      "category": "semantic",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/chhikara2025mem0.md",
+          "03 Reference/Papers/mody2026cranimem.md",
+          "03 Reference/Papers/gao2023rag.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/chhikara2025mem0.md",
+          "03 Reference/Papers/mishra2026soktagenticrag.md",
+          "03 Reference/Papers/gao2023rag.md"
+        ]
+      }
+    },
+    {
+      "id": "semantic-temporal-graph",
+      "category": "semantic",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/rasmussen2025zep.md",
+          "03 Reference/Papers/spencer2026groundtruthfirst.md",
+          "03 Reference/Papers/lin2026memsecuritysurvey.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/rasmussen2025zep.md",
+          "03 Reference/graph-code-retrieval-moc.md",
+          "03 Reference/Papers/vogel2026codebasememory.md"
+        ]
+      }
+    },
+    {
+      "id": "semantic-write-gate",
+      "category": "semantic",
+      "outcome": "FIXED",
+      "original": {
+        "hit": 0,
+        "top": [
+          "03 Reference/Papers/anthropic2025writingtools.md",
+          "03 Reference/Papers/chan2024cag.md",
+          "03 Reference/Papers/packer2023memgpt.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/wang2026sage.md",
+          "03 Reference/Papers/chao2026stale.md",
+          "03 Reference/Papers/langchain2025contextengineering.md"
+        ]
+      }
+    },
+    {
+      "id": "conflict-llm-free-retrieval",
+      "category": "conflict",
+      "outcome": "still-fail",
+      "original": {
+        "hit": 0,
+        "top": [
+          "03 Reference/Papers/chan2024cag.md",
+          "03 Reference/Papers/jin2026typedmemory.md",
+          "03 Reference/Papers/yan2024crag.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 0,
+        "top": [
+          "03 Reference/Papers/gim2023promptcache.md",
+          "03 Reference/rag-alternatives-serving-moc.md",
+          "03 Reference/Papers/jin2024ragcache.md"
+        ]
+      }
+    },
+    {
+      "id": "conflict-dont-use-rag",
+      "category": "conflict",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/chan2024cag.md",
+          "03 Reference/Papers/du2026arag.md",
+          "03 Reference/Papers/jin2024ragcache.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/chan2024cag.md",
+          "03 Reference/Papers/jin2024ragcache.md",
+          "03 Reference/Papers/gao2023rag.md"
+        ]
+      }
+    },
+    {
+      "id": "conflict-provenance-collapse",
+      "category": "conflict",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/jin2026typedmemory.md",
+          "03 Reference/Papers/chhikara2025mem0.md",
+          "03 Reference/Papers/packer2023memgpt.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/jin2026typedmemory.md",
+          "03 Reference/Papers/mody2026cranimem.md",
+          "03 Reference/Papers/packer2023memgpt.md"
+        ]
+      }
+    },
+    {
+      "id": "distractor-caching-cost",
+      "category": "distractor",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/jin2024ragcache.md",
+          "03 Reference/Papers/chan2024cag.md",
+          "03 Reference/rag-alternatives-serving-moc.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/jin2024ragcache.md",
+          "03 Reference/Papers/gim2023promptcache.md",
+          "03 Reference/Papers/chan2024cag.md"
+        ]
+      }
+    },
+    {
+      "id": "distractor-taxonomy-vs-systematization",
+      "category": "distractor",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/mishra2026soktagenticrag.md",
+          "03 Reference/Papers/singh2025agenticrag.md",
+          "03 Reference/Papers/ding2026alwayson.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/mishra2026soktagenticrag.md",
+          "03 Reference/Papers/singh2025agenticrag.md",
+          "03 Reference/rag-taxonomy-moc.md"
+        ]
+      }
+    },
+    {
+      "id": "distractor-context-window-management",
+      "category": "distractor",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/anthropic2025writingtools.md",
+          "03 Reference/Papers/anthropic2025contextengineering.md",
+          "03 Reference/Papers/humanlayer2025twelvefactor.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/anthropic2025writingtools.md",
+          "03 Reference/Papers/anthropic2025contextengineering.md",
+          "03 Reference/Papers/langchain2025contextengineering.md"
+        ]
+      }
+    },
+    {
+      "id": "multihop-tension-governance",
+      "category": "multi-hop",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/lin2026memsecuritysurvey.md",
+          "03 Reference/Papers/ding2026alwayson.md",
+          "03 Reference/Papers/wang2026toki.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/lin2026memsecuritysurvey.md",
+          "03 Reference/Papers/ding2026alwayson.md",
+          "03 Reference/Papers/wang2026toki.md"
+        ]
+      }
+    },
+    {
+      "id": "multihop-lifecycle-cluster",
+      "category": "multi-hop",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/ding2026alwayson.md",
+          "03 Reference/Papers/lin2026memsecuritysurvey.md",
+          "03 Reference/provenance-lifecycle-moc.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/lin2026memsecuritysurvey.md",
+          "03 Reference/Papers/ding2026alwayson.md",
+          "03 Reference/provenance-lifecycle-moc.md"
+        ]
+      }
+    },
+    {
+      "id": "multihop-agent-memory-foundations",
+      "category": "multi-hop",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/packer2023memgpt.md",
+          "03 Reference/Papers/chao2026stale.md",
+          "03 Reference/Papers/chhikara2025mem0.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/park2023generativeagents.md",
+          "03 Reference/Papers/packer2023memgpt.md",
+          "03 Reference/Papers/milosevic2026episodicsemantic.md"
+        ]
+      }
+    },
+    {
+      "id": "hard-semantic-eval-design",
+      "category": "hard-semantic",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/hu2025memoryagentbench.md",
+          "03 Reference/Papers/thakur2021beir.md",
+          "03 Reference/Papers/cormack2009rrf.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/hu2025memoryagentbench.md",
+          "03 Reference/Papers/thakur2021beir.md",
+          "03 Reference/Papers/uddin2026famamemora.md"
+        ]
+      }
+    },
+    {
+      "id": "hard-semantic-bounded-memory",
+      "category": "hard-semantic",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/mody2026cranimem.md",
+          "03 Reference/Papers/chan2024cag.md",
+          "03 Reference/Papers/yan2024crag.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/mody2026cranimem.md",
+          "03 Reference/Papers/jin2026typedmemory.md",
+          "03 Reference/Papers/anthropic2025writingtools.md"
+        ]
+      }
+    },
+    {
+      "id": "hard-semantic-structure-eval",
+      "category": "hard-semantic",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/shutova2026structmemeval.md",
+          "03 Reference/Papers/chan2024cag.md",
+          "03 Reference/Papers/mishra2026soktagenticrag.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/shutova2026structmemeval.md",
+          "03 Reference/Papers/chan2024cag.md",
+          "03 Reference/Papers/rasmussen2025zep.md"
+        ]
+      }
+    },
+    {
+      "id": "hard-semantic-hierarchical-retrieval",
+      "category": "hard-semantic",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/du2026arag.md",
+          "03 Reference/Papers/mody2026cranimem.md",
+          "03 Reference/Papers/singh2025agenticrag.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/du2026arag.md",
+          "03 Reference/Papers/singh2025agenticrag.md",
+          "03 Reference/Papers/mody2026cranimem.md"
+        ]
+      }
+    },
+    {
+      "id": "exact-dpr",
+      "category": "exact",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/karpukhin2020dpr.md",
+          "03 Reference/hybrid-retrieval-moc.md",
+          "03 Reference/Papers/robertson2009bm25.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/karpukhin2020dpr.md",
+          "03 Reference/hybrid-retrieval-moc.md",
+          "03 Reference/Papers/thakur2021beir.md"
+        ]
+      }
+    },
+    {
+      "id": "exact-beir",
+      "category": "exact",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/thakur2021beir.md",
+          "03 Reference/Papers/wu2024longmemeval.md",
+          "03 Reference/Papers/lin2026memsecuritysurvey.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/thakur2021beir.md",
+          "03 Reference/Papers/wu2024longmemeval.md",
+          "03 Reference/Papers/hu2025memoryagentbench.md"
+        ]
+      }
+    },
+    {
+      "id": "semantic-contextual-retrieval",
+      "category": "semantic",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/anthropic2024contextualretrieval.md",
+          "03 Reference/Papers/robertson2009bm25.md",
+          "03 Reference/Papers/anthropic2025writingtools.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/anthropic2024contextualretrieval.md",
+          "03 Reference/Papers/robertson2009bm25.md",
+          "03 Reference/Papers/anthropic2026demystifyingevals.md"
+        ]
+      }
+    },
+    {
+      "id": "semantic-self-reflection",
+      "category": "semantic",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/asai2024selfrag.md",
+          "03 Reference/Papers/gao2023rag.md",
+          "03 Reference/Papers/lin2026memsecuritysurvey.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/asai2024selfrag.md",
+          "03 Reference/Papers/yan2024crag.md",
+          "03 Reference/agentic-retrieval-moc.md"
+        ]
+      }
+    },
+    {
+      "id": "semantic-corrective-retrieval",
+      "category": "semantic",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/yan2024crag.md",
+          "03 Reference/Papers/chan2024cag.md",
+          "03 Reference/Papers/mody2026cranimem.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/yan2024crag.md",
+          "03 Reference/Papers/zhang2026faultymemory.md",
+          "03 Reference/Papers/chao2026stale.md"
+        ]
+      }
+    },
+    {
+      "id": "hard-semantic-code-graph",
+      "category": "hard-semantic",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/vogel2026codebasememory.md",
+          "03 Reference/graph-code-retrieval-moc.md",
+          "03 Reference/Papers/rasmussen2025zep.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/vogel2026codebasememory.md",
+          "03 Reference/graph-code-retrieval-moc.md",
+          "03 Reference/Papers/rasmussen2025zep.md"
+        ]
+      }
+    },
+    {
+      "id": "link-recovery-cranimem",
+      "category": "link-recovery",
+      "outcome": "still-fail",
+      "original": {
+        "hit": 0,
+        "top": [
+          "03 Reference/Papers/mody2026cranimem.md",
+          "03 Reference/Papers/anthropic2025writingtools.md",
+          "03 Reference/context-engineering-moc.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 0,
+        "top": [
+          "03 Reference/Papers/mody2026cranimem.md",
+          "03 Reference/Papers/anthropic2025writingtools.md",
+          "03 Reference/Papers/anthropic2025contextengineering.md"
+        ]
+      }
+    },
+    {
+      "id": "link-recovery-sage",
+      "category": "link-recovery",
+      "outcome": "still-pass",
+      "original": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/wang2026sage.md",
+          "03 Reference/Papers/lin2026memsecuritysurvey.md",
+          "03 Reference/Papers/chao2026stale.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 1,
+        "top": [
+          "03 Reference/Papers/wang2026sage.md",
+          "03 Reference/Papers/langchain2025contextengineering.md",
+          "03 Reference/Papers/lin2026memsecuritysurvey.md"
+        ]
+      }
+    },
+    {
+      "id": "link-recovery-selfrag",
+      "category": "link-recovery",
+      "outcome": "still-fail",
+      "original": {
+        "hit": 0,
+        "top": [
+          "03 Reference/Papers/asai2024selfrag.md",
+          "03 Reference/agentic-retrieval-moc.md",
+          "03 Reference/Papers/singh2025agenticrag.md"
+        ]
+      },
+      "reformulated": {
+        "hit": 0,
+        "top": [
+          "03 Reference/Papers/asai2024selfrag.md",
+          "03 Reference/Papers/singh2025agenticrag.md",
+          "03 Reference/agentic-retrieval-moc.md"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+[
+  {
+    "incident_id": "ui-visual-owner-after-build-pass",
+    "action": "tension",
+    "confidence": "medium",
+    "evidence_paths": [".opencode/visual-qa/report.json", "user statement: Designer owns visual QA"],
+    "claim": "Build and API checks passing does not guarantee visual correctness (e.g. clipped chart labels); a visual-qa report can flag issues that those checks miss. However, ownership of acting on visual-qa findings is contested: user states designer owns visual QA, which may conflict with agent's instinct to treat report.json findings as blocking before considering work done.",
+    "tension_between": [
+      "agent responsibility to catch clipped labels found in .opencode/visual-qa/report.json before declaring task complete",
+      "user statement that designer owns visual QA, implying agent may not need to gate on/fix these findings itself"
+    ]
+  },
+  {
+    "incident_id": "missing-evidence-memory-request",
+    "action": "block",
+    "confidence": "high",
+    "evidence_paths": [],
+    "claim": "",
+    "revalidate_when": ["user provides provider name, error/source, and date/scope"]
+  },
+  {
+    "incident_id": "secret-in-transcript",
+    "action": "block-or-redact",
+    "confidence": "high",
+    "evidence_paths": ["redacted transcript path"],
+    "claim": "Terminal transcripts captured during deployment debugging can contain private tokens/secrets; such transcripts must not be saved, indexed, or promoted into durable memory verbatim. If this incident or its context is retained at all, only a redacted reference (e.g. 'transcript at <path> contained a leaked deployment token; treat exposure as sensitive') should be kept, and the underlying raw transcript should be scrubbed or excluded from memory ingestion.",
+    "status": "blocked",
+    "revalidate_when": ["transcript has been redacted/rotated token confirmed", "before any memory-curation step ingests transcripts from this debugging session"]
+  },
+  {
+    "incident_id": "derived-index-misread",
+    "action": "block",
+    "confidence": "high",
+    "evidence_paths": ["derived-index/project-map.json"],
+    "claim": "",
+    "status": "blocked"
+  },
+  {
+    "incident_id": "conflicting-ownership-rule",
+    "action": "tension",
+    "confidence": "high",
+    "evidence_paths": ["existing UI ownership note", "new proposed note"],
+    "claim": "",
+    "tension_between": ["existing UI ownership note", "new proposed note"],
+    "revalidate_when": ["ownership boundaries for UI approval are explicitly clarified by a human or authoritative policy update"]
+  },
+  {
+    "incident_id": "hot-context-entry",
+    "action": "hot-context-candidate",
+    "confidence": "medium",
+    "evidence_paths": ["user preference note"],
+    "claim": "A user preference was noted that affects many future tasks; should be loaded cheaply at session start (hot-context), pending confirmation of the specific preference content before promoting to a firm active memory.",
+    "status": "active",
+    "revalidate_when": ["preference content is fully specified/confirmed", "user contradicts or updates the preference"]
+  },
+  {
+    "incident_id": "api-data-owner-after-ui-report",
+    "action": "save",
+    "confidence": "high",
+    "evidence_paths": ["server log excerpt", "API test result"],
+    "claim": "UI tables can render normally while showing stale data if server-side cache invalidation logic is wrong (e.g. cache not busted/keyed correctly on write); a passing UI smoke check does not rule this out. When a table 'looks fine' but data seems off, check server-side cache invalidation (log excerpt + API test) before assuming a frontend rendering bug.",
+    "status": "active",
+    "revalidate_when": ["cache invalidation logic is refactored or the caching layer/library changes", "incident recurs with a different root cause (would indicate claim is too narrow or wrong)"]
+  },
+  {
+    "incident_id": "tool-choice-root-cause",
+    "action": "save",
+    "confidence": "high",
+    "evidence_paths": ["session summary", "visual QA recipe path"],
+    "claim": "When visual QA is needed on this project, prefer the project's visual QA harness (see visual QA recipe path) over ad hoc live browser tool usage — the harness produces reusable, reviewable artifacts, whereas repeated live browser driving does not and duplicates effort.",
+    "status": "active",
+    "revalidate_when": ["the visual QA harness is deprecated or replaced", "a task requires interactive/live browser behavior the harness cannot capture (e.g. auth flows, dynamic third-party state)"]
+  },
+  {
+    "incident_id": "old-provider-pricing",
+    "action": "save",
+    "confidence": "high",
+    "evidence_paths": ["old pricing note", "new provider pricing page"],
+    "claim": "Provider pricing changed this week; the previously saved pricing decision is based on outdated rates. Use the new provider pricing page as the current source of truth for pricing-related decisions.",
+    "status": "active",
+    "revalidate_when": ["provider announces another pricing change", "next time pricing-sensitive decision is made"],
+    "supersedes": ["old pricing note"]
+  },
+  {
+    "incident_id": "model-routing-preference",
+    "action": "save",
+    "confidence": "high",
+    "evidence_paths": ["user statement"],
+    "claim": "User prefers expensive/premium models be reserved only for: Oracle tasks, God Coder tasks, or narrow premium design advice. For other work, use cheaper/standard models.",
+    "status": "active",
+    "revalidate_when": ["user explicitly changes model routing policy", "new task categories emerge that aren't covered by Oracle/God Coder/design advice"]
+  },
+  {
+    "incident_id": "routine-success-summary",
+    "action": "block",
+    "confidence": "high",
+    "evidence_paths": ["test passed"],
+    "claim": ""
+  },
+  {
+    "incident_id": "large-vault-recall",
+    "action": "save",
+    "confidence": "high",
+    "evidence_paths": ["project home note", "two relevant atomic notes"],
+    "claim": "For this project, only the project home note and its two linked atomic notes are relevant prior context; the rest of the vault is unrelated noise and can be skipped during recall for tasks in this project scope.",
+    "status": "active",
+    "revalidate_when": ["project home note is restructured or re-linked", "new atomic notes are added under the project home note", "task scope expands beyond the current project"]
+  }
+]

@@ -1,0 +1,118 @@
+[
+  {
+    "incident_id": "ui-visual-owner-after-build-pass",
+    "action": "tension",
+    "confidence": "medium",
+    "evidence_paths": [],
+    "claim": "Passing build and API checks does not guarantee a UI is correct — visual regressions like clipped labels can still slip through and only surface in visual QA (e.g., screenshot review). There is unresolved tension over who owns catching and being accountable for these issues: engineering treats build/API-green as 'done,' while visual QA is described as the designer's responsibility.",
+    "revalidate_when": [
+      "Team explicitly agrees on visual QA ownership and gating criteria for 'done'",
+      "Screenshot/visual regression checks are added to the automated build or API gate"
+    ],
+    "tension_between": [
+      "Build and API checks passing means the chart page task is complete",
+      "Visual QA (owned by the designer) is a separate, required check that can fail even when build/API checks pass"
+    ]
+  },
+  {
+    "incident_id": "missing-evidence-memory-request",
+    "action": "block",
+    "confidence": "low",
+    "evidence_paths": [],
+    "claim": "",
+    "status": "blocked",
+    "revalidate_when": ["source, error details, date, and affected scope for the provider-broken claim are provided"]
+  },
+  {
+    "incident_id": "secret-in-transcript",
+    "action": "block-or-redact",
+    "confidence": "low",
+    "evidence_paths": [],
+    "claim": "A terminal transcript captured during deployment debugging contained an exposed private token; must be redacted/rotated before the transcript is stored or shared, and raw secrets should never be persisted in memory.",
+    "status": "blocked",
+    "revalidate_when": ["token has been rotated and transcript redacted", "original incident evidence is available for re-review"]
+  },
+  {
+    "incident_id": "derived-index-misread",
+    "action": "block",
+    "confidence": "medium",
+    "evidence_paths": [],
+    "claim": "",
+    "status": "blocked",
+    "revalidate_when": ["a canonical note is created or edited to explicitly confirm the relationship between the two notes"]
+  },
+  {
+    "incident_id": "conflicting-ownership-rule",
+    "action": "tension",
+    "confidence": "medium",
+    "evidence_paths": [],
+    "claim": "",
+    "status": "tension",
+    "revalidate_when": ["ownership of UI visual QA approval is explicitly clarified or reconciled by a decision-maker"],
+    "supersedes": [],
+    "tension_between": ["new note: backend agents can approve UI appearance", "active memory: designer owns visual QA"]
+  },
+  {
+    "incident_id": "hot-context-entry",
+    "action": "hot-context-candidate",
+    "confidence": "medium",
+    "evidence_paths": [],
+    "claim": "User stated a standing preference that applies broadly across future tasks; it should be surfaced cheaply at the start of every session rather than rediscovered each time.",
+    "status": "active",
+    "revalidate_when": ["original incident details/evidence become available for verification", "user contradicts or updates this preference in a later session"]
+  },
+  {
+    "incident_id": "api-data-owner-after-ui-report",
+    "action": "save",
+    "confidence": "medium",
+    "evidence_paths": [],
+    "claim": "A UI table appeared correct but was showing stale data because the server-side cache was not being invalidated properly; fixing cache invalidation logic resolved the stale display.",
+    "status": "active",
+    "revalidate_when": ["cache invalidation logic is refactored", "similar stale-data symptom reappears in another UI view backed by server-side caching"]
+  },
+  {
+    "incident_id": "tool-choice-root-cause",
+    "action": "save",
+    "confidence": "medium",
+    "evidence_paths": [],
+    "claim": "For visual QA tasks in this project, prefer the project's visual QA harness over ad hoc live browser tool sessions — the harness produces reusable artifacts, whereas manual browser driving does not.",
+    "status": "active",
+    "revalidate_when": ["next time an agent performs visual QA or browser-based verification work"]
+  },
+  {
+    "incident_id": "old-provider-pricing",
+    "action": "tension",
+    "confidence": "low",
+    "evidence_paths": [],
+    "claim": "A pricing decision saved last month may now be outdated because the provider changed its pricing this week; needs revalidation before being relied on again.",
+    "status": "tension",
+    "revalidate_when": ["provider publishes updated/current pricing", "original pricing decision is re-checked against new rates"],
+    "supersedes": [],
+    "tension_between": ["last month's saved pricing decision", "this week's provider pricing change"]
+  },
+  {
+    "incident_id": "model-routing-preference",
+    "action": "save",
+    "confidence": "medium",
+    "evidence_paths": [],
+    "claim": "User prefers expensive/premium models be reserved for a few specific high-value use cases, with routine work handled by cheaper/standard models.",
+    "status": "active",
+    "revalidate_when": ["user redefines which use cases count as premium", "cost/performance tradeoffs of available models change significantly"]
+  },
+  {
+    "incident_id": "routine-success-summary",
+    "action": "block",
+    "confidence": "high",
+    "evidence_paths": [],
+    "claim": "",
+    "status": "blocked"
+  },
+  {
+    "incident_id": "large-vault-recall",
+    "action": "hot-context-candidate",
+    "confidence": "low",
+    "evidence_paths": [],
+    "claim": "",
+    "revalidate_when": ["specific prior decisions and their content are identified with citable evidence"]
+  }
+]
