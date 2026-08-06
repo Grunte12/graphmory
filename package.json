@@ -65,6 +65,7 @@
     "eval:rerank": "node scripts/eval-rerank.mjs",
     "eval:live-agent-score": "node scripts/eval-live-agent-score.mjs",
     "eval:vault": "node scripts/eval-vault-retrieval.mjs",
+    "eval:query-reformulation": "node scripts/eval-query-reformulation.mjs --vault eval/real-vault/vault --queries eval/real-vault/queries.json --reformulations eval/real-vault/reformulated-queries.json",
     "eval:curator": "node scripts/eval-curator.mjs",
     "eval:curator:compare": "node scripts/eval-curator.mjs --candidate eval/curator/candidates --allow-failures",
     "eval:patch-quality": "node scripts/eval-patch-quality.mjs",
