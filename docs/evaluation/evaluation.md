@@ -93,14 +93,14 @@ node scripts/eval-live-agent-score.mjs \
   --json
 ```
 
-The scoring wrapper is deterministic and uses only the incident expected-answer data. Live model benchmark results and filled TBD tables belong in `docs/live-model-results.md` only after real runs exist.
+The scoring wrapper is deterministic and uses only the incident expected-answer data. Live model benchmark results and filled TBD tables belong in `docs/evaluation/live-model-results.md` only after real runs exist.
 
 ## v0.5 Release Evidence Gate
 
 `0.5.0` remains a release candidate until all applicable layers are reported separately:
 
 1. **Deterministic regression:** `npm run check`, `npm run eval:v05-gate`, and `npm run release:gate` pass with no critical safety regression. **Implemented** — `scripts/release-gate.mjs`, `scripts/eval-v05-gate.mjs`.
-2. **Human-labeled retrieval:** at least 30 private or anonymized real-vault questions, frozen before tuning, with Recall@3 >= 0.90, MRR >= 0.80, zero stale/raw pollution, and bounded context. **Infrastructure ready** — see `docs/cost-and-scale.md` for private-vault results; public incident set at `eval/live-agent/incidents.json`.
+2. **Human-labeled retrieval:** at least 30 private or anonymized real-vault questions, frozen before tuning, with Recall@3 >= 0.90, MRR >= 0.80, zero stale/raw pollution, and bounded context. **Infrastructure ready** — see `docs/evaluation/cost-and-scale.md` for private-vault results; public incident set at `eval/live-agent/incidents.json`.
 3. **Lifecycle correctness:** `npm run eval:lifecycle` passes. Stale/expired/superseded/current cases must be audited separately from recall; `lifecycle-audit` should identify revalidation, replacement, and tension-decision needs without mutating notes. **Implemented** — `scripts/eval-lifecycle-audit.mjs`, `brain-sync.mjs lifecycle-audit`.
 4. **Conflict decision quality:** `npm run eval:conflict` passes. Same-note divergence, non-overlapping agent histories, and dirty local drafts should produce distinct read-only decision options without mutating Git state. **Implemented** — `scripts/eval-conflict-assist.mjs`, `brain-sync.mjs conflict-assist` (with `decisionOptions`), `conflict-plan`, `conflict-apply`.
 5. **Live memory behavior:** at least 20 incidents drawn from real failures, with three isolated trials per tested setup. Record false-memory, secret handling, conflict handling, future-task utility, token use, latency, and human correction time. **Infrastructure ready** — `eval/live-agent/incidents.json` (20+ scenarios), `eval/live-agent/run-template.md`, `scripts/eval-live-agent-score.mjs`. **Blocked on live-model runs** — no real model comparisons published yet.

@@ -1,5 +1,5 @@
 {
-  "_note": "Blind LLM query reformulations for the query-reformulation-vs-dense-lane ablation. Each entry is a single-shot rewrite of the ORIGINAL query text only (id + query fields of eval/real-vault/queries.json) -- the rewriting model did not see the 'relevant' target document(s) for any query while writing these, mirroring the original N=2 test methodology in docs/academic (a curator agent that must guess vocabulary without already knowing the answer). See scripts/eval-query-reformulation.mjs and docs/academic/query-reformulation-ablation-2026-08-05.md.",
+  "_note": "Blind LLM query reformulations for the query-reformulation-vs-dense-lane ablation. Each entry is a single-shot rewrite of the ORIGINAL query text only (id + query fields of eval/real-vault/queries.json) -- the rewriting model did not see the 'relevant' target document(s) for any query while writing these, mirroring the original N=2 test methodology (a curator agent that must guess vocabulary without already knowing the answer). See scripts/eval-query-reformulation.mjs and docs/evaluation/query-reformulation-ablation-2026-08-05.md.",
   "reformulations": {
     "exact-memgpt": "LLM operating system tiered memory paging virtual context management agent",
     "exact-bm25": "probabilistic ranking function field-weighted BM25F formal definition",

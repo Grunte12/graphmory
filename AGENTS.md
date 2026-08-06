@@ -9,7 +9,7 @@ Memory Patch Harness adds a durable Markdown memory layer for coding agents. The
 ## First Actions
 
 1. Run `npm test` to verify the repo works.
-2. Read `docs/install.md` for full installation steps.
+2. Read `docs/guides/install.md` for full installation steps.
 3. Run the installer to copy the skill, CLI, and source modules:
    ```sh
    node scripts/install.mjs --target "<agent-config-root>"
@@ -25,9 +25,9 @@ Memory Patch Harness adds a durable Markdown memory layer for coding agents. The
    - Merge `AGENTS.snippet.md` into the lead agent instructions.
    - Use `memory-curator-prompt.md` as the `memory_curator` sub-agent prompt.
    - Use `opencode.agent.example.json` as a template for the sub-agent configuration.
-   See `docs/install.md#opencode-adapter` for detailed instructions.
-6. If the user wants portable memory across machines/accounts, read `docs/portable-brain-sync.md`.
-7. If setup or a command fails, run `doctor --json` and follow `docs/troubleshooting.md`.
+   See `docs/guides/install.md#opencode-adapter` for detailed instructions.
+6. If the user wants portable memory across machines/accounts, read `docs/guides/portable-brain-sync.md`.
+7. If setup or a command fails, run `doctor --json` and follow `docs/guides/troubleshooting.md`.
 8. Do not edit the user's agent config until you know which adapter they use.
 
 ## Local Development Handoff
@@ -222,7 +222,7 @@ Use `sync-plan --json` before deciding whether to hold, pull first, request conf
 
 ## Unknown Failures
 
-If a failure is not covered by a known error code, follow the `Unknown Failure Protocol` in `docs/troubleshooting.md`. Freeze writes, preserve sanitized operational evidence, protect the only copy of the vault, classify Git/migration state, and prefer reversible recovery. If state is contradictory, stop and return the Safe Escalation Report instead of guessing.
+If a failure is not covered by a known error code, follow the `Unknown Failure Protocol` in `docs/guides/troubleshooting.md`. Freeze writes, preserve sanitized operational evidence, protect the only copy of the vault, classify Git/migration state, and prefer reversible recovery. If state is contradictory, stop and return the Safe Escalation Report instead of guessing.
 
 ## Verification
 

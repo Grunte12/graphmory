@@ -41,5 +41,5 @@ endpoint), update this section to the new transport. Supported transport values:
 ## See Also
 
 - `INSTALL.md` — Step-by-step installation for this adapter.
-- `docs/install.md` — General harness installation.
-- `docs/portable-brain-sync.md` — Multi-machine sync guidance.
+- `docs/guides/install.md` — General harness installation.
+- `docs/guides/portable-brain-sync.md` — Multi-machine sync guidance.

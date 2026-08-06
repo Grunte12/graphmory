@@ -104,6 +104,6 @@ when a claim needs verification.
 
 ## See Also
 
-- `docs/demo-workflow.md` — How hot context fits into the full memory workflow.
+- `docs/guides/demo-workflow.md` — How hot context fits into the full memory workflow.
 - `schemas/hot-context-pack.schema.json` — The JSON schema for the pack format.
 - `examples/hot-context-pack.json` — The example input pack.

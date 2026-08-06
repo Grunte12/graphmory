@@ -154,17 +154,17 @@ Existing Obsidian/custom memory is never restructured silently. The reviewed flo
 
 ## Guides
 
-- [Installation](docs/install.md): install the skill and adapt it to OpenCode or any other coding agent.
-- [Portable Brain Sync](docs/portable-brain-sync.md): connect a private GitHub-backed memory repo for account and machine portability.
-- [Troubleshooting](docs/troubleshooting.md): machine diagnostics, stable error codes, platform notes, and safe agent recovery.
-- [Demo Workflow](docs/demo-workflow.md): see one realistic task become a Memory Patch, Brain Brief, and Hot Context Pack.
-- [Live Model Evaluation](docs/live-model-eval.md): compare real model outputs against the deterministic evaluator.
-- [Live Model Results](docs/live-model-results.md): publish real model results separately from proxy fixtures.
-- [Evaluation](docs/evaluation.md): understand the retrieval, curator, patch-quality, and baseline comparison checks.
-- [Improvement Research](docs/improvement-research.md): research-backed roadmap for stale-memory audits, conflict decisions, curation-first retrieval, optional reranking, live-agent evals, and resume artifacts.
-- [Learning Loop](docs/learning-loop.md): v0.3 contract for verified behavior-changing lessons.
-- [Thai Strategy Guide](docs/thai-strategy-guide.md): strategy, process, use cases, trade-offs, and limitations for Thai readers.
-- [Repository Patterns](docs/repository-patterns.md): how this repo borrows packaging patterns from agent-tool projects without adding heavy dependencies.
+- [Installation](docs/guides/install.md): install the skill and adapt it to OpenCode or any other coding agent.
+- [Portable Brain Sync](docs/guides/portable-brain-sync.md): connect a private GitHub-backed memory repo for account and machine portability.
+- [Troubleshooting](docs/guides/troubleshooting.md): machine diagnostics, stable error codes, platform notes, and safe agent recovery.
+- [Demo Workflow](docs/guides/demo-workflow.md): see one realistic task become a Memory Patch, Brain Brief, and Hot Context Pack.
+- [Live Model Evaluation](docs/evaluation/live-model-eval.md): compare real model outputs against the deterministic evaluator.
+- [Live Model Results](docs/evaluation/live-model-results.md): publish real model results separately from proxy fixtures.
+- [Evaluation](docs/evaluation/evaluation.md): understand the retrieval, curator, patch-quality, and baseline comparison checks.
+- [Improvement Research](docs/research/improvement-research.md): research-backed roadmap for stale-memory audits, conflict decisions, curation-first retrieval, optional reranking, live-agent evals, and resume artifacts.
+- [Learning Loop](docs/design/learning-loop.md): v0.3 contract for verified behavior-changing lessons.
+- [Thai Strategy Guide](docs/guides/thai-strategy-guide.md): strategy, process, use cases, trade-offs, and limitations for Thai readers.
+- [Repository Patterns](docs/design/repository-patterns.md): how this repo borrows packaging patterns from agent-tool projects without adding heavy dependencies.
 
 ## Project Health
 
@@ -291,9 +291,9 @@ This repository is an original integration, not a claim to have invented agent m
 - optional Derived Index and Hot Context Pack contracts,
 - and deterministic contract audits.
 
-See [Research Foundations](docs/research-foundations.md) for source-backed design rationale, including Agentic RAG, CAG, caching, prompt reuse, and long-term memory papers. See [Evaluation](docs/evaluation.md) for retrieval and curator behavior checks.
+See [Research Foundations](docs/research/research-foundations.md) for source-backed design rationale, including Agentic RAG, CAG, caching, prompt reuse, and long-term memory papers. See [Evaluation](docs/evaluation/evaluation.md) for retrieval and curator behavior checks.
 
-See [Repository Patterns](docs/repository-patterns.md) for why optional graph, compression, MCP, and HTML layers are kept outside the core contracts.
+See [Repository Patterns](docs/design/repository-patterns.md) for why optional graph, compression, MCP, and HTML layers are kept outside the core contracts.
 
 ## Is This Agentic RAG?
 
@@ -305,15 +305,15 @@ The most accurate description is:
 
 > **Agentic memory retrieval with an evidence-grounded compiled wiki, designed to become RAG-enabled when scale and measured retrieval failures justify it.**
 
-Read the bilingual guide: [Where This Fits in the RAG Landscape](docs/rag-positioning.md).
+Read the bilingual guide: [Where This Fits in the RAG Landscape](docs/research/rag-positioning.md).
 
-The retrieval baseline is documented in [Evaluation](docs/evaluation.md). Synthetic stress tests support governed BM25F section retrieval as the default local recall path. Earlier private real-vault evals exposed semantic/alias and vault-curation gaps that should be re-evaluated with the latest governed BM25F section retrieval and `curation-recommend` tooling before making public claims about private-vault effectiveness.
+The retrieval baseline is documented in [Evaluation](docs/evaluation/evaluation.md). Synthetic stress tests support governed BM25F section retrieval as the default local recall path. Earlier private real-vault evals exposed semantic/alias and vault-curation gaps that should be re-evaluated with the latest governed BM25F section retrieval and `curation-recommend` tooling before making public claims about private-vault effectiveness.
 
-See [Cost and Scale](docs/cost-and-scale.md) for private real-vault results, honest vector-RAG trade-offs, and the current scalability boundary.
+See [Cost and Scale](docs/evaluation/cost-and-scale.md) for private real-vault results, honest vector-RAG trade-offs, and the current scalability boundary.
 
-See [Research Source Map](docs/research-source-map.md) for adopted evidence, discovery-only sources, and sources excluded as irrelevant.
+See [Research Source Map](docs/research/research-source-map.md) for adopted evidence, discovery-only sources, and sources excluded as irrelevant.
 
-See [Independent NotebookLM Review](docs/notebooklm-review.md) for the neutral research pass, seeded critique, accepted changes, and rejected overreach.
+See [Independent NotebookLM Review](docs/research/notebooklm-review.md) for the neutral research pass, seeded critique, accepted changes, and rejected overreach.
 
 ## License
 

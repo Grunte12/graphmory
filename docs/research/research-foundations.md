@@ -87,4 +87,4 @@ The following combination is original to this harness and requires local evaluat
 
 > A lead agent with full task context should author the durable semantic payload, while a separate curator should control retrieval, placement, linking, conflict detection, and graph hygiene without adding unsupported meaning.
 
-The rationale is information preservation, not an assumption that more agents are always better. For small tasks, direct lead-agent memory may be cheaper. See `evaluation.md`.
+The rationale is information preservation, not an assumption that more agents are always better. For small tasks, direct lead-agent memory may be cheaper. See `docs/evaluation/evaluation.md`.

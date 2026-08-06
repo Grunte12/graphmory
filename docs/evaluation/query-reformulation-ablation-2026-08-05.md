@@ -124,5 +124,5 @@ larger sample the regressions outweigh the fix.
 
 **Grounded in:** `scripts/eval-query-reformulation.mjs`,
 `eval/real-vault/reformulated-queries.json`,
-`docs/academic/raw-logs/query-reformulation-2026-08-05.json`, `eval/real-vault/`,
+`docs/evaluation/raw-logs/query-reformulation-2026-08-05.json`, `eval/real-vault/`,
 `real-vault-retrieval-2026-08-02.md`, `verifier-retry-ablation-2026-08-04.md`.

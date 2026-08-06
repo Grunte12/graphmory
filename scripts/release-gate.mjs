@@ -69,7 +69,7 @@ function assertPackIsClean(packReport) {
     "scripts/install.mjs",
     "scripts/recommend-curation.mjs",
     "src/memory-lifecycle-audit.mjs",
-    "docs/portable-brain-sync.md",
+    "docs/guides/portable-brain-sync.md",
     "adapters/generic-agent/INSTALL.md",
   ]
   const missing = required.filter((file) => !files.includes(file))
