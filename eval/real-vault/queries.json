@@ -1,0 +1,313 @@
+[
+  {
+    "id": "exact-memgpt",
+    "category": "exact",
+    "query": "Which paper proposes treating LLMs as operating systems with tiered memory management?",
+    "relevant": [
+      "03 Reference/Papers/packer2023memgpt.md"
+    ]
+  },
+  {
+    "id": "exact-bm25",
+    "category": "exact",
+    "query": "What is the formal foundation paper for BM25 and BM25F ranking?",
+    "relevant": [
+      "03 Reference/Papers/robertson2009bm25.md"
+    ]
+  },
+  {
+    "id": "exact-rrf",
+    "category": "exact",
+    "query": "What is the canonical algorithm for fusing BM25 and dense retrieval rankings?",
+    "relevant": [
+      "03 Reference/Papers/cormack2009rrf.md"
+    ]
+  },
+  {
+    "id": "exact-toki",
+    "category": "exact",
+    "query": "Which paper formalizes contradiction resolution in agent memory using a bitemporal operator algebra?",
+    "relevant": [
+      "03 Reference/Papers/wang2026toki.md"
+    ]
+  },
+  {
+    "id": "exact-longmemeval",
+    "category": "exact",
+    "query": "What benchmark evaluates chat assistants on long-term interactive memory with temporal reasoning cases?",
+    "relevant": [
+      "03 Reference/Papers/wu2024longmemeval.md"
+    ]
+  },
+  {
+    "id": "exact-zettelkasten",
+    "category": "exact",
+    "query": "Which paper describes a Zettelkasten-style, dynamically-linked agent memory architecture?",
+    "relevant": [
+      "03 Reference/Papers/xu2025amem.md"
+    ]
+  },
+  {
+    "id": "semantic-forgetting",
+    "category": "semantic",
+    "query": "What research looks at whether an agent can tell its own remembered facts have gone stale?",
+    "relevant": [
+      "03 Reference/Papers/chao2026stale.md",
+      "03 Reference/Papers/uddin2026famamemora.md"
+    ]
+  },
+  {
+    "id": "semantic-degradation",
+    "category": "semantic",
+    "query": "Is there evidence that letting an LLM keep rewriting its own memory makes it worse over time?",
+    "relevant": [
+      "03 Reference/Papers/zhang2026faultymemory.md"
+    ]
+  },
+  {
+    "id": "semantic-graph-vs-markdown",
+    "category": "semantic",
+    "query": "Does a graph-based memory system eventually outperform a curated note-based memory system as usage continues over weeks?",
+    "relevant": [
+      "03 Reference/Papers/spencer2026groundtruthfirst.md"
+    ]
+  },
+  {
+    "id": "semantic-production-memory",
+    "category": "semantic",
+    "query": "What production-grade memory system has been benchmarked against plain RAG and full-context prompting?",
+    "relevant": [
+      "03 Reference/Papers/chhikara2025mem0.md"
+    ]
+  },
+  {
+    "id": "semantic-temporal-graph",
+    "category": "semantic",
+    "query": "What agent memory architecture stores facts with explicit timestamps and relationship history in a graph?",
+    "relevant": [
+      "03 Reference/Papers/rasmussen2025zep.md"
+    ]
+  },
+  {
+    "id": "semantic-write-gate",
+    "category": "semantic",
+    "query": "How should a memory system decide whether an incoming fact is genuinely new versus redundant before writing it?",
+    "relevant": [
+      "03 Reference/Papers/wang2026sage.md"
+    ]
+  },
+  {
+    "id": "conflict-llm-free-retrieval",
+    "category": "conflict",
+    "query": "Is there a paper that argues retrieval should avoid using an LLM at all in the retrieval loop?",
+    "relevant": [
+      "03 Reference/Papers/joshi2026eywa.md"
+    ]
+  },
+  {
+    "id": "conflict-dont-use-rag",
+    "category": "conflict",
+    "query": "Is there a case against using RAG at all for small, bounded knowledge tasks?",
+    "relevant": [
+      "03 Reference/Papers/chan2024cag.md"
+    ]
+  },
+  {
+    "id": "conflict-provenance-collapse",
+    "category": "conflict",
+    "query": "What failure mode happens when a memory system blends the source evidence together with the derived conclusion?",
+    "relevant": [
+      "03 Reference/Papers/jin2026typedmemory.md"
+    ]
+  },
+  {
+    "id": "distractor-caching-cost",
+    "category": "distractor",
+    "query": "What work studies the serving/latency cost of long knowledge-injected context in retrieval-augmented generation?",
+    "relevant": [
+      "03 Reference/Papers/jin2024ragcache.md"
+    ],
+    "note": "Distractor risk: gim2023promptcache and chan2024cag both discuss caching/latency but for different mechanisms."
+  },
+  {
+    "id": "distractor-taxonomy-vs-systematization",
+    "category": "distractor",
+    "query": "What survey specifically produces a systematization-of-knowledge (SoK) treatment of agentic RAG risks and architectures?",
+    "relevant": [
+      "03 Reference/Papers/mishra2026soktagenticrag.md"
+    ],
+    "note": "Distractor risk: gao2023rag and singh2025agenticrag are both general surveys, not SoK-framed."
+  },
+  {
+    "id": "distractor-context-window-management",
+    "category": "distractor",
+    "query": "What Anthropic engineering post specifically covers designing tools with bounded, unambiguous outputs for agents?",
+    "relevant": [
+      "03 Reference/Papers/anthropic2025writingtools.md"
+    ],
+    "note": "Distractor risk: anthropic2025contextengineering and anthropic2025harnesses are adjacent but about different concerns."
+  },
+  {
+    "id": "multihop-tension-governance",
+    "category": "multi-hop",
+    "query": "How does this project's TENSION conflict-flagging state relate to broader research on memory lifecycle security and governance?",
+    "relevant_groups": [
+      [
+        "03 Reference/Papers/wang2026toki.md"
+      ],
+      [
+        "03 Reference/Papers/lin2026memsecuritysurvey.md",
+        "03 Reference/Papers/ding2026alwayson.md"
+      ]
+    ]
+  },
+  {
+    "id": "multihop-lifecycle-cluster",
+    "category": "multi-hop",
+    "query": "What is the full set of 2026 papers this project's bibliography groups under provenance and lifecycle governance?",
+    "relevant_groups": [
+      [
+        "03 Reference/Papers/wang2026toki.md",
+        "03 Reference/Papers/lin2026memsecuritysurvey.md",
+        "03 Reference/Papers/ding2026alwayson.md",
+        "03 Reference/Papers/wang2026sage.md",
+        "03 Reference/Papers/ha2026memguard.md",
+        "03 Reference/Papers/joshi2026eywa.md",
+        "03 Reference/Papers/spencer2026groundtruthfirst.md",
+        "03 Reference/Papers/jin2026typedmemory.md"
+      ]
+    ]
+  },
+  {
+    "id": "multihop-agent-memory-foundations",
+    "category": "multi-hop",
+    "query": "What are the foundational agent-memory architecture papers this project's related-work section opens with?",
+    "relevant_groups": [
+      [
+        "03 Reference/Papers/packer2023memgpt.md",
+        "03 Reference/Papers/park2023generativeagents.md",
+        "03 Reference/Papers/zhong2023memorybank.md"
+      ]
+    ]
+  },
+  {
+    "id": "hard-semantic-eval-design",
+    "category": "hard-semantic",
+    "query": "What benchmark specifically evaluates selective forgetting as one of its memory-agent capabilities, alongside retrieval and test-time learning?",
+    "relevant": [
+      "03 Reference/Papers/hu2025memoryagentbench.md"
+    ]
+  },
+  {
+    "id": "hard-semantic-bounded-memory",
+    "category": "hard-semantic",
+    "query": "Is there evidence that a gated, size-bounded memory resists irrelevant distractor content better than an unbounded one?",
+    "relevant": [
+      "03 Reference/Papers/mody2026cranimem.md"
+    ]
+  },
+  {
+    "id": "hard-semantic-structure-eval",
+    "category": "hard-semantic",
+    "query": "What research directly measures whether explicit memory organization structure improves an agent's task performance?",
+    "relevant": [
+      "03 Reference/Papers/shutova2026structmemeval.md"
+    ]
+  },
+  {
+    "id": "hard-semantic-hierarchical-retrieval",
+    "category": "hard-semantic",
+    "query": "What system uses hierarchical retrieval interfaces to scale agentic RAG while keeping token use bounded?",
+    "relevant": [
+      "03 Reference/Papers/du2026arag.md"
+    ]
+  },
+  {
+    "id": "exact-dpr",
+    "category": "exact",
+    "query": "What is the original Dense Passage Retrieval paper for open-domain question answering?",
+    "relevant": [
+      "03 Reference/Papers/karpukhin2020dpr.md"
+    ]
+  },
+  {
+    "id": "exact-beir",
+    "category": "exact",
+    "query": "What benchmark methodology evaluates zero-shot information retrieval across heterogeneous datasets?",
+    "relevant": [
+      "03 Reference/Papers/thakur2021beir.md"
+    ]
+  },
+  {
+    "id": "semantic-contextual-retrieval",
+    "category": "semantic",
+    "query": "What does Anthropic recommend for combining BM25 keyword search with embeddings and reranking, using contextual chunking?",
+    "relevant": [
+      "03 Reference/Papers/anthropic2024contextualretrieval.md"
+    ]
+  },
+  {
+    "id": "semantic-self-reflection",
+    "category": "semantic",
+    "query": "What retrieval approach lets a model critique its own generation and decide whether to retrieve again?",
+    "relevant": [
+      "03 Reference/Papers/asai2024selfrag.md"
+    ]
+  },
+  {
+    "id": "semantic-corrective-retrieval",
+    "category": "semantic",
+    "query": "What system evaluates retrieval quality and triggers a corrective action when retrieval is weak?",
+    "relevant": [
+      "03 Reference/Papers/yan2024crag.md"
+    ]
+  },
+  {
+    "id": "hard-semantic-code-graph",
+    "category": "hard-semantic",
+    "query": "What approach builds a knowledge graph over a codebase using tree-sitter parsing for LLM code exploration via MCP?",
+    "relevant": [
+      "03 Reference/Papers/vogel2026codebasememory.md"
+    ]
+  },
+  {
+    "id": "link-recovery-cranimem",
+    "category": "link-recovery",
+    "query": "What other papers does this bibliography associate with CraniMem's gated, bounded, distractor-resistant memory design?",
+    "relevant_groups": [
+      [
+        "03 Reference/Papers/liu2026simplemem.md",
+        "03 Reference/Papers/packer2023memgpt.md",
+        "03 Reference/Papers/rasmussen2025zep.md",
+        "03 Reference/Papers/xu2025amem.md"
+      ]
+    ],
+    "note": "Deliberately constructed: query lexically matches only the seed (mody2026cranimem), not the target neighbors -- tests whether wikilink expansion recovers graph-adjacent papers that direct BM25F alone would miss."
+  },
+  {
+    "id": "link-recovery-sage",
+    "category": "link-recovery",
+    "query": "Which papers in this bibliography are cross-referenced alongside SAGE's novelty-gating add/redundant/review write decision?",
+    "relevant_groups": [
+      [
+        "03 Reference/Papers/joshi2026eywa.md",
+        "03 Reference/Papers/spencer2026groundtruthfirst.md",
+        "03 Reference/Papers/lin2026memsecuritysurvey.md",
+        "03 Reference/Papers/wang2026toki.md"
+      ]
+    ],
+    "note": "Deliberately constructed: query lexically matches only the seed (wang2026sage), not the target neighbors."
+  },
+  {
+    "id": "link-recovery-selfrag",
+    "category": "link-recovery",
+    "query": "What papers are cross-referenced near Self-RAG's retrieve-generate-critique loop in this bibliography?",
+    "relevant_groups": [
+      [
+        "03 Reference/Papers/yan2024crag.md",
+        "03 Reference/Papers/du2026arag.md"
+      ]
+    ],
+    "note": "Deliberately constructed: query lexically matches only the seed (asai2024selfrag), not the target neighbors."
+  }
+]
