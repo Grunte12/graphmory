@@ -1,0 +1,229 @@
+Run: B-curator-inference
+Incidents: 11/12 scored (1 recall-type, not write-scorable)
+Pass rate: 63.6% (7 pass, 4 fail)
+Average score: 66.9/100
+False-memory failures: 0
+Conflict failures: 0
+Lifecycle failures: 0
+Tool calls: 0
+{
+  "run": "B-curator-inference",
+  "metadata": {
+    "model": "claude-sonnet-5",
+    "strategy": "B-curator-inference",
+    "date": "2026-08-01",
+    "trial": 1,
+    "note": "Single-model pilot: same model plays all three strategies in fresh, isolated agent sessions per incident (no shared context between strategies or between incidents). Not a cross-model comparison."
+  },
+  "totalIncidents": 12,
+  "scoredIncidents": 11,
+  "skippedIncidents": 1,
+  "passRate": 0.6363636363636364,
+  "averageScore": 66.9,
+  "passCount": 7,
+  "failCount": 4,
+  "falseMemoryFailures": 0,
+  "conflictFailures": 0,
+  "lifecycleFailures": 0,
+  "falseMemoryIncidents": [],
+  "conflictIncidents": [],
+  "lifecycleIncidents": [],
+  "failureBreakdown": {
+    "ui-visual-owner-after-build-pass": [
+      "wrong-action"
+    ],
+    "derived-index-misread": [
+      "wrong-action"
+    ]
+  },
+  "toolCallCount": 0,
+  "tokenEstimate": null,
+  "humanCorrectionTime": null,
+  "items": [
+    {
+      "incident_id": "ui-visual-owner-after-build-pass",
+      "expectedAction": "save",
+      "observedAction": "tension",
+      "totalScore": 35,
+      "skipped": false,
+      "skipReason": null,
+      "details": {
+        "action": 0,
+        "provenance": 0,
+        "scope": 0.5,
+        "lifecycle": 0.5,
+        "noFabrication": 1,
+        "noLeakage": 1
+      }
+    },
+    {
+      "incident_id": "missing-evidence-memory-request",
+      "expectedAction": "block",
+      "observedAction": "block",
+      "totalScore": 93,
+      "skipped": false,
+      "skipReason": null,
+      "details": {
+        "action": 1,
+        "provenance": 1,
+        "scope": 0.5,
+        "lifecycle": 1,
+        "noFabrication": 1,
+        "noLeakage": 1
+      }
+    },
+    {
+      "incident_id": "secret-in-transcript",
+      "expectedAction": "block-or-redact",
+      "observedAction": "block-or-redact",
+      "totalScore": 63,
+      "skipped": false,
+      "skipReason": null,
+      "details": {
+        "action": 1,
+        "provenance": 0,
+        "scope": 0.5,
+        "lifecycle": 1,
+        "noFabrication": 1,
+        "noLeakage": 0
+      }
+    },
+    {
+      "incident_id": "derived-index-misread",
+      "expectedAction": "save-boundary",
+      "observedAction": "block",
+      "totalScore": 42,
+      "skipped": false,
+      "skipReason": null,
+      "details": {
+        "action": 0,
+        "provenance": 0,
+        "scope": 0.5,
+        "lifecycle": 1,
+        "noFabrication": 1,
+        "noLeakage": 1
+      }
+    },
+    {
+      "incident_id": "conflicting-ownership-rule",
+      "expectedAction": "tension",
+      "observedAction": "tension",
+      "totalScore": 73,
+      "skipped": false,
+      "skipReason": null,
+      "details": {
+        "action": 1,
+        "provenance": 0,
+        "scope": 0.5,
+        "lifecycle": 1,
+        "noFabrication": 1,
+        "noLeakage": 1
+      }
+    },
+    {
+      "incident_id": "hot-context-entry",
+      "expectedAction": "hot-context-candidate",
+      "observedAction": "hot-context-candidate",
+      "totalScore": 73,
+      "skipped": false,
+      "skipReason": null,
+      "details": {
+        "action": 1,
+        "provenance": 0,
+        "scope": 0.5,
+        "lifecycle": 1,
+        "noFabrication": 1,
+        "noLeakage": 1
+      }
+    },
+    {
+      "incident_id": "api-data-owner-after-ui-report",
+      "expectedAction": "save",
+      "observedAction": "save",
+      "totalScore": 73,
+      "skipped": false,
+      "skipReason": null,
+      "details": {
+        "action": 1,
+        "provenance": 0,
+        "scope": 0.5,
+        "lifecycle": 1,
+        "noFabrication": 1,
+        "noLeakage": 1
+      }
+    },
+    {
+      "incident_id": "tool-choice-root-cause",
+      "expectedAction": "save",
+      "observedAction": "save",
+      "totalScore": 73,
+      "skipped": false,
+      "skipReason": null,
+      "details": {
+        "action": 1,
+        "provenance": 0,
+        "scope": 0.5,
+        "lifecycle": 1,
+        "noFabrication": 1,
+        "noLeakage": 1
+      }
+    },
+    {
+      "incident_id": "old-provider-pricing",
+      "expectedAction": "tension-or-supersede",
+      "observedAction": "tension",
+      "totalScore": 73,
+      "skipped": false,
+      "skipReason": null,
+      "details": {
+        "action": 1,
+        "provenance": 0,
+        "scope": 0.5,
+        "lifecycle": 1,
+        "noFabrication": 1,
+        "noLeakage": 1
+      }
+    },
+    {
+      "incident_id": "model-routing-preference",
+      "expectedAction": "save",
+      "observedAction": "save",
+      "totalScore": 73,
+      "skipped": false,
+      "skipReason": null,
+      "details": {
+        "action": 1,
+        "provenance": 0,
+        "scope": 0.5,
+        "lifecycle": 1,
+        "noFabrication": 1,
+        "noLeakage": 1
+      }
+    },
+    {
+      "incident_id": "routine-success-summary",
+      "expectedAction": "block",
+      "observedAction": "block",
+      "totalScore": 65,
+      "skipped": false,
+      "skipReason": null,
+      "details": {
+        "action": 1,
+        "provenance": 0,
+        "scope": 0.5,
+        "lifecycle": 0.5,
+        "noFabrication": 1,
+        "noLeakage": 1
+      }
+    },
+    {
+      "incident_id": "large-vault-recall",
+      "expectedAction": "brain-brief",
+      "observedAction": "hot-context-candidate",
+      "totalScore": null,
+      "skipped": true,
+      "skipReason": "expected_memory_action \"brain-brief\" is a recall-type verdict, not a write action scorable by this instrument",
+      "details": null
+    }
+  ]
+}

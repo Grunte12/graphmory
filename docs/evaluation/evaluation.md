@@ -30,6 +30,16 @@ Interpretation:
 
 Decision: keep BM25 as an evaluation baseline. Do not make it the production default until a larger real-vault dataset shows a meaningful gain.
 
+> **Update (2026-08-01):** the numbers above are the *original* v0.4-era baseline table and are kept as-is for historical comparison — do not edit them in place. A fresh reproduction of the same synthetic fixture on 2026-08-01, after the field-weighted BM25F section retrieval work described below had already shipped, measured higher numbers on the same eight-note/fifteen-query fixture:
+>
+> | Method | Hit@3 | Recall@3 | MRR | nDCG@3 | Avg context chars |
+> |---|---:|---:|---:|---:|---:|
+> | BM25 | 93.3% | 84.4% | 0.839 | 0.806 | 1147 |
+> | BM25 (section-scoped) | 93.3% | 84.4% | 0.828 | 0.797 | 676 |
+> | **BM25F (field-weighted, sections)** | **93.3%** | **84.4%** | **0.861** | **0.807** | **674** |
+>
+> This is not a re-measurement error or fixture drift — it reflects real code improvement between when the original table was written and 2026-08-01 (frontmatter-as-metadata indexing, heading hierarchy, field-weighted BM25F, conservative plural normalization, bounded wikilink boosting — see "Section and Field-Weighted Retrieval (v0.5)" below). Reproduce with the same two commands above on the current `main`; the live-model pilot numbers this reproduction accompanied live in `docs/evaluation/live-model-results.md`.
+
 ### Stress Baseline
 
 Run `npm run eval:retrieval:stress` to evaluate a larger generated vault containing canonical notes, stale guidance, raw captures, and unrelated distractors. Unlike the original scale benchmark, this diagnostic measures retrieval quality and contamination as well as speed:
