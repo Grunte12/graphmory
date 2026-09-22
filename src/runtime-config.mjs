@@ -27,7 +27,7 @@ export function runtimeConfigPath(override = process.env.GRAPHMORY_CONFIG_PATH |
 export function validateRuntimeConfig(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Runtime configuration must be an object")
   if (value.version !== 1) throw new Error("Unsupported runtime configuration version")
-  if (!["curator", "hosted-jev", "local-decision"].includes(value.workflow)) throw new Error("Invalid workflow")
+  if (!["curator", "hosted-jev", "local-decision", "local-rerank"].includes(value.workflow)) throw new Error("Invalid workflow")
   if (value.workflow === "curator") for (const key of ["provider", "model"]) {
     if (typeof value.curator?.[key] !== "string" || !value.curator[key].trim()) throw new Error(`curator.${key} is required`)
   }
@@ -39,10 +39,12 @@ export function validateRuntimeConfig(value) {
   if (!Number.isInteger(decision.maxCandidates) || decision.maxCandidates < 1 || decision.maxCandidates > 10) throw new Error("decision.maxCandidates must be 1–10")
   let endpoint
   try { endpoint = new URL(decision.endpoint) } catch { throw new Error("decision.endpoint must be a valid URL") }
-  if (value.workflow === "hosted-jev" && (endpoint.protocol !== "https:" || endpoint.hostname !== "api.typesafe.ai" || endpoint.pathname !== "/v1/systemone")) {
-    throw new Error("Hosted Jev endpoint must be https://api.typesafe.ai/v1/systemone")
+  const directJev = endpoint.href === "https://api.typesafe.ai/v1/systemone"
+  const gatewayJev = endpoint.href === "https://ai-gateway.vercel.sh/typesafe/v1/systemone"
+  if (value.workflow === "hosted-jev" && !directJev && !gatewayJev) {
+    throw new Error("Hosted Jev endpoint must be the TypeSafe API or Vercel AI Gateway TypeSafe-compatible endpoint")
   }
-  if (value.workflow === "local-decision" && (!(endpoint.hostname === "localhost" || endpoint.hostname === "127.0.0.1" || endpoint.hostname === "[::1]") || !["http:", "https:"].includes(endpoint.protocol))) {
+  if (["local-decision", "local-rerank"].includes(value.workflow) && (!(endpoint.hostname === "localhost" || endpoint.hostname === "127.0.0.1" || endpoint.hostname === "[::1]") || !["http:", "https:"].includes(endpoint.protocol))) {
     throw new Error("Local decision endpoint must use localhost")
   }
   return value

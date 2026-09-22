@@ -735,10 +735,10 @@ async function configureRuntime() {
   const ask = async (label, current) => (await input.question(`${label} [${current}]: `)).trim() || current
   try {
     console.log("Graphmory · setup")
-    console.log("1 Curator only   2 Hosted Jev decision gate   3 Local System One-compatible decision gate")
-    const selected = await ask("Workflow", { curator: "1", "hosted-jev": "2", "local-decision": "3" }[config.workflow])
-    const workflows = { "1": "curator", "2": "hosted-jev", "3": "local-decision" }
-    if (!workflows[selected]) throw new Error("Choose workflow 1, 2, or 3")
+    console.log("1 Curator only   2 Hosted Jev decision gate   3 Local System One decision gate   4 Local retrieval reranker")
+    const selected = await ask("Workflow", { curator: "1", "hosted-jev": "2", "local-decision": "3", "local-rerank": "4" }[config.workflow])
+    const workflows = { "1": "curator", "2": "hosted-jev", "3": "local-decision", "4": "local-rerank" }
+    if (!workflows[selected]) throw new Error("Choose workflow 1, 2, 3, or 4")
     config.workflow = workflows[selected]
     if (config.workflow === "curator") {
       config.curator ??= { provider: "openai", model: "gpt-6-luna" }
@@ -746,12 +746,25 @@ async function configureRuntime() {
       config.curator.model = await ask("Curator model", config.curator.model)
     }
     if (config.workflow === "hosted-jev") {
-      config.decision.endpoint = "https://api.typesafe.ai/v1/systemone"
-      config.decision.model = await ask("Jev model", config.decision.model)
-      config.decision.apiKeyEnv = await ask("API key environment variable name", config.decision.apiKeyEnv)
-      const consent = await ask("Send retrieved vault note excerpts to TypeSafe? (yes/no)", config.decision.allowRemoteVaultContent ? "yes" : "no")
+      const gateway = config.decision.endpoint === "https://ai-gateway.vercel.sh/typesafe/v1/systemone"
+      const provider = await ask("Jev access (1 TypeSafe direct, 2 Vercel AI Gateway)", gateway ? "2" : "1")
+      if (!["1", "2"].includes(provider)) throw new Error("Choose Jev access option 1 or 2")
+      config.decision.endpoint = provider === "2"
+        ? "https://ai-gateway.vercel.sh/typesafe/v1/systemone"
+        : "https://api.typesafe.ai/v1/systemone"
+      config.decision.model = await ask("Jev model", provider === "2" ? "typesafe-ai/jev" : "jev-latest")
+      config.decision.apiKeyEnv = await ask("API key environment variable name", provider === "2" ? "AI_GATEWAY_API_KEY" : "TYPESAFE_API_KEY")
+      const consent = await ask("Send retrieved vault note excerpts to the selected hosted provider? (yes/no)", config.decision.allowRemoteVaultContent ? "yes" : "no")
       if (!["yes", "no"].includes(consent)) throw new Error("Answer yes or no for remote vault content")
       config.decision.allowRemoteVaultContent = consent === "yes"
+    } else if (config.workflow === "local-rerank") {
+      const preset = await ask("Local reranker (1 Qwen3 4B quality candidate, 2 MiniLM CPU light, 3 Qwen3 0.6B multilingual, 4 custom)",
+        config.decision.model === "cross-encoder/ms-marco-MiniLM-L-6-v2" ? "2"
+          : config.decision.model === "Qwen/Qwen3-Reranker-0.6B" ? "3" : "1")
+      if (!["1", "2", "3", "4"].includes(preset)) throw new Error("Choose local reranker option 1, 2, 3, or 4")
+      config.decision.endpoint = await ask("Local /v1/rerank endpoint", "http://127.0.0.1:8000/v1/rerank")
+      const rerankModels = { "1": "Qwen3-Reranker-4B-4bit", "2": "cross-encoder/ms-marco-MiniLM-L-6-v2", "3": "Qwen/Qwen3-Reranker-0.6B" }
+      config.decision.model = await ask("Local reranker model", rerankModels[preset] ?? config.decision.model)
     } else if (config.workflow === "local-decision") {
       const preset = await ask("Local model (1 OpenThai-SystemOne, 2 Laya, 3 custom)",
         config.decision.model === "iapp/OpenThai-SystemOne" ? "1" : config.decision.model === "laya" ? "2" : "3")
@@ -762,9 +775,11 @@ async function configureRuntime() {
       const modelDefault = preset === "1" ? "iapp/OpenThai-SystemOne" : preset === "2" ? "laya" : config.decision.model
       config.decision.model = await ask("Local decision model identifier", modelDefault)
     }
-    if (config.workflow !== "curator") {
+    if (["hosted-jev", "local-decision"].includes(config.workflow)) {
       config.decision.relevanceThreshold = Number(await ask("Minimum relevance probability (0–1)", config.decision.relevanceThreshold))
-      config.decision.maxCandidates = Number(await ask("Maximum candidates (1–10)", config.decision.maxCandidates))
+    }
+    if (config.workflow !== "curator") {
+      config.decision.maxCandidates = Number(await ask("Maximum candidates (1–10)", config.workflow === "local-rerank" && config.decision.maxCandidates === 8 ? 4 : config.decision.maxCandidates))
     }
     saveRuntimeConfig(file, config)
     console.log(`Saved ${file}`)
@@ -792,7 +807,7 @@ async function recallManaged() {
   else if (flag("--json")) console.log(JSON.stringify(report, null, 2))
   else {
     console.log(`Managed recall: ${report.workflow}; ${report.confidence} retrieval confidence${report.decisionGate ? `; gate ${report.decisionGate}` : ""}`)
-    for (const item of report.results) console.log(`- ${item.path} | ${item.title} | relevance ${item.relevance ?? "curator review"}`)
+    for (const item of report.results) console.log(`- ${item.path} | ${item.title} | ${item.rankScore === undefined ? `relevance ${item.relevance ?? "curator review"}` : `rank score ${item.rankScore}`}`)
     for (const step of report.nextSteps) console.log(`- ${step}`)
   }
 }

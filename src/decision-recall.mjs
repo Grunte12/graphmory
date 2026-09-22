@@ -20,9 +20,28 @@ export async function managedRecall(vault, query, config, {
     nextSteps: initial.nextSteps.slice(0, 2),
   }
   if (config.workflow === "hosted-jev" && !config.decision.allowRemoteVaultContent) {
-    throw new Error("Remote vault content is disabled. Enable it explicitly in `mph config` after reviewing the data flow.")
+    throw new Error("Remote vault content is disabled. Enable it explicitly in `graphmory config` after reviewing the data flow.")
   }
   const documents = new Map(vaultDocuments.map((item) => [item.id, item]))
+  if (config.workflow === "local-rerank") {
+    const ranked = await rerankCandidates(initial.results.slice(0, limit), documents, query, config, fetchImpl)
+    const selected = ranked.slice(0, k)
+    const evidence = selected.map(({ path, title, status, rankScore, excerpt, excerptHash }) => ({
+      path, title, status, rankScore, excerpt, excerptHash,
+    }))
+    const evidencePacket = {
+      status: evidence.length ? "ready" : "abstain", workflow: config.workflow,
+      decisionModel: config.decision.model, retrievalConfidence: initial.confidence,
+      decisionGate: evidence.length ? "rank-only" : "abstain", candidateCount: ranked.length,
+      expanded: false, scanLimitReached: initial.scanLimitReached,
+      nextAction: evidence.length ? "lead-review" : "continue-without-memory", evidence,
+    }
+    return { query, workflow: config.workflow, decisionModel: config.decision.model,
+      evidencePacket, decisionGate: evidencePacket.decisionGate, results: selected,
+      confidence: initial.confidence, retrievalConfidence: initial.confidence,
+      candidateCount: ranked.length, expanded: false, scanLimitReached: initial.scanLimitReached,
+      needsExpansion: !evidence.length, nextSteps: evidence.length ? [] : initial.nextSteps.slice(0, 2) }
+  }
   let results = await scoreCandidates(initial.results.slice(0, limit), documents, query, config, fetchImpl)
   let expanded = false
   if (!results.some((item) => item.relevance >= config.decision.relevanceThreshold) && semanticExpansion) {
@@ -60,6 +79,29 @@ export async function managedRecall(vault, query, config, {
   }
 }
 
+async function rerankCandidates(candidates, documents, query, config, fetchImpl) {
+  const available = candidates.filter((candidate) => documents.has(candidate.path))
+  if (!available.length) return []
+  const excerpts = available.map((candidate) => relevantExcerpt(documents.get(candidate.path), query).slice(0, 800))
+  const response = await fetchImpl(config.decision.endpoint, {
+    method: "POST", redirect: "error", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ model: config.decision.model, query, documents: excerpts, top_n: available.length }),
+    signal: AbortSignal.timeout(120000),
+  })
+  if (!response.ok) throw new Error(`Local reranker returned HTTP ${response.status}`)
+  const results = (await response.json())?.results
+  if (!Array.isArray(results) || results.length !== available.length) throw new Error("Local reranker returned invalid results")
+  const seen = new Set()
+  return results.map((item) => {
+    if (!Number.isInteger(item.index) || item.index < 0 || item.index >= available.length || seen.has(item.index)
+      || !Number.isFinite(item.relevance_score)) throw new Error("Local reranker returned invalid scores")
+    seen.add(item.index)
+    const excerpt = excerpts[item.index]
+    return { ...available[item.index], rankScore: item.relevance_score,
+      excerpt: excerpt.slice(0, 240), excerptHash: createHash("sha256").update(excerpt).digest("hex") }
+  }).sort((a, b) => b.rankScore - a.rankScore || b.score - a.score || a.path.localeCompare(b.path))
+}
+
 async function scoreCandidates(candidates, documents, query, config, fetchImpl) {
   const available = candidates.filter((candidate) => documents.has(candidate.path))
   if (!available.length) return []
@@ -82,7 +124,7 @@ async function scoreCandidates(candidates, documents, query, config, fetchImpl) 
     redirect: "error",
     headers: { "content-type": "application/json", ...(config.workflow === "hosted-jev" ? { authorization: `Bearer ${key}` } : {}) },
     body: JSON.stringify({ model: config.decision.model, state, questions }),
-    signal: AbortSignal.timeout(10000),
+    signal: AbortSignal.timeout(config.workflow === "local-decision" ? 120000 : 10000),
   })
   if (!response.ok) throw new Error(`Decision endpoint returned HTTP ${response.status}`)
   const answers = (await response.json())?.answers

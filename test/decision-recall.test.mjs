@@ -17,9 +17,52 @@ test("runtime configuration persists without a secret and validates endpoint iso
     if (process.platform !== "win32") assert.equal(fs.statSync(file).mode & 0o777, 0o600)
     assert.throws(() => validateRuntimeConfig({ ...config, workflow: "local-decision", decision: { ...config.decision, endpoint: "https://example.com/v1/systemone" } }), /localhost/u)
     assert.throws(() => validateRuntimeConfig({ ...config, workflow: "hosted-jev", decision: { ...config.decision, endpoint: "http://127.0.0.1:8000/v1/systemone" } }), /Hosted Jev/u)
+    assert.doesNotThrow(() => validateRuntimeConfig({ ...config, workflow: "hosted-jev", decision: { ...config.decision, endpoint: "https://ai-gateway.vercel.sh/typesafe/v1/systemone", model: "typesafe-ai/jev", apiKeyEnv: "AI_GATEWAY_API_KEY" } }))
+    assert.throws(() => validateRuntimeConfig({ ...config, workflow: "hosted-jev", decision: { ...config.decision, endpoint: "https://ai-gateway.vercel.sh.evil.example/typesafe/v1/systemone" } }), /Hosted Jev/u)
+    assert.doesNotThrow(() => validateRuntimeConfig({ ...config, workflow: "local-rerank", decision: { ...config.decision, endpoint: "http://127.0.0.1:8000/v1/rerank" } }))
+    assert.throws(() => validateRuntimeConfig({ ...config, workflow: "local-rerank", decision: { ...config.decision, endpoint: "https://example.com/v1/rerank" } }), /localhost/u)
     assert.doesNotThrow(() => validateRuntimeConfig({ ...config, workflow: "hosted-jev", curator: undefined }))
     assert.throws(() => validateRuntimeConfig({ ...config, curator: undefined }), /curator.provider/u)
   } finally { fs.rmSync(dir, { recursive: true, force: true }) }
+})
+
+test("local reranker ranks bounded candidates without treating raw scores as probabilities", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-rerank-"))
+  try {
+    fs.writeFileSync(path.join(vault, "Alpha.md"), "# Alpha\n\nquery token and useful evidence")
+    fs.writeFileSync(path.join(vault, "Beta.md"), "# Beta\n\nquery token and other evidence")
+    const config = structuredClone(DEFAULT_RUNTIME_CONFIG)
+    config.workflow = "local-rerank"
+    config.decision.endpoint = "http://127.0.0.1:8000/v1/rerank"
+    config.decision.model = "Qwen3-Reranker-4B-4bit"
+    const report = await managedRecall(vault, "query token", config, { fetchImpl: async (_url, options) => {
+      const request = JSON.parse(options.body)
+      assert.equal(request.documents.length, 2)
+      return { ok: true, json: async () => ({ results: [
+        { index: 1, relevance_score: 9.4 }, { index: 0, relevance_score: 2.1 },
+      ] }) }
+    } })
+    assert.deepEqual(report.results.map((item) => item.path), ["Beta.md", "Alpha.md"])
+    assert.equal(report.decisionGate, "rank-only")
+    assert.equal(report.evidencePacket.evidence[0].rankScore, 9.4)
+    assert.equal(report.evidencePacket.evidence[0].relevance, undefined)
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
+})
+
+test("local reranker rejects missing or repeated candidate scores", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-rerank-invalid-"))
+  try {
+    fs.writeFileSync(path.join(vault, "Alpha.md"), "# Alpha\n\nquery token evidence")
+    fs.writeFileSync(path.join(vault, "Beta.md"), "# Beta\n\nquery token evidence")
+    const config = structuredClone(DEFAULT_RUNTIME_CONFIG)
+    config.workflow = "local-rerank"
+    config.decision.endpoint = "http://127.0.0.1:8000/v1/rerank"
+    await assert.rejects(managedRecall(vault, "query token", config, { fetchImpl: async () => ({
+      ok: true, json: async () => ({ results: [
+        { index: 0, relevance_score: 1 }, { index: 0, relevance_score: 2 },
+      ] }),
+    }) }), /invalid scores/u)
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
 })
 
 test("local decision gate reranks candidates and abstains when none pass", async () => {
@@ -67,6 +110,32 @@ test("hosted workflow requires explicit vault-content consent", async () => {
     fs.writeFileSync(path.join(vault, "note.md"), "# Note\nsecret content")
     await assert.rejects(managedRecall(vault, "secret", config, { fetchImpl: () => { throw new Error("network must not run") } }), /disabled/u)
   } finally { fs.rmSync(vault, { recursive: true, force: true }) }
+})
+
+test("Vercel gateway route sends a TypeSafe-compatible request with the configured key", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-gateway-"))
+  const previous = process.env.GRAPHMORY_TEST_GATEWAY_KEY
+  try {
+    fs.writeFileSync(path.join(vault, "note.md"), "# Note\n\nrelevant retrieval evidence")
+    process.env.GRAPHMORY_TEST_GATEWAY_KEY = "test-only-key"
+    const config = structuredClone(DEFAULT_RUNTIME_CONFIG)
+    config.workflow = "hosted-jev"
+    Object.assign(config.decision, { endpoint: "https://ai-gateway.vercel.sh/typesafe/v1/systemone",
+      model: "typesafe-ai/jev", apiKeyEnv: "GRAPHMORY_TEST_GATEWAY_KEY", allowRemoteVaultContent: true })
+    const report = await managedRecall(vault, "retrieval evidence", config, { fetchImpl: async (url, options) => {
+      assert.equal(url, config.decision.endpoint)
+      assert.equal(options.headers.authorization, "Bearer test-only-key")
+      const request = JSON.parse(options.body)
+      assert.equal(request.model, "typesafe-ai/jev")
+      assert.equal(request.questions.relevant_0.type, "noul")
+      return { ok: true, json: async () => ({ answers: { relevant_0: { noul: 0.9 } } }) }
+    } })
+    assert.equal(report.evidencePacket.decisionGate, "pass")
+  } finally {
+    if (previous === undefined) delete process.env.GRAPHMORY_TEST_GATEWAY_KEY
+    else process.env.GRAPHMORY_TEST_GATEWAY_KEY = previous
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
 })
 
 test("empty local retrieval abstains without calling a decision model", async () => {

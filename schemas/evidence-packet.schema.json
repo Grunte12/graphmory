@@ -7,10 +7,10 @@
   "required": ["status", "workflow", "decisionModel", "retrievalConfidence", "decisionGate", "candidateCount", "expanded", "scanLimitReached", "nextAction", "evidence"],
   "properties": {
     "status": { "enum": ["ready", "abstain"] },
-    "workflow": { "enum": ["hosted-jev", "local-decision"] },
+    "workflow": { "enum": ["hosted-jev", "local-decision", "local-rerank"] },
     "decisionModel": { "type": "string", "minLength": 1 },
     "retrievalConfidence": { "type": "string" },
-    "decisionGate": { "enum": ["pass", "abstain"] },
+    "decisionGate": { "enum": ["pass", "rank-only", "abstain"] },
     "candidateCount": { "type": "integer", "minimum": 0 },
     "expanded": { "type": "boolean" },
     "scanLimitReached": { "type": "boolean" },
@@ -21,12 +21,13 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["path", "title", "status", "relevance", "excerpt", "excerptHash"],
+        "required": ["path", "title", "status", "excerpt", "excerptHash"],
         "properties": {
           "path": { "type": "string", "minLength": 1 },
           "title": { "type": "string" },
           "status": { "type": "string" },
           "relevance": { "type": "number", "minimum": 0, "maximum": 1 },
+          "rankScore": { "type": "number" },
           "excerpt": { "type": "string", "maxLength": 240 },
           "excerptHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
         }
@@ -35,6 +36,8 @@
   },
   "allOf": [
     { "if": { "properties": { "status": { "const": "abstain" } } }, "then": { "properties": { "evidence": { "maxItems": 0 }, "decisionGate": { "const": "abstain" } } } },
-    { "if": { "properties": { "status": { "const": "ready" } } }, "then": { "properties": { "evidence": { "minItems": 1 }, "decisionGate": { "const": "pass" } } } }
+    { "if": { "properties": { "status": { "const": "ready" } } }, "then": { "properties": { "evidence": { "minItems": 1 }, "decisionGate": { "enum": ["pass", "rank-only"] } } } },
+    { "if": { "properties": { "decisionGate": { "const": "rank-only" } } }, "then": { "properties": { "workflow": { "const": "local-rerank" }, "evidence": { "items": { "required": ["rankScore"] } } } } },
+    { "if": { "properties": { "decisionGate": { "const": "pass" } } }, "then": { "properties": { "evidence": { "items": { "required": ["relevance"] } } } } }
   ]
 }

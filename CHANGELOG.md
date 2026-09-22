@@ -8,6 +8,7 @@ This project follows a lightweight changelog format inspired by Keep a Changelog
 
 - Renamed the product, GitHub repository, npm package, and primary CLI command to Graphmory. Kept `memory-patch-harness`, `mph`, and existing vault metadata paths as compatibility interfaces.
 - Added curator, hosted Jev, and local decision workflows with compact managed retrieval. Jev/local evidence goes directly to the lead agent without a curator sub-agent.
+- Added Vercel AI Gateway as a TypeSafe-compatible Jev route, a local reranker workflow with distinct raw rank scores, and a managed retrieval eval runner. Benchmarked the local vault without writing notes; see `docs/evaluation/managed-modes-2026-09-23.md`.
 
 ## 0.5.0-rc.3 - 2026-07-06
 
