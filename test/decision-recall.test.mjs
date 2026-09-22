@@ -14,7 +14,7 @@ test("runtime configuration persists without a secret and validates endpoint iso
     config.curator = { provider: "anthropic", model: "custom-curator" }
     saveRuntimeConfig(file, config)
     assert.deepEqual(loadRuntimeConfig(file), config)
-    assert.equal(fs.statSync(file).mode & 0o777, 0o600)
+    if (process.platform !== "win32") assert.equal(fs.statSync(file).mode & 0o777, 0o600)
     assert.throws(() => validateRuntimeConfig({ ...config, workflow: "local-decision", decision: { ...config.decision, endpoint: "https://example.com/v1/systemone" } }), /localhost/u)
     assert.throws(() => validateRuntimeConfig({ ...config, workflow: "hosted-jev", decision: { ...config.decision, endpoint: "http://127.0.0.1:8000/v1/systemone" } }), /Hosted Jev/u)
     assert.doesNotThrow(() => validateRuntimeConfig({ ...config, workflow: "hosted-jev", curator: undefined }))
