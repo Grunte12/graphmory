@@ -77,7 +77,7 @@ function cleanScalar(value) {
   return String(value).trim().replace(/^['"]|['"]$/gu, "")
 }
 
-const EXCLUDED_LIFECYCLES = new Set(["raw", "stale", "superseded", "archived"])
+const EXCLUDED_LIFECYCLES = new Set(["raw", "stale", "superseded", "archived", "deprecated"])
 
 export function isRetrievable(document, { includeNoncanonical = false } = {}) {
   const status = String(document.metadata?.status ?? document.metadata?.lifecycle ?? "current").toLowerCase()

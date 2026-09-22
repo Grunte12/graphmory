@@ -1,29 +1,31 @@
 # Installation
 
-Memory Patch Harness is file-first. It installs a skill and gives you adapter snippets, but it does not rewrite your agent configuration automatically.
+Graphmory is file-first. It installs a skill and gives you adapter snippets, but it does not rewrite your agent configuration automatically.
+
+For Codex, Cursor, or Claude Code, follow the [cross-host setup guide](agent-hosts.md). The steps below describe the existing OpenCode installer and vault setup.
 
 ## Requirements
 
 - Node.js 20 or newer
 - A Markdown memory folder or Obsidian vault
-- A coding agent that can read files and call a small memory-curator role
+- A coding agent that can read files and run the CLI; a memory-curator sub-agent is optional in curator mode
 
 ## Install The Skill
 
 ```sh
-git clone https://github.com/Grunte12/memory-patch-harness.git
-cd memory-patch-harness
+git clone https://github.com/Grunte12/graphmory.git
+cd graphmory
 npm run check
 node scripts/install.mjs --target "$HOME/.config/opencode"
 ```
 
-The installer copies `skills/memory-curator/`, `src/` modules, and the `brain-sync.mjs` CLI binary (`bin/memory-patch-harness.mjs`). It does not edit `opencode.json`.
+The installer copies `skills/memory-curator/`, `src/` modules, and the `brain-sync.mjs` CLI binary (`bin/graphmory.mjs`). It does not edit `opencode.json`.
 
 To verify the CLI works after install:
 ```sh
-node "$(dirname $(which node))/../lib/node_modules/@memory-patch-harness/bin/memory-patch-harness.mjs" doctor --json
-# or, if the target bin/ directory is on your PATH:
-memory-patch-harness.mjs doctor --json
+node "<target>/bin/graphmory.mjs" doctor --json
+# or, after adding <target>/bin/ to PATH:
+graphmory.mjs doctor --json
 ```
 
 Use `--check` to preview what would change during an upgrade:
@@ -78,11 +80,11 @@ After the installer has copied the skill, CLI, and src modules to `<target>`, ap
 3. **Use `opencode.agent.example.json` as a sub-agent configuration template.**
    Copy the agent definition from this file and adjust the `prompt` field to paste the contents of `memory-curator-prompt.md`. The example grants `read`, `edit`, `glob`, `grep`, `list`, and `external_directory` permissions while denying `bash`, `task`, `webfetch`, and `websearch`.
 
-4. **Add `<target>/bin/` to your `PATH`** so you can run `memory-patch-harness.mjs` from any directory without `node <target>/bin/...`.
+4. **Add `<target>/bin/` to your `PATH`** so you can run `graphmory.mjs` from any directory without `node <target>/bin/...`.
 
 5. **Verify the CLI works from the installed location:**
    ```sh
-   node <target>/bin/memory-patch-harness.mjs doctor --json
+   node <target>/bin/graphmory.mjs doctor --json
    ```
 
 The core mapping is:

@@ -1,10 +1,10 @@
-# Memory Patch Harness Agent Instructions
+# Graphmory Agent Instructions
 
 Use this file when a user gives this repository to an AI coding agent and asks it to install, connect, or use the harness.
 
 ## Goal
 
-Memory Patch Harness adds a durable Markdown memory layer for coding agents. The tool repo is not the memory repo. A user's brain repo or Obsidian vault stores the memory.
+Graphmory adds a durable Markdown memory layer for coding agents. The tool repo is not the memory repo. A user's brain repo or Obsidian vault stores the memory.
 
 ## First Actions
 
@@ -14,17 +14,17 @@ Memory Patch Harness adds a durable Markdown memory layer for coding agents. The
    ```sh
    node scripts/install.mjs --target "<agent-config-root>"
    ```
-   Replace `<agent-config-root>` with the target configuration directory (e.g. `~/.config/opencode` for OpenCode). The installer copies `skills/memory-curator/`, `src/` modules, and `bin/memory-patch-harness.mjs`. It does **not** edit your agent config.
+   Replace `<agent-config-root>` with the target configuration directory (e.g. `~/.config/opencode` for OpenCode). The installer copies `skills/memory-curator/`, `src/` modules, and `bin/graphmory.mjs`. It does **not** edit your agent config.
 4. Verify the CLI works after installation:
    ```sh
-   node <target>/bin/memory-patch-harness.mjs doctor --json
+   node <target>/bin/graphmory.mjs doctor --json
    # or, after adding <target>/bin/ to your PATH:
-   memory-patch-harness.mjs doctor --json
+   graphmory.mjs doctor --json
    ```
 5. Apply the adapter for your runtime. For OpenCode, review and apply the files under `adapters/opencode/`:
    - Merge `AGENTS.snippet.md` into the lead agent instructions.
-   - Use `memory-curator-prompt.md` as the `memory_curator` sub-agent prompt.
-   - Use `opencode.agent.example.json` as a template for the sub-agent configuration.
+   - In curator mode, use `memory-curator-prompt.md` as the `memory_curator` sub-agent prompt and `opencode.agent.example.json` as its configuration template.
+   - In Jev/local decision modes, route managed recall directly to the lead agent.
    See `docs/guides/install.md#opencode-adapter` for detailed instructions.
 6. If the user wants portable memory across machines/accounts, read `docs/guides/portable-brain-sync.md`.
 7. If setup or a command fails, run `doctor --json` and follow `docs/guides/troubleshooting.md`.
@@ -85,7 +85,8 @@ The apply command requires a clean Git worktree and baseline commit, creates a l
 ## Memory Roles
 
 - Lead agent: decides what was learned and writes the Memory Patch.
-- Memory Curator: retrieves, places, links, deduplicates, and validates memory without inventing missing facts.
+- In curator mode, Memory Curator retrieves, places, links, deduplicates, and validates memory without inventing missing facts.
+- In hosted Jev and local decision modes, the selected decision engine judges bounded retrieval candidates directly. The lead agent reads selected evidence and remains responsible for prose and Memory Patch authorship; no curator sub-agent is dispatched for recall.
 - Markdown/Obsidian vault: canonical operational memory.
 - GitHub brain repo: optional private sync target for portable memory.
 
@@ -102,7 +103,7 @@ The installer (`node scripts/install.mjs --target <dir>`) copies three component
 |-----------|-------------|---------|
 | `skills/memory-curator/` | `<target>/skills/memory-curator/` | Agent skill with protocol, schema, and authority rules |
 | `src/` | `<target>/src/` | Reusable runtime modules (recall, sync, lifecycle, contracts, etc.) |
-| `bin/memory-patch-harness.mjs` | `<target>/bin/memory-patch-harness.mjs` | CLI entry point for `doctor`, `recall`, `health`, `push`, etc. |
+| `bin/graphmory.mjs` | `<target>/bin/graphmory.mjs` | CLI entry point for `doctor`, `recall`, `health`, `push`, etc. |
 
 Adapters (under `adapters/`) configure the runtime — they do not overwrite agent config, merge prompts, or install system packages. Choose the adapter for your platform and apply the files as documented.
 
@@ -128,6 +129,12 @@ For recall, start with the bounded machine-readable path selector instead of bro
 
 ```sh
 node <harness-path>/scripts/brain-sync.mjs recall --vault "<vault-path>" --query "<task-specific memory question>" --json
+```
+
+When the user has configured a managed workflow with `graphmory config`, use the compact agent interface instead. In Jev/local mode it returns an EvidencePacket with bounded excerpts and paths; `abstain` means no accepted evidence. Do not repeat a failed decision call automatically; report the error or expansion signal.
+
+```sh
+node <harness-path>/scripts/brain-sync.mjs recall-managed --vault "<vault-path>" --query "<task-specific memory question>" --scope "<known project-or-domain path>" --agent
 ```
 
 Add `--scope "<known project-or-domain path>"` when the active project/domain is known. Read only the returned paths. Raw inbox/clipping paths and stale/superseded lifecycle states are excluded by default. If `needsExpansion` is true, reformulate once using project vocabulary or inspect the named MOC/backlink neighborhood; do not immediately scan the whole vault.

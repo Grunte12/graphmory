@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Grunte12/graphmory/schemas/evidence-packet.schema.json",
+  "title": "Managed retrieval EvidencePacket",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "workflow", "decisionModel", "retrievalConfidence", "decisionGate", "candidateCount", "expanded", "scanLimitReached", "nextAction", "evidence"],
+  "properties": {
+    "status": { "enum": ["ready", "abstain"] },
+    "workflow": { "enum": ["hosted-jev", "local-decision"] },
+    "decisionModel": { "type": "string", "minLength": 1 },
+    "retrievalConfidence": { "type": "string" },
+    "decisionGate": { "enum": ["pass", "abstain"] },
+    "candidateCount": { "type": "integer", "minimum": 0 },
+    "expanded": { "type": "boolean" },
+    "scanLimitReached": { "type": "boolean" },
+    "nextAction": { "enum": ["lead-review", "continue-without-memory"] },
+    "evidence": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "title", "status", "relevance", "excerpt", "excerptHash"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "title": { "type": "string" },
+          "status": { "type": "string" },
+          "relevance": { "type": "number", "minimum": 0, "maximum": 1 },
+          "excerpt": { "type": "string", "maxLength": 240 },
+          "excerptHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    }
+  },
+  "allOf": [
+    { "if": { "properties": { "status": { "const": "abstain" } } }, "then": { "properties": { "evidence": { "maxItems": 0 }, "decisionGate": { "const": "abstain" } } } },
+    { "if": { "properties": { "status": { "const": "ready" } } }, "then": { "properties": { "evidence": { "minItems": 1 }, "decisionGate": { "const": "pass" } } } }
+  ]
+}

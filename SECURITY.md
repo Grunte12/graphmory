@@ -1,6 +1,6 @@
 # Security Policy
 
-Memory Patch Harness is a local-first developer tool. It does not run a hosted service, but it may be used near private notes, code, prompts, logs, and agent transcripts.
+Graphmory is a local-first developer tool. It does not run a hosted service, but it may be used near private notes, code, prompts, logs, and agent transcripts.
 
 ## Supported Versions
 

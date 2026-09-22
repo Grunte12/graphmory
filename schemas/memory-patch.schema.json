@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/Grunte12/memory-patch-harness/main/schemas/memory-patch.schema.json",
+  "$id": "https://raw.githubusercontent.com/Grunte12/graphmory/main/schemas/memory-patch.schema.json",
   "title": "Memory Patch",
   "type": "object",
   "additionalProperties": false,

@@ -116,6 +116,14 @@ test("governed retrieval excludes stale and raw memory", () => {
   assert.equal(result.excluded, 2)
 })
 
+test("governed retrieval excludes deprecated memory", () => {
+  const deprecated = parseMarkdown("deprecated", "---\nstatus: deprecated\n---\n# Retired Policy\n\nshared brain")
+  const tension = parseMarkdown("tension", "---\nstatus: tension\n---\n# Open Decision\n\nshared brain")
+  assert.equal(isRetrievable(deprecated), false)
+  assert.equal(isRetrievable(tension), true)
+  assert.deepEqual(governedRank([deprecated, tension], "shared brain", "bm25").results.map((item) => item.id), ["tension"])
+})
+
 test("governed retrieval follows one bounded wikilink hop", () => {
   const policy = parseMarkdown("policy.md", "---\nstatus: current\n---\n# Policy\n\nUse safe sync. See [[conflict]].")
   const conflict = parseMarkdown("conflict.md", "---\nstatus: current\n---\n# Conflict\n\nPreserve competing evidence.")

@@ -1,5 +1,5 @@
-import { governedRank } from "./retrieval.mjs"
-import { filterByScope, loadVaultDocuments } from "./memory-recall.mjs"
+import { governedRank, isRetrievable } from "./retrieval.mjs"
+import { loadVaultDocuments } from "./memory-recall.mjs"
 
 const DEFAULT_MODEL = "Xenova/bge-small-en-v1.5"
 
@@ -19,7 +19,7 @@ export async function recallVaultSemantic(vault, query, {
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be between 1 and 10")
   if (!Number.isInteger(maxFiles) || maxFiles < 1) throw new Error("maxFiles must be positive")
 
-  const documents = filterByScope(loadVaultDocuments(vault, { includeRawPaths, maxFiles }), scope)
+  const documents = loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
   const transformers = await loadTransformers()
   if (modelCache) transformers.env.cacheDir = modelCache
   const embed = await transformers.pipeline("feature-extraction", model)
@@ -36,7 +36,7 @@ export async function recallVaultSemantic(vault, query, {
 
   const vectorResults = documents
     .map((document) => ({ ...document, score: dot(queryVector, vectorById.get(document.id)), retrievalSource: "semantic-vector" }))
-    .filter((document) => includeNoncanonical || !["raw", "stale", "superseded", "archived"].includes(String(document.metadata?.status ?? document.metadata?.lifecycle ?? "current").toLowerCase()))
+    .filter((document) => isRetrievable(document, { includeNoncanonical }))
     .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
 
   const sparse = governedRank(documents, query, "bm25f-sections", { includeNoncanonical }).results
@@ -46,11 +46,7 @@ export async function recallVaultSemantic(vault, query, {
   ])
 
   const top = fused.slice(0, k)
-  const confidence = top.length === 0
-    ? "none"
-    : top[0].fusedScore >= 1 / 61
-      ? "bounded"
-      : "low"
+  const confidence = semanticConfidence(fused)
 
   return {
     query,
@@ -76,6 +72,14 @@ export async function recallVaultSemantic(vault, query, {
       lanes: item.lanes,
     })),
   }
+}
+
+export function semanticConfidence(results) {
+  if (!results.length) return "none"
+  const [first, second] = results
+  if (first.lanes.length < 2) return "low"
+  if (second && first.fusedScore / second.fusedScore < 1.15) return "low"
+  return "bounded"
 }
 
 async function loadTransformers() {

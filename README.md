@@ -1,18 +1,18 @@
-# Memory Patch Harness
+# Graphmory
 
-[![CI](https://github.com/Grunte12/memory-patch-harness/actions/workflows/ci.yml/badge.svg)](https://github.com/Grunte12/memory-patch-harness/actions/workflows/ci.yml)
+[![CI](https://github.com/Grunte12/graphmory/actions/workflows/ci.yml/badge.svg)](https://github.com/Grunte12/graphmory/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An evidence-informed memory layer for coding agents.
 
 Status: experimental pre-1.0. The contracts and evals are usable, but live-model benchmark results are not published yet.
 
-The harness separates two responsibilities:
+Graphmory separates two responsibilities:
 
 - The lead agent decides what a completed task means and authors a structured Memory Patch.
-- A memory curator retrieves, validates, links, and stores that patch without inventing missing facts.
+- The configured workflow retrieves and checks evidence. A subscription curator can maintain notes; hosted Jev or a local decision engine can judge evidence directly for the lead agent.
 
-This prevents a common failure mode: asking a second agent with less task context to reconstruct the lesson from a vague summary.
+The lead agent keeps ownership of meaning. Decision-engine modes do not require a curator sub-agent for retrieval.
 
 ## Why This Exists
 
@@ -20,24 +20,28 @@ Long-running agents need durable memory, but saving every conversation creates n
 
 1. **Significance gate**: save only knowledge that can change future work.
 2. **Semantic ownership**: the agent with the full task context authors the memory claim.
-3. **Curator boundary**: the memory agent organizes and validates; it does not invent.
-4. **Bounded recall**: future tasks receive a compact Brain Brief and a few exact note paths.
+3. **Bounded decision role**: a curator or decision engine judges evidence within its capability.
+4. **Bounded recall**: future tasks receive a compact Brain Brief or EvidencePacket with exact note paths.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
   E[Verified evidence] --> O[Lead agent]
-  O -->|Memory Patch| C[Memory curator]
+  O -->|Memory Patch in curator mode| C[Memory curator]
   C -->|APPLIED| W[Canonical Markdown wiki]
   C -->|TENSION| T[Contradiction retained]
   C -->|BLOCKED| B[Missing meaning or evidence]
-  W -->|Brain Brief| O
+  W --> RCL[Bounded retrieval]
+  RCL --> C
+  RCL --> J[Jev or local decision engine]
+  C -->|Brain Brief| O
+  J -->|EvidencePacket| O
   R[Raw evidence] -. provenance .-> W
   W -. derived .-> D[Search, graph, HTML, reports]
 ```
 
-Raw evidence is the immutable evidentiary source of truth. Markdown is canonical operational memory: an agent-maintained synthesis that must remain traceable to evidence. Search indexes, knowledge graphs, and generated reports are rebuildable derived views.
+Raw evidence is the immutable evidentiary source of truth. Markdown is canonical operational memory: an agent-maintained synthesis that must remain traceable to evidence. Search indexes, knowledge graphs, and generated reports are rebuildable derived views. In Jev/local mode, durable patch placement remains lead-owned; automatic note placement is still planned.
 
 ## Quick Start
 
@@ -46,17 +50,17 @@ Requirements: Node.js 20 or newer.
 If you are an AI coding agent installing this for a user, read [AGENTS.md](AGENTS.md) first.
 
 ```powershell
-git clone https://github.com/Grunte12/memory-patch-harness.git
-cd memory-patch-harness
+git clone https://github.com/Grunte12/graphmory.git
+cd graphmory
 npm test
 node scripts/install.mjs --target "$HOME/.config/opencode"
 ```
 
-The installer copies the `memory-curator` skill, the `src/` modules, and the `brain-sync.mjs` CLI to the target directory. It does not overwrite `opencode.json` or agent prompts. Review the generated instructions, then apply the files under `adapters/opencode/`.
+The installer copies the `memory-curator` skill, the `src/` modules, and the CLI to the target directory. It does not overwrite `opencode.json` or agent prompts. Review the generated instructions, then apply the files under `adapters/opencode/`.
 
-After installation, add the target's `bin/` directory to your `PATH` to run `memory-patch-harness.mjs` from anywhere. Try `node <target>/bin/memory-patch-harness.mjs doctor --json` to verify the CLI works.
+After installation, add the target's `bin/` directory to your `PATH` to run `graphmory.mjs` from anywhere. Try `node <target>/bin/graphmory.mjs doctor --json` to verify the CLI works.
 
-The package also exposes `memory-patch-harness` and `mph` CLI commands when installed globally via `npm install -g .` or installed as a project dependency.
+The package name, GitHub repository, and primary CLI command are `graphmory`. Existing `memory-patch-harness` and `mph` commands remain as compatibility aliases. Existing vault metadata under `.memory-patch-harness/` remains readable without migration.
 
 Initialize a project memory area:
 
@@ -155,6 +159,7 @@ Existing Obsidian/custom memory is never restructured silently. The reviewed flo
 ## Guides
 
 - [Installation](docs/guides/install.md): install the skill and adapt it to OpenCode or any other coding agent.
+- [Codex, Cursor, and Claude Code](docs/guides/agent-hosts.md): set up the CLI and skill for each host.
 - [Portable Brain Sync](docs/guides/portable-brain-sync.md): connect a private GitHub-backed memory repo for account and machine portability.
 - [Troubleshooting](docs/guides/troubleshooting.md): machine diagnostics, stable error codes, platform notes, and safe agent recovery.
 - [Demo Workflow](docs/guides/demo-workflow.md): see one realistic task become a Memory Patch, Brain Brief, and Hot Context Pack.
@@ -163,6 +168,9 @@ Existing Obsidian/custom memory is never restructured silently. The reviewed flo
 - [Evaluation](docs/evaluation/evaluation.md): understand the retrieval, curator, patch-quality, and baseline comparison checks.
 - [Improvement Research](docs/research/improvement-research.md): research-backed roadmap for stale-memory audits, conflict decisions, curation-first retrieval, optional reranking, live-agent evals, and resume artifacts.
 - [Learning Loop](docs/design/learning-loop.md): v0.3 contract for verified behavior-changing lessons.
+- [Jev-assisted retrieval plan](docs/design/jev-retrieval-plan.md): staged local retrieval optimization and an optional decision-model experiment.
+- [Managed retrieval](docs/guides/managed-retrieval.md): console configuration for curator, hosted Jev, and a local System One-compatible decision endpoint.
+- [Four workflow model plan](docs/research/four-workflow-models-2026-09-23.md): subscription curator, hosted Jev, local decision, and a proposed ultra-light local ranker.
 - [Thai Strategy Guide](docs/guides/thai-strategy-guide.md): strategy, process, use cases, trade-offs, and limitations for Thai readers.
 - [Repository Patterns](docs/design/repository-patterns.md): how this repo borrows packaging patterns from agent-tool projects without adding heavy dependencies.
 

@@ -4,7 +4,7 @@
 
 ### Short answer
 
-Memory Patch Harness is **not a complete Agentic RAG system today**.
+Graphmory is **not a complete Agentic RAG system today**.
 
 It is an **agent-controlled memory retrieval architecture** over a canonical, linked Markdown wiki. It has some agentic retrieval behavior and a dependency-free BM25F section retrieval pipeline, but it does not yet include the full iterative retrieval loop, persistent search index, or reranking-by-model pipeline normally expected from a production Agentic RAG system.
 
@@ -105,7 +105,7 @@ The repository uses governed BM25F section retrieval as the default recall path.
 
 ### คำตอบสั้น
 
-Memory Patch Harness **ยังไม่ใช่ Agentic RAG แบบเต็มระบบ**
+Graphmory **ยังไม่ใช่ Agentic RAG แบบเต็มระบบ**
 
 ตอนนี้มันคือ **ระบบค้นคืนความจำที่ agent เป็นผู้ควบคุม** โดยใช้ Markdown/Obsidian wiki ที่เชื่อมโยงกันเป็นแหล่งความรู้หลัก มีลักษณะ agentic บางส่วน เพราะ Curator ตัดสินใจว่า note ใดเกี่ยวข้อง แต่ยังไม่มี indexing และ ranking pipeline แบบ RAG ที่ใช้ในระบบ production ทั่วไป
 

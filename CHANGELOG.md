@@ -4,6 +4,11 @@ This project follows a lightweight changelog format inspired by Keep a Changelog
 
 ## Unreleased
 
+### Changed
+
+- Renamed the product, GitHub repository, npm package, and primary CLI command to Graphmory. Kept `memory-patch-harness`, `mph`, and existing vault metadata paths as compatibility interfaces.
+- Added curator, hosted Jev, and local decision workflows with compact managed retrieval. Jev/local evidence goes directly to the lead agent without a curator sub-agent.
+
 ## 0.5.0-rc.3 - 2026-07-06
 
 ### Added

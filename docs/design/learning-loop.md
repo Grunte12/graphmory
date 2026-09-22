@@ -1,6 +1,6 @@
 # Learning Loop
 
-Memory Patch Harness treats durable memory as the result of a verified loop, not a running diary.
+Graphmory treats durable memory as the result of a verified loop, not a running diary.
 
 The loop is:
 

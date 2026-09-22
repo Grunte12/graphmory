@@ -5,25 +5,30 @@ import { governedRank, parseMarkdown, sectionFocusRerank } from "./retrieval.mjs
 const SKIP_DIRECTORIES = new Set([".git", ".obsidian", ".memory-patch-harness", "node_modules"])
 const RAW_ROOTS = new Set(["00 inbox", "clippings"])
 
-export function loadVaultDocuments(vault, { includeRawPaths = false, maxFiles = 5000 } = {}) {
+export function loadVaultDocuments(vault, { includeRawPaths = false, maxFiles = 5000, scope = "" } = {}) {
   const root = path.resolve(vault)
   if (!fs.existsSync(root)) throw new Error(`VAULT_NOT_FOUND: ${root}`)
   if (!fs.statSync(root).isDirectory()) throw new Error(`INVALID_VAULT_PATH: not a directory: ${root}`)
   const documents = []
+  const scopes = normalizeScopes(scope)
   const stack = [root]
   while (stack.length && documents.length < maxFiles) {
     const directory = stack.pop()
-    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const entries = fs.readdirSync(directory, { withFileTypes: true })
+      .sort((a, b) => a.name.localeCompare(b.name))
+    for (const entry of entries) {
       if (entry.isDirectory()) {
         if (SKIP_DIRECTORIES.has(entry.name)) continue
         const relative = path.relative(root, path.join(directory, entry.name)).replaceAll("\\", "/")
         if (!includeRawPaths && RAW_ROOTS.has(relative.split("/")[0].toLowerCase())) continue
+        if (scopes.length && !mayContainScope(relative, scopes)) continue
         stack.push(path.join(directory, entry.name))
         continue
       }
       if (!entry.isFile() || path.extname(entry.name).toLowerCase() !== ".md") continue
       const file = path.join(directory, entry.name)
       const relative = path.relative(root, file).replaceAll("\\", "/")
+      if (scopes.length && !matchesScope(relative, scopes)) continue
       const document = parseMarkdown(relative, fs.readFileSync(file, "utf8"))
       if (RAW_ROOTS.has(relative.split("/")[0].toLowerCase())) {
         document.metadata = { ...document.metadata, status: document.metadata.status ?? "raw" }
@@ -47,7 +52,7 @@ export function recallVault(vault, query, {
   if (!query?.trim()) throw new Error("query is required")
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be between 1 and 10")
   if (!Number.isInteger(maxFiles) || maxFiles < 1) throw new Error("maxFiles must be positive")
-  const documents = filterByScope(loadVaultDocuments(vault, { includeRawPaths, maxFiles }), scope)
+  const documents = loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
   const retrieval = governedRank(documents, query, method, { includeNoncanonical })
   let results = retrieval.results
   if (rerank) {
@@ -83,10 +88,11 @@ export function recallVaultLoop(vault, query, {
   scope = "",
   perMethodLimit = 8,
   rerank = false,
+  documents: suppliedDocuments,
 } = {}) {
   if (!query?.trim()) throw new Error("query is required")
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be between 1 and 10")
-  const documents = filterByScope(loadVaultDocuments(vault, { includeRawPaths, maxFiles }), scope)
+  const documents = suppliedDocuments ?? loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
   const lanes = methods.map((method) => {
     const retrieval = governedRank(documents, query, method, { includeNoncanonical })
     let laneResults = retrieval.results
@@ -140,7 +146,7 @@ export function recallVaultLoop(vault, query, {
   }
 }
 
-export function fuseRankedLanes(lanes) {
+export function fuseRankedLanes(lanes, constant = 60) {
   const byId = new Map()
   for (const lane of lanes) {
     lane.results.forEach((item, index) => {
@@ -149,7 +155,7 @@ export function fuseRankedLanes(lanes) {
         fusedScore: 0,
         lanes: [],
       }
-      current.fusedScore += 1 / (index + 1)
+      current.fusedScore += 1 / (constant + index + 1)
       current.lanes.push(lane.method)
       byId.set(item.id, current)
     })
@@ -158,13 +164,23 @@ export function fuseRankedLanes(lanes) {
 }
 
 export function filterByScope(documents, scope = "") {
-  const scopes = String(scope)
-    .split(",")
-    .map((item) => item.trim().toLowerCase().replaceAll("\\", "/"))
-    .filter(Boolean)
+  const scopes = normalizeScopes(scope)
   if (!scopes.length) return documents
-  return documents.filter((document) => {
-    const id = document.id.toLowerCase()
-    return scopes.some((candidate) => id === candidate || id.startsWith(`${candidate.replace(/\/$/u, "")}/`) || id.includes(candidate))
-  })
+  return documents.filter((document) => matchesScope(document.id, scopes))
+}
+
+function normalizeScopes(scope) {
+  return String(scope).split(",")
+    .map((item) => item.trim().replaceAll("\\", "/").replace(/\/+$/u, "").toLowerCase())
+    .filter(Boolean)
+}
+
+function matchesScope(relative, scopes) {
+  const id = relative.toLowerCase()
+  return scopes.some((candidate) => id === candidate || id === `${candidate}.md` || id.startsWith(`${candidate}/`))
+}
+
+function mayContainScope(relative, scopes) {
+  const directory = relative.toLowerCase()
+  return scopes.some((candidate) => candidate === directory || candidate.startsWith(`${directory}/`) || directory.startsWith(`${candidate}/`))
 }

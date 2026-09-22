@@ -4,6 +4,7 @@ import crypto from "node:crypto"
 import fs from "node:fs"
 import path from "node:path"
 import process from "node:process"
+import { createInterface } from "node:readline/promises"
 import {
   analyzeVaultHealth,
   applyRestructureManifest,
@@ -30,6 +31,8 @@ import { recallVaultSemantic } from "../src/semantic-recall.mjs"
 import { buildCurationRecommendations, renderCurationRecommendations } from "../src/curation-recommendations.mjs"
 import { auditMemoryLifecycle } from "../src/memory-lifecycle-audit.mjs"
 import { writeFileAtomic, writeJsonAtomic } from "../src/atomic-write.mjs"
+import { loadRuntimeConfig, runtimeConfigPath, saveRuntimeConfig } from "../src/runtime-config.mjs"
+import { managedRecall } from "../src/decision-recall.mjs"
 
 const args = process.argv.slice(2)
 const command = args[0]
@@ -46,7 +49,7 @@ function flag(name) {
 
 function usage(exitCode = 0) {
   const out = exitCode === 0 ? process.stdout : process.stderr
-  out.write(`Memory Patch Harness brain sync\n\n`)
+  out.write(`Graphmory brain sync\n\n`)
   out.write(`Usage:\n`)
   out.write(`  node scripts/brain-sync.mjs adoption-plan --vault <path> [--out <file>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs bootstrap --vault <path> --repo <owner/repo> [--create-remote]\n`)
@@ -57,6 +60,8 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs recall-loop --vault <path> --query <text> [--scope <path>] [--k 3] [--rerank] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs config [show] [--config <path>] [--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k 3] [--semantic-expansion] [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs lifecycle-audit --vault <path> [--json] [--out <file>]\n`)
   out.write(`  node scripts/brain-sync.mjs init --vault <path> --repo <owner/repo> [--create-remote]\n`)
@@ -298,7 +303,7 @@ function ensureRemoteRepo(config, createRemote, dryRun) {
     run("gh", ["auth", "status"], { dryRun })
     const existing = run("gh", ["repo", "view", config.repo], { dryRun, allowFail: true })
     if (dryRun || existing.status !== 0) {
-      const createArgs = ["repo", "create", config.repo, `--${config.visibility}`, "--description", "Markdown memory managed by Memory Patch Harness"]
+      const createArgs = ["repo", "create", config.repo, `--${config.visibility}`, "--description", "Markdown memory managed by Graphmory"]
       run("gh", createArgs, { dryRun })
     }
   }
@@ -461,7 +466,7 @@ function doctor() {
   }
   if (json) console.log(JSON.stringify(report, null, 2))
   else {
-    console.log(`Memory Patch Harness doctor: ${report.ok ? "PASS" : "FAIL"}`)
+    console.log(`Graphmory doctor: ${report.ok ? "PASS" : "FAIL"}`)
     for (const check of checks) {
       console.log(`- [${check.status.toUpperCase()}] ${check.id}: ${check.detail}`)
       if (check.fix) console.log(`  Fix: ${check.fix}`)
@@ -714,6 +719,80 @@ function recallLoop() {
   }
   if (report.needsExpansion) {
     console.log("Expansion required:")
+    for (const step of report.nextSteps) console.log(`- ${step}`)
+  }
+}
+
+async function configureRuntime() {
+  const file = runtimeConfigPath(option("--config"))
+  const config = loadRuntimeConfig(file)
+  if (rest.includes("show") || flag("--json")) {
+    console.log(JSON.stringify({ path: file, ...config }, null, 2))
+    return
+  }
+  if (!process.stdin.isTTY) throw new Error("Interactive config requires a terminal; use `graphmory config show` to inspect settings")
+  const input = createInterface({ input: process.stdin, output: process.stdout })
+  const ask = async (label, current) => (await input.question(`${label} [${current}]: `)).trim() || current
+  try {
+    console.log("Graphmory · setup")
+    console.log("1 Curator only   2 Hosted Jev decision gate   3 Local System One-compatible decision gate")
+    const selected = await ask("Workflow", { curator: "1", "hosted-jev": "2", "local-decision": "3" }[config.workflow])
+    const workflows = { "1": "curator", "2": "hosted-jev", "3": "local-decision" }
+    if (!workflows[selected]) throw new Error("Choose workflow 1, 2, or 3")
+    config.workflow = workflows[selected]
+    if (config.workflow === "curator") {
+      config.curator ??= { provider: "openai", model: "gpt-6-luna" }
+      config.curator.provider = await ask("Curator provider (openai/anthropic/google/other)", config.curator.provider)
+      config.curator.model = await ask("Curator model", config.curator.model)
+    }
+    if (config.workflow === "hosted-jev") {
+      config.decision.endpoint = "https://api.typesafe.ai/v1/systemone"
+      config.decision.model = await ask("Jev model", config.decision.model)
+      config.decision.apiKeyEnv = await ask("API key environment variable name", config.decision.apiKeyEnv)
+      const consent = await ask("Send retrieved vault note excerpts to TypeSafe? (yes/no)", config.decision.allowRemoteVaultContent ? "yes" : "no")
+      if (!["yes", "no"].includes(consent)) throw new Error("Answer yes or no for remote vault content")
+      config.decision.allowRemoteVaultContent = consent === "yes"
+    } else if (config.workflow === "local-decision") {
+      const preset = await ask("Local model (1 OpenThai-SystemOne, 2 Laya, 3 custom)",
+        config.decision.model === "iapp/OpenThai-SystemOne" ? "1" : config.decision.model === "laya" ? "2" : "3")
+      if (!["1", "2", "3"].includes(preset)) throw new Error("Choose local model option 1, 2, or 3")
+      const localDefault = /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])/u.test(config.decision.endpoint)
+        ? config.decision.endpoint : "http://127.0.0.1:8000/v1/systemone"
+      config.decision.endpoint = await ask("Local System One-compatible endpoint", localDefault)
+      const modelDefault = preset === "1" ? "iapp/OpenThai-SystemOne" : preset === "2" ? "laya" : config.decision.model
+      config.decision.model = await ask("Local decision model identifier", modelDefault)
+    }
+    if (config.workflow !== "curator") {
+      config.decision.relevanceThreshold = Number(await ask("Minimum relevance probability (0–1)", config.decision.relevanceThreshold))
+      config.decision.maxCandidates = Number(await ask("Maximum candidates (1–10)", config.decision.maxCandidates))
+    }
+    saveRuntimeConfig(file, config)
+    console.log(`Saved ${file}`)
+    console.log(config.workflow === "curator"
+      ? `Workflow: curator; agent: ${config.curator.provider}/${config.curator.model}`
+      : `Workflow: ${config.workflow}; decision model: ${config.decision.model}; evidence goes directly to the lead agent`)
+  } finally {
+    input.close()
+  }
+}
+
+async function recallManaged() {
+  const report = await managedRecall(requireVault(), requiredOption("--query"), loadRuntimeConfig(runtimeConfigPath(option("--config"))), {
+    k: Number.parseInt(option("--k", "3"), 10),
+    scope: option("--scope", ""),
+    semanticExpansion: flag("--semantic-expansion"),
+  })
+  if (flag("--agent")) console.log(JSON.stringify(report.evidencePacket || {
+    workflow: report.workflow,
+    retrievalConfidence: report.retrievalConfidence,
+    needsExpansion: report.needsExpansion,
+    scanLimitReached: report.scanLimitReached,
+    results: report.results.map(({ path, relevance, status }) => ({ path, ...(relevance === undefined ? {} : { relevance }), status })),
+  }))
+  else if (flag("--json")) console.log(JSON.stringify(report, null, 2))
+  else {
+    console.log(`Managed recall: ${report.workflow}; ${report.confidence} retrieval confidence${report.decisionGate ? `; gate ${report.decisionGate}` : ""}`)
+    for (const item of report.results) console.log(`- ${item.path} | ${item.title} | relevance ${item.relevance ?? "curator review"}`)
     for (const step of report.nextSteps) console.log(`- ${step}`)
   }
 }
@@ -1700,6 +1779,8 @@ try {
   else if (command === "health") health()
   else if (command === "recall") recall()
   else if (command === "recall-loop") recallLoop()
+  else if (command === "recall-managed") await recallManaged()
+  else if (command === "config") await configureRuntime()
   else if (command === "recall-rerank") recallRerank()
   else if (command === "recall-semantic") await recallSemantic()
   else if (command === "curation-recommend") curationRecommend()
@@ -1723,7 +1804,9 @@ try {
   else if (command === "curation-apply") curationApply()
   else usage(2)
 } catch (error) {
-  if (flag("--verbose")) {
+  if (command === "recall-managed" && flag("--agent")) {
+    console.log(JSON.stringify({ error: error.message, retryable: /HTTP 429|HTTP 529|fetch failed|timeout/iu.test(error.message) }))
+  } else if (flag("--verbose")) {
     console.error(error.stack || error.message)
   } else {
     console.error(error.message)

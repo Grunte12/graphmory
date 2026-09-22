@@ -2,7 +2,7 @@
 
 **Transport: Filesystem**
 
-This adapter connects any AI coding agent to Memory Patch Harness through
+This adapter connects any AI coding agent to Graphmory through
 direct filesystem access. No plugin, REST API, MCP server, or Obsidian-specific
 tooling is required.
 

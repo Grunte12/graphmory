@@ -21,7 +21,10 @@ function npmCommand(args, options) {
     ),
   )
   env.NPM_CONFIG_USERCONFIG = os.devNull
-  const merged = { ...options, env, shell: false }
+  env.NPM_CONFIG_CACHE = options?.npmCache ?? path.join(os.tmpdir(), `mph-npm-cache-${process.pid}`)
+  const spawnOptions = { ...options }
+  delete spawnOptions.npmCache
+  const merged = { ...spawnOptions, env, shell: false }
   return npmCli
     ? spawnSync(process.execPath, [npmCli, ...args], merged)
     : spawnSync("npm", args, merged)
@@ -29,32 +32,40 @@ function npmCommand(args, options) {
 
 test("packed harness installs on a fresh machine surface and exposes agent commands", { timeout: 60_000 }, () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "mph-fresh-install-"))
-  const packed = npmCommand(["pack", "--pack-destination", root], {
-    cwd: path.resolve("."),
-    encoding: "utf8",
-  })
-  assert.equal(packed.status, 0, packed.stderr)
-  const archive = fs.readdirSync(root).find((file) => file.endsWith(".tgz"))
-  assert.ok(archive, "npm pack should create an installable archive")
+  const npmCache = path.join(root, "npm-cache")
+  try {
+    const packed = npmCommand(["pack", "--pack-destination", root], {
+      cwd: path.resolve("."),
+      encoding: "utf8",
+      npmCache,
+    })
+    assert.equal(packed.status, 0, packed.stderr)
+    const archive = fs.readdirSync(root).find((file) => file.endsWith(".tgz"))
+    assert.ok(archive, "npm pack should create an installable archive")
 
-  const initialized = npmCommand(["init", "-y"], {
-    cwd: root,
-    encoding: "utf8",
-  })
-  assert.equal(initialized.status, 0, initialized.stderr)
+    const initialized = npmCommand(["init", "-y"], {
+      cwd: root,
+      encoding: "utf8",
+      npmCache,
+    })
+    assert.equal(initialized.status, 0, initialized.stderr)
 
-  const installed = npmCommand(["install", "--ignore-scripts", "--no-audit", "--no-fund", path.join(root, archive)], {
-    cwd: root,
-    encoding: "utf8",
-  })
-  assert.equal(installed.status, 0, installed.stderr)
+    const installed = npmCommand(["install", "--ignore-scripts", "--omit=optional", "--no-audit", "--no-fund", path.join(root, archive)], {
+      cwd: root,
+      encoding: "utf8",
+      npmCache,
+    })
+    assert.equal(installed.status, 0, installed.stderr)
 
-  const cli = path.join(root, "node_modules", "memory-patch-harness", "scripts", "brain-sync.mjs")
-  const help = spawnSync(process.execPath, [cli, "--help"], { cwd: root, encoding: "utf8", shell: false })
-  assert.equal(help.status, 0, help.stderr)
-  assert.match(help.stdout, /recall --vault/)
-  assert.match(help.stdout, /sync-plan --vault/)
-  assert.match(help.stdout, /doctor/)
+    const cli = path.join(root, "node_modules", "graphmory", "scripts", "brain-sync.mjs")
+    const help = spawnSync(process.execPath, [cli, "--help"], { cwd: root, encoding: "utf8", shell: false })
+    assert.equal(help.status, 0, help.stderr)
+    assert.match(help.stdout, /recall --vault/)
+    assert.match(help.stdout, /sync-plan --vault/)
+    assert.match(help.stdout, /doctor/)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
 })
 
 test("agent package documents autonomy-first human gates", () => {
@@ -70,6 +81,12 @@ test("install.mjs copies skill, src, and CLI to target and CLI runs without a va
   try {
     const installScript = path.resolve("scripts", "install.mjs")
     const target = path.join(tmp, "target")
+
+    const before = spawnSync(process.execPath, [installScript, "--target", target, "--check"], {
+      cwd: path.resolve("."), encoding: "utf8", shell: false,
+    })
+    assert.equal(before.status, 0, before.stderr)
+    assert.ok(JSON.parse(before.stdout).changes.some((change) => change.file.startsWith("skills/memory-curator/")))
 
     // Run the installer
     const install = spawnSync(process.execPath, [installScript, "--target", target, "--force"], {
@@ -88,8 +105,9 @@ test("install.mjs copies skill, src, and CLI to target and CLI runs without a va
     assert.ok(fs.existsSync(srcPath), "src/brain-sync.mjs should exist after install")
 
     // Verify CLI was copied
-    const cliPath = path.join(target, "bin", "memory-patch-harness.mjs")
-    assert.ok(fs.existsSync(cliPath), "bin/memory-patch-harness.mjs should exist after install")
+    const cliPath = path.join(target, "bin", "graphmory.mjs")
+    assert.ok(fs.existsSync(cliPath), "bin/graphmory.mjs should exist after install")
+    assert.ok(fs.existsSync(path.join(target, "bin", "memory-patch-harness.mjs")), "legacy launcher should remain available")
 
     // Verify installed CLI runs doctor without a vault
     const doctor = spawnSync(process.execPath, [cliPath, "doctor", "--json"], {
@@ -109,6 +127,12 @@ test("install.mjs copies skill, src, and CLI to target and CLI runs without a va
     })
     assert.equal(help.status, 0, `--help failed: ${help.stderr}`)
     assert.match(help.stdout, /doctor/)
+
+    const check = spawnSync(process.execPath, [installScript, "--target", target, "--check"], {
+      cwd: path.resolve("."), encoding: "utf8", shell: false,
+    })
+    assert.equal(check.status, 0, check.stderr)
+    assert.deepEqual(JSON.parse(check.stdout.split("\nNo changes needed.")[0]).changes, [])
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true })
   }

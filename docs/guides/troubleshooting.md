@@ -6,7 +6,7 @@ Start with the doctor command instead of guessing:
 node scripts/brain-sync.mjs doctor --vault "<vault-path>" --json
 ```
 
-Add `--require-github` only when the user wants GitHub-backed portability. Local Memory Patch Harness use requires Node.js and Git, but not GitHub CLI.
+Add `--require-github` only when the user wants GitHub-backed portability. Local Graphmory use requires Node.js and Git, but not GitHub CLI.
 
 ## Agent Recovery Loop
 

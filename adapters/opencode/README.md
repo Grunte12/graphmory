@@ -2,7 +2,7 @@
 
 **Transport: Filesystem (with MCP as optional extension)**
 
-This adapter configures Memory Patch Harness for the [OpenCode](https://opencode.ai/)
+This adapter configures Graphmory for the [OpenCode](https://opencode.ai/)
 coding agent platform. OpenCode supports custom agent definitions, skills, and
 permission rules.
 
