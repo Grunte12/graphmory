@@ -128,7 +128,17 @@ async function scoreCandidates(candidates, documents, query, config, fetchImpl) 
     body: JSON.stringify({ model: config.decision.model, state, questions }),
     signal: AbortSignal.timeout(config.workflow === "local-decision" ? 120000 : 10000),
   })
-  if (!response.ok) throw new Error(`Decision endpoint returned HTTP ${response.status}`)
+  if (!response.ok) {
+    if (config.workflow === "hosted-jev" && response.status === 403) {
+      let body
+      try { body = await response.json() } catch { /* Preserve the HTTP error for non-JSON responses. */ }
+      const code = body?.error?.type ?? body?.error?.code ?? body?.code
+      if (code === "customer_verification_required") {
+        throw new Error("Vercel AI Gateway requires a verified payment card on the key's account before it will serve Jev requests, including free-tier requests. Add a card in that account's Billing settings, then retry.")
+      }
+    }
+    throw new Error(`Decision endpoint returned HTTP ${response.status}`)
+  }
   const answers = (await response.json())?.answers
   return available.map((candidate, index) => {
     const answer = answers?.[`relevant_${index}`]

@@ -138,6 +138,26 @@ test("Vercel gateway route sends a TypeSafe-compatible request with the configur
   }
 })
 
+test("Vercel verification error explains the account action", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-gateway-billing-"))
+  const previous = process.env.GRAPHMORY_TEST_GATEWAY_KEY
+  try {
+    fs.writeFileSync(path.join(vault, "note.md"), "# Note\n\nrelevant retrieval evidence")
+    process.env.GRAPHMORY_TEST_GATEWAY_KEY = "test-only-key"
+    const config = structuredClone(DEFAULT_RUNTIME_CONFIG)
+    config.workflow = "hosted-jev"
+    Object.assign(config.decision, { endpoint: "https://ai-gateway.vercel.sh/typesafe/v1/systemone",
+      model: "typesafe-ai/jev", apiKeyEnv: "GRAPHMORY_TEST_GATEWAY_KEY", allowRemoteVaultContent: true })
+    await assert.rejects(managedRecall(vault, "retrieval evidence", config, { fetchImpl: async () => ({
+      ok: false, status: 403, json: async () => ({ error: { type: "customer_verification_required" } }),
+    }) }), /requires a verified payment card/u)
+  } finally {
+    if (previous === undefined) delete process.env.GRAPHMORY_TEST_GATEWAY_KEY
+    else process.env.GRAPHMORY_TEST_GATEWAY_KEY = previous
+    fs.rmSync(vault, { recursive: true, force: true })
+  }
+})
+
 test("empty local retrieval abstains without calling a decision model", async () => {
   const vault = fs.mkdtempSync(path.join(os.tmpdir(), "mph-empty-decision-"))
   try {
