@@ -1,0 +1,14 @@
+{
+  "01-new-decision":{"status":"APPLIED","operation":"update","target":"projects/atlas.md","source":"review-201"},
+  "02-new-project":{"status":"APPLIED","operation":"create","target":"projects/solstice.md","source":"release-31"},
+  "03-derived-boundary":{"status":"APPLIED","operation":"update","target":"policies/memory.md","source":"design-41"},
+  "04-duplicate":{"status":"BLOCKED","operation":"none","reason_code":"DUPLICATE"},
+  "05-routine-noise":{"status":"BLOCKED","operation":"none","reason_code":"NOISE"},
+  "06-unsupported":{"status":"BLOCKED","operation":"none","reason_code":"UNSUPPORTED"},
+  "07-conflict":{"status":"TENSION","operation":"none","reason_code":"CONFLICT","target":"projects/atlas.md"},
+  "08-replacement":{"status":"TENSION","operation":"none","reason_code":"NEEDS_APPROVAL","target":"projects/meridian.md"},
+  "09-stale-source":{"status":"BLOCKED","operation":"none","reason_code":"STALE_SOURCE"},
+  "10-secret":{"status":"BLOCKED","operation":"none","reason_code":"SECRET"},
+  "11-cross-project":{"status":"BLOCKED","operation":"none","reason_code":"SCOPE"},
+  "12-injected-note":{"status":"BLOCKED","operation":"none","reason_code":"UNTRUSTED_SOURCE"}
+}
