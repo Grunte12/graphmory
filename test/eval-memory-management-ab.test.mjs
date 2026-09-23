@@ -7,13 +7,15 @@ import { test } from "node:test"
 
 const root = path.resolve("eval/memory-management-ab")
 const answers = JSON.parse(fs.readFileSync(path.join(root, "answers.json"), "utf8"))
+const cases = JSON.parse(fs.readFileSync(path.join(root, "cases.json"), "utf8"))
+const casesById = new Map(cases.map((item) => [item.id, item]))
 const script = path.resolve("scripts/eval-memory-management-ab.mjs")
 
 function referenceOutputs() {
   return Object.entries(answers).map(([id, answer]) => ({
     id,
     ...answer,
-    ...(answer.status === "APPLIED" ? { source_ids: [answer.source], stored_claim: `Verified synthetic memory for ${id}` } : {}),
+    ...(answer.status === "APPLIED" ? { source_ids: [answer.source], stored_claim: casesById.get(id).proposal } : {}),
   }))
 }
 
@@ -45,4 +47,17 @@ test("unsafe write and secret echo fail", () => {
   assert.equal(result.status, 1)
   assert.match(result.stdout, /10-secret: .*secret echoed/)
   assert.match(result.stdout, /false writes 1/)
+})
+
+test("wrong claim, extra source, and wrong target count as unsafe proposals", () => {
+  const outputs = referenceOutputs()
+  outputs.find((item) => item.id === "01-new-decision").stored_claim = "Unrelated synthetic memory"
+  outputs.find((item) => item.id === "02-new-project").source_ids.push("unknown-source")
+  outputs.find((item) => item.id === "03-derived-boundary").target = "../outside.md"
+  const result = score(outputs)
+  assert.equal(result.status, 1)
+  assert.match(result.stdout, /false writes 3/)
+  assert.match(result.stdout, /01-new-decision: stored_claim/)
+  assert.match(result.stdout, /02-new-project: provenance/)
+  assert.match(result.stdout, /03-derived-boundary: .*unsafe target path/)
 })

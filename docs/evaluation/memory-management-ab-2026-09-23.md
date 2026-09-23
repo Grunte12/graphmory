@@ -2,6 +2,8 @@
 
 This pilot used the 12 synthetic cases in `eval/memory-management-ab/`. Both arms received the same frozen proposed claim, source context, and candidate notes. Neither arm wrote Markdown. The scorer checked proposed status, operation, target, reason, provenance, and false writes. These cases are development examples, not an independent held-out set.
 
+These historical counts used scorer v1. The v2 scorer now checks claim text and extra source IDs and counts unsafe proposals even in cases expected to be applied. Do not compare these counts directly with v2 reports. The two arms also differed in final decision workflow, and Luna timing/cost were unavailable, so this is a workflow pilot rather than a model ranking.
+
 | Arm | Exact cases | Correct status | False writes | Timing / usage |
 | --- | ---: | ---: | ---: | --- |
 | Codex `gpt-6-luna` curator sub-agent | 10/12 | 12/12 | 0 | Per-call tokens, latency, and cost unavailable from this invocation |

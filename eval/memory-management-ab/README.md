@@ -21,6 +21,8 @@ For a no-write case, use `operation: "none"`, omit `stored_claim`, and set `reas
 node scripts/eval-memory-management-ab.mjs --candidate /tmp/luna-run.json --candidate /tmp/jev-run.json --json /tmp/graphmory-ab-report.json --allow-failures
 ```
 
-Prioritize **zero false writes**, then overall case accuracy, latency and total cost. A perfect dry-run score does not prove the actual writer is safe: placement, atomic edits, source-hash checks, and rollback need a separate write test before enabling Jev-assisted curation. Hosted Jev note placement is currently a design, not a working Graphmory feature. This suite is preparation for a live A/B, not a claim that either arm has passed.
+Prioritize **zero false writes**, then overall case accuracy, latency and total cost. A perfect dry-run score does not prove the actual writer is safe: placement, atomic edits, source-hash checks, and rollback need a separate write test before enabling Jev-assisted curation. Hosted Jev has a proposal-only `curate-plan` pilot; it cannot write notes. This suite is preparation for a live A/B, not a claim that either arm has passed.
+
+The scorer is now version 2. It requires the exact fixture claim (allowing whitespace normalization), rejects extra source IDs, and counts wrong-target, wrong-claim, and unknown-source write proposals as unsafe. Historical pilot scores used the older scorer and must not be compared directly with new reports. These 12 fixtures still test proposal decisions, not actual file diffs or model superiority.
 
 The first synthetic decision pilot and its limitations are recorded in `docs/evaluation/memory-management-ab-2026-09-23.md`.

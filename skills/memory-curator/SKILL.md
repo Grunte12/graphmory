@@ -35,6 +35,8 @@ Pass `--scope "<known-project-or-domain-path>"` when the scope is known. Read on
 5. Preserve provenance and connect the note to a project map.
 6. Return `APPLIED`, `TENSION`, or `BLOCKED`.
 
+In hosted Jev or local decision mode, the lead may run `graphmory curate-plan --vault "<path>" --input "<bundle.json>" --agent` after authoring a Memory Patch. The bundle contains `patch`, `sources` with IDs and short evidence excerpts, and optionally up to three `candidate_paths`. Read the returned advice and affected notes before any write. `curate-plan` never edits the vault; `review` is not approval to apply a patch. A local reranker cannot perform this classification.
+
 ## Authority
 
 - The lead agent authors new semantic meaning.

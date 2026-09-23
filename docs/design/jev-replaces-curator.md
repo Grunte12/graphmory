@@ -1,6 +1,6 @@
 # Jev as the curator decision engine
 
-Status: incremental implementation, 2026-09-23. `recall-managed` calls Jev directly in hosted mode and emits a compact EvidencePacket. Jev-assisted note placement and calibrated quality gates below are not implemented yet.
+Status: incremental implementation, 2026-09-23. `recall-managed` calls Jev directly in hosted mode and emits a compact EvidencePacket. `curate-plan` now offers a proposal-only placement decision; calibrated quality gates and a Jev-driven writer are not implemented.
 
 ## Role boundary
 
@@ -34,7 +34,13 @@ Keep agent output compact by default: path, status, short excerpt, score, and ex
 
 ## Note placement and consolidation without Luna
 
-The lead authors a Memory Patch with proposed claims and provenance. The harness finds a bounded set of possible destinations. Jev may classify each comparison as `duplicate`, `compatible addition`, `conflict`, or `insufficient`, and may choose only from supplied destination IDs. The harness prepares an exact edit, rechecks source hashes, validates frontmatter/links/lifecycle, and writes atomically under existing authority rules. An ambiguous semantic merge or unsupported claim returns to the lead for an explicit replacement; Jev never invents patch prose. Start with retrieval only. Enable automated placement after separate write-safety evaluation.
+The lead authors a Memory Patch with proposed claims and provenance. The harness finds a bounded set of possible destinations. Jev classifies each comparison as `duplicate`, `compatible`, `conflict`, `unrelated`, or `insufficient`, and returns only supplied destination IDs. The lead reviews the proposal and writes any approved change through the existing curator flow. A future writer would need to recheck source hashes, validate frontmatter, links, and lifecycle, and apply an exact edit atomically. Jev never invents patch prose. Enable automated placement only after separate write-safety evaluation.
+
+### Proposal-only pilot
+
+`graphmory curate-plan --vault <path> --input <bundle.json> --agent` reads a complete Memory Patch plus source excerpts. The bundle shape is `{ "patch": <MemoryPatch>, "sources": [{ "id": "review-201", "text": "..." }], "candidate_paths": ["projects/atlas.md"] }`. Every `patch.provenance[].value` must match one supplied source ID. Omit `candidate_paths` to use the bounded local shortlist. The command checks patch structure, secrets, source IDs, candidate containment and lifecycle before sending data. Hosted mode requires the existing explicit remote-content consent in `graphmory config`. Local rerank mode reports a capability error.
+
+The command sends one source-support question and up to three five-way relationship questions. Its output always has `operation: "none"` and `writeEnabled: false`; `review` means the lead must inspect evidence and author any change. Candidate and source hashes help detect stale advice, but the current writer does not consume this proposal. The 0.8 support and 0.75 relationship-confidence gates are provisional, not validated safety thresholds. No automatic write follows this command.
 
 ## Implementation order
 
