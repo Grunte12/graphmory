@@ -150,7 +150,7 @@ async function scoreCandidates(candidates, documents, query, config, fetchImpl) 
   })
 }
 
-function relevantExcerpt(document, query) {
+export function relevantExcerpt(document, query) {
   const terms = new Set(tokenize(query))
   const sections = splitMarkdownSections(document)
   if (!sections.length) return document.markdown.slice(0, 2500)
