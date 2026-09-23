@@ -13,7 +13,7 @@ The Qwen3-Reranker-0.6B CPU pilot used the first two questions from each of seve
 
 On this vault, the lexical top four contain a labeled relevant note in 31/34 questions, the same as top eight. Top ten contain one in 32/34. This sets a ceiling for a reranker that only reorders those candidates. MiniLM did not improve aggregate retrieval quality; the no-model path remains the default for this English research vault. OpenThai remains an opt-in Thai-first typed-decision model, requiring evaluation on Thai labels before choosing a threshold. Qwen3-Reranker-4B 4-bit is a candidate for a quality-oriented Apple Silicon local mode, but **was not measured**: the execution sandbox denied access to Metal during MLX model conversion. The small Qwen3 CPU result does not establish the 4B result.
 
-Hosted Jev via TypeSafe or Vercel was **not measured** in this benchmark. No private vault content was sent to a hosted model. Agent subscription mode here measures the CLI retrieval that would be passed to Luna/Haiku; it does **not** measure the sub-agent's final answer or curation quality.
+The original local pilot did not measure hosted Jev. A subsequent consented Vercel AI Gateway run is reported below. Agent subscription mode here measures the CLI retrieval that would be passed to Luna/Haiku; it does **not** measure the sub-agent's final answer or curation quality.
 
 Reproduce the deterministic and managed retrieval runs with:
 
@@ -38,4 +38,13 @@ The two-lane method is now the default for `recall-loop` and managed recall. It 
 
 The existing local semantic hybrid (BGE-small English embeddings plus BM25F) reached 83.8% Recall@3 on the same 34 questions. At top ten, it did not recover any label absent from the whole-note BM25 top ten. It remains an **optional escalation**, not a default call. Semantic vectors are now cached outside the vault by note-content hash and model, so unchanged notes are not embedded again. A warm in-process sample took about 13 ms after a 3.5 s cold model load/index build on this machine. The vector cache file is private (`0600`); if weights change under the same model identifier, clear the cache before comparing results.
 
-Hosted Jev quality remains unmeasured in this release. A separate live evaluation should run only after the account can access the selected gateway and the vault owner explicitly enables remote-content consent.
+## Hosted Jev follow-up
+
+After the vault owner authorized a hosted evaluation and the Vercel account passed card verification, we ran the same 34 frozen questions against the same read-only 55-note vault. The benchmark sent only query-specific candidate excerpts, titles, and paths to Vercel's TypeSafe-compatible Jev endpoint. The API key was supplied only to the benchmark process; it was not saved in this repository or the runtime config. The private JSON reports, including retrieved paths, remain outside the repository.
+
+| Workflow | Hit@3 | Recall@3 | MRR | nDCG@3 | Mean / query | p95 / query | Misses |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Curator handoff, two-lane lexical fusion | 91.2% | 89.7% | 0.858 | 0.858 | 11.8 ms | 17.0 ms | 3 |
+| Hosted Jev, Vercel AI Gateway, threshold 0.6, candidate cap 8 | 94.1% | 92.6% | 0.912 | 0.908 | 743.3 ms | 1008.0 ms | 2 |
+
+Jev recovered two questions missed by the lexical top three, but also lost one question that lexical retrieval hit. Neither mode abstained on this labeled set. This is a small regression suite drawn from the same research fixture as the vault, not an independent held-out test. The 0.6 threshold was not calibrated on a development split, and the set lacks genuine no-answer cases. Do not make Jev the default on these numbers alone. The current default remains local lexical retrieval, with hosted Jev available as an opt-in quality mode. Measure false acceptance, Thai and mixed-language queries, and a fresh held-out vault before changing that default. Vercel's `typesafe-ai/jev` alias also does not expose a pinned resolved Jev version in the response, so exact version parity with another provider is not established by this run.
