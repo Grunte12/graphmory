@@ -134,6 +134,14 @@ test("governed retrieval follows one bounded wikilink hop", () => {
   assert.deepEqual(sectionResult.results.map((item) => item.id), ["policy.md", "conflict.md"])
 })
 
+test("section retrieval follows a link outside the winning section", () => {
+  const hub = parseMarkdown("hub.md", "# Hub\n\n## Matching\nrollback safety protocol\n\n## Related\nSee [[evidence]].")
+  const evidence = parseMarkdown("evidence.md", "# Evidence\n\nIndependent recovery record.")
+  const results = governedRank([hub, evidence], "rollback safety protocol", "bm25f-sections").results
+  assert.deepEqual(results.map((item) => item.id), ["hub.md", "evidence.md"])
+  assert.equal(results[1].retrievalSource, "wikilink:hub.md")
+})
+
 test("governed retrieval can rerank an already-matching linked note", () => {
   const hub = parseMarkdown("hub", "# Recovery Hub\n\nrollback procedure [[canonical]]")
   const noise = parseMarkdown("noise", "# Rollback Procedure\n\nrollback rollback procedure")

@@ -1,7 +1,13 @@
+import fs from "node:fs"
+import os from "node:os"
+import path from "node:path"
+import { createHash } from "node:crypto"
 import { governedRank, isRetrievable } from "./retrieval.mjs"
 import { loadVaultDocuments } from "./memory-recall.mjs"
+import { writeJsonAtomic } from "./atomic-write.mjs"
 
 const DEFAULT_MODEL = "Xenova/bge-small-en-v1.5"
+const PIPELINES = new Map()
 
 export async function recallVaultSemantic(vault, query, {
   k = 3,
@@ -20,23 +26,16 @@ export async function recallVaultSemantic(vault, query, {
   if (!Number.isInteger(maxFiles) || maxFiles < 1) throw new Error("maxFiles must be positive")
 
   const documents = loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
-  const transformers = await loadTransformers()
-  if (modelCache) transformers.env.cacheDir = modelCache
-  const embed = await transformers.pipeline("feature-extraction", model)
-
-  const textById = new Map(documents.map((document) => [
-    document.id,
-    semanticText(document, maxDocumentCharacters),
-  ]))
-  const documentVectors = await embed([...textById.values()], { pooling: "mean", normalize: true })
-  const vectors = documentVectors.tolist()
-  const vectorById = new Map(documents.map((document, index) => [document.id, vectors[index]]))
+  const eligible = documents.filter((document) => isRetrievable(document, { includeNoncanonical }))
+  const embed = await loadEmbeddingPipeline(model, modelCache)
+  const vectorById = await cachedDocumentVectors(eligible, embed, {
+    vault, scope, model, modelCache, maxDocumentCharacters,
+  })
   const queryOutput = await embed(query, { pooling: "mean", normalize: true })
   const queryVector = queryOutput.tolist()[0]
 
-  const vectorResults = documents
+  const vectorResults = eligible
     .map((document) => ({ ...document, score: dot(queryVector, vectorById.get(document.id)), retrievalSource: "semantic-vector" }))
-    .filter((document) => isRetrievable(document, { includeNoncanonical }))
     .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
 
   const sparse = governedRank(documents, query, "bm25f-sections", { includeNoncanonical }).results
@@ -98,6 +97,54 @@ async function loadTransformers() {
     }
     throw error
   }
+}
+
+async function loadEmbeddingPipeline(model, modelCache) {
+  const key = `${model}\0${modelCache}`
+  if (!PIPELINES.has(key)) PIPELINES.set(key, (async () => {
+    const transformers = await loadTransformers()
+    if (modelCache) transformers.env.cacheDir = modelCache
+    return transformers.pipeline("feature-extraction", model)
+  })())
+  try { return await PIPELINES.get(key) } catch (error) { PIPELINES.delete(key); throw error }
+}
+
+export async function cachedDocumentVectors(documents, embed, {
+  vault, scope = "", model, modelCache = "", maxDocumentCharacters = 8000,
+} = {}) {
+  const directory = modelCache || path.join(os.homedir(), ".cache", "graphmory", "semantic")
+  const cacheId = createHash("sha256").update(`${path.resolve(vault)}\0${scope}\0${model}\0${maxDocumentCharacters}`).digest("hex")
+  const file = path.join(directory, "graphmory-vectors", `${cacheId}.json`)
+  let prior = {}
+  try {
+    const parsed = JSON.parse(fs.readFileSync(file, "utf8"))
+    if (parsed.version === 1 && parsed.model === model && parsed.maxDocumentCharacters === maxDocumentCharacters) prior = parsed.vectors ?? {}
+  } catch (error) {
+    if (error.code !== "ENOENT" && !(error instanceof SyntaxError)) throw error
+  }
+  const vectors = {}
+  const pending = []
+  for (const document of documents) {
+    const text = semanticText(document, maxDocumentCharacters)
+    const digest = createHash("sha256").update(text).digest("hex")
+    const cached = prior[document.id]
+    if (cached?.digest === digest && Array.isArray(cached.vector) && cached.vector.every(Number.isFinite)) {
+      vectors[document.id] = cached
+    } else pending.push({ id: document.id, text, digest })
+  }
+  for (let offset = 0; offset < pending.length; offset += 16) {
+    const batch = pending.slice(offset, offset + 16)
+    const output = await embed(batch.map((item) => item.text), { pooling: "mean", normalize: true })
+    const batchVectors = output.tolist()
+    if (batchVectors.length !== batch.length) throw new Error("Semantic embedding model returned an unexpected vector count")
+    batch.forEach((item, index) => { vectors[item.id] = { digest: item.digest, vector: batchVectors[index] } })
+  }
+  if (pending.length || Object.keys(prior).length !== documents.length) {
+    fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 })
+    writeJsonAtomic(file, { version: 1, model, maxDocumentCharacters, vectors })
+    fs.chmodSync(file, 0o600)
+  }
+  return new Map(documents.map((document) => [document.id, vectors[document.id].vector]))
 }
 
 function semanticText(document, maxCharacters) {

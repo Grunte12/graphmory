@@ -80,7 +80,7 @@ export function recallVault(vault, query, {
 }
 
 export function recallVaultLoop(vault, query, {
-  methods = ["bm25f-sections", "bm25f-focused-sections", "bm25-sections"],
+  methods = ["bm25", "bm25f-focused-sections"],
   k = 3,
   includeNoncanonical = false,
   includeRawPaths = false,

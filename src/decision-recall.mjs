@@ -7,6 +7,7 @@ export async function managedRecall(vault, query, config, {
   k = 3,
   scope = "",
   semanticExpansion = false,
+  semanticRecallImpl = recallVaultSemantic,
   fetchImpl = fetch,
 } = {}) {
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be 1–10")
@@ -45,8 +46,9 @@ export async function managedRecall(vault, query, config, {
   let results = await scoreCandidates(initial.results.slice(0, limit), documents, query, config, fetchImpl)
   let expanded = false
   if (!results.some((item) => item.relevance >= config.decision.relevanceThreshold) && semanticExpansion) {
-    const semantic = await recallVaultSemantic(vault, query, { k: 10, scope })
-    const unseen = semantic.results.filter((item) => !initial.results.some((prior) => prior.path === item.path)).slice(0, limit)
+    const semantic = await semanticRecallImpl(vault, query, { k: 10, scope })
+    const scoredPaths = new Set(initial.results.slice(0, limit).map((item) => item.path))
+    const unseen = semantic.results.filter((item) => !scoredPaths.has(item.path)).slice(0, limit)
     if (unseen.length) {
       results = results.concat(await scoreCandidates(unseen, documents, query, config, fetchImpl))
       expanded = true

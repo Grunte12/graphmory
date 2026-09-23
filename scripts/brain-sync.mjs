@@ -697,7 +697,7 @@ function recallLoop() {
   const vault = requireVault()
   const query = requiredOption("--query")
   const k = Number.parseInt(option("--k", "3"), 10)
-  const methods = option("--methods", "bm25f-sections,bm25f-focused-sections,bm25-sections")
+  const methods = option("--methods", "bm25,bm25f-focused-sections")
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean)
