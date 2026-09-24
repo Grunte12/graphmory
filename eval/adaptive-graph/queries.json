@@ -1,0 +1,10 @@
+[
+  {"id":"outgoing-related","category":"relation","query":"What other notes are linked to the Aurora release decision?","relevant_groups":[["projects/notes/Decision.md","projects/notes/Retrospective.md"]]},
+  {"id":"two-hop","category":"multi-hop","query":"Which notes connected to the Aurora release identify the rollback owner?","relevant":["projects/notes/Trail.md"]},
+  {"id":"direct-owner","category":"ordinary","query":"Who owns the Aurora release?","relevant":["projects/Aurora.md"]},
+  {"id":"references-direct","category":"ordinary","query":"Which references explain who owns Aurora release decisions?","relevant":["Reference.md"]},
+  {"id":"other-project","category":"ordinary","query":"What other project owns pipeline Z?","relevant":["other/Direct.md"]},
+  {"id":"scoped-owner","category":"scope","query":"Who owns the Aurora release?","scope":"projects","relevant":["projects/Aurora.md"]},
+  {"id":"no-answer-unknown","category":"no-answer","query":"What other notes are linked to quantum banana?","relevant":[]},
+  {"id":"no-answer-stale","category":"no-answer","query":"What other notes prove Nico is the current Aurora release owner?","relevant":[]}
+]

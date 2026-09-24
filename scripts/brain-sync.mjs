@@ -34,6 +34,7 @@ import { writeFileAtomic, writeJsonAtomic } from "../src/atomic-write.mjs"
 import { loadRuntimeConfig, runtimeConfigPath, saveRuntimeConfig } from "../src/runtime-config.mjs"
 import { managedRecall } from "../src/decision-recall.mjs"
 import { planDecisionCuration } from "../src/decision-curation.mjs"
+import { recallVaultAdaptive } from "../src/adaptive-recall.mjs"
 
 const args = process.argv.slice(2)
 const command = args[0]
@@ -63,6 +64,7 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs config [show] [--config <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k 3] [--semantic-expansion] [--agent|--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-explore --vault <path> --query <text> [--scope <path>] [--k 3] [--agent|--json] (experimental)\n`)
   out.write(`  node scripts/brain-sync.mjs curate-plan --vault <path> --input <bundle.json> [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs lifecycle-audit --vault <path> [--json] [--out <file>]\n`)
@@ -811,6 +813,22 @@ async function recallManaged() {
     console.log(`Managed recall: ${report.workflow}; ${report.confidence} retrieval confidence${report.decisionGate ? `; gate ${report.decisionGate}` : ""}`)
     for (const item of report.results) console.log(`- ${item.path} | ${item.title} | ${item.rankScore === undefined ? `relevance ${item.relevance ?? "curator review"}` : `rank score ${item.rankScore}`}`)
     for (const step of report.nextSteps) console.log(`- ${step}`)
+  }
+}
+
+async function recallExplore() {
+  const report = await recallVaultAdaptive(requireVault(), requiredOption("--query"), {
+    k: Number.parseInt(option("--k", "3"), 10), scope: option("--scope", ""), graphPolicy: "auto",
+  })
+  if (flag("--agent")) console.log(JSON.stringify({ workflow: report.workflow, evidenceStatus: report.evidenceStatus,
+    stopReason: report.stopReason, rounds: report.rounds, uniqueCandidates: report.uniqueCandidates,
+    scanLimitReached: report.scanLimitReached, graphLimitReached: report.graphLimitReached,
+    results: report.results.map(({ path, via, parent, depth }) => ({ path, via, ...(parent ? { parent } : {}), depth })),
+    nextAction: report.nextAction }))
+  else if (flag("--json")) console.log(JSON.stringify(report, null, 2))
+  else {
+    console.log(`Experimental graph recall: ${report.stopReason}; ${report.rounds} expansion round(s); evidence unverified`)
+    for (const item of report.results) console.log(`- ${item.path} (${item.via})`)
   }
 }
 
@@ -1803,6 +1821,7 @@ try {
   else if (command === "recall") recall()
   else if (command === "recall-loop") recallLoop()
   else if (command === "recall-managed") await recallManaged()
+  else if (command === "recall-explore") await recallExplore()
   else if (command === "curate-plan") await curatePlan()
   else if (command === "config") await configureRuntime()
   else if (command === "recall-rerank") recallRerank()
@@ -1828,7 +1847,7 @@ try {
   else if (command === "curation-apply") curationApply()
   else usage(2)
 } catch (error) {
-  if (["recall-managed", "curate-plan"].includes(command) && flag("--agent")) {
+  if (["recall-managed", "recall-explore", "curate-plan"].includes(command) && flag("--agent")) {
     console.log(JSON.stringify({ error: error.message, retryable: /HTTP 429|HTTP 529|fetch failed|timeout/iu.test(error.message) }))
   } else if (flag("--verbose")) {
     console.error(error.stack || error.message)
