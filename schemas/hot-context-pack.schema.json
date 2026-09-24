@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.local/memory-patch-harness/hot-context-pack.schema.json",
+  "$id": "https://example.local/graphmory/hot-context-pack.schema.json",
   "title": "Hot Context Pack",
   "type": "object",
   "required": ["role", "canonical_memory", "generated_at", "derived_from", "entries"],

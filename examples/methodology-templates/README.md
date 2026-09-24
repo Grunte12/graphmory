@@ -1,7 +1,7 @@
 # Methodology Templates
 
 These are synthetic examples showing how different personal-knowledge methodologies
-can organize notes within a Memory Patch Harness vault.
+can organize notes within a Graphmory vault.
 
 The harness uses **generic** organization by default. These templates are optional
 conventions — there is no automatic methodology router.

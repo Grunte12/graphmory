@@ -77,7 +77,7 @@ function cleanScalar(value) {
   return String(value).trim().replace(/^['"]|['"]$/gu, "")
 }
 
-const EXCLUDED_LIFECYCLES = new Set(["raw", "stale", "superseded", "archived"])
+const EXCLUDED_LIFECYCLES = new Set(["raw", "stale", "superseded", "archived", "deprecated"])
 
 export function isRetrievable(document, { includeNoncanonical = false } = {}) {
   const status = String(document.metadata?.status ?? document.metadata?.lifecycle ?? "current").toLowerCase()
@@ -125,17 +125,15 @@ function eligibleDocuments(documents, options) {
 
 function expandLinkedResults(results, documents, seedCount) {
   const seedLinks = []
-  let byId
+  const { byId, byReference } = documentReferenceIndex(documents)
   for (const parent of results.slice(0, seedCount)) {
-    if (!parent.markdown && !byId) byId = documentReferenceIndex(documents).byId
-    const source = parent.markdown ?? byId?.get(parent.id)?.markdown ?? ""
+    const source = byId.get(parent.id)?.markdown ?? ""
     for (const match of source.matchAll(/\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|[^\]]+)?\]\]/gu)) {
       seedLinks.push({ parent, reference: match[1] })
     }
   }
   if (!seedLinks.length) return results
 
-  const { byReference } = documentReferenceIndex(documents)
   const rankedById = new Map(results.map((item) => [item.id, { ...item }]))
   const linked = new Map()
   for (const { parent, reference } of seedLinks) {

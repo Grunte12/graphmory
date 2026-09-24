@@ -4,7 +4,7 @@ import os from "node:os"
 import path from "node:path"
 import process from "node:process"
 import { fileURLToPath } from "node:url"
-import { spawnSync } from "node:child_process"
+import { writeJsonAtomic } from "../src/atomic-write.mjs"
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(here, "..")
@@ -71,10 +71,13 @@ if (flag("--check")) {
       }
     }
     for (const file of fs.readdirSync(installedSkill, { recursive: true })) {
+      if (file === ".install-manifest.json") continue
       if (!fs.existsSync(path.join(root, "skills", "memory-curator", file))) {
         check.changes.push({ action: "remove", file: `skills/memory-curator/${file}` })
       }
     }
+  } else {
+    check.changes.push({ action: "add", file: "skills/memory-curator/ (directory)" })
   }
   const srcDest = path.join(targetRoot, "src")
   if (fs.existsSync(srcDest)) {
@@ -94,10 +97,13 @@ if (flag("--check")) {
   } else {
     check.changes.push({ action: "add", file: "src/ (directory)" })
   }
-  const cliTarget = path.join(targetRoot, "bin", "memory-patch-harness.mjs")
-  if (!fs.existsSync(cliTarget)) {
-    check.changes.push({ action: "add", file: "bin/memory-patch-harness.mjs (CLI launcher)" }
-    )
+  for (const name of ["graphmory.mjs", "memory-patch-harness.mjs"]) {
+    const cliTarget = path.join(targetRoot, "bin", name)
+    if (!fs.existsSync(cliTarget)) {
+      check.changes.push({ action: "add", file: `bin/${name} (CLI launcher)` })
+    } else if (fs.readFileSync(path.join(root, "scripts", "brain-sync.mjs"), "utf8") !== fs.readFileSync(cliTarget, "utf8")) {
+      check.changes.push({ action: "update", file: `bin/${name}` })
+    }
   }
   console.log(JSON.stringify(check, null, 2))
   if (!check.changes.length) console.log("No changes needed.")
@@ -145,8 +151,10 @@ const binDir = path.join(targetRoot, "bin")
 const cliSource = path.join(root, "scripts", "brain-sync.mjs")
 if (!dryRun) {
   fs.mkdirSync(binDir, { recursive: true })
-  fs.cpSync(cliSource, path.join(binDir, "memory-patch-harness.mjs"), { force: upgradeMode })
-  console.log(`Installed CLI: ${path.join(binDir, "memory-patch-harness.mjs")}`)
+  for (const name of ["graphmory.mjs", "memory-patch-harness.mjs"]) {
+    fs.cpSync(cliSource, path.join(binDir, name), { force: upgradeMode })
+  }
+  console.log(`Installed CLI: ${path.join(binDir, "graphmory.mjs")}`)
 }
 
 // --- Write install manifest ---
@@ -155,9 +163,9 @@ if (!dryRun) {
     version: ownVersion,
     installedAt: new Date().toISOString(),
     target: targetRoot,
-    components: ["skills/memory-curator", "src/", "bin/memory-patch-harness.mjs"],
+    components: ["skills/memory-curator", "src/", "bin/graphmory.mjs", "bin/memory-patch-harness.mjs"],
   }
-  fs.writeFileSync(path.join(skillDest, ".install-manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`)
+  writeJsonAtomic(path.join(skillDest, ".install-manifest.json"), manifest)
 }
 
 if (dryRun) {

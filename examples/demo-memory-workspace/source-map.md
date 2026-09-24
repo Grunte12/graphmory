@@ -1,6 +1,6 @@
 # Source Map — Demo Memory Workspace
 
-This is a synthetic demo memory workspace for the Memory Patch Harness.
+This is a synthetic demo memory workspace for the Graphmory.
 It shows the minimum structure the harness expects.
 
 ## Layout

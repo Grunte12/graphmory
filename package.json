@@ -1,17 +1,17 @@
 {
-  "name": "memory-patch-harness",
+  "name": "graphmory",
   "version": "0.5.0-rc.3",
-  "description": "Provenance-preserving memory contracts for coding agents",
+  "description": "Graph-powered, provenance-preserving memory for coding agents",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Grunte12/memory-patch-harness.git"
+    "url": "git+https://github.com/Grunte12/graphmory.git"
   },
   "bugs": {
-    "url": "https://github.com/Grunte12/memory-patch-harness/issues"
+    "url": "https://github.com/Grunte12/graphmory/issues"
   },
-  "homepage": "https://github.com/Grunte12/memory-patch-harness#readme",
+  "homepage": "https://github.com/Grunte12/graphmory#readme",
   "optionalDependencies": {
     "@huggingface/transformers": "^3.4.0"
   },
@@ -19,23 +19,34 @@
     "node": ">=20"
   },
   "bin": {
+    "graphmory": "scripts/brain-sync.mjs",
     "memory-patch-harness": "scripts/brain-sync.mjs",
     "mph": "scripts/brain-sync.mjs"
   },
   "files": [
     "adapters/",
     "docs/design/architecture.md",
+    "docs/design/jev-replaces-curator.md",
+    "docs/design/adaptive-retrieval-loop.md",
     "docs/evaluation/cost-and-scale.md",
     "docs/evaluation/evaluation.md",
+    "docs/evaluation/managed-modes-2026-09-23.md",
+    "docs/evaluation/adaptive-graph-pilot-2026-09-24.md",
     "docs/guides/install.md",
+    "docs/guides/agent-hosts.md",
+    "docs/guides/managed-retrieval.md",
     "docs/design/learning-loop.md",
     "docs/guides/portable-brain-sync.md",
     "docs/research/rag-positioning.md",
+    "docs/research/four-workflow-models-2026-09-23.md",
     "docs/research/research-foundations.md",
     "docs/guides/troubleshooting.md",
     "examples/",
+    "eval/local-rerank/",
     "schemas/",
     "scripts/brain-sync.mjs",
+    "scripts/eval-managed-recall.mjs",
+    "scripts/eval-adaptive-graph.mjs",
     "scripts/init-project.mjs",
     "scripts/install.mjs",
     "scripts/recommend-curation.mjs",
@@ -65,6 +76,8 @@
     "eval:rerank": "node scripts/eval-rerank.mjs",
     "eval:live-agent-score": "node scripts/eval-live-agent-score.mjs",
     "eval:vault": "node scripts/eval-vault-retrieval.mjs",
+    "eval:managed": "node scripts/eval-managed-recall.mjs",
+    "eval:adaptive-graph": "node scripts/eval-adaptive-graph.mjs --vault eval/real-vault/vault --queries eval/real-vault/queries.json",
     "eval:query-reformulation": "node scripts/eval-query-reformulation.mjs --vault eval/real-vault/vault --queries eval/real-vault/queries.json --reformulations eval/real-vault/reformulated-queries.json",
     "eval:curator": "node scripts/eval-curator.mjs",
     "eval:curator:compare": "node scripts/eval-curator.mjs --candidate eval/curator/candidates --allow-failures",

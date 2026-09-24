@@ -2,11 +2,11 @@
 
 **Synthetic demo note — not real operational memory.**
 
-This workspace demonstrates the Memory Patch Harness workflow.
+This workspace demonstrates the Graphmory workflow.
 
 ## What the Harness Does
 
-Memory Patch Harness adds a durable Markdown memory layer for coding agents.
+Graphmory adds a durable Markdown memory layer for coding agents.
 Verified lessons become Memory Patches that survive across sessions.
 
 ## Harness Pillars

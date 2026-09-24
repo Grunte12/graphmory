@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.local/memory-patch-harness/derived-index.schema.json",
+  "$id": "https://example.local/graphmory/derived-index.schema.json",
   "title": "Derived Index",
   "type": "object",
   "required": ["role", "canonical_memory", "generated_at", "generator", "scope", "derived_from", "entries"],

@@ -133,7 +133,7 @@ export function initialBrainFiles({ title = "Portable Brain" } = {}) {
   return new Map([
     [
       "README.md",
-      `# ${title}\n\nThis repository stores Markdown memory managed by Memory Patch Harness.\n\nDo not store secrets, raw private logs, credentials, or full chat transcripts here.\n\nCanonical memory should be curated notes with provenance, lifecycle, and links. Inbox and clippings are temporary evidence until promoted or archived.\n`,
+      `# ${title}\n\nThis repository stores Markdown memory managed by Graphmory.\n\nDo not store secrets, raw private logs, credentials, or full chat transcripts here.\n\nCanonical memory should be curated notes with provenance, lifecycle, and links. Inbox and clippings are temporary evidence until promoted or archived.\n`,
     ],
     [
       ".gitignore",
@@ -228,7 +228,7 @@ export function renderAdoptionPlanMarkdown(plan) {
   lines.push("")
   lines.push("## User Decision Needed")
   lines.push("")
-  lines.push("Do you want Memory Patch Harness to gradually restructure this memory into the harness pattern?")
+  lines.push("Do you want Graphmory to gradually restructure this memory into the harness pattern?")
   lines.push("")
   lines.push("Recommended answer when unsure: adopt sync first, then migrate a small sample of notes manually before broad restructuring.")
   lines.push("")

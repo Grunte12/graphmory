@@ -22,9 +22,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - run: npm install --ignore-scripts --package-lock=false
-      - run: npm run check
-      - run: npm pack --dry-run
+      - run: npm ci --ignore-scripts --omit=optional
+      - run: npm run release:gate
 
   install-smoke:
     name: Install Smoke Test (${{ matrix.os }}, Node ${{ matrix.node }})
@@ -39,7 +38,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - run: npm install --ignore-scripts --package-lock=false
+      - run: npm ci --ignore-scripts --omit=optional
       - run: node --test test/fresh-install.test.mjs
       - name: Direct install smoke (file-copy installer)
         shell: bash

@@ -68,7 +68,7 @@ const learningRuns = learningLoop.runs
 const futureReports = futureTask.reports
 
 const lines = []
-lines.push("# Memory Patch Harness Eval Report")
+lines.push("# Graphmory Eval Report")
 lines.push("")
 lines.push(`Generated: ${new Date().toISOString()}`)
 lines.push("")

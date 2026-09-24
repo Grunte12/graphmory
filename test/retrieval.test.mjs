@@ -116,6 +116,14 @@ test("governed retrieval excludes stale and raw memory", () => {
   assert.equal(result.excluded, 2)
 })
 
+test("governed retrieval excludes deprecated memory", () => {
+  const deprecated = parseMarkdown("deprecated", "---\nstatus: deprecated\n---\n# Retired Policy\n\nshared brain")
+  const tension = parseMarkdown("tension", "---\nstatus: tension\n---\n# Open Decision\n\nshared brain")
+  assert.equal(isRetrievable(deprecated), false)
+  assert.equal(isRetrievable(tension), true)
+  assert.deepEqual(governedRank([deprecated, tension], "shared brain", "bm25").results.map((item) => item.id), ["tension"])
+})
+
 test("governed retrieval follows one bounded wikilink hop", () => {
   const policy = parseMarkdown("policy.md", "---\nstatus: current\n---\n# Policy\n\nUse safe sync. See [[conflict]].")
   const conflict = parseMarkdown("conflict.md", "---\nstatus: current\n---\n# Conflict\n\nPreserve competing evidence.")
@@ -124,6 +132,14 @@ test("governed retrieval follows one bounded wikilink hop", () => {
   assert.equal(result.results[1].retrievalSource, "wikilink:policy.md")
   const sectionResult = governedRank([policy, conflict], "safe sync", "bm25-sections")
   assert.deepEqual(sectionResult.results.map((item) => item.id), ["policy.md", "conflict.md"])
+})
+
+test("section retrieval follows a link outside the winning section", () => {
+  const hub = parseMarkdown("hub.md", "# Hub\n\n## Matching\nrollback safety protocol\n\n## Related\nSee [[evidence]].")
+  const evidence = parseMarkdown("evidence.md", "# Evidence\n\nIndependent recovery record.")
+  const results = governedRank([hub, evidence], "rollback safety protocol", "bm25f-sections").results
+  assert.deepEqual(results.map((item) => item.id), ["hub.md", "evidence.md"])
+  assert.equal(results[1].retrievalSource, "wikilink:hub.md")
 })
 
 test("governed retrieval can rerank an already-matching linked note", () => {

@@ -1,12 +1,12 @@
 cff-version: 1.2.0
-message: "If you use Memory Patch Harness in research, writing, or a public project, please cite it."
-title: "Memory Patch Harness"
+message: "If you use Graphmory in research, writing, or a public project, please cite it."
+title: "Graphmory"
 version: "0.5.0-rc.3"
 date-released: "2026-07-06"
-abstract: "A local-first, provenance-preserving memory harness for coding agents using Memory Patches, bounded recall, human-controlled portable brain sync, and a curator-limited write boundary."
+abstract: "A local-first, provenance-preserving memory system for coding agents using Memory Patches, bounded recall, optional curator or decision-engine workflows, and human-controlled portable brain sync."
 authors:
   - name: "Grunte12"
-repository-code: "https://github.com/Grunte12/memory-patch-harness"
+repository-code: "https://github.com/Grunte12/graphmory"
 license: "MIT"
 keywords:
   - agent memory

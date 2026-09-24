@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.local/memory-patch-harness/curation-plan.schema.json",
+  "$id": "https://example.local/graphmory/curation-plan.schema.json",
   "title": "Curation Plan",
   "type": "object",
   "required": ["role", "canonical_memory", "schema_version", "method", "recommendations"],

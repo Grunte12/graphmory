@@ -324,7 +324,7 @@ test("recall-loop fuses bounded retrieval lanes for agent use", () => {
   assert.equal(result.status, 0, result.stderr)
   const report = JSON.parse(result.stdout)
   assert.equal(report.results[0].path, "Memory/Policy.md")
-  assert.deepEqual(report.results[0].lanes, ["bm25f-sections", "bm25f-focused-sections", "bm25-sections"])
+  assert.deepEqual(report.results[0].lanes, ["bm25", "bm25f-focused-sections"])
 })
 
 test("lifecycle-audit reports stale and conflict memory without applying changes", () => {

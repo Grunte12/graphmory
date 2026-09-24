@@ -1,6 +1,6 @@
-# คู่มือแนวคิด Memory Patch Harness
+# คู่มือแนวคิด Graphmory
 
-Memory Patch Harness คือระบบจัดการความจำให้ AI agent ทำงานต่อเนื่องได้ดีขึ้น โดยไม่ต้องยัด context ทั้งหมดกลับเข้าไปทุกครั้ง และไม่ปล่อยให้ agent จดทุกอย่างมั่ว ๆ ลง memory
+Graphmory คือระบบจัดการความจำให้ AI agent ทำงานต่อเนื่องได้ดีขึ้น โดยไม่ต้องยัด context ทั้งหมดกลับเข้าไปทุกครั้ง และไม่ปล่อยให้ agent จดทุกอย่างมั่ว ๆ ลง memory
 
 ปัญหาที่มันแก้คือ:
 
@@ -63,7 +63,7 @@ Memory Curator เป็นเจ้าของโครงสร้าง
 - รายละเอียดที่สำคัญอาจหาย
 - ถ้า Curator เติมช่องว่างเอง memory จะกลายเป็น hallucinated memory
 
-Memory Patch Harness จึงไม่ให้ Curator “คิดแทน” ว่าบทเรียนคืออะไร
+Graphmory จึงไม่ให้ Curator “คิดแทน” ว่าบทเรียนคืออะไร
 
 Curator ทำหน้าที่เหมือนคนดูแลคลังความรู้: จัดระเบียบ เชื่อมโยง ตรวจ conflict และบอกว่า memory นี้ใช้ได้หรือยัง
 
@@ -689,7 +689,7 @@ documents -> chunks -> embeddings -> vector search -> retrieved context -> answe
 - PDF/document QA
 - customer support knowledge base
 
-Memory Patch Harness เน้น:
+Graphmory เน้น:
 
 ```text
 verified work -> structured lesson -> curated Markdown memory -> bounded recall -> better future agent decision
@@ -709,7 +709,7 @@ verified work -> structured lesson -> curated Markdown memory -> bounded recall 
 
 ```text
 RAG ช่วยค้นข้อมูล
-Memory Patch Harness ช่วยจำบทเรียนที่มีผลกับการทำงานครั้งหน้า
+Graphmory ช่วยจำบทเรียนที่มีผลกับการทำงานครั้งหน้า
 ```
 
 อนาคตสามารถต่อ vector search, BM25, graph, reranker ได้ แต่ไม่ควรให้สิ่งเหล่านั้นเป็น canonical truth
@@ -1394,7 +1394,7 @@ contract คือกระดูกสันหลัง
 
 ## สรุปสั้น
 
-Memory Patch Harness คือ discipline layer สำหรับ agent memory
+Graphmory คือ discipline layer สำหรับ agent memory
 
 มันไม่ได้พยายามทำให้ model ฉลาดขึ้นด้วยการยัดข้อมูลมากขึ้น
 
@@ -1410,7 +1410,7 @@ Memory Patch Harness คือ discipline layer สำหรับ agent memory
 คำอธิบายสั้นที่สุด:
 
 ```text
-Memory Patch Harness ทำให้ AI agent จำเป็นระบบ
+Graphmory ทำให้ AI agent จำเป็นระบบ
 ไม่ใช่จำเยอะขึ้น
 แต่จำถูกขึ้น มีหลักฐานขึ้น และใช้เปลี่ยนการทำงานครั้งหน้าได้จริง
 ```

@@ -1,6 +1,6 @@
 # Generic Agent Install Guide
 
-Use this guide when an AI coding agent is asked to install or connect Memory Patch Harness for a user.
+Use this guide when an AI coding agent is asked to install or connect Graphmory for a user.
 
 ## Minimum Safe Flow
 

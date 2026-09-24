@@ -53,7 +53,7 @@ for (const label of methods) {
     }
     const scopedDocumentsForQuery = scopedDocuments(item.scope ?? "")
     const results = label === "recall-loop"
-      ? fuseRankedLanes(["bm25f-sections", "bm25f-focused-sections", "bm25-sections"].map((laneMethod) => ({
+      ? fuseRankedLanes(["bm25", "bm25f-focused-sections"].map((laneMethod) => ({
           method: laneMethod,
           results: governedRank(scopedDocumentsForQuery, item.query, laneMethod).results.slice(0, 8),
         })))

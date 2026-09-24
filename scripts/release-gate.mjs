@@ -46,7 +46,7 @@ function runNpmStep(name, args, options) {
 }
 
 function assertPackIsClean(packReport) {
-  const [packed] = packReport
+  const packed = Array.isArray(packReport) ? packReport[0] : Object.values(packReport ?? {})[0]
   if (!packed?.files?.length) throw new Error("npm pack dry-run returned no files")
   const files = packed.files.map((entry) => entry.path.replaceAll("\\", "/"))
   const forbidden = [
@@ -79,8 +79,9 @@ function assertPackIsClean(packReport) {
 
 function main() {
   const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"))
-  if (!/^0\.5\.0-rc\.\d+$/u.test(pkg.version)) {
-    throw new Error(`release gate expects a v0.5 release candidate, got ${pkg.version}`)
+  const lock = JSON.parse(fs.readFileSync(path.join(root, "package-lock.json"), "utf8"))
+  if (lock.version !== pkg.version || lock.packages?.[""]?.version !== pkg.version) {
+    throw new Error(`package-lock.json version does not match package.json (${pkg.version})`)
   }
 
   runNpmStep("check: unit + schema + core evals", ["run", "check"])
@@ -89,7 +90,7 @@ function main() {
   const pack = assertPackIsClean(packReport)
 
   console.log("")
-  console.log("Memory Patch Harness release gate")
+  console.log("Graphmory release gate")
   console.log("")
   console.log(`Version: ${pkg.version}`)
   console.log(`Package: ${pack.filename ?? "(dry-run)"} (${pack.fileCount} files, ${pack.unpackedSize ?? "unknown"} bytes unpacked)`)

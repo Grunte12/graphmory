@@ -1,6 +1,6 @@
 # Portable Brain Sync
 
-Portable Brain Sync is an optional Memory Patch Harness workflow for keeping the same curated Markdown memory across accounts, machines, and coding agents.
+Portable Brain Sync is an optional Graphmory workflow for keeping the same curated Markdown memory across accounts, machines, and coding agents.
 
 It does not replace the harness repository. It creates or connects a separate GitHub repository that stores only memory notes.
 
@@ -8,10 +8,10 @@ It does not replace the harness repository. It creates or connects a separate Gi
 
 | Repository | Contains | Should be public? |
 |---|---|---|
-| `memory-patch-harness` | tools, schemas, evals, docs, skills | public is fine |
+| `graphmory` | tools, schemas, evals, docs, skills | public is fine |
 | personal brain repo | curated Markdown memory, inbox candidates, project notes | private by default |
 
-The brain repo is a portable vault, not a second copy of the tool. A new desktop or account installs Memory Patch Harness, clones/pulls the same brain repo, and starts with the same durable memory.
+The brain repo is a portable vault, not a second copy of the tool. A new desktop or account installs Graphmory, clones/pulls the same brain repo, and starts with the same durable memory.
 
 ## Why This Helps
 
@@ -28,8 +28,8 @@ The goal is not stop-and-ask synchronization. The goal is controlled portability
 Install the harness first, then initialize a brain repo.
 
 ```powershell
-git clone https://github.com/Grunte12/memory-patch-harness.git
-cd memory-patch-harness
+git clone https://github.com/Grunte12/graphmory.git
+cd graphmory
 npm test
 ```
 
@@ -50,7 +50,7 @@ node scripts/brain-sync.mjs bootstrap `
   --create-remote
 ```
 
-The command uses GitHub CLI when `--create-remote` is present. GitHub CLI documents that `gh repo create OWNER/REPO --private` creates a private repo non-interactively, and `gh repo clone OWNER/REPO <directory>` clones an existing repository. Memory Patch Harness requires explicit `OWNER/REPO` format to avoid creating or cloning the wrong repo.
+The command uses GitHub CLI when `--create-remote` is present. GitHub CLI documents that `gh repo create OWNER/REPO --private` creates a private repo non-interactively, and `gh repo clone OWNER/REPO <directory>` clones an existing repository. Graphmory requires explicit `OWNER/REPO` format to avoid creating or cloning the wrong repo.
 
 ## Daily Flow
 
@@ -208,7 +208,7 @@ Portable Brain Sync should assist setup, not silently decide where your memory l
 | Local dirty state before pull | Uncommitted note edits | Refuse pull | Prevent accidental merge/conflict corruption |
 | Secret-like value detected before push | API key/token/private key pattern | Refuse push | Cloud memory must not leak secrets |
 
-Adoption means the user has reviewed the existing repo/vault and intentionally wants Memory Patch Harness to add its sync config and compatible folders. Use:
+Adoption means the user has reviewed the existing repo/vault and intentionally wants Graphmory to add its sync config and compatible folders. Use:
 
 ```powershell
 node scripts/brain-sync.mjs bootstrap `
@@ -219,7 +219,7 @@ node scripts/brain-sync.mjs bootstrap `
 
 Adoption does not rewrite existing notes into Memory Patch format. It only connects sync metadata and creates missing neutral folders. A Memory Curator should later triage old notes gradually.
 
-If the user wants to reshape an existing memory repo into the Memory Patch Harness structure, generate a plan first:
+If the user wants to reshape an existing memory repo into the Graphmory structure, generate a plan first:
 
 ```powershell
 node scripts/brain-sync.mjs adoption-plan `

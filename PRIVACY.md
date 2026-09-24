@@ -1,6 +1,6 @@
 # Privacy
 
-Memory Patch Harness is local-first. The core repository does not run a hosted service, telemetry, analytics, or background network calls.
+Graphmory is local-first. The core repository does not run a hosted service, telemetry, analytics, or background network calls.
 
 ## What Stays Local
 

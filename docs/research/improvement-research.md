@@ -1,6 +1,6 @@
 # Improvement Research Notes
 
-This document records research-backed improvement areas for Memory Patch Harness after the `0.5.0-rc.3` retrieval and sync work.
+This document records research-backed improvement areas for Graphmory after the `0.5.0-rc.3` retrieval and sync work.
 
 The harness should stay local-first, Markdown-readable, and agent-friendly. Improvements should reduce context waste and memory corruption before adding heavier infrastructure.
 

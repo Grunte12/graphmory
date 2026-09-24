@@ -9,6 +9,16 @@ Treat durable memory as a governed knowledge base, not a diary.
 
 Read `references/protocol.md` before applying a Memory Patch. Read `references/note-schema.md` only when creating, reshaping, or auditing canonical notes.
 
+## CLI recall
+
+When `mph` is on PATH and the vault path is known, start with a bounded machine-readable lookup:
+
+```sh
+mph recall-managed --vault "<vault-path>" --query "<question>" --k 3 --agent
+```
+
+Pass `--scope "<known-project-or-domain-path>"` when the scope is known. Read only the returned candidate notes needed to prepare the Brain Brief. The JSON scores rank candidates; they do not establish that a claim is true or current. If `needsExpansion` is true, follow the configured retrieval workflow and make at most one bounded expansion before abstaining. Never dump the full vault into agent context. Use `mph config` in a terminal for human setup; do not run its interactive menu in an agent loop.
+
 ## Recall
 
 1. Start from the project map or index.
@@ -24,6 +34,8 @@ Read `references/protocol.md` before applying a Memory Patch. Read `references/n
 4. Merge or create without expanding the patch's meaning.
 5. Preserve provenance and connect the note to a project map.
 6. Return `APPLIED`, `TENSION`, or `BLOCKED`.
+
+In hosted Jev or local decision mode, the lead may run `graphmory curate-plan --vault "<path>" --input "<bundle.json>" --agent` after authoring a Memory Patch. The bundle contains `patch`, `sources` with IDs and short evidence excerpts, and optionally up to three `candidate_paths`. Read the returned advice and affected notes before any write. `curate-plan` never edits the vault; `review` is not approval to apply a patch. A local reranker cannot perform this classification.
 
 ## Authority
 
