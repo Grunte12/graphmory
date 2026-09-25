@@ -84,6 +84,8 @@ The apply command requires a clean Git worktree and baseline commit, creates a l
 
 ## Memory Roles
 
+- Write new canonical memory in concise English; the lead agent answers the user in their chosen language. Preserve exact identifiers and provenance, and do not create translated duplicate notes. See `docs/guides/token-efficient-language.md`.
+
 - Lead agent: decides what was learned and writes the Memory Patch.
 - In curator mode, Memory Curator retrieves, places, links, deduplicates, and validates memory without inventing missing facts.
 - In hosted Jev and local decision modes, the selected decision engine judges bounded retrieval candidates directly. In local rerank mode, a local model only reorders candidates and the lead agent checks whether the evidence answers the query. The lead agent remains responsible for prose and Memory Patch authorship; no curator sub-agent is dispatched for these recall modes.

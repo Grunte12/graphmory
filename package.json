@@ -35,6 +35,7 @@
     "docs/guides/install.md",
     "docs/guides/agent-hosts.md",
     "docs/guides/managed-retrieval.md",
+    "docs/guides/token-efficient-language.md",
     "docs/design/learning-loop.md",
     "docs/guides/portable-brain-sync.md",
     "docs/research/rag-positioning.md",

@@ -1,5 +1,7 @@
 ## Durable Memory
 
+- Write new canonical vault notes in concise English. Keep exact technical identifiers and provenance intact. Do not duplicate notes by language or translate existing notes solely for consistency. Answer the user in their chosen language, including Thai. Keep routine replies short while preserving decisions, evidence, uncertainty, and next actions.
+
 - At session start and before current shared memory is required, ask the lead agent to run `brain-sync auto-pull --json`. Memory Curator should not run Git sync itself.
 - The lead agent owns the meaning of new memory.
 - Before non-trivial work where prior decisions could change the plan, inspect the selected `mph config` workflow. In curator mode, ask the memory curator for a compact Brain Brief. In hosted Jev or local decision mode, run `brain-sync recall-managed --query "<specific question>" --scope "<known project/domain>" --agent` directly; the lead agent reads its selected paths and uses the EvidencePacket. Do not dispatch a curator or silently fall back to one in decision modes.
