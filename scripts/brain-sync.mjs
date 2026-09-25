@@ -58,8 +58,8 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs detect --vault <path> [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs doctor [--vault <path>] [--json] [--require-github]\n`)
   out.write(`  node scripts/brain-sync.mjs health --vault <path> [--json] [--out <file>]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--rerank] [--json]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall-loop --vault <path> --query <text> [--scope <path>] [--k 3] [--rerank] [--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--rerank] [--agent|--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-loop --vault <path> --query <text> [--scope <path>] [--k 3] [--rerank] [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs config [show] [--config <path>] [--json]\n`)
@@ -495,6 +495,18 @@ function health() {
   if (!report.ok) process.exitCode = 1
 }
 
+function agentRecallPacket(report, { includeLanes = false } = {}) {
+  return {
+    confidence: report.confidence,
+    needsExpansion: report.needsExpansion,
+    scanLimitReached: report.scanLimitReached,
+    ...(report.excludedByLifecycle ? { excludedByLifecycle: report.excludedByLifecycle } : {}),
+    results: report.results.map(({ path, status, lanes }) => ({
+      path, status, ...(includeLanes ? { lanes } : {}),
+    })),
+  }
+}
+
 function recall() {
   const vault = requireVault()
   const query = requiredOption("--query")
@@ -508,6 +520,10 @@ function recall() {
     scope: option("--scope", ""),
     rerank: flag("--rerank"),
   })
+  if (flag("--agent")) {
+    console.log(JSON.stringify(agentRecallPacket(report)))
+    return
+  }
   if (flag("--json")) {
     console.log(JSON.stringify(report, null, 2))
     return
@@ -713,6 +729,10 @@ function recallLoop() {
     scope: option("--scope", ""),
     rerank: flag("--rerank"),
   })
+  if (flag("--agent")) {
+    console.log(JSON.stringify(agentRecallPacket(report, { includeLanes: true })))
+    return
+  }
   if (flag("--json")) {
     console.log(JSON.stringify(report, null, 2))
     return

@@ -268,6 +268,31 @@ test("recall can restrict search to a known memory scope", () => {
   assert.equal(report.scanned, 1)
 })
 
+test("agent recall keeps ranked paths, lifecycle status, and expansion signals with a smaller payload", () => {
+  const vault = tempRoot("mph-agent-recall-")
+  try {
+    fs.writeFileSync(path.join(vault, "Policy.md"), "---\nstatus: current\n---\n# Sync Policy\n\nUse human-reviewed conflict handling.")
+    fs.writeFileSync(path.join(vault, "Old.md"), "---\nstatus: stale\n---\n# Old Policy\n\nAutomatically overwrite memory conflicts.")
+    for (const command of ["recall", "recall-loop"]) {
+      const args = [command, "--vault", vault, "--query", "human reviewed memory conflict"]
+      const fullResult = runCli([...args, "--json"])
+      const compactResult = runCli([...args, "--agent"])
+      assert.equal(fullResult.status, 0, fullResult.stderr)
+      assert.equal(compactResult.status, 0, compactResult.stderr)
+      const full = JSON.parse(fullResult.stdout)
+      const compact = JSON.parse(compactResult.stdout)
+      assert.deepEqual(compact.results.map(({ path, status }) => ({ path, status })),
+        full.results.map(({ path, status }) => ({ path, status })))
+      assert.equal(compact.confidence, full.confidence)
+      assert.equal(compact.needsExpansion, full.needsExpansion)
+      assert.equal(compact.scanLimitReached, full.scanLimitReached)
+      assert.equal(compact.excludedByLifecycle, full.excludedByLifecycle)
+      if (command === "recall-loop") assert.deepEqual(compact.results.map(({ lanes }) => lanes), full.results.map(({ lanes }) => lanes))
+      assert.ok(Buffer.byteLength(compactResult.stdout) < Buffer.byteLength(fullResult.stdout))
+    }
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
+})
+
 test("curation-recommend classifies retrieval misses for agent repair", () => {
   const root = tempRoot("mph-curation-cli-")
   try {
