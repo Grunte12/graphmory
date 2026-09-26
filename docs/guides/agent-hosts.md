@@ -79,6 +79,10 @@ Add this instruction to your host's lead-agent guidance, then reload the host:
 
 If delegation is unavailable, the lead may follow the skill directly. Pinning Luna, Haiku, or another model is a host setting; Graphmory's `curator.model` is routing metadata and does not override the host's model. OpenCode requires its own adapter configuration.
 
+### Optional lifecycle reminder hooks
+
+Keep the short lead instruction above and the curator's skill/agent definition as the source of the workflow. A hook can restore a **brief reminder** when a session starts or its context is compacted; it should not run retrieval on every prompt or spawn a curator on every task. This avoids unrelated vault reads and repeated prompt tokens. For a local Codex installation, consider a `SessionStart` hook matching `startup|resume|compact` that emits one short instruction pointing to the named curator and vault configuration. Claude Code supports `SessionStart` hooks; Cursor supports `sessionStart` and `preCompact`, but their hook files and output schemas differ. Have the user's agent install a host-specific hook only after previewing its script and configuration. Hooks are optional because some hosts and remote sessions cannot run local scripts, and Codex asks users to review and trust new hooks. Keep the skill and lead instruction so Graphmory works without a hook. See the official [Codex](https://learn.chatgpt.com/docs/hooks), [Claude Code](https://code.claude.com/docs/en/hooks-guide), and [Cursor](https://prod.cursor.com/docs/hooks) documentation.
+
 For a Memory Patch, the lead agent supplies the claim, scope, and source IDs. The curator searches only likely destinations and checks current note contents before applying an edit. This second search is for placement and conflict detection, so it can reuse candidate paths found earlier but must not trust stale excerpts. Keep the curator's stable instructions ahead of the changing patch and excerpts to preserve any prompt caching the host/provider offers; compare reported cache usage and actual cost before claiming savings.
 
 ## 5. Smoke check
