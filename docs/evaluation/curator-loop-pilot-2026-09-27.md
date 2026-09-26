@@ -20,4 +20,6 @@ Second correction: the skill's flexible synthesis guidance conflicted with the B
 
 No comparable cost/latency result: the control recorded about 41 seconds of wall time, while treatment recorded only about 5.9 seconds inside tool calls, excluding synthesis. These different clocks cannot be compared. Neither arm exposed actual provider tokens/cache/billing. Only one trial per arm ran; no unknown-case or write-safety trial ran. We cannot claim that Graphmory beats the control or any competitor from this pilot.
 
+An additional three-question unknown-handling development probe used the updated skill: exact 2026-09-27 token/billing numbers unavailable from the frozen 2026-09-26 snapshot; production SLA unevidenced; universal benchmark superiority unestablished. The curator explicitly reported those evidence limits, distinguished the earlier dated Jev numbers from curator usage, and cited exact source paths. All three outputs behaved conservatively on preliminary primary-agent review. This small, intentionally unavailable-information probe is not the >=90% acceptance result, does not test independent adversarial questions, and does not establish write safety.
+
 Promotion gates and next trials are in [optimization-loop-2026-09-27.md](optimization-loop-2026-09-27.md). Private outputs and rubric remain outside the repository.

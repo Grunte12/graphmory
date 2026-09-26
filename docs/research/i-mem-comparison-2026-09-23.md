@@ -2,6 +2,8 @@
 
 Date: 2026-09-23. This comparison uses an existing local I-MEM checkout for its current working state, a temporary GitHub `main` clone for the published tests, and the current Graphmory checkout. No files in the existing local I-MEM checkout were changed.
 
+Historical snapshot, not the current runtime inventory. Update 2026-09-27: Graphmory now caches semantic document vectors outside the vault by content hash, reusing unchanged vectors; see [managed retrieval](../guides/managed-retrieval.md) and `cachedDocumentVectors` in `src/semantic-recall.mjs`. The performance row and experiment advice below describe the earlier inspected revision. This correction does not change the recorded benchmark results or establish a new end-to-end speed advantage. I-MEM's later state has not been rechecked here.
+
 ## Recommendation
 
 Use **Graphmory as the operational base** for further tool development and personal Obsidian use. Keep **I-MEM as the academic research artifact** with frozen datasets, dated corrections, and publication material. Port individually measured retrieval improvements into the operational base; do not merge the research tree wholesale. If a single repository must be chosen for running the system, choose Graphmory.
@@ -14,7 +16,7 @@ Use **Graphmory as the operational base** for further tool development and perso
 | Retrieval baseline | BM25F section recall, one-hop links, recall loop, optional semantic CLI; scope pruning and semantic-confidence fixes in this checkout | Three lexical lanes with standard RRF; optional bidirectional link lane; isolated semantic API | I-MEM had the better fused ranking on the shared fixture; its RRF fix has now been ported into Graphmory |
 | Lifecycle governance | Rich write/sync lifecycle checks; `deprecated` retrieval exclusion ported in this checkout | Excludes deprecated in published `main`; reports tension | Both now align on this eligibility rule |
 | Research traceability | Broad deterministic tests and evals, fewer frozen academic narratives | Frozen 54-note/34-question set, dated raw logs and corrections, negative ablations, paper and bibliography | I-MEM is stronger for publication |
-| Performance engineering | In-process WeakMap caches, CLI file scan each call; semantic embeddings recalculated each call | Same underlying limitations | Neither has yet demonstrated optimized end-to-end latency or persistent embedding cache |
+| Performance engineering at the inspected revision | In-process WeakMap caches, CLI file scan each call; semantic embeddings recalculated each call at that revision | Same underlying limitations at that revision | Neither had demonstrated optimized end-to-end latency or persistent embedding cache in this comparison; see the later Graphmory update above |
 
 The existing local I-MEM branch is three commits behind GitHub `main`, with substantial uncommitted academic reorganization. Its `src/memory-recall.mjs` working change only updates a document path; the runtime retrieval behavior matches its checked-out commit. `npm test` passed 43/43 there. The published clone passed 49/49. Graphmory's `npm run check` passed after the ports.
 
@@ -26,4 +28,4 @@ I-MEM's opt-in bidirectional wikilink lane is a useful experiment, but its own e
 
 The user's intended Jev role is candidate relevance scoring after keyword and semantic retrieval. Keep RRF as a deterministic candidate fusion baseline, then test Jev as a learned relevance judge over the bounded union. Jev would score short candidate sections against the query, admit the best evidence, and trigger at most one bounded retrieval expansion if none passes. Compare this against local RRF and curator verification for quality, latency, cost, and abstention. The implementation plan is in `docs/design/jev-retrieval-plan.md`.
 
-The semantic lane currently runs separately, re-embeds the documents per call, and has no demonstrated end-to-end win in I-MEM. Persist and invalidate local vectors before running an always-on hybrid/Jev experiment; otherwise embedding time can dominate the result. Hosted Jev would receive the query and candidate excerpts, so live private-vault evaluation requires a separate explicit opt-in and payload preview.
+At the inspected revision, the semantic lane ran separately, re-embedded documents per call, and had no demonstrated end-to-end win in I-MEM. The experiment recommendation then was to persist and invalidate local vectors before running an always-on hybrid/Jev experiment; Graphmory has since implemented that cache as noted above. Hosted Jev would receive the query and candidate excerpts, so live private-vault evaluation requires a separate explicit opt-in and payload preview.
