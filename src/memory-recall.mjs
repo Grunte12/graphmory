@@ -90,6 +90,7 @@ export function recallVaultLoop(vault, query, {
   maxFiles = 5000,
   scope = "",
   perMethodLimit = 8,
+  shortlistLimit = 0,
   rerank = false,
   documents: suppliedDocuments,
 } = {}) {
@@ -111,7 +112,11 @@ export function recallVaultLoop(vault, query, {
       excluded: retrieval.excluded,
     }
   })
-  const fused = fuseRankedLanes(lanes)
+  const all = fuseRankedLanes(lanes)
+  // Preserve the previous first-page ordering; deeper lane results remain reachable.
+  const shortlist = shortlistLimit > 0 ? fuseRankedLanes(lanes.map((lane) => ({ ...lane, results: lane.results.slice(0, shortlistLimit) }))).slice(0, 10) : []
+  const shortlistIds = new Set(shortlist.map((item) => item.id))
+  const fused = shortlistLimit > 0 ? [...shortlist, ...all.filter((item) => !shortlistIds.has(item.id))] : all
   const top = fused.slice(offset, offset + k)
   const confidence = fused.length === 0
     ? "none"

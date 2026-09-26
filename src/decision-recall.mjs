@@ -19,7 +19,7 @@ export async function managedRecall(vault, query, config, {
   const vaultDocuments = loadVaultDocuments(vault, { scope })
   const methods = retrievalMethods(config.retrievalProfile)
   if (config.workflow === "curator") {
-    const page = recallVaultLoop(vault, query, { k, offset, scope, perMethodLimit: vaultDocuments.length, documents: vaultDocuments, methods })
+    const page = recallVaultLoop(vault, query, { k, offset, scope, perMethodLimit: vaultDocuments.length, shortlistLimit: limit, documents: vaultDocuments, methods })
     return {
       query, workflow: "curator", curator: config.curator,
       confidence: page.confidence, retrievalConfidence: page.confidence, needsExpansion: page.needsExpansion, scanLimitReached: page.scanLimitReached,

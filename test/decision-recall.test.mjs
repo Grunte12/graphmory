@@ -4,7 +4,8 @@ import os from "node:os"
 import path from "node:path"
 import test from "node:test"
 import { managedRecall } from "../src/decision-recall.mjs"
-import { DEFAULT_RUNTIME_CONFIG, loadRuntimeConfig, saveRuntimeConfig, validateRuntimeConfig } from "../src/runtime-config.mjs"
+import { loadVaultDocuments, recallVaultLoop } from "../src/memory-recall.mjs"
+import { DEFAULT_RUNTIME_CONFIG, loadRuntimeConfig, saveRuntimeConfig, validateRuntimeConfig, retrievalMethods } from "../src/runtime-config.mjs"
 
 test("curator pages through all matching paths while an explicit smaller page still works", async () => {
   const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-curator-depth-"))
@@ -21,6 +22,8 @@ test("curator pages through all matching paths while an explicit smaller page st
     assert.equal(broad.totalCandidates, 16)
     assert.equal(broad.hasMore, true)
     assert.equal(broad.nextOffset, 10)
+    const legacy = recallVaultLoop(vault, "project memory evidence", { k: 10, perMethodLimit: 8, documents: loadVaultDocuments(vault), methods: retrievalMethods(DEFAULT_RUNTIME_CONFIG.retrievalProfile) })
+    assert.deepEqual(broad.results.slice(0, legacy.results.length).map((item) => item.path), legacy.results.map((item) => item.path))
     assert.equal(second.results.length, 6)
     assert.equal(second.hasMore, false)
     assert.equal(second.nextOffset, null)
