@@ -9,6 +9,7 @@ export async function managedRecall(vault, query, config, {
   offset = 0,
   scope = "",
   semanticExpansion = false,
+  evidencePreview = false,
   semanticRecallImpl = recallVaultSemantic,
   fetchImpl = fetch,
 } = {}) {
@@ -20,11 +21,14 @@ export async function managedRecall(vault, query, config, {
   const methods = retrievalMethods(config.retrievalProfile)
   if (config.workflow === "curator") {
     const page = recallVaultLoop(vault, query, { k, offset, scope, perMethodLimit: vaultDocuments.length, shortlistLimit: limit, documents: vaultDocuments, methods })
+    const documentsByPath = evidencePreview ? new Map(vaultDocuments.map((item) => [item.id, item])) : null
     return {
       query, workflow: "curator", curator: config.curator,
       confidence: page.confidence, retrievalConfidence: page.confidence, needsExpansion: page.needsExpansion, scanLimitReached: page.scanLimitReached,
       offset: page.offset, totalCandidates: page.totalCandidates, hasMore: page.hasMore, nextOffset: page.nextOffset,
-      results: page.results.map(({ path, title, score, status }) => ({ path, title, score, status })),
+      results: page.results.map(({ path, title, score, status }) => ({ path, title, score, status,
+        ...(documentsByPath?.has(path) ? { evidencePreview: curatorEvidencePreview(documentsByPath.get(path), query) } : {}),
+      })),
       nextSteps: page.nextSteps.slice(0, 2),
     }
   }
@@ -89,6 +93,23 @@ export async function managedRecall(vault, query, config, {
     candidateCount: results.length,
     nextSteps: passing.length ? [] : ["No candidate passed the relevance gate. Narrow the scope or reformulate the query; optionally enable --semantic-expansion."],
   }
+}
+
+export function curatorEvidencePreview(document, query) {
+  const normalize = (term) => term.endsWith("ed") ? [term, term.slice(0, -2), term.slice(0, -1)] : [term]
+  const terms = new Set(tokenize(query).flatMap(normalize))
+  const sections = splitMarkdownSections(document)
+  const ranked = sections.map((section, index) => {
+    const overlap = [...new Set((section.fields?.body ?? section.tokens).flatMap(normalize))].filter((term) => terms.has(term)).length
+    const userEvidence = /(?:^| > )user$/iu.test(section.title)
+    return { section, index, overlap, userEvidence }
+  })
+  const userTurns = ranked.filter((item) => item.userEvidence)
+  const pool = userTurns.length ? userTurns : ranked
+  const first = pool[0]
+  const rankedMatches = [...pool].sort((a, b) => b.overlap - a.overlap || a.index - b.index)
+  const selected = [first, ...rankedMatches.filter((item) => item !== first).slice(0, 2)]
+  return selected.map(({ section }) => ({ heading: section.title, text: section.markdown.slice(0, 350) }))
 }
 
 async function rerankCandidates(candidates, documents, query, config, fetchImpl) {

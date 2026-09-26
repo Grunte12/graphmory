@@ -3,7 +3,7 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import test from "node:test"
-import { managedRecall } from "../src/decision-recall.mjs"
+import { curatorEvidencePreview, managedRecall } from "../src/decision-recall.mjs"
 import { loadVaultDocuments, recallVaultLoop } from "../src/memory-recall.mjs"
 import { DEFAULT_RUNTIME_CONFIG, loadRuntimeConfig, saveRuntimeConfig, validateRuntimeConfig, retrievalMethods } from "../src/runtime-config.mjs"
 
@@ -31,6 +31,29 @@ test("curator pages through all matching paths while an explicit smaller page st
     assert.ok(broad.results.every((result) => !Object.hasOwn(result, "excerpt")))
     assert.equal((await managedRecall(vault, "unmatchedzzz", DEFAULT_RUNTIME_CONFIG)).totalCandidates, 0)
     assert.equal((await managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG, { offset: 16 })).results.length, 0)
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
+})
+
+test("optional curator previews keep every candidate and prefer matched user evidence on ties", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-curator-preview-"))
+  try {
+    fs.writeFileSync(path.join(vault, "one.md"), "# Kitchen conversation\n## user\nI bought a new kitchen mat.\n## assistant\nKitchen recipe suggestions are unrelated.\n## user\nLater I replaced a toaster.")
+    fs.writeFileSync(path.join(vault, "two.md"), "# Kitchen note\nThe faucet was fixed.")
+    const baseline = await managedRecall(vault, "kitchen", DEFAULT_RUNTIME_CONFIG, { k: 1 })
+    const preview = await managedRecall(vault, "kitchen", DEFAULT_RUNTIME_CONFIG, { k: 1, evidencePreview: true })
+    assert.equal(preview.totalCandidates, baseline.totalCandidates)
+    assert.equal(preview.nextOffset, baseline.nextOffset)
+    assert.deepEqual(preview.results.map((item) => item.path), baseline.results.map((item) => item.path))
+    const next = await managedRecall(vault, "kitchen", DEFAULT_RUNTIME_CONFIG, { k: 1, offset: preview.nextOffset, evidencePreview: true })
+    const all = [...preview.results, ...next.results]
+    assert.equal(all.length, 2)
+    const conversation = all.find((item) => item.path === "one.md")
+    assert.match(conversation.evidencePreview[0].heading, /user$/u)
+    assert.match(conversation.evidencePreview[0].text, /new kitchen mat/u)
+    const replacement = curatorEvidencePreview(loadVaultDocuments(vault).find((item) => item.id === "one.md"), "replace")
+    assert.match(replacement[1].text, /replaced a toaster/u)
+    assert.ok(all.every((item) => item.evidencePreview.every((section) => section.text.length <= 350)))
+    assert.ok(baseline.results.every((item) => !Object.hasOwn(item, "evidencePreview")))
   } finally { fs.rmSync(vault, { recursive: true, force: true }) }
 })
 
