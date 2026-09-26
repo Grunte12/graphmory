@@ -21,6 +21,8 @@ mph recall-managed --vault "<vault-path>" --query "<question>" --k 3 --agent
 
 Pass `--scope "<known-project-or-domain-path>"` when the scope is known. Read only the returned candidate notes needed to prepare the Brain Brief. The JSON scores rank candidates; they do not establish that a claim is true or current. If `needsExpansion` is true, follow the configured retrieval workflow and make at most one bounded expansion before abstaining. Never dump the full vault into agent context. Use `mph config` in a terminal for human setup; do not run its interactive menu in an agent loop.
 
+For a question that explicitly compares two known projects, check whether the first three results contain direct evidence from both. If one side is missing, make one bounded comparison expansion: run `mph recall-loop --vault "<vault-path>" --query "<question>" --scope "<project-a-path>" --k 5 --agent` and repeat once for `<project-b-path>`. These compact results contain paths, not note bodies. Inspect only relevant lines in those candidates, choose at most one directly supported note per project, and cite both in the Brain Brief. If a side has no supporting note, say that it is unknown. Do not choose a note merely because it ranks first, and do not repeat this expansion for ordinary single-project questions.
+
 ## Recall
 
 1. Start from the project map or index.
