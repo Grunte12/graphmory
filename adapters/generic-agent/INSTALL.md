@@ -2,6 +2,25 @@
 
 Use this guide when an AI coding agent is asked to install or connect Graphmory for a user.
 
+## Agent-Guided Setup
+
+You are the installer on the user's machine. This Markdown guide is the source of truth; `graphmory-setup` is an optional file-writing helper for known hosts, not the universal installation interface. Use the host's native multiple-choice question UI when available. If it is unavailable, ask one concise numbered-choice question in chat at a time. Never block setup merely because the host lacks a named question tool.
+
+These UIs have different names and availability: Claude Code documents `AskUserQuestion`, Cursor's ACP documents `cursor/ask_question`, and Codex may expose a user-input tool in the current client. Use the tool actually available in the session; do not call a guessed name. [Claude reference](https://code.claude.com/docs/en/agent-sdk/permissions) · [Cursor reference](https://prod.cursor.com/docs/cli/acp)
+
+Inspect the host, OS, available models, existing agent files, and candidate vault paths before asking. Ask only for decisions you cannot reliably infer. Keep answers in the conversation until the requirements below are complete; do not write a config containing guessed answers.
+
+1. **Scope:** If not stated, ask `Install Graphmory for all projects or this project only?` Choices: `All projects` / `This project`.
+2. **Vault:** Ask for the intended Markdown/Obsidian vault path if unknown. If the detected path already has notes, ask whether to `Use as-is and make an adoption plan` or `Choose another vault`. Offer `Create a new vault` only when its location is clear. Do not restructure or adopt existing notes on this answer alone; follow the separate reviewed adoption flow below.
+3. **Curator model:** Show inexpensive models actually available in the host and ask which one to assign. If the host cannot enumerate models, offer `Try the recommended inexpensive model` / `Choose another model`; verify the selected model in that host before calling setup complete. Never silently inherit an expensive lead model or require a nontechnical user to know a model ID.
+4. **Existing host configuration:** If a skill or agent with the same name exists, show the affected path and ask whether to `Keep existing` or `Review a proposed update`. Do not overwrite it.
+
+The user's install request plus these answers authorize ordinary, reversible setup files. Summarize the exact paths, selected model, and vault before writing; a second generic confirmation is unnecessary. Ask separately before existing-vault adoption, restructuring, remote creation, or other decisions listed under Human Judgment Gates in `AGENTS.md`.
+
+Install the CLI with npm from this checkout, then use the host's current documented agent and skill format. For Codex, Claude Code, and Cursor, `graphmory-setup --host <host>` can preview known paths and `--apply` can write them when its output matches the detected host. If it does not match, create the host files from the same curator role and skill using the host's current documentation. Do not use an unverified model ID or claim the helper supports an unfamiliar host. See `docs/guides/agent-hosts.md` for current examples.
+
+After installation, run `graphmory doctor --json`; verify the skill and named curator appear in the host if the host exposes that check; then ask the lead agent to delegate one read-only recall against a disposable or known vault. Report `CLI installed`, `skill discovered`, and `curator dispatched` separately. If a host cannot verify discovery or dispatch, report that limit instead of claiming the setup is complete.
+
 ## Minimum Safe Flow
 
 1. Verify this repository:
@@ -10,7 +29,7 @@ Use this guide when an AI coding agent is asked to install or connect Graphmory 
    npm test
    ```
 
-2. Ask the user for the memory vault path and optional GitHub brain repo in `OWNER/REPO` format. Do not guess silently.
+2. Use the vault path chosen during the setup interview. If it is still unknown, ask for it. Ask for an optional GitHub brain repo in `OWNER/REPO` format only when sync is requested. Do not guess silently.
 
    Diagnose the machine first:
 
@@ -53,7 +72,7 @@ Use this guide when an AI coding agent is asked to install or connect Graphmory 
 
    Read affected notes, set exact targets, and show the proposed batch to the user. Generated entries are unapproved. After explicit approval, mark only accepted entries `approved: true`, run `restructure-apply --dry-run`, then `restructure-apply --approve`. Run `restructure-verify` on the emitted record and repair links before committing.
 
-6. Install the CLI and named Memory Curator agent for the chosen host. Preview the host files before applying:
+6. Install the CLI and named Memory Curator agent for the chosen host. On a supported host, the helper may preview the files before applying:
 
    ```sh
    npm install -g --omit=optional .

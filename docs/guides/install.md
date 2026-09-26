@@ -6,7 +6,7 @@ For Codex, Cursor, or Claude Code, follow the [cross-host setup guide](agent-hos
 
 ## Where installation instructions live
 
-- [README Quick Start](../../README.md#quick-start) is the first path for a person arriving from GitHub.
+- [README Quick Start](../../README.md#quick-start) is the first path for a person arriving from GitHub; its agent-guided setup is recommended.
 - This guide explains setup and vault choices; [host setup](agent-hosts.md) gives exact commands and agent paths.
 - [Generic agent install guide](../../adapters/generic-agent/INSTALL.md) is the checklist for a coding agent doing setup for someone.
 - [AGENTS.md](../../AGENTS.md) guides agents working in this repository; [`memory-curator/SKILL.md`](../../skills/memory-curator/SKILL.md) defines curator behavior after installation. Neither is a substitute for installing the CLI.

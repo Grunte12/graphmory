@@ -1,6 +1,6 @@
 # Codex, Cursor, and Claude Code
 
-The same `graphmory` CLI and `memory-curator` skill work across hosts that can run shell commands. Install one named curator agent during setup so its role, skill, and inexpensive model are consistent across sessions. The lead agent still decides when to delegate and authors every new Memory Patch.
+The same `graphmory` CLI and `memory-curator` skill work across hosts that can run shell commands. For broad compatibility, have the user's coding agent follow the [guided install interview](../../adapters/generic-agent/INSTALL.md#agent-guided-setup). The agent inspects its host, asks for missing choices, and installs one named curator with a consistent role, skill, and inexpensive model. The lead agent still decides when to delegate and authors every new Memory Patch.
 
 ## 1. Install the CLI once
 
@@ -15,7 +15,7 @@ The npm package is not published yet. `npm install -g --omit=optional .` may lin
 
 ## 2. Install the curator agent and skill
 
-Preview first, then apply. The setup command does not overwrite existing agent or skill files:
+For a supported host, the agent may use this helper after confirming the host format and model. Preview first, then apply. The setup command does not overwrite existing agent or skill files:
 
 ```sh
 graphmory-setup --host codex

@@ -47,7 +47,9 @@ Raw evidence is the immutable evidentiary source of truth. Markdown is canonical
 
 Requirements: Node.js 20 or newer and Git. The npm package is not published yet, so install from this GitHub checkout. You do not need to fork it to use it.
 
-If you are an AI coding agent installing this for a user, read [AGENTS.md](AGENTS.md) first.
+For the easiest setup, ask your coding agent: **“Install Graphmory from this repository. Follow `adapters/generic-agent/INSTALL.md`. Ask me for missing choices using your question UI, then verify CLI, skill discovery, and curator dispatch.”** The agent can adapt the files to its own host and machine.
+
+The commands below are a manual path for Codex. `graphmory-setup` is a helper for known hosts, not a requirement for agent-guided setup. Coding agents should read [AGENTS.md](AGENTS.md) and the install guide first.
 
 ```sh
 git clone https://github.com/Grunte12/graphmory.git

@@ -10,13 +10,13 @@ Graphmory adds a durable Markdown memory layer for coding agents. The tool repo 
 
 1. Run `npm test` to verify the repo works.
 2. Read `docs/guides/install.md` for full installation steps.
-3. Identify the user's host. For Codex, Cursor, or Claude Code, install the CLI and preview the named curator agent before applying it:
+3. Follow the [agent-guided setup](adapters/generic-agent/INSTALL.md#agent-guided-setup): inspect the host and machine, ask the user for missing choices, and keep those answers in the conversation. For Codex, Cursor, or Claude Code, the optional helper can preview and write the named curator agent after the host format and model are confirmed:
    ```sh
    npm install -g --omit=optional .
    graphmory-setup --host codex
    graphmory-setup --host codex --apply
    ```
-   Replace `codex` with `claude` or `cursor` for that host. Cursor requires `--model <host-model-id>`. For OpenCode, instead run `node scripts/install.mjs --target "<agent-config-root>"` and follow `docs/guides/install.md#opencode-adapter`. Do not overwrite an existing host agent or skill.
+   Replace `codex` with `claude` or `cursor` for that host. Cursor requires `--model <host-model-id>`. If the helper does not fit the host, follow its current agent/skill documentation and create the files manually. For OpenCode, run `node scripts/install.mjs --target "<agent-config-root>"` and follow `docs/guides/install.md#opencode-adapter`. Do not overwrite an existing host agent or skill.
 4. Verify the selected CLI works after installation:
    ```sh
    graphmory doctor --json
