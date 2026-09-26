@@ -179,6 +179,7 @@ test("semantic expansion can judge a lexical candidate that was not in the score
   try {
     fs.writeFileSync(path.join(vault, "Alpha.md"), "# Alpha\n\nquery query query token")
     fs.writeFileSync(path.join(vault, "Beta.md"), "# Beta\n\nquery token with independent evidence")
+    fs.writeFileSync(path.join(vault, "Index.md"), "---\ncanonical_memory: false\n---\n# Query index\n[[Alpha]] [[Beta]]")
     const config = structuredClone(DEFAULT_RUNTIME_CONFIG)
     config.workflow = "local-decision"
     config.decision.endpoint = "http://127.0.0.1:8000/v1/systemone"
@@ -186,7 +187,10 @@ test("semantic expansion can judge a lexical candidate that was not in the score
     let calls = 0
     const report = await managedRecall(vault, "query token", config, {
       semanticExpansion: true,
-      semanticRecallImpl: async () => ({ results: [{ path: "Beta.md", title: "Beta", score: 1, status: "current" }] }),
+      semanticRecallImpl: async () => ({ results: [
+        { path: "Index.md", title: "Query index", score: 2, status: "current" },
+        { path: "Beta.md", title: "Beta", score: 1, status: "current" },
+      ] }),
       fetchImpl: async () => ({ ok: true, json: async () => ({ answers: { relevant_0: { noul: ++calls === 1 ? 0.1 : 0.9 } } }) }),
     })
     assert.equal(report.expanded, true)

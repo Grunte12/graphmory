@@ -2,7 +2,7 @@ import { retrievalMethods } from "./runtime-config.mjs"
 import { createHash } from "node:crypto"
 import { loadVaultDocuments, recallVaultLoop } from "./memory-recall.mjs"
 import { recallVaultSemantic } from "./semantic-recall.mjs"
-import { splitMarkdownSections, tokenize } from "./retrieval.mjs"
+import { isAnswerCandidate, splitMarkdownSections, tokenize } from "./retrieval.mjs"
 
 export async function managedRecall(vault, query, config, {
   k = 3,
@@ -49,7 +49,8 @@ export async function managedRecall(vault, query, config, {
   if (!results.some((item) => item.relevance >= config.decision.relevanceThreshold) && semanticExpansion) {
     const semantic = await semanticRecallImpl(vault, query, { k: 10, scope })
     const scoredPaths = new Set(initial.results.slice(0, limit).map((item) => item.path))
-    const unseen = semantic.results.filter((item) => !scoredPaths.has(item.path)).slice(0, limit)
+    const unseen = semantic.results.filter((item) => !scoredPaths.has(item.path)
+      && documents.has(item.path) && isAnswerCandidate(documents.get(item.path))).slice(0, limit)
     if (unseen.length) {
       results = results.concat(await scoreCandidates(unseen, documents, query, config, fetchImpl))
       expanded = true
