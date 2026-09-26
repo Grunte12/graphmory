@@ -33,7 +33,9 @@ const familySplit = id => {
   const family=id.replace(/_abs$/u,'')
   return knownFamilies.has(family) || parseInt(hash('graphmory-split-v2:'+family).slice(0,8),16)%2===0 ? 'dev' : 'acceptance'
 }
-const selected = selectCases(eligible.filter(item=>split==='all'||familySplit(item.question_id)===split), Number(option('--per-category', '2')))
+const idsManifest = option('--ids-manifest') ? JSON.parse(fs.readFileSync(option('--ids-manifest'),'utf8')) : null
+if (idsManifest && idsManifest.sourceSha256 !== hash(bytes)) throw new Error('Manifest dataset hash mismatch')
+const selected = idsManifest ? idsManifest.selectedIds.map(id=> { const item=eligible.find(x=>x.question_id===id); if(!item) throw new Error('Missing selected ID'); return item }) : selectCases(eligible.filter(item=>split==='all'||familySplit(item.question_id)===split), Number(option('--per-category', '2')))
 const methods = option('--arms', 'baseline,graph').split(',')
 if (!methods.length || new Set(methods).size!==methods.length || methods.some(m=>!['baseline','graph','bm25','multigranularity'].includes(m))) throw new Error('Invalid arms')
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'graphmory-lme-'))
@@ -49,7 +51,7 @@ try {
     }
     const labels = prepared.labels
     // Date is available to both arms, but no answer, source IDs or category are passed.
-    const query = `${prepared.query.text}\nAs of: ${prepared.query.date}`
+    const query = args.includes('--question-only') ? prepared.query.text : `${prepared.query.text}\nAs of: ${prepared.query.date}`
     const arms = [...methods.slice(index % methods.length), ...methods.slice(0,index % methods.length)]
     for (const arm of arms) {
       const start = performance.now()
@@ -95,7 +97,7 @@ try {
         completeAt12:cases.filter(r=>r.completeAt12===true).length}
     }
   }
-  const report={split,methods,implementationHashes,categories,suite:'longmemeval-session-retrieval-pilot',dataset:'xiaowu0162/longmemeval-cleaned',revision,
+  const report={queryFormat:args.includes('--question-only')?'question-only':'question-plus-date',split,methods,implementationHashes,categories,suite:'longmemeval-session-retrieval-pilot',dataset:'xiaowu0162/longmemeval-cleaned',revision,
     sourceSha256:hash(bytes),temporalPolicy:strictTime?'exclude-cases-with-future-sessions':'preserve-upstream-history',
     futureSessionCases:items.filter(item=>item.haystack_dates.some(date=>benchmarkDate(date)>benchmarkDate(item.question_date))).map(item=>item.question_id),inputCases:items.length,validatedCases:eligible.length,quarantined,selectionSeed:'graphmory-lme-pilot-v1',selectedIds:selected.map(i=>i.question_id),
     adaptation:'Verbatim sessions rendered to Markdown; original timestamps; no summaries or generated links. Session-level retrieval only, not official answer accuracy.',
