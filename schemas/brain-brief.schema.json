@@ -15,7 +15,6 @@
     "relevant_memory": {
       "type": "array",
       "minItems": 1,
-      "maxItems": 7,
       "items": {
         "type": "object",
         "additionalProperties": false,

@@ -42,6 +42,14 @@ test("accepts the example Brain Brief", () => {
   assert.deepEqual(validateBrainBrief(brief), { valid: true, errors: [] })
 })
 
+test("accepts more than seven sourced findings without truncating the brief", () => {
+  const expanded = { ...brief, relevant_memory: Array.from({ length: 9 }, (_, index) => ({ summary: `Supported finding ${index}`, path: `Note-${index}.md` })) }
+  assert.equal(validateBrainBrief(expanded).valid, true)
+  assert.equal(validateBrainBrief({ ...expanded, relevant_memory: [] }).valid, false)
+  expanded.relevant_memory[8].path = ""
+  assert.equal(validateBrainBrief(expanded).valid, false)
+})
+
 test("bounds direct reads to three paths", () => {
   const result = validateBrainBrief({
     ...brief,

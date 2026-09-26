@@ -30,6 +30,8 @@ For a question that compares two known projects, retrieve within each project sc
 3. Inspect as many relevant notes as needed to compare evidence, resolve duplicates, and notice conflicts. Do not copy every candidate into the brief. Return a concise synthesis of the supported memory items, constraints, watchouts, and source paths; include more items when the task genuinely needs them. Keep each claim tied to its source path; include excerpts only when the lead needs exact wording.
 4. Do not edit in recall mode.
 
+For questions about implementation, runtime behavior, or provider configuration, distinguish historical designs/comparisons from current operational evidence. Check the relevant runtime guide or implementation note before claiming a feature is wired, absent, or uncached. An API/module's existence does not prove it is connected to the default workflow. For comparisons, verify the same material status questions on both sides. If sources conflict, report their dates/status and the conflict; a newer date alone does not prove correctness. Cite exact vault-relative paths (and section or line when available), not invented short source labels. Stop only after the material claims have supporting evidence, not because the first retrieved note appears to answer the question.
+
 ## Consolidation
 
 1. Require a complete Memory Patch.

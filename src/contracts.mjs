@@ -130,8 +130,8 @@ export function validateBrainBrief(value) {
   if (!Array.isArray(value.relevant_memory)) {
     errors.push("relevant_memory must be an array")
   } else {
-    if (value.relevant_memory.length < 1 || value.relevant_memory.length > 7) {
-      errors.push("relevant_memory must contain 1-7 items")
+    if (value.relevant_memory.length < 1) {
+      errors.push("relevant_memory must contain at least one item")
     }
     value.relevant_memory.forEach((item, index) => {
       if (!item || typeof item !== "object" || Array.isArray(item)) {

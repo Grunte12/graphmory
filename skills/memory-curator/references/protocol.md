@@ -40,7 +40,7 @@ Do not write a speculative note. Return the exact missing field or evidence.
 
 Return:
 
-- `relevant_memory`: 1-7 items with summary and path
+- `relevant_memory`: supported items with summary and path; keep concise, but include every material finding needed for the task
 - `constraints`
 - `watchouts`
 - `note_paths`
