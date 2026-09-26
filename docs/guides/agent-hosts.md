@@ -66,7 +66,7 @@ graphmory config
 Then give the agent the vault path and this noninteractive call:
 
 ```sh
-graphmory recall-managed --vault "<vault-path>" --query "<question>" --k 3 --agent
+graphmory recall-managed --vault "<vault-path>" --query "<question>" --agent
 ```
 
 The result is one compact JSON line. The agent should open only relevant returned Markdown notes before answering, preserve provenance, and abstain when evidence is insufficient. Use `--scope` when the project or domain folder is known. See [managed retrieval](managed-retrieval.md) for the curator, hosted Jev, and local decision workflows. Hosted Jev needs explicit consent to send candidate excerpts; local decision needs a compatible server.
@@ -87,7 +87,7 @@ Use a disposable Markdown vault or a known existing vault in read-only recall mo
 
 ```sh
 graphmory doctor --vault "<vault-path>" --json
-graphmory recall-managed --vault "<vault-path>" --query "<known-memory-question>" --k 3 --agent
+graphmory recall-managed --vault "<vault-path>" --query "<known-memory-question>" --agent
 ```
 
 Confirm the host invokes the CLI once, receives one JSON line, and reads only the returned notes it needs. Do not treat an empty result as permission to broaden into the full vault.

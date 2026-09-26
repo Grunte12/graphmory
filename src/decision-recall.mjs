@@ -5,7 +5,7 @@ import { recallVaultSemantic } from "./semantic-recall.mjs"
 import { isAnswerCandidate, splitMarkdownSections, tokenize } from "./retrieval.mjs"
 
 export async function managedRecall(vault, query, config, {
-  k = 3,
+  k = config.workflow === "curator" ? 10 : 3,
   scope = "",
   semanticExpansion = false,
   semanticRecallImpl = recallVaultSemantic,

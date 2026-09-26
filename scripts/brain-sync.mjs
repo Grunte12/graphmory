@@ -65,7 +65,7 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs config [show] [--config <path>] [--json]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k 3] [--semantic-expansion] [--agent|--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--semantic-expansion] [--agent|--json] (default: 10 curator, 3 decision)\n`)
   out.write(`  node scripts/brain-sync.mjs recall-explore --vault <path> --query <text> [--scope <path>] [--k 3] [--agent|--json] (experimental)\n`)
   out.write(`  node scripts/brain-sync.mjs curate-plan --vault <path> --input <bundle.json> [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
@@ -826,8 +826,9 @@ async function configureRuntime() {
 }
 
 async function recallManaged() {
-  const report = await managedRecall(requireVault(), requiredOption("--query"), loadRuntimeConfig(runtimeConfigPath(option("--config"))), {
-    k: Number.parseInt(option("--k", "3"), 10),
+  const config = loadRuntimeConfig(runtimeConfigPath(option("--config")))
+  const report = await managedRecall(requireVault(), requiredOption("--query"), config, {
+    k: Number.parseInt(option("--k", config.workflow === "curator" ? "10" : "3"), 10),
     scope: option("--scope", ""),
     semanticExpansion: flag("--semantic-expansion"),
   })

@@ -6,6 +6,21 @@ import test from "node:test"
 import { managedRecall } from "../src/decision-recall.mjs"
 import { DEFAULT_RUNTIME_CONFIG, loadRuntimeConfig, saveRuntimeConfig, validateRuntimeConfig } from "../src/runtime-config.mjs"
 
+test("curator defaults to a broader path shortlist while an explicit smaller k still works", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-curator-depth-"))
+  try {
+    for (let index = 1; index <= 6; index++) {
+      fs.writeFileSync(path.join(vault, `Note-${index}.md`), `# Project memory ${index}\n\nProject memory evidence for the query.`)
+    }
+    const broad = await managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG)
+    const narrow = await managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG, { k: 3 })
+    assert.equal(broad.workflow, "curator")
+    assert.equal(broad.results.length, 6)
+    assert.equal(narrow.results.length, 3)
+    assert.ok(broad.results.every((result) => !Object.hasOwn(result, "excerpt")))
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
+})
+
 test("runtime configuration persists without a secret and validates endpoint isolation", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "mph-runtime-"))
   try {

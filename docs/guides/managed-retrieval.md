@@ -11,6 +11,8 @@ Run `graphmory config` in a terminal to select one of four workflows. All remain
 
 The Jev/local workflow replaces the curator sub-agent for evidence judgment; the existing lead agent handles prose and durable patch authorship. Jev returns structured decisions, not Brain Briefs or Markdown. The CLI calls Jev directly in hosted mode, config asks for curator details only in curator mode, and the OpenCode adapter routes decision evidence directly to the lead. See the [replacement design](../design/jev-replaces-curator.md) for the remaining work. Agent hosts still need their own model credentials and agent registration. This CLI does not spawn Claude, Gemini, or Luna processes or change a host's agent settings automatically.
 
+Curator mode defaults to ten ranked Markdown **paths** for the sub-agent to inspect; `--k` can narrow that list. It does not send ten note bodies to the lead agent. The curator reads only relevant sections until it has enough evidence, then returns a compact Brain Brief with supported claims and source paths. Decision modes keep a three-result default because each selected candidate may carry a bounded excerpt or invoke a model. A larger candidate list is an opportunity for review, not permission to treat every retrieved note as relevant.
+
 Example:
 
 ```sh
@@ -34,7 +36,7 @@ Compare managed workflows with `node scripts/eval-managed-recall.mjs --vault /pa
 
 ## Experimental link navigation
 
-The normal `recall` and `recall-loop` commands keep `canonical_memory: false` navigation notes in the ranked corpus but omit them from the answer results. Managed recall inherits this rule, including when optional semantic expansion proposes extra candidates. Use `--include-navigation` with the ordinary recall commands when intentionally inspecting a MOC or derived index. This preserves source-note slots in the default three-result packet without deleting the index or its links.
+The normal `recall` and `recall-loop` commands keep `canonical_memory: false` navigation notes in the ranked corpus but omit them from the answer results. Managed recall inherits this rule, including when optional semantic expansion proposes extra candidates. Use `--include-navigation` with the ordinary recall commands when intentionally inspecting a MOC or derived index. This preserves source-note slots in the returned candidate list without deleting the index or its links.
 
 For a question that explicitly asks about related notes, papers, or a route through a shared index/MOC, `graphmory recall-explore --vault /path/to/vault --query "Which other papers are linked to this design?" --agent` tries a bounded link and backlink expansion after local sparse retrieval. It does not call a model, create embeddings, or write to the vault. The compact response lists candidate paths and marks them `unverified`; the lead agent must read the notes before answering. Ordinary questions keep the sparse ranking. This is an opt-in experiment, not a replacement for `recall-managed`. See the [design](../design/adaptive-retrieval-loop.md) and [pilot results](../evaluation/adaptive-graph-pilot-2026-09-24.md).
 
