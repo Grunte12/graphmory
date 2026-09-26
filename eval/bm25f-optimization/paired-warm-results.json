@@ -1,0 +1,72 @@
+{
+  "notes": 5000,
+  "queries": 50,
+  "exactResultMatch": true,
+  "timings": [
+    {
+      "arm": "before",
+      "repeat": 0,
+      "averageMs": 5.177549179999996
+    },
+    {
+      "arm": "after",
+      "repeat": 0,
+      "averageMs": 4.139800839999998
+    },
+    {
+      "arm": "after",
+      "repeat": 1,
+      "averageMs": 4.092899159999997
+    },
+    {
+      "arm": "before",
+      "repeat": 1,
+      "averageMs": 5.1241916600000055
+    },
+    {
+      "arm": "before",
+      "repeat": 2,
+      "averageMs": 5.07777916
+    },
+    {
+      "arm": "after",
+      "repeat": 2,
+      "averageMs": 4.143765819999999
+    },
+    {
+      "arm": "after",
+      "repeat": 3,
+      "averageMs": 4.134103320000004
+    },
+    {
+      "arm": "before",
+      "repeat": 3,
+      "averageMs": 5.220482499999998
+    },
+    {
+      "arm": "before",
+      "repeat": 4,
+      "averageMs": 5.101099160000003
+    },
+    {
+      "arm": "after",
+      "repeat": 4,
+      "averageMs": 4.163204159999996
+    },
+    {
+      "arm": "after",
+      "repeat": 5,
+      "averageMs": 4.109757499999996
+    },
+    {
+      "arm": "before",
+      "repeat": 5,
+      "averageMs": 5.1661908400000085
+    }
+  ],
+  "baselineRevision": "d6b61f8",
+  "candidateSourceSha256": "e1ae21a7e20cc39298fcd54a3c19f20b7315d9be8d69340f0e2ce05d4d056355",
+  "fixture": "eval-retrieval-stress.mjs: 5000 notes, seed29, 50 framed development queries",
+  "measurement": "in-process alternating warm scoring rounds; excludes host LLM latency and billing",
+  "limitation": "Synthetic development data, not external-tool acceptance; pre-change standalone profile also passed latency gate, so machine variance affects earlier failures."
+}

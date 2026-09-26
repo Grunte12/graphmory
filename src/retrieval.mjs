@@ -387,23 +387,25 @@ export function bm25fRank(documents, query, {
     for (const index of indexes) candidateIndexes.add(index)
   }
 
+  const queryTerms = queryTokens.flatMap((token) => {
+    const containing = documentFrequency.get(token) ?? 0
+    return containing ? [{ token, idf: Math.log(1 + (documents.length - containing + 0.5) / (containing + 0.5)) }] : []
+  })
+
   return [...candidateIndexes]
     .map((index) => {
       const { document, counts } = prepared[index]
+      const normalizations = fieldNames.map((field) =>
+        1 - b + b * ((document.fields?.[field]?.length ?? 0) / Math.max(averages[field], 1)))
       let score = 0
-      for (const token of queryTokens) {
-        const containing = documentFrequency.get(token) ?? 0
-        if (!containing) continue
+      for (const { token, idf } of queryTerms) {
         let weightedFrequency = 0
-        for (const field of fieldNames) {
-          const tokens = document.fields?.[field] ?? []
+        for (let fieldIndex = 0; fieldIndex < fieldNames.length; fieldIndex++) {
+          const field = fieldNames[fieldIndex]
           const frequency = counts[field].get(token) ?? 0
           if (!frequency) continue
-          const averageLength = Math.max(averages[field], 1)
-          const lengthNormalization = 1 - b + b * (tokens.length / averageLength)
-          weightedFrequency += (fieldWeights[field] ?? 1) * (frequency / lengthNormalization)
+          weightedFrequency += (fieldWeights[field] ?? 1) * (frequency / normalizations[fieldIndex])
         }
-        const idf = Math.log(1 + (documents.length - containing + 0.5) / (containing + 0.5))
         score += idf * ((weightedFrequency * (k1 + 1)) / (weightedFrequency + k1))
       }
       return { ...document, score }
