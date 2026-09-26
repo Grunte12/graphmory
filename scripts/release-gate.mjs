@@ -67,6 +67,7 @@ function assertPackIsClean(packReport) {
     "README.md",
     "scripts/brain-sync.mjs",
     "scripts/install.mjs",
+    "scripts/setup-curator-agent.mjs",
     "scripts/recommend-curation.mjs",
     "src/memory-lifecycle-audit.mjs",
     "docs/guides/portable-brain-sync.md",

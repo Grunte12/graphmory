@@ -63,6 +63,10 @@ test("packed harness installs on a fresh machine surface and exposes agent comma
     assert.match(help.stdout, /recall --vault/)
     assert.match(help.stdout, /sync-plan --vault/)
     assert.match(help.stdout, /doctor/)
+    const setup = path.join(root, "node_modules", "graphmory", "scripts", "setup-curator-agent.mjs")
+    const setupHelp = spawnSync(process.execPath, [setup, "--help"], { cwd: root, encoding: "utf8", shell: false })
+    assert.equal(setupHelp.status, 0, setupHelp.stderr)
+    assert.match(setupHelp.stdout, /graphmory-setup --host/)
   } finally {
     fs.rmSync(root, { recursive: true, force: true })
   }

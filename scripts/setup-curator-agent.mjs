@@ -8,6 +8,12 @@ import { fileURLToPath } from "node:url"
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const args = process.argv.slice(2)
 
+if (args.includes("--help") || args.includes("-h")) {
+  console.log("Usage: graphmory-setup --host codex|claude|cursor [--scope user|project] [--project <path>] [--model <host-model-id>] [--apply]")
+  console.log("Preview is the default. --apply installs the named curator agent and skill without overwriting existing files.")
+  process.exit(0)
+}
+
 function option(name) {
   const index = args.indexOf(name)
   if (index < 0) return undefined

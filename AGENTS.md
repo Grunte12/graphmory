@@ -10,23 +10,24 @@ Graphmory adds a durable Markdown memory layer for coding agents. The tool repo 
 
 1. Run `npm test` to verify the repo works.
 2. Read `docs/guides/install.md` for full installation steps.
-3. Run the installer to copy the skill, CLI, and source modules:
+3. Identify the user's host. For Codex, Cursor, or Claude Code, install the CLI and preview the named curator agent before applying it:
    ```sh
-   node scripts/install.mjs --target "<agent-config-root>"
+   npm install -g --omit=optional .
+   graphmory-setup --host codex
+   graphmory-setup --host codex --apply
    ```
-   Replace `<agent-config-root>` with the target configuration directory (e.g. `~/.config/opencode` for OpenCode). The installer copies `skills/memory-curator/`, `src/` modules, and `bin/graphmory.mjs`. It does **not** edit your agent config.
-4. Verify the CLI works after installation:
+   Replace `codex` with `claude` or `cursor` for that host. Cursor requires `--model <host-model-id>`. For OpenCode, instead run `node scripts/install.mjs --target "<agent-config-root>"` and follow `docs/guides/install.md#opencode-adapter`. Do not overwrite an existing host agent or skill.
+4. Verify the selected CLI works after installation:
    ```sh
-   node <target>/bin/graphmory.mjs doctor --json
-   # or, after adding <target>/bin/ to your PATH:
-   graphmory.mjs doctor --json
+   graphmory doctor --json
+   # OpenCode's copied launcher: node <target>/bin/graphmory.mjs doctor --json
    ```
 5. Apply the adapter for your runtime. For OpenCode, review and apply the files under `adapters/opencode/`:
    - Merge `AGENTS.snippet.md` into the lead agent instructions.
    - In curator mode, use `memory-curator-prompt.md` as the `memory_curator` sub-agent prompt and `opencode.agent.example.json` as its configuration template.
    - In Jev/local decision modes, route managed recall directly to the lead agent.
    See `docs/guides/install.md#opencode-adapter` for detailed instructions.
-   For Codex, Cursor, or Claude Code, preview with `node scripts/setup-curator-agent.mjs --host <host> [--model <model>]`, then rerun with `--apply` as described in `docs/guides/agent-hosts.md`. This installs a named curator and skill without overwriting existing host files.
+   For Codex, Cursor, or Claude Code, follow `docs/guides/agent-hosts.md` to select a vault and add the short lead-agent instruction.
 6. If the user wants portable memory across machines/accounts, read `docs/guides/portable-brain-sync.md`.
 7. If setup or a command fails, run `doctor --json` and follow `docs/guides/troubleshooting.md`.
 8. Do not edit the user's agent config until you know which adapter they use.

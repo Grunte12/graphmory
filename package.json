@@ -20,6 +20,7 @@
   },
   "bin": {
     "graphmory": "scripts/brain-sync.mjs",
+    "graphmory-setup": "scripts/setup-curator-agent.mjs",
     "memory-patch-harness": "scripts/brain-sync.mjs",
     "mph": "scripts/brain-sync.mjs"
   },

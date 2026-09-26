@@ -56,9 +56,9 @@ Use this guide when an AI coding agent is asked to install or connect Graphmory 
 6. Install the CLI and named Memory Curator agent for the chosen host. Preview the host files before applying:
 
    ```sh
-   npm install -g .
-   node scripts/setup-curator-agent.mjs --host codex
-   node scripts/setup-curator-agent.mjs --host codex --apply
+   npm install -g --omit=optional .
+   graphmory-setup --host codex
+   graphmory-setup --host codex --apply
    ```
 
    Use `claude` or `cursor` in place of `codex` where appropriate; Cursor also requires `--model <supported-cheap-model-id>`. For OpenCode use `node scripts/install.mjs --target "<agent-config-root>"` and its adapter. See `docs/guides/agent-hosts.md`.
