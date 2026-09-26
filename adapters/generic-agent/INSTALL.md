@@ -53,21 +53,25 @@ Use this guide when an AI coding agent is asked to install or connect Graphmory 
 
    Read affected notes, set exact targets, and show the proposed batch to the user. Generated entries are unapproved. After explicit approval, mark only accepted entries `approved: true`, run `restructure-apply --dry-run`, then `restructure-apply --approve`. Run `restructure-verify` on the emitted record and repair links before committing.
 
-6. Install the Memory Curator skill or copy its instructions into the user's agent harness:
+6. Install the CLI and named Memory Curator agent for the chosen host. Preview the host files before applying:
 
    ```sh
-   node scripts/install.mjs --target "<agent-config-root>"
+   npm install -g .
+   node scripts/setup-curator-agent.mjs --host codex
+   node scripts/setup-curator-agent.mjs --host codex --apply
    ```
+
+   Use `claude` or `cursor` in place of `codex` where appropriate; Cursor also requires `--model <supported-cheap-model-id>`. For OpenCode use `node scripts/install.mjs --target "<agent-config-root>"` and its adapter. See `docs/guides/agent-hosts.md`.
 
 7. Add this boundary to the user's main agent instructions:
 
    ```text
    The lead agent authors Memory Patches after verified work.
-   When durable memory is warranted, dispatch a bounded curator sub-agent using the memory-curator skill to retrieve, link, deduplicate, and validate the lead-authored patch without inventing facts. If the host cannot dispatch, run the skill in the lead agent.
+   When durable memory is warranted, dispatch the named Graphmory curator agent to retrieve, link, deduplicate, and validate the lead-authored patch without inventing facts. If the host cannot dispatch, run the skill in the lead agent.
    Use Brain Briefs for bounded recall. Do not save secrets, raw logs, or full transcripts.
    ```
 
-   Codex and Cursor can dispatch from this guide without a Graphmory model config step. If the user wants a dedicated model across projects, follow `docs/guides/agent-hosts.md` for optional host-specific setup; Graphmory's saved model name does not pin a host sub-agent.
+   The host agent definition pins the curator model. Graphmory's saved model name alone does not pin a host sub-agent.
 
 ## Do Not
 

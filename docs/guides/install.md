@@ -1,6 +1,6 @@
 # Installation
 
-Graphmory is file-first. It installs a skill and gives you adapter snippets, but it does not rewrite your agent configuration automatically.
+Graphmory is file-first. For Codex, Cursor, and Claude Code, its setup script can install a named curator agent and skill after a path/model preview. The OpenCode installer still uses adapter snippets and does not rewrite `opencode.json`.
 
 For Codex, Cursor, or Claude Code, follow the [cross-host setup guide](agent-hosts.md). The steps below describe the existing OpenCode installer and vault setup.
 
@@ -8,7 +8,7 @@ For Codex, Cursor, or Claude Code, follow the [cross-host setup guide](agent-hos
 
 - Node.js 20 or newer
 - A Markdown memory folder or Obsidian vault
-- A coding agent that can read files and run the CLI; a memory-curator sub-agent is optional in curator mode
+- A coding agent that can read files and run the CLI; install a named memory-curator sub-agent for consistent curator mode
 
 ## Install The Skill
 

@@ -57,6 +57,7 @@
     "scripts/eval-agent-output.mjs",
     "scripts/init-project.mjs",
     "scripts/install.mjs",
+    "scripts/setup-curator-agent.mjs",
     "scripts/recommend-curation.mjs",
     "scripts/render-hot-context.mjs",
     "scripts/validate.mjs",

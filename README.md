@@ -159,7 +159,7 @@ Existing Obsidian/custom memory is never restructured silently. The reviewed flo
 ## Guides
 
 - [Installation](docs/guides/install.md): install the skill and adapt it to OpenCode or any other coding agent.
-- [Codex, Cursor, and Claude Code](docs/guides/agent-hosts.md): set up the CLI and skill for each host.
+- [Codex, Cursor, and Claude Code](docs/guides/agent-hosts.md): preview and install a named curator sub-agent, skill, and CLI for each host.
 - [Portable Brain Sync](docs/guides/portable-brain-sync.md): connect a private GitHub-backed memory repo for account and machine portability.
 - [Troubleshooting](docs/guides/troubleshooting.md): machine diagnostics, stable error codes, platform notes, and safe agent recovery.
 - [Demo Workflow](docs/guides/demo-workflow.md): see one realistic task become a Memory Patch, Brain Brief, and Hot Context Pack.

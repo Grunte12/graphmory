@@ -1,6 +1,6 @@
 # Codex, Cursor, and Claude Code
 
-The same `graphmory` CLI and `memory-curator` skill work across hosts that can run shell commands. Each host discovers skills in a different directory. Codex and Cursor can dispatch curator work themselves from the lead-agent instruction below; a dedicated global subagent is optional.
+The same `graphmory` CLI and `memory-curator` skill work across hosts that can run shell commands. Install one named curator agent during setup so its role, skill, and inexpensive model are consistent across sessions. The lead agent still decides when to delegate and authors every new Memory Patch.
 
 ## 1. Install the CLI once
 
@@ -13,7 +13,28 @@ graphmory doctor --json
 
 `npm install -g .` installs a copy of the current checkout, not a published registry package. If a global install is undesirable, keep the checkout and call `node /absolute/path/to/graphmory/scripts/brain-sync.mjs` wherever this guide says `graphmory`.
 
-## 2. Install the skill for your host
+## 2. Install the curator agent and skill
+
+Preview first, then apply. The setup command does not overwrite existing agent or skill files:
+
+```sh
+node scripts/setup-curator-agent.mjs --host codex
+node scripts/setup-curator-agent.mjs --host codex --apply
+```
+
+Replace `codex` with `claude` or `cursor`. Codex defaults to `gpt-6-luna`; Claude Code defaults to `haiku`. Cursor requires `--model <model-id>` because `inherit` may use the lead model. Choose an ID available to your host and subscription. Use `--scope project --project <path>` for one workspace rather than the default user scope. Run this once per host you use. Restart a session if it does not see the new agent. The script installs the skill and a `graphmory_curator` (Codex) or `graphmory-curator` (Claude/Cursor) agent definition. It does not set up the vault or change existing global lead instructions.
+
+| Host | User agent file | User skill directory |
+| --- | --- | --- |
+| Codex | `~/.codex/agents/graphmory_curator.toml` | `~/.agents/skills/memory-curator/` |
+| Cursor | `~/.cursor/agents/graphmory-curator.md` | `~/.cursor/skills/memory-curator/` |
+| Claude Code | `~/.claude/agents/graphmory-curator.md` | `~/.claude/skills/memory-curator/` |
+
+The locations and model fields follow the [Codex](https://learn.chatgpt.com/docs/agent-configuration/subagents), [Claude Code](https://code.claude.com/docs/en/sub-agents), and [Cursor](https://prod.cursor.com/docs/subagents) subagent documentation. Claude preloads the skill. Codex points to its installed skill in the agent definition. Cursor's agent prompt points to the installed skill because its documented subagent frontmatter does not specify a `skills` field. Tool/file restrictions vary by host; the prompt is a behavioral boundary, not a filesystem sandbox. Configure host permissions separately if you need a hard boundary.
+
+Choose the Markdown/Obsidian vault as part of the same setup. Run `graphmory detect --vault "<vault-path>" --json` and follow the [vault adoption or bootstrap flow](../../adapters/generic-agent/INSTALL.md). For an established vault, review an adoption plan before changing folders or files. For a new project area, `node scripts/init-project.mjs --vault "<vault-path>" --project "<project-name>"` creates the starting structure. Pass the vault path to the lead agent; the curator must receive it with each delegated task. The agent installer never edits the vault.
+
+### Manual skill copy
 
 Copy the entire `skills/memory-curator` directory, including `references/` and `agents/`. Choose a project path for one workspace or a user path for all local workspaces:
 
@@ -36,7 +57,7 @@ The host locations follow [Codex's repository skill convention](https://develope
 
 ## 3. Recall memory
 
-The default workflow is already `curator`; Codex and Cursor can dispatch a sub-agent when the lead agent is given the curator guide. No Graphmory config step is required for this path. Use the terminal menu only to change retrieval settings or opt into an advanced model workflow:
+The default workflow is already `curator`. Use the terminal menu only to change retrieval settings or opt into an advanced model workflow:
 
 ```sh
 graphmory config
@@ -52,11 +73,11 @@ The result is one compact JSON line. The agent should open only relevant returne
 
 ## 4. Give the lead agent a curator instruction
 
-Codex and Cursor can spawn a sub-agent for a bounded curator task without Graphmory creating one. Add this instruction to your host's agent guidance:
+Add this instruction to your host's lead-agent guidance, then reload the host:
 
-> After completing and verifying a task, if durable knowledge should be saved, author a Memory Patch with evidence IDs and delegate its placement, duplicate/conflict check, and validation to a curator sub-agent using the `memory-curator` skill. The lead owns the claim. The curator returns `APPLIED`, `TENSION`, or `BLOCKED` with affected note paths. Ask for a compact Brain Brief when prior memory is needed. Use an inexpensive available sub-agent model and read only the relevant notes.
+> After completing and verifying a task, if durable knowledge should be saved, author a Memory Patch with evidence IDs and delegate its placement, duplicate/conflict check, and validation to the named Graphmory curator agent. The lead owns the claim. The curator returns `APPLIED`, `TENSION`, or `BLOCKED` with affected note paths. Ask the same curator for a compact Brain Brief when prior memory is needed. Do not spawn an unconfigured generic memory agent.
 
-The skill also works directly with the lead agent if delegation is unavailable. For a reusable dedicated curator, use `adapters/opencode/memory-curator-prompt.md` as its role prompt and grant only the tools it needs. Pinning Luna, Haiku, or another model is a host setting; Graphmory's `curator.model` is routing metadata and does not override the host's model. Cursor custom sub-agents inherit the parent model unless their host configuration selects another, so a guide alone does not guarantee a cheaper model. If you want a pinned Cursor curator across projects, create a user-scoped agent under `~/.cursor/agents/` with a specific supported `model` in its frontmatter; [Cursor's subagent guide](https://prod.cursor.com/docs/subagents) documents this location and behavior. OpenCode requires its own adapter configuration.
+If delegation is unavailable, the lead may follow the skill directly. Pinning Luna, Haiku, or another model is a host setting; Graphmory's `curator.model` is routing metadata and does not override the host's model. OpenCode requires its own adapter configuration.
 
 For a Memory Patch, the lead agent supplies the claim, scope, and source IDs. The curator searches only likely destinations and checks current note contents before applying an edit. This second search is for placement and conflict detection, so it can reuse candidate paths found earlier but must not trust stale excerpts. Keep the curator's stable instructions ahead of the changing patch and excerpts to preserve any prompt caching the host/provider offers; compare reported cache usage and actual cost before claiming savings.
 

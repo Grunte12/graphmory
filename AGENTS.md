@@ -26,6 +26,7 @@ Graphmory adds a durable Markdown memory layer for coding agents. The tool repo 
    - In curator mode, use `memory-curator-prompt.md` as the `memory_curator` sub-agent prompt and `opencode.agent.example.json` as its configuration template.
    - In Jev/local decision modes, route managed recall directly to the lead agent.
    See `docs/guides/install.md#opencode-adapter` for detailed instructions.
+   For Codex, Cursor, or Claude Code, preview with `node scripts/setup-curator-agent.mjs --host <host> [--model <model>]`, then rerun with `--apply` as described in `docs/guides/agent-hosts.md`. This installs a named curator and skill without overwriting existing host files.
 6. If the user wants portable memory across machines/accounts, read `docs/guides/portable-brain-sync.md`.
 7. If setup or a command fails, run `doctor --json` and follow `docs/guides/troubleshooting.md`.
 8. Do not edit the user's agent config until you know which adapter they use.
