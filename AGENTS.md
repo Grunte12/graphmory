@@ -142,7 +142,7 @@ When the user has configured a managed workflow with `graphmory config`, use the
 node <harness-path>/scripts/brain-sync.mjs recall-managed --vault "<vault-path>" --query "<task-specific memory question>" --scope "<known project-or-domain path>" --agent
 ```
 
-Add `--scope "<known project-or-domain path>"` when the active project/domain is known. Read only the returned paths. Raw inbox/clipping paths and stale/superseded lifecycle states are excluded by default. If `needsExpansion` is true, reformulate once using project vocabulary or inspect the named MOC/backlink neighborhood; do not immediately scan the whole vault.
+Add `--scope "<known project-or-domain path>"` when the active project/domain is known. In curator mode, inspect the returned paths and request `--offset <nextOffset>` while evidence is incomplete and `hasMore` is true. Stop when the evidence is sufficient or candidates are exhausted; there is no fixed total note count. Raw inbox/clipping paths and stale/superseded lifecycle states are excluded by default. If the candidate paths still miss the answer, reformulate using project vocabulary or inspect the named MOC/backlink neighborhood; do not immediately scan the whole vault.
 
 For explicit note relationships or multi-hop exploration, use `recall-explore --agent` and inspect the returned path trails. Run `graph-audit --agent` to check unresolved/ambiguous references and isolated notes before proposing curation. Optional relation properties and minimal folder guidance are in `docs/guides/knowledge-graph.md`. Do not infer facts from graph connectivity alone.
 

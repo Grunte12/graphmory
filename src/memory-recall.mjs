@@ -83,6 +83,7 @@ export function recallVault(vault, query, {
 export function recallVaultLoop(vault, query, {
   methods = ["bm25", "bm25f-focused-sections"],
   k = 3,
+  offset = 0,
   includeNoncanonical = false,
   includeNavigation = false,
   includeRawPaths = false,
@@ -94,6 +95,7 @@ export function recallVaultLoop(vault, query, {
 } = {}) {
   if (!query?.trim()) throw new Error("query is required")
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be between 1 and 10")
+  if (!Number.isInteger(offset) || offset < 0) throw new Error("offset must be a non-negative integer")
   const documents = suppliedDocuments ?? loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
   const lanes = methods.map((method) => {
     const retrieval = governedRank(documents, query, method, { includeNoncanonical, answerCandidatesOnly: !includeNavigation })
@@ -110,16 +112,20 @@ export function recallVaultLoop(vault, query, {
     }
   })
   const fused = fuseRankedLanes(lanes)
-  const top = fused.slice(0, k)
-  const confidence = top.length === 0
+  const top = fused.slice(offset, offset + k)
+  const confidence = fused.length === 0
     ? "none"
-    : lanes.some((lane) => lane.confidence === "bounded") || top[0].fusedScore >= 1
+    : lanes.some((lane) => lane.confidence === "bounded") || fused[0].fusedScore >= 1
       ? "bounded"
       : "low"
   return {
     query,
     methods,
     k,
+    offset,
+    totalCandidates: fused.length,
+    hasMore: offset + k < fused.length,
+    nextOffset: offset + k < fused.length ? offset + k : null,
     scanned: documents.length,
     scanLimitReached: documents.length >= maxFiles,
     excludedByLifecycle: Math.max(...lanes.map((lane) => lane.excluded), 0),

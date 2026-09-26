@@ -65,7 +65,7 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs config [show] [--config <path>] [--json]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--semantic-expansion] [--agent|--json] (default: 10 curator, 3 decision)\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--offset N] [--semantic-expansion] [--agent|--json] (curator: pages of 10 paths; decision: 3 results)\n`)
   out.write(`  node scripts/brain-sync.mjs recall-explore --vault <path> --query <text> [--scope <path>] [--k 3] [--agent|--json] (experimental)\n`)
   out.write(`  node scripts/brain-sync.mjs curate-plan --vault <path> --input <bundle.json> [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
@@ -829,6 +829,7 @@ async function recallManaged() {
   const config = loadRuntimeConfig(runtimeConfigPath(option("--config")))
   const report = await managedRecall(requireVault(), requiredOption("--query"), config, {
     k: Number.parseInt(option("--k", config.workflow === "curator" ? "10" : "3"), 10),
+    offset: Number(option("--offset", "0")),
     scope: option("--scope", ""),
     semanticExpansion: flag("--semantic-expansion"),
   })
@@ -837,12 +838,14 @@ async function recallManaged() {
     retrievalConfidence: report.retrievalConfidence,
     needsExpansion: report.needsExpansion,
     scanLimitReached: report.scanLimitReached,
+    ...(report.workflow === "curator" ? { offset: report.offset, totalCandidates: report.totalCandidates, hasMore: report.hasMore, nextOffset: report.nextOffset } : {}),
     results: report.results.map(({ path, relevance, status }) => ({ path, ...(relevance === undefined ? {} : { relevance }), status })),
   }))
   else if (flag("--json")) console.log(JSON.stringify(report, null, 2))
   else {
     console.log(`Managed recall: ${report.workflow}; ${report.confidence} retrieval confidence${report.decisionGate ? `; gate ${report.decisionGate}` : ""}`)
     for (const item of report.results) console.log(`- ${item.path} | ${item.title} | ${item.rankScore === undefined ? `relevance ${item.relevance ?? "curator review"}` : `rank score ${item.rankScore}`}`)
+    if (report.hasMore) console.log(`- More candidate paths: rerun with --offset ${report.nextOffset}`)
     for (const step of report.nextSteps) console.log(`- ${step}`)
   }
 }

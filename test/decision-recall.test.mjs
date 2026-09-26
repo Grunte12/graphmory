@@ -6,18 +6,28 @@ import test from "node:test"
 import { managedRecall } from "../src/decision-recall.mjs"
 import { DEFAULT_RUNTIME_CONFIG, loadRuntimeConfig, saveRuntimeConfig, validateRuntimeConfig } from "../src/runtime-config.mjs"
 
-test("curator defaults to a broader path shortlist while an explicit smaller k still works", async () => {
+test("curator pages through all matching paths while an explicit smaller page still works", async () => {
   const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-curator-depth-"))
   try {
-    for (let index = 1; index <= 6; index++) {
+    for (let index = 1; index <= 16; index++) {
       fs.writeFileSync(path.join(vault, `Note-${index}.md`), `# Project memory ${index}\n\nProject memory evidence for the query.`)
     }
     const broad = await managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG)
     const narrow = await managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG, { k: 3 })
+    const second = await managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG, { offset: broad.nextOffset })
     assert.equal(broad.workflow, "curator")
-    assert.equal(broad.results.length, 6)
+    assert.equal(broad.results.length, 10)
     assert.equal(narrow.results.length, 3)
+    assert.equal(broad.totalCandidates, 16)
+    assert.equal(broad.hasMore, true)
+    assert.equal(broad.nextOffset, 10)
+    assert.equal(second.results.length, 6)
+    assert.equal(second.hasMore, false)
+    assert.equal(second.nextOffset, null)
+    assert.equal(new Set([...broad.results, ...second.results].map((item) => item.path)).size, 16)
     assert.ok(broad.results.every((result) => !Object.hasOwn(result, "excerpt")))
+    assert.equal((await managedRecall(vault, "unmatchedzzz", DEFAULT_RUNTIME_CONFIG)).totalCandidates, 0)
+    assert.equal((await managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG, { offset: 16 })).results.length, 0)
   } finally { fs.rmSync(vault, { recursive: true, force: true }) }
 })
 

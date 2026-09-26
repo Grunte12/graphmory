@@ -6,21 +6,29 @@ import { isAnswerCandidate, splitMarkdownSections, tokenize } from "./retrieval.
 
 export async function managedRecall(vault, query, config, {
   k = config.workflow === "curator" ? 10 : 3,
+  offset = 0,
   scope = "",
   semanticExpansion = false,
   semanticRecallImpl = recallVaultSemantic,
   fetchImpl = fetch,
 } = {}) {
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be 1–10")
+  if (!Number.isInteger(offset) || offset < 0) throw new Error("offset must be a non-negative integer")
+  if (config.workflow !== "curator" && offset !== 0) throw new Error("offset is supported only in curator mode")
   const limit = config.decision.maxCandidates
   const vaultDocuments = loadVaultDocuments(vault, { scope })
-  const initial = recallVaultLoop(vault, query, { k: 10, scope, perMethodLimit: limit, documents: vaultDocuments, methods: retrievalMethods(config.retrievalProfile) })
-  if (config.workflow === "curator") return {
-    query, workflow: "curator", curator: config.curator,
-    confidence: initial.confidence, retrievalConfidence: initial.confidence, needsExpansion: initial.needsExpansion, scanLimitReached: initial.scanLimitReached,
-    results: initial.results.slice(0, k).map(({ path, title, score, status }) => ({ path, title, score, status })),
-    nextSteps: initial.nextSteps.slice(0, 2),
+  const methods = retrievalMethods(config.retrievalProfile)
+  if (config.workflow === "curator") {
+    const page = recallVaultLoop(vault, query, { k, offset, scope, perMethodLimit: vaultDocuments.length, documents: vaultDocuments, methods })
+    return {
+      query, workflow: "curator", curator: config.curator,
+      confidence: page.confidence, retrievalConfidence: page.confidence, needsExpansion: page.needsExpansion, scanLimitReached: page.scanLimitReached,
+      offset: page.offset, totalCandidates: page.totalCandidates, hasMore: page.hasMore, nextOffset: page.nextOffset,
+      results: page.results.map(({ path, title, score, status }) => ({ path, title, score, status })),
+      nextSteps: page.nextSteps.slice(0, 2),
+    }
   }
+  const initial = recallVaultLoop(vault, query, { k: 10, scope, perMethodLimit: limit, documents: vaultDocuments, methods })
   if (config.workflow === "hosted-jev" && !config.decision.allowRemoteVaultContent) {
     throw new Error("Remote vault content is disabled. Enable it explicitly in `graphmory config` after reviewing the data flow.")
   }
