@@ -1,0 +1,58 @@
+{
+  "candidate": "bm25",
+  "baseline": "baseline",
+  "split": "acceptance",
+  "dataset": "xiaowu0162/longmemeval-cleaned",
+  "sourceSha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "method": "Paired family-cluster percentile bootstrap, 10000 resamples; conditional on this selected sample, not proof of universal superiority.",
+  "metrics": {
+    "completeAt3": {
+      "pairs": 60,
+      "families": 60,
+      "wins": 11,
+      "losses": 1,
+      "ties": 48,
+      "delta": 0.16666666666666666,
+      "interval95": [
+        0.06666666666666667,
+        0.2833333333333333
+      ]
+    },
+    "completeAt12": {
+      "pairs": 60,
+      "families": 60,
+      "wins": 1,
+      "losses": 0,
+      "ties": 59,
+      "delta": 0.016666666666666666,
+      "interval95": [
+        0,
+        0.05
+      ]
+    },
+    "recallAt3": {
+      "pairs": 60,
+      "families": 60,
+      "wins": 13,
+      "losses": 1,
+      "ties": 46,
+      "delta": 0.11666666666666667,
+      "interval95": [
+        0.03888888888888889,
+        0.2
+      ]
+    },
+    "recallAt12": {
+      "pairs": 60,
+      "families": 60,
+      "wins": 1,
+      "losses": 0,
+      "ties": 59,
+      "delta": 0.0033333333333333327,
+      "interval95": [
+        0,
+        0.009999999999999998
+      ]
+    }
+  }
+}

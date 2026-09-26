@@ -1,0 +1,1377 @@
+{
+  "kind": "synthetic-development-evaluation",
+  "baselineRevision": "881b7ec",
+  "candidate": "graph-structure implementation 2026-09-26",
+  "limitations": [
+    "Hand-authored during development; not a held-out benchmark",
+    "No generated-answer quality or live model evaluation",
+    "No-answer cases may still return unverified candidates",
+    "Single-pass timings are not a latency benchmark"
+  ],
+  "before": {
+    "suite": "adaptive-graph",
+    "notes": 13,
+    "questions": 11,
+    "candidateCap": 12,
+    "baseline": {
+      "hitAt3": 1,
+      "recallAt3": 0.8095238095238094,
+      "hitAt12": 1,
+      "recallAt12": 1,
+      "completeAt3": 0.5714285714285714,
+      "completeAt12": 1,
+      "noAnswerWithCandidates": 4,
+      "noAnswerCases": 4,
+      "meanMs": 0.9555190000000002,
+      "p95Ms": 1.987791999999999,
+      "missesAt12": []
+    },
+    "graph": {
+      "hitAt3": 0.8571428571428571,
+      "recallAt3": 0.6666666666666666,
+      "hitAt12": 1,
+      "recallAt12": 1,
+      "completeAt3": 0.42857142857142855,
+      "completeAt12": 1,
+      "noAnswerWithCandidates": 4,
+      "noAnswerCases": 4,
+      "meanMs": 0.9488106363636352,
+      "p95Ms": 1.7318329999999982,
+      "missesAt12": []
+    },
+    "runs": {
+      "baseline": [
+        {
+          "id": "cedar-related-notes",
+          "category": "relation",
+          "top3": {
+            "hit": 1,
+            "recall": 0.5,
+            "reciprocalRank": 0.3333333333333333,
+            "ndcg": 0.3065735963827292,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 0.3333333333333333,
+            "ndcg": 0.5437713091520254,
+            "contextCharacters": null
+          },
+          "elapsedMs": 1.987791999999999,
+          "completeAt3": false,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Cedar.md",
+            "projects/Atlas.md",
+            "projects/launch/Decision.md",
+            "projects/Platform.md",
+            "projects/ops/Runbook.md",
+            "projects/Archive/Mercury.md",
+            "projects/launch/Review.md",
+            "projects/Atlas-Index.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "cedar-review-evidence",
+          "category": "typed-relation",
+          "top3": {
+            "hit": 1,
+            "recall": 0.5,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.38685280723454163,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.6509209298071326,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.9486249999999998,
+          "completeAt3": false,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/launch/Decision.md",
+            "projects/Cedar.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Review.md",
+            "projects/Platform.md",
+            "projects/Archive/Mercury.md",
+            "projects/Atlas-Index.md",
+            "projects/Atlas.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "runbook-implements-decision",
+          "category": "typed-relation",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.8611250000000013,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/ops/Runbook.md",
+            "projects/Cedar.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Archive/Mercury.md",
+            "projects/Platform.md",
+            "projects/Atlas-Index.md",
+            "projects/Atlas.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "cedar-two-hop-owner",
+          "category": "multi-hop",
+          "top3": {
+            "hit": 1,
+            "recall": 0.6666666666666666,
+            "reciprocalRank": 1,
+            "ndcg": 0.7653606369886217,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 0.9325210919548239,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.708833000000002,
+          "completeAt3": false,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Cedar.md",
+            "projects/ops/Runbook.md",
+            "projects/Atlas.md",
+            "projects/Platform.md",
+            "projects/Archive/Mercury.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Atlas-Index.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "relative-markdown-link",
+          "category": "markdown-link",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.9677089999999993,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/ops/Runbook.md",
+            "projects/Cedar.md",
+            "projects/Platform.md",
+            "projects/Atlas-Index.md",
+            "projects/Atlas.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "ordinary-fact",
+          "category": "ordinary",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.9651250000000005,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Atlas.md",
+            "projects/Atlas-Index.md",
+            "projects/Operations/Runbook.md",
+            "projects/Platform.md",
+            "projects/Cedar.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Review.md",
+            "projects/launch/Decision.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md"
+          ]
+        },
+        {
+          "id": "hub-distractor",
+          "category": "hub",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.6309297535714575,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.6309297535714575,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.6979169999999968,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Atlas.md",
+            "projects/Atlas-Index.md",
+            "projects/Cedar.md",
+            "projects/Archive/Mercury.md",
+            "projects/Platform.md",
+            "projects/Operations/Runbook.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md"
+          ]
+        },
+        {
+          "id": "ambiguous-project-entity",
+          "category": "ambiguity",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.7546250000000043,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Archive/Mercury.md",
+            "projects/Mercury/Project.md",
+            "projects/Platform.md",
+            "projects/Cedar.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/ops/Runbook.md"
+          ]
+        },
+        {
+          "id": "ambiguous-runbook-name",
+          "category": "ambiguity",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.9057080000000042,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Archive/Mercury.md",
+            "projects/Cedar.md",
+            "projects/ops/Runbook.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md",
+            "projects/launch/Decision.md",
+            "projects/Platform.md",
+            "projects/Atlas-Index.md",
+            "projects/Analytics/Project.md",
+            "projects/Mercury/Project.md",
+            "projects/Atlas.md",
+            "projects/launch/Review.md"
+          ]
+        },
+        {
+          "id": "no-answer-unseen",
+          "category": "no-answer",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 1.0491249999999965,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Atlas.md",
+            "projects/Archive/Mercury.md",
+            "projects/Cedar.md",
+            "projects/Operations/Runbook.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Atlas-Index.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md"
+          ]
+        },
+        {
+          "id": "no-answer-unsupported-owner",
+          "category": "no-answer",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.6641249999999985,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Cedar.md",
+            "projects/Atlas.md",
+            "projects/ops/Runbook.md",
+            "projects/Platform.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Atlas-Index.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        }
+      ],
+      "graph": [
+        {
+          "id": "cedar-related-notes",
+          "category": "relation",
+          "top3": {
+            "hit": 1,
+            "recall": 0.5,
+            "reciprocalRank": 1,
+            "ndcg": 0.6131471927654584,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 0.8772153153380493,
+            "contextCharacters": null
+          },
+          "elapsedMs": 1.7318329999999982,
+          "completeAt3": false,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/ops/Runbook.md",
+            "projects/launch/Review.md",
+            "projects/Atlas.md",
+            "projects/launch/Decision.md",
+            "projects/Platform.md",
+            "projects/Archive/Mercury.md",
+            "projects/Atlas-Index.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md",
+            "projects/Cedar.md"
+          ]
+        },
+        {
+          "id": "cedar-review-evidence",
+          "category": "typed-relation",
+          "top3": {
+            "hit": 1,
+            "recall": 0.5,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.38685280723454163,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.6509209298071326,
+            "contextCharacters": null
+          },
+          "elapsedMs": 1.002082999999999,
+          "completeAt3": false,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/launch/Decision.md",
+            "projects/Cedar.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Review.md",
+            "projects/Platform.md",
+            "projects/Archive/Mercury.md",
+            "projects/Atlas-Index.md",
+            "projects/Atlas.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "runbook-implements-decision",
+          "category": "typed-relation",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "elapsedMs": 1.0107089999999985,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/ops/Runbook.md",
+            "projects/Cedar.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Archive/Mercury.md",
+            "projects/Platform.md",
+            "projects/Atlas-Index.md",
+            "projects/Atlas.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "cedar-two-hop-owner",
+          "category": "multi-hop",
+          "top3": {
+            "hit": 1,
+            "recall": 0.6666666666666666,
+            "reciprocalRank": 1,
+            "ndcg": 0.7653606369886217,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 0.9674679834891693,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.9442920000000008,
+          "completeAt3": false,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Cedar.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/ops/Runbook.md",
+            "projects/Atlas.md",
+            "projects/Platform.md",
+            "projects/Archive/Mercury.md",
+            "projects/Atlas-Index.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "relative-markdown-link",
+          "category": "markdown-link",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.8144580000000019,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/ops/Runbook.md",
+            "projects/Cedar.md",
+            "projects/Platform.md",
+            "projects/Atlas-Index.md",
+            "projects/Atlas.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "ordinary-fact",
+          "category": "ordinary",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.8768749999999983,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Atlas.md",
+            "projects/Atlas-Index.md",
+            "projects/Operations/Runbook.md",
+            "projects/Platform.md",
+            "projects/Cedar.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Review.md",
+            "projects/launch/Decision.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md"
+          ]
+        },
+        {
+          "id": "hub-distractor",
+          "category": "hub",
+          "top3": {
+            "hit": 0,
+            "recall": 0,
+            "reciprocalRank": 0.14285714285714285,
+            "ndcg": 0,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 0.14285714285714285,
+            "ndcg": 0.3333333333333333,
+            "contextCharacters": null
+          },
+          "elapsedMs": 1.0545419999999979,
+          "completeAt3": false,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Platform.md",
+            "projects/ops/Runbook.md",
+            "projects/Mercury/Project.md",
+            "projects/Operations/Runbook.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Atlas-Index.md",
+            "projects/Cedar.md",
+            "projects/Archive/Mercury.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Atlas.md"
+          ]
+        },
+        {
+          "id": "ambiguous-project-entity",
+          "category": "ambiguity",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.7161249999999981,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Atlas.md",
+            "projects/Operations/Runbook.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Mercury/Project.md",
+            "projects/Platform.md",
+            "projects/Cedar.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/ops/Runbook.md",
+            "projects/Archive/Mercury.md"
+          ]
+        },
+        {
+          "id": "ambiguous-runbook-name",
+          "category": "ambiguity",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.7486669999999975,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Archive/Mercury.md",
+            "projects/Cedar.md",
+            "projects/ops/Runbook.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md",
+            "projects/launch/Decision.md",
+            "projects/Platform.md",
+            "projects/Atlas-Index.md",
+            "projects/Analytics/Project.md",
+            "projects/Mercury/Project.md",
+            "projects/Atlas.md",
+            "projects/launch/Review.md"
+          ]
+        },
+        {
+          "id": "no-answer-unseen",
+          "category": "no-answer",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.8197499999999991,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Platform.md",
+            "projects/ops/Runbook.md",
+            "projects/Mercury/Project.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/launch/Decision.md",
+            "projects/Archive/Mercury.md",
+            "projects/Cedar.md",
+            "projects/Operations/Runbook.md",
+            "projects/launch/Review.md",
+            "projects/Atlas-Index.md",
+            "projects/Atlas.md"
+          ]
+        },
+        {
+          "id": "no-answer-unsupported-owner",
+          "category": "no-answer",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.7175829999999976,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Cedar.md",
+            "projects/Atlas.md",
+            "projects/ops/Runbook.md",
+            "projects/Platform.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Atlas-Index.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        }
+      ]
+    }
+  },
+  "after": {
+    "suite": "adaptive-graph",
+    "notes": 13,
+    "questions": 11,
+    "candidateCap": 12,
+    "baseline": {
+      "hitAt3": 1,
+      "recallAt3": 0.8095238095238094,
+      "hitAt12": 1,
+      "recallAt12": 1,
+      "completeAt3": 0.5714285714285714,
+      "completeAt12": 1,
+      "noAnswerWithCandidates": 4,
+      "noAnswerCases": 4,
+      "meanMs": 0.9599507272727266,
+      "p95Ms": 2.3302499999999995,
+      "missesAt12": []
+    },
+    "graph": {
+      "hitAt3": 1,
+      "recallAt3": 0.8095238095238094,
+      "hitAt12": 1,
+      "recallAt12": 1,
+      "completeAt3": 0.5714285714285714,
+      "completeAt12": 1,
+      "noAnswerWithCandidates": 4,
+      "noAnswerCases": 4,
+      "meanMs": 1.1051704545454555,
+      "p95Ms": 2.4157919999999997,
+      "missesAt12": []
+    },
+    "runs": {
+      "baseline": [
+        {
+          "id": "cedar-related-notes",
+          "category": "relation",
+          "top3": {
+            "hit": 1,
+            "recall": 0.5,
+            "reciprocalRank": 0.3333333333333333,
+            "ndcg": 0.3065735963827292,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 0.3333333333333333,
+            "ndcg": 0.5437713091520254,
+            "contextCharacters": null
+          },
+          "elapsedMs": 2.3302499999999995,
+          "completeAt3": false,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Cedar.md",
+            "projects/Atlas.md",
+            "projects/launch/Decision.md",
+            "projects/Platform.md",
+            "projects/ops/Runbook.md",
+            "projects/Archive/Mercury.md",
+            "projects/launch/Review.md",
+            "projects/Reference/Glossary.md",
+            "projects/Operations/Runbook.md",
+            "projects/Teams/Runbook.md",
+            "projects/Atlas-Index.md",
+            "projects/Mercury/Project.md"
+          ]
+        },
+        {
+          "id": "cedar-review-evidence",
+          "category": "typed-relation",
+          "top3": {
+            "hit": 1,
+            "recall": 0.5,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.38685280723454163,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.6509209298071326,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.9168329999999969,
+          "completeAt3": false,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/launch/Decision.md",
+            "projects/Cedar.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Review.md",
+            "projects/Platform.md",
+            "projects/Archive/Mercury.md",
+            "projects/Atlas-Index.md",
+            "projects/Atlas.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "runbook-implements-decision",
+          "category": "typed-relation",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.9165829999999957,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/ops/Runbook.md",
+            "projects/Cedar.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Archive/Mercury.md",
+            "projects/Platform.md",
+            "projects/Atlas-Index.md",
+            "projects/Atlas.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "cedar-two-hop-owner",
+          "category": "multi-hop",
+          "top3": {
+            "hit": 1,
+            "recall": 0.6666666666666666,
+            "reciprocalRank": 1,
+            "ndcg": 0.7653606369886217,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 0.9325210919548239,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.7778339999999986,
+          "completeAt3": false,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Cedar.md",
+            "projects/ops/Runbook.md",
+            "projects/Atlas.md",
+            "projects/Platform.md",
+            "projects/Archive/Mercury.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Atlas-Index.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "relative-markdown-link",
+          "category": "markdown-link",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.7785830000000047,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/ops/Runbook.md",
+            "projects/Cedar.md",
+            "projects/Platform.md",
+            "projects/Atlas-Index.md",
+            "projects/Atlas.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "ordinary-fact",
+          "category": "ordinary",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.9471249999999998,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Atlas.md",
+            "projects/Atlas-Index.md",
+            "projects/Operations/Runbook.md",
+            "projects/Platform.md",
+            "projects/Cedar.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Mercury/Project.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Review.md",
+            "projects/launch/Decision.md"
+          ]
+        },
+        {
+          "id": "hub-distractor",
+          "category": "hub",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.6309297535714575,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.6309297535714575,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.9055840000000046,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Atlas.md",
+            "projects/Atlas-Index.md",
+            "projects/Cedar.md",
+            "projects/Archive/Mercury.md",
+            "projects/Platform.md",
+            "projects/Operations/Runbook.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md"
+          ]
+        },
+        {
+          "id": "ambiguous-project-entity",
+          "category": "ambiguity",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.8550409999999999,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Archive/Mercury.md",
+            "projects/Mercury/Project.md",
+            "projects/Platform.md",
+            "projects/ops/Runbook.md",
+            "projects/Cedar.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md"
+          ]
+        },
+        {
+          "id": "ambiguous-runbook-name",
+          "category": "ambiguity",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.6522919999999957,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Archive/Mercury.md",
+            "projects/Cedar.md",
+            "projects/ops/Runbook.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md",
+            "projects/launch/Decision.md",
+            "projects/Platform.md",
+            "projects/Atlas-Index.md",
+            "projects/Analytics/Project.md",
+            "projects/Mercury/Project.md",
+            "projects/Atlas.md",
+            "projects/launch/Review.md"
+          ]
+        },
+        {
+          "id": "no-answer-unseen",
+          "category": "no-answer",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.7092919999999978,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Atlas.md",
+            "projects/Archive/Mercury.md",
+            "projects/Cedar.md",
+            "projects/Operations/Runbook.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Atlas-Index.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md"
+          ]
+        },
+        {
+          "id": "no-answer-unsupported-owner",
+          "category": "no-answer",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.7700409999999991,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Cedar.md",
+            "projects/Atlas.md",
+            "projects/ops/Runbook.md",
+            "projects/Platform.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Reference/Glossary.md",
+            "projects/Operations/Runbook.md",
+            "projects/Mercury/Project.md",
+            "projects/Teams/Runbook.md",
+            "projects/Atlas-Index.md"
+          ]
+        }
+      ],
+      "graph": [
+        {
+          "id": "cedar-related-notes",
+          "category": "relation",
+          "top3": {
+            "hit": 1,
+            "recall": 0.5,
+            "reciprocalRank": 1,
+            "ndcg": 0.6131471927654584,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 0.8503449055347546,
+            "contextCharacters": null
+          },
+          "elapsedMs": 2.4157919999999997,
+          "completeAt3": false,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/launch/Decision.md",
+            "projects/Atlas.md",
+            "projects/Platform.md",
+            "projects/launch/Review.md",
+            "projects/ops/Runbook.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md",
+            "projects/Archive/Mercury.md",
+            "projects/Atlas-Index.md",
+            "projects/Mercury/Project.md",
+            "projects/Cedar.md"
+          ]
+        },
+        {
+          "id": "cedar-review-evidence",
+          "category": "typed-relation",
+          "top3": {
+            "hit": 1,
+            "recall": 0.5,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.38685280723454163,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.6509209298071326,
+            "contextCharacters": null
+          },
+          "elapsedMs": 1.1087090000000046,
+          "completeAt3": false,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/launch/Decision.md",
+            "projects/Cedar.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Review.md",
+            "projects/Platform.md",
+            "projects/Archive/Mercury.md",
+            "projects/Atlas-Index.md",
+            "projects/Atlas.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "runbook-implements-decision",
+          "category": "typed-relation",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "elapsedMs": 1.0610829999999964,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/ops/Runbook.md",
+            "projects/Cedar.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Archive/Mercury.md",
+            "projects/Platform.md",
+            "projects/Atlas-Index.md",
+            "projects/Atlas.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "cedar-two-hop-owner",
+          "category": "multi-hop",
+          "top3": {
+            "hit": 1,
+            "recall": 0.6666666666666666,
+            "reciprocalRank": 1,
+            "ndcg": 0.7653606369886217,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 0.9325210919548239,
+            "contextCharacters": null
+          },
+          "elapsedMs": 1.2380830000000032,
+          "completeAt3": false,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Cedar.md",
+            "projects/ops/Runbook.md",
+            "projects/Atlas.md",
+            "projects/Platform.md",
+            "projects/launch/Review.md",
+            "projects/launch/Decision.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md",
+            "projects/Archive/Mercury.md",
+            "projects/Atlas-Index.md"
+          ]
+        },
+        {
+          "id": "relative-markdown-link",
+          "category": "markdown-link",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.8921250000000001,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/ops/Runbook.md",
+            "projects/Cedar.md",
+            "projects/Platform.md",
+            "projects/Atlas-Index.md",
+            "projects/Atlas.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md"
+          ]
+        },
+        {
+          "id": "ordinary-fact",
+          "category": "ordinary",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 1,
+            "ndcg": 1,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.775584000000002,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Atlas.md",
+            "projects/Atlas-Index.md",
+            "projects/Operations/Runbook.md",
+            "projects/Platform.md",
+            "projects/Cedar.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Mercury/Project.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Review.md",
+            "projects/launch/Decision.md"
+          ]
+        },
+        {
+          "id": "hub-distractor",
+          "category": "hub",
+          "top3": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.6309297535714575,
+            "contextCharacters": null
+          },
+          "at12": {
+            "hit": 1,
+            "recall": 1,
+            "reciprocalRank": 0.5,
+            "ndcg": 0.6309297535714575,
+            "contextCharacters": null
+          },
+          "elapsedMs": 0.9131250000000009,
+          "completeAt3": true,
+          "completeAt12": true,
+          "retrieved": [
+            "projects/Cedar.md",
+            "projects/Atlas-Index.md",
+            "projects/Operations/Runbook.md",
+            "projects/Platform.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Archive/Mercury.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Atlas.md"
+          ]
+        },
+        {
+          "id": "ambiguous-project-entity",
+          "category": "ambiguity",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.8339580000000026,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Archive/Mercury.md",
+            "projects/Mercury/Project.md",
+            "projects/Platform.md",
+            "projects/ops/Runbook.md",
+            "projects/Cedar.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md"
+          ]
+        },
+        {
+          "id": "ambiguous-runbook-name",
+          "category": "ambiguity",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 1.3254579999999976,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Archive/Mercury.md",
+            "projects/Cedar.md",
+            "projects/ops/Runbook.md",
+            "projects/Teams/Runbook.md",
+            "projects/Operations/Runbook.md",
+            "projects/launch/Decision.md",
+            "projects/Platform.md",
+            "projects/Atlas-Index.md",
+            "projects/Analytics/Project.md",
+            "projects/Mercury/Project.md",
+            "projects/Atlas.md",
+            "projects/launch/Review.md"
+          ]
+        },
+        {
+          "id": "no-answer-unseen",
+          "category": "no-answer",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.8070830000000058,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Operations/Runbook.md",
+            "projects/Cedar.md",
+            "projects/Atlas-Index.md",
+            "projects/Reference/Glossary.md",
+            "projects/Teams/Runbook.md",
+            "projects/Platform.md",
+            "projects/Archive/Mercury.md",
+            "projects/ops/Runbook.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Atlas.md"
+          ]
+        },
+        {
+          "id": "no-answer-unsupported-owner",
+          "category": "no-answer",
+          "top3": null,
+          "at12": null,
+          "elapsedMs": 0.7858749999999972,
+          "completeAt3": false,
+          "completeAt12": false,
+          "retrieved": [
+            "projects/Cedar.md",
+            "projects/Atlas.md",
+            "projects/ops/Runbook.md",
+            "projects/Platform.md",
+            "projects/launch/Decision.md",
+            "projects/launch/Review.md",
+            "projects/Reference/Glossary.md",
+            "projects/Operations/Runbook.md",
+            "projects/Mercury/Project.md",
+            "projects/Teams/Runbook.md",
+            "projects/Atlas-Index.md"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -40,7 +40,8 @@ for (const item of queries) {
       : results.slice(0, n).some((entry) => gold.includes(entry.id))
     runs[arm].push({ id: item.id, category: item.category, top3, at12, elapsedMs,
       completeAt3: answerable && complete(3), completeAt12: answerable && complete(12),
-      retrieved: results.slice(0, 12).map((entry) => entry.id) })
+      retrieved: results.slice(0, 12).map((entry) => entry.id),
+      ...(arm === "graph" ? { rounds: graph.rounds, stopReason: graph.stopReason, evidenceStatus: graph.evidenceStatus } : {}) })
   }
 }
 const summarize = (arm) => {

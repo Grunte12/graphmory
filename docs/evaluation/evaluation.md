@@ -1,5 +1,7 @@
 # Evaluation
 
+For the current audit, external dataset choices, and proposed controlled experiments, see [Evaluation strategy — 2026-09-26](evaluation-strategy-2026-09-26.md). Existing synthetic results below are development/regression evidence, not proof of end-to-end agent effectiveness.
+
 The repository should earn its claims with repeatable comparison rather than architecture diagrams alone.
 
 ## Retrieval Baseline

@@ -1,0 +1,13 @@
+[
+  {"id":"cedar-related-notes","category":"relation","query":"What other notes are linked or related to the Cedar deployment?","relevant_groups":[["projects/launch/Decision.md"],["projects/ops/Runbook.md"]]},
+  {"id":"cedar-review-evidence","category":"typed-relation","query":"Which notes provide evidence for the Cedar launch decision?","relevant_groups":[["projects/Cedar.md"],["projects/launch/Review.md"]]},
+  {"id":"runbook-implements-decision","category":"typed-relation","query":"Which note implements the Cedar launch decision?","relevant":["projects/ops/Runbook.md"]},
+  {"id":"cedar-two-hop-owner","category":"multi-hop","query":"Following notes linked to the Cedar deployment, who owns the rollback?","relevant_groups":[["projects/Cedar.md"],["projects/launch/Decision.md"],["projects/ops/Runbook.md"]]},
+  {"id":"relative-markdown-link","category":"markdown-link","query":"What rollout does the Cedar launch decision specify?","relevant":["projects/launch/Decision.md"]},
+  {"id":"ordinary-fact","category":"ordinary","query":"Who owns the Atlas service?","relevant":["projects/Atlas.md"]},
+  {"id":"hub-distractor","category":"hub","query":"What other notes are related to the Atlas service?","relevant":["projects/Atlas-Index.md"]},
+  {"id":"ambiguous-project-entity","category":"ambiguity","query":"What other notes are linked to Mercury?","relevant":[]},
+  {"id":"ambiguous-runbook-name","category":"ambiguity","query":"What other note is linked to the runbook?","relevant":[]},
+  {"id":"no-answer-unseen","category":"no-answer","query":"What other notes are linked to the quantum banana service?","relevant":[]},
+  {"id":"no-answer-unsupported-owner","category":"no-answer","query":"Who owns the Cedar deployment today?","relevant":[]}
+]

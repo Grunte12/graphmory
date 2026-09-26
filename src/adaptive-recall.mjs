@@ -45,7 +45,8 @@ export async function recallVaultAdaptive(vault, query, {
   const pool = new Map(initial.slice(0, navigate ? Math.min(Math.max(4, k), maxCandidates) : maxCandidates).map((item) => [item.id, {
     path: item.id, title: item.title, score: item.fusedScore, status: item.metadata?.status ?? item.metadata?.lifecycle ?? "current", depth: 0, via: "lexical",
   }]))
-  let frontier = [...pool.values()].slice(0, 3)
+  let frontier = [...pool.values()].slice(0, assessEvidence ? 3 : 1)
+  const visited = new Set()
   let rounds = 0
   let decisionCalls = 0
   let stopReason = "lead-review"
@@ -94,21 +95,41 @@ export async function recallVaultAdaptive(vault, query, {
       stopReason = "no-valid-seed"
       break
     }
-    const next = []
+    // Score the complete bounded neighborhood before spending the per-round budget.
+    // This avoids favoring the first links in a MOC and starving later seeds.
+    // Being retrieved is not the same as having traversed a node.
+    for (const seed of seeds) visited.add(seed.path)
+    const proposals = new Map()
     for (const seed of seeds) {
       for (const neighbor of linkedNeighbors(graph, seed.path, direction)) {
-        if (pool.has(neighbor.path)) continue
+        if (visited.has(neighbor.path)) continue
         const document = graph.byId.get(neighbor.path)
         if (!document) continue
         const score = seed.score * (neighbor.via === "backlink" ? 0.92 : 0.85)
         const item = { path: neighbor.path, title: document.title, score, status: document.metadata?.status ?? document.metadata?.lifecycle ?? "current",
-          depth: seed.depth + 1, via: neighbor.via, parent: seed.path }
-        pool.set(item.path, item)
-        next.push(item)
-        expansionSources.push({ path: item.path, parent: seed.path, via: neighbor.via })
-        if (next.length >= perRound || pool.size >= maxCandidates) break
+          depth: seed.depth + 1, via: neighbor.via, parent: seed.path, relations: neighbor.relations,
+          trail: [...(seed.trail ?? []), { source: neighbor.via === "backlink" ? neighbor.path : seed.path,
+            target: neighbor.via === "backlink" ? seed.path : neighbor.path, via: neighbor.via, relations: neighbor.relations }] }
+        if (!proposals.has(item.path) || proposals.get(item.path).score < score) proposals.set(item.path, item)
       }
-      if (next.length >= perRound || pool.size >= maxCandidates) break
+    }
+    const neighborDocuments = [...proposals.keys()].map((id) => graph.byId.get(id))
+    const relevance = new Map(governedRank(neighborDocuments, [query, ...facets].join(" "), "bm25", { followLinks: false }).results
+      .map((item) => [item.id, item.score]))
+    const ordered = [...proposals.values()].sort((a, b) => (relevance.get(b.path) ?? 0) - (relevance.get(a.path) ?? 0)
+      || b.score - a.score || a.path.localeCompare(b.path))
+    const next = []
+    let newSlots = maxCandidates - pool.size
+    for (const item of ordered) {
+      if (next.length >= perRound) break
+      if (!pool.has(item.path) && newSlots <= 0) continue
+      if (!pool.has(item.path)) newSlots--
+      next.push(item)
+    }
+    for (const item of next) {
+      visited.add(item.path)
+      pool.set(item.path, item)
+      expansionSources.push({ path: item.path, parent: item.parent, via: item.via, relations: item.relations })
     }
     rounds++
     if (!next.length) {
@@ -127,10 +148,12 @@ export async function recallVaultAdaptive(vault, query, {
     }
   }
   const lexical = [...pool.values()].filter((item) => item.depth === 0).sort((a, b) => b.score - a.score || a.path.localeCompare(b.path))
+  const destinationRelevance = new Map(governedRank([...pool.keys()].map((id) => graph.byId.get(id)),
+    [query, ...facets].join(" "), "bm25", { followLinks: false }).results.map((item) => [item.id, item.score]))
   const expanded = [...pool.values()].filter((item) => item.depth > 0).sort((a, b) => {
     const canonicalA = graph.byId.get(a.path)?.metadata?.canonical_memory === "true" || graph.byId.get(a.path)?.metadata?.canonical_memory === true
     const canonicalB = graph.byId.get(b.path)?.metadata?.canonical_memory === "true" || graph.byId.get(b.path)?.metadata?.canonical_memory === true
-    return Number(canonicalB) - Number(canonicalA) || b.score - a.score || a.path.localeCompare(b.path)
+    return Number(canonicalB) - Number(canonicalA) || (destinationRelevance.get(b.path) ?? 0) - (destinationRelevance.get(a.path) ?? 0) || b.score - a.score || a.path.localeCompare(b.path)
   })
   const ranked = expanded.length && navigate ? (intent?.excludeSeed ? [...expanded, ...lexical.slice(1)] : [lexical[0], ...expanded, ...lexical.slice(1)]) : lexical
   const candidatePool = [...ranked.map((item) => item.path), ...[...pool.keys()].filter((id) => !ranked.some((item) => item.path === id))]

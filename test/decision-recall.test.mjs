@@ -194,3 +194,19 @@ test("semantic expansion can judge a lexical candidate that was not in the score
     assert.deepEqual(report.results.map((item) => item.path), ["Beta.md"])
   } finally { fs.rmSync(vault, { recursive: true, force: true }) }
 })
+
+test("conversation profile persists and rejects unknown retrieval strategies", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-profile-"))
+  try {
+    fs.writeFileSync(path.join(vault, "Current.md"), '# Zephyr\nThe valid release threshold is three percent.')
+    fs.writeFileSync(path.join(vault, "Old.md"), '---\nstatus: stale\n---\n# Zephyr\nZephyr Zephyr Zephyr incorrect old threshold.')
+    const config = {...structuredClone(DEFAULT_RUNTIME_CONFIG), retrievalProfile:'conversations'}
+    const file=path.join(vault,'runtime.json')
+    saveRuntimeConfig(file,config)
+    assert.equal(loadRuntimeConfig(file).retrievalProfile,'conversations')
+    const result=await managedRecall(vault,'Zephyr release threshold',loadRuntimeConfig(file))
+    assert.deepEqual(result.results.map(r=>r.path),['Current.md'])
+    assert.throws(()=>validateRuntimeConfig({...config,retrievalProfile:'unknown'}),/retrievalProfile/)
+    await assert.rejects(managedRecall(vault,'Zephyr',{...config,retrievalProfile:'unknown'}),/retrievalProfile/)
+  } finally {fs.rmSync(vault,{recursive:true,force:true})}
+})

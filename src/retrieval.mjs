@@ -1,3 +1,5 @@
+import { createNoteLinkResolver } from "./brain-sync.mjs"
+
 const WORD = /[\p{L}\p{M}\p{N}_-]+/gu
 const SECTION_CACHE = Symbol("memoryPatchHarness.sections")
 const FIELD_COUNTS_CACHE = Symbol("memoryPatchHarness.fieldCounts")
@@ -90,7 +92,7 @@ export function governedRank(documents, query, method, options = {}) {
   const direct = rank(eligible, query, method).map((item) => ({ ...item, retrievalSource: "direct" }))
   const results = options.followLinks === false
     ? direct
-    : expandLinkedResults(direct, eligible, options.linkSeeds ?? 3)
+    : expandLinkedResults(direct, eligible, options.linkSeeds ?? 3, documents)
   const minimumResults = options.minimumResults ?? 1
   const topScore = results[0]?.score ?? 0
   const secondScore = results[1]?.score ?? 0
@@ -123,9 +125,9 @@ function eligibleDocuments(documents, options) {
   return eligible
 }
 
-function expandLinkedResults(results, documents, seedCount) {
+function expandLinkedResults(results, documents, seedCount, resolutionDocuments = documents) {
   const seedLinks = []
-  const { byId, byReference } = documentReferenceIndex(documents)
+  const { byId, byResolvedPath, resolve } = documentReferenceIndex(documents, resolutionDocuments)
   for (const parent of results.slice(0, seedCount)) {
     const source = byId.get(parent.id)?.markdown ?? ""
     for (const match of source.matchAll(/\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|[^\]]+)?\]\]/gu)) {
@@ -137,7 +139,8 @@ function expandLinkedResults(results, documents, seedCount) {
   const rankedById = new Map(results.map((item) => [item.id, { ...item }]))
   const linked = new Map()
   for (const { parent, reference } of seedLinks) {
-    const document = byReference.get(normalizeReference(reference))
+    const resolution = resolve(reference, parent.id)
+    const document = resolution.resolved ? byResolvedPath.get(resolution.path) : null
     if (!document || document.id === parent.id) continue
     const graphScore = parent.score * 0.1
     const existing = rankedById.get(document.id)
@@ -162,23 +165,45 @@ function expandLinkedResults(results, documents, seedCount) {
   return [...rankedById.values()].sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
 }
 
-function documentReferenceIndex(documents) {
-  const cached = REFERENCE_INDEX_CACHE.get(documents)
+function documentReferenceIndex(documents, resolutionDocuments = documents) {
+  let cachedByResolutionDocuments = REFERENCE_INDEX_CACHE.get(documents)
+  const cached = cachedByResolutionDocuments?.get(resolutionDocuments)
   if (cached) return cached
-  const byId = new Map(documents.map((document) => [document.id, document]))
-  const byReference = new Map()
+  const byId = new Map()
   for (const document of documents) {
-    for (const reference of [document.id, document.title, document.id.replace(/\.md$/iu, ""), document.id.split("/").at(-1)?.replace(/\.md$/iu, "")]) {
-      if (reference) byReference.set(normalizeReference(reference), document)
+    byId.set(document.id, document)
+  }
+  const byResolvedPath = new Map()
+  const resolvedPathMatches = new Map()
+  for (const document of resolutionDocuments) {
+    const key = normalizeResolvedPath(document.id)
+    const matches = resolvedPathMatches.get(key) ?? []
+    matches.push(document)
+    resolvedPathMatches.set(key, matches)
+  }
+  for (const [key, matches] of resolvedPathMatches) {
+    if (matches.length === 1) {
+      const eligible = byId.get(matches[0].id)
+      if (eligible) byResolvedPath.set(key, eligible)
     }
   }
-  const index = { byId, byReference }
-  REFERENCE_INDEX_CACHE.set(documents, index)
+  const resolve = createNoteLinkResolver(resolutionDocuments.map((document) => ({
+    path: document.id,
+    title: document.title,
+    text: document.markdown,
+  })))
+  const index = { byId, byResolvedPath, resolve }
+  if (!cachedByResolutionDocuments) {
+    cachedByResolutionDocuments = new WeakMap()
+    REFERENCE_INDEX_CACHE.set(documents, cachedByResolutionDocuments)
+  }
+  cachedByResolutionDocuments.set(resolutionDocuments, index)
   return index
 }
 
-function normalizeReference(value) {
-  return String(value).trim().replaceAll("\\", "/").replace(/\.md$/iu, "").toLowerCase()
+function normalizeResolvedPath(value) {
+  const normalized = String(value).replaceAll("\\", "/").replace(/^\/+/, "")
+  return normalized.toLowerCase().endsWith(".md") ? normalized : `${normalized}.md`
 }
 
 export function splitMarkdownSections(document) {

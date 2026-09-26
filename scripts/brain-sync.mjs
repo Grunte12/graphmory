@@ -26,7 +26,8 @@ import {
   validateRestructureManifest,
   verifyRestructureRecord,
 } from "../src/brain-sync.mjs"
-import { recallVault, recallVaultLoop } from "../src/memory-recall.mjs"
+import { summarizeNoteGraph } from "../src/graph-navigation.mjs"
+import { loadVaultDocuments, recallVault, recallVaultLoop } from "../src/memory-recall.mjs"
 import { recallVaultSemantic } from "../src/semantic-recall.mjs"
 import { buildCurationRecommendations, renderCurationRecommendations } from "../src/curation-recommendations.mjs"
 import { auditMemoryLifecycle } from "../src/memory-lifecycle-audit.mjs"
@@ -59,6 +60,7 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs doctor [--vault <path>] [--json] [--require-github]\n`)
   out.write(`  node scripts/brain-sync.mjs health --vault <path> [--json] [--out <file>]\n`)
   out.write(`  node scripts/brain-sync.mjs recall --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--rerank] [--agent|--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs graph-audit --vault <path> [--scope <path>] [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-loop --vault <path> --query <text> [--scope <path>] [--k 3] [--rerank] [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
@@ -805,6 +807,9 @@ async function configureRuntime() {
     if (config.workflow !== "curator") {
       config.decision.maxCandidates = Number(await ask("Maximum candidates (1–10)", config.workflow === "local-rerank" && config.decision.maxCandidates === 8 ? 4 : config.decision.maxCandidates))
     }
+    const profile = await ask("Memory content (1 Mixed project notes, 2 Conversation histories)", config.retrievalProfile === "conversations" ? "2" : "1")
+    if (!["1", "2"].includes(profile)) throw new Error("Choose memory content option 1 or 2")
+    config.retrievalProfile = profile === "2" ? "conversations" : "mixed-notes"
     saveRuntimeConfig(file, config)
     console.log(`Saved ${file}`)
     console.log(config.workflow === "curator"
@@ -836,6 +841,11 @@ async function recallManaged() {
   }
 }
 
+function graphAudit() {
+  const report = summarizeNoteGraph(loadVaultDocuments(requireVault()), { scope: option("--scope", "") })
+  console.log(JSON.stringify(report, null, flag("--agent") ? 0 : 2))
+}
+
 async function recallExplore() {
   const report = await recallVaultAdaptive(requireVault(), requiredOption("--query"), {
     k: Number.parseInt(option("--k", "3"), 10), scope: option("--scope", ""), graphPolicy: "auto",
@@ -843,7 +853,7 @@ async function recallExplore() {
   if (flag("--agent")) console.log(JSON.stringify({ workflow: report.workflow, evidenceStatus: report.evidenceStatus,
     stopReason: report.stopReason, rounds: report.rounds, uniqueCandidates: report.uniqueCandidates,
     scanLimitReached: report.scanLimitReached, graphLimitReached: report.graphLimitReached,
-    results: report.results.map(({ path, via, parent, depth }) => ({ path, via, ...(parent ? { parent } : {}), depth })),
+    results: report.results.map(({ path, via, parent, depth, trail }) => ({ path, via, ...(parent ? { parent, trail } : {}), depth })),
     nextAction: report.nextAction }))
   else if (flag("--json")) console.log(JSON.stringify(report, null, 2))
   else {
@@ -1841,6 +1851,7 @@ try {
   else if (command === "recall") recall()
   else if (command === "recall-loop") recallLoop()
   else if (command === "recall-managed") await recallManaged()
+  else if (command === "graph-audit") graphAudit()
   else if (command === "recall-explore") await recallExplore()
   else if (command === "curate-plan") await curatePlan()
   else if (command === "config") await configureRuntime()
