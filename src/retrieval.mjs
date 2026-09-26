@@ -87,12 +87,20 @@ export function isRetrievable(document, { includeNoncanonical = false } = {}) {
   return true
 }
 
+export function isAnswerCandidate(document) {
+  return String(document?.metadata?.canonical_memory ?? "").toLowerCase() !== "false"
+}
+
 export function governedRank(documents, query, method, options = {}) {
   const eligible = eligibleDocuments(documents, options)
   const direct = rank(eligible, query, method).map((item) => ({ ...item, retrievalSource: "direct" }))
-  const results = options.followLinks === false
+  const withNavigation = options.followLinks === false
     ? direct
     : expandLinkedResults(direct, eligible, options.linkSeeds ?? 3, documents)
+  const byId = options.answerCandidatesOnly ? new Map(eligible.map((item) => [item.id, item])) : null
+  const results = options.answerCandidatesOnly
+    ? withNavigation.filter((item) => byId.has(item.id) && isAnswerCandidate(byId.get(item.id)))
+    : withNavigation
   const minimumResults = options.minimumResults ?? 1
   const topScore = results[0]?.score ?? 0
   const secondScore = results[1]?.score ?? 0

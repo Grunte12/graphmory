@@ -50,10 +50,11 @@ test("packed harness installs on a fresh machine surface and exposes agent comma
     })
     assert.equal(initialized.status, 0, initialized.stderr)
 
-    const installed = npmCommand(["install", "--ignore-scripts", "--omit=optional", "--no-audit", "--no-fund", path.join(root, archive)], {
+    const installed = npmCommand(["install", "--ignore-scripts", "--omit=optional", "--no-audit", "--no-fund", "--offline", path.join(root, archive)], {
       cwd: root,
       encoding: "utf8",
       npmCache,
+      timeout: 30_000,
     })
     assert.equal(installed.status, 0, installed.stderr)
 

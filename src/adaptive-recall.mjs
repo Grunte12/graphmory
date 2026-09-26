@@ -1,19 +1,17 @@
 import { createHash } from "node:crypto"
 import { buildNoteGraph, linkedNeighbors } from "./graph-navigation.mjs"
 import { filterByScope, fuseRankedLanes, loadVaultDocuments } from "./memory-recall.mjs"
-import { governedRank } from "./retrieval.mjs"
+import { governedRank, isAnswerCandidate } from "./retrieval.mjs"
 import { relevantExcerpt } from "./decision-recall.mjs"
 
 const ACTIONS = new Set(["enough", "partial", "none", "conflict"])
 const DIRECTIONS = new Set(["outgoing", "backlinks", "both"])
 
-function isAnswerCandidate(document) {
-  return String(document?.metadata?.canonical_memory ?? "").toLowerCase() !== "false"
-}
-
 export function graphNavigationIntent(query) {
   const text = query.toLocaleLowerCase("en")
-  if (!/(?:\bother\s+(?:papers|notes|documents|sources|files)\b|\b(?:papers|notes|documents|sources|files)\s+(?:associated|related|linked|connected)\b|\b(?:backlinks|wikilinks)\b|(?:โน้ต|บันทึก|เอกสาร|งานวิจัย).*(?:เกี่ยวข้อง|เชื่อมโยง|อ้างถึง))/u.test(text)) return null
+  const linkedNotes = /(?:\bother\s+(?:papers|notes|documents|sources|files)\b|\b(?:papers|notes|documents|sources|files)\s+(?:associated|related|linked|connected)\b|\b(?:backlinks|wikilinks)\b|(?:โน้ต|บันทึก|เอกสาร|งานวิจัย).*(?:เกี่ยวข้อง|เชื่อมโยง|อ้างถึง))/u.test(text)
+  const indexRoute = /\b(?:through|via|shared|same)\b.{0,48}\b(?:index|moc|map of content)\b/u.test(text)
+  if (!linkedNotes && !indexRoute) return null
   return { direction: "both", excludeSeed: /(?:\bother\b|อื่น|อีก)/u.test(text) }
 }
 
@@ -43,7 +41,7 @@ export async function recallVaultAdaptive(vault, query, {
   const initial = fuseRankedLanes(["bm25", "bm25f-focused-sections"].map((method) => ({
     method, results: governedRank(documents, query, method).results.slice(0, maxCandidates),
   }))).slice(0, maxCandidates)
-  const baseline = initial.filter((item) => isAnswerCandidate(item)).slice(0, k)
+  const baseline = initial.filter((item) => isAnswerCandidate(graph.byId.get(item.id))).slice(0, k)
   const intent = graphNavigationIntent(query)
   const navigate = Boolean(assessEvidence) || graphPolicy === "force" || graphPolicy === "auto" && Boolean(intent)
   const pool = new Map(initial.slice(0, navigate ? Math.min(Math.max(4, k), maxCandidates) : maxCandidates).map((item) => [item.id, {

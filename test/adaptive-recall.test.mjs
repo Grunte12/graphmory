@@ -58,6 +58,8 @@ test("explicit relation query triggers navigation; ordinary query keeps lexical 
   try {
     assert.equal(graphNavigationIntent("What other notes are linked to Atlas?")?.excludeSeed, true)
     assert.equal(graphNavigationIntent("What other project owns this feature?"), null)
+    assert.equal(graphNavigationIntent("Which guide connects to this note through their shared index?")?.direction, "both")
+    assert.equal(graphNavigationIntent("How does BM25 index terms?"), null)
     const ordinary = await recallVaultAdaptive(vault, "Atlas architecture", { graphPolicy: "auto" })
     assert.equal(ordinary.rounds, 0)
     assert.deepEqual(ordinary.results.map((item) => item.path), ordinary.baseline)

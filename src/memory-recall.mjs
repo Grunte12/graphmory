@@ -44,6 +44,7 @@ export function recallVault(vault, query, {
   method = "bm25f-sections",
   k = 3,
   includeNoncanonical = false,
+  includeNavigation = false,
   includeRawPaths = false,
   maxFiles = 5000,
   scope = "",
@@ -53,7 +54,7 @@ export function recallVault(vault, query, {
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be between 1 and 10")
   if (!Number.isInteger(maxFiles) || maxFiles < 1) throw new Error("maxFiles must be positive")
   const documents = loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
-  const retrieval = governedRank(documents, query, method, { includeNoncanonical })
+  const retrieval = governedRank(documents, query, method, { includeNoncanonical, answerCandidatesOnly: !includeNavigation })
   let results = retrieval.results
   if (rerank) {
     results = sectionFocusRerank(results, query, documents)
@@ -83,6 +84,7 @@ export function recallVaultLoop(vault, query, {
   methods = ["bm25", "bm25f-focused-sections"],
   k = 3,
   includeNoncanonical = false,
+  includeNavigation = false,
   includeRawPaths = false,
   maxFiles = 5000,
   scope = "",
@@ -94,7 +96,7 @@ export function recallVaultLoop(vault, query, {
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be between 1 and 10")
   const documents = suppliedDocuments ?? loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
   const lanes = methods.map((method) => {
-    const retrieval = governedRank(documents, query, method, { includeNoncanonical })
+    const retrieval = governedRank(documents, query, method, { includeNoncanonical, answerCandidatesOnly: !includeNavigation })
     let laneResults = retrieval.results
     if (rerank) {
       laneResults = sectionFocusRerank(laneResults, query, documents)

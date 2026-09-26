@@ -59,9 +59,9 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs detect --vault <path> [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs doctor [--vault <path>] [--json] [--require-github]\n`)
   out.write(`  node scripts/brain-sync.mjs health --vault <path> [--json] [--out <file>]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--rerank] [--agent|--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--include-navigation] [--rerank] [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs graph-audit --vault <path> [--scope <path>] [--agent|--json]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall-loop --vault <path> --query <text> [--scope <path>] [--k 3] [--rerank] [--agent|--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-loop --vault <path> --query <text> [--scope <path>] [--k 3] [--include-navigation] [--rerank] [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs config [show] [--config <path>] [--json]\n`)
@@ -518,6 +518,7 @@ function recall() {
     method,
     k,
     includeNoncanonical: flag("--include-noncanonical"),
+    includeNavigation: flag("--include-navigation"),
     includeRawPaths: flag("--include-raw-paths"),
     scope: option("--scope", ""),
     rerank: flag("--rerank"),
@@ -727,6 +728,7 @@ function recallLoop() {
     methods,
     k,
     includeNoncanonical: flag("--include-noncanonical"),
+    includeNavigation: flag("--include-navigation"),
     includeRawPaths: flag("--include-raw-paths"),
     scope: option("--scope", ""),
     rerank: flag("--rerank"),
