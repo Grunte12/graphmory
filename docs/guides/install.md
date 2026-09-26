@@ -8,6 +8,7 @@ For Codex, Cursor, or Claude Code, follow the [cross-host setup guide](agent-hos
 
 - [README Quick Start](../../README.md#quick-start) is the first path for a person arriving from GitHub; its agent-guided setup is recommended.
 - This guide explains setup and vault choices; [host setup](agent-hosts.md) gives exact commands and agent paths.
+- [Vault setup and architecture](vault-setup.md) explains the minimal Markdown layout, existing-vault choices, and graph links.
 - [Generic agent install guide](../../adapters/generic-agent/INSTALL.md) is the checklist for a coding agent doing setup for someone.
 - [AGENTS.md](../../AGENTS.md) guides agents working in this repository; [`memory-curator/SKILL.md`](../../skills/memory-curator/SKILL.md) defines curator behavior after installation. Neither is a substitute for installing the CLI.
 
@@ -48,7 +49,7 @@ node scripts/install.mjs --target "$HOME/.config/opencode" --check
 node scripts/init-project.mjs --vault "/path/to/ObsidianVault" --project "my-project"
 ```
 
-This creates a small project home under the vault. Keep project-specific facts there; keep global harness rules in this repository.
+This creates the fuller project template under the vault. For a minimal new vault, follow [vault setup](vault-setup.md) and create only the needed folders and notes. Keep project-specific facts there; keep global harness rules in this repository.
 
 ## Optional Portable Brain Sync
 

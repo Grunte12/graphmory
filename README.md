@@ -47,7 +47,7 @@ Raw evidence is the immutable evidentiary source of truth. Markdown is canonical
 
 Requirements: Node.js 20 or newer and Git. The npm package is not published yet, so install from this GitHub checkout. You do not need to fork it to use it.
 
-For the easiest setup, ask your coding agent: **“Install Graphmory from this repository. Follow `adapters/generic-agent/INSTALL.md`. Ask me for missing choices using your question UI, then verify CLI, skill discovery, and curator dispatch.”** The agent can adapt the files to its own host and machine.
+For the easiest setup, ask your coding agent: **“Install Graphmory from this repository. Follow `adapters/generic-agent/INSTALL.md`. Ask me for missing choices using your question UI, including where and how to organize my Obsidian vault. Then verify CLI, vault, skill discovery, and curator dispatch.”** The agent can adapt the files to its own host and machine. See the [minimal vault architecture](docs/guides/vault-setup.md); GitHub sync is optional.
 
 The commands below are a manual path for Codex. `graphmory-setup` is a helper for known hosts, not a requirement for agent-guided setup. Coding agents should read [AGENTS.md](AGENTS.md) and the install guide first.
 

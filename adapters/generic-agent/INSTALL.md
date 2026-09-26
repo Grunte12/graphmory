@@ -11,9 +11,10 @@ These UIs have different names and availability: Claude Code documents `AskUserQ
 Inspect the host, OS, available models, existing agent files, and candidate vault paths before asking. Ask only for decisions you cannot reliably infer. Keep answers in the conversation until the requirements below are complete; do not write a config containing guessed answers.
 
 1. **Scope:** If not stated, ask `Install Graphmory for all projects or this project only?` Choices: `All projects` / `This project`.
-2. **Vault:** Ask for the intended Markdown/Obsidian vault path if unknown. If the detected path already has notes, ask whether to `Use as-is and make an adoption plan` or `Choose another vault`. Offer `Create a new vault` only when its location is clear. Do not restructure or adopt existing notes on this answer alone; follow the separate reviewed adoption flow below.
-3. **Curator model:** Show inexpensive models actually available in the host and ask which one to assign. If the host cannot enumerate models, offer `Try the recommended inexpensive model` / `Choose another model`; verify the selected model in that host before calling setup complete. Never silently inherit an expensive lead model or require a nontechnical user to know a model ID.
-4. **Existing host configuration:** If a skill or agent with the same name exists, show the affected path and ask whether to `Keep existing` or `Review a proposed update`. Do not overwrite it.
+2. **Vault location and layout:** Ask for the intended Markdown/Obsidian vault path if unknown, then run `detect`. If it contains notes, ask `Keep this vault's layout` / `Use a dedicated Graphmory folder inside it` / `Choose another vault`. If it is missing or empty, ask `Create a dedicated vault here` / `Choose another location`. Resolve the Graphmory `--vault` path from that choice; for a dedicated folder, point `--vault` at that folder. Ask for an initial project name only if creating a project area. Do not move or adopt existing notes on this answer alone. Follow [vault architecture](../../docs/guides/vault-setup.md) and show a small path tree before writing.
+3. **Sync:** Ask `Local only` / `Sync through a private GitHub memory repo` only if the user has not expressed a preference. Local use needs no GitHub repo. For sync, collect the exact `OWNER/REPO` and ask before creating a remote.
+4. **Curator model:** Show inexpensive models actually available in the host and ask which one to assign. If the host cannot enumerate models, offer `Try the recommended inexpensive model` / `Choose another model`; verify the selected model in that host before calling setup complete. Never silently inherit an expensive lead model or require a nontechnical user to know a model ID.
+5. **Existing host configuration:** If a skill or agent with the same name exists, show the affected path and ask whether to `Keep existing` or `Review a proposed update`. Do not overwrite it.
 
 The user's install request plus these answers authorize ordinary, reversible setup files. Summarize the exact paths, selected model, and vault before writing; a second generic confirmation is unnecessary. Ask separately before existing-vault adoption, restructuring, remote creation, or other decisions listed under Human Judgment Gates in `AGENTS.md`.
 
@@ -29,7 +30,7 @@ After installation, run `graphmory doctor --json`; verify the skill and named cu
    npm test
    ```
 
-2. Use the vault path chosen during the setup interview. If it is still unknown, ask for it. Ask for an optional GitHub brain repo in `OWNER/REPO` format only when sync is requested. Do not guess silently.
+2. Use the vault path chosen during the setup interview. If it is still unknown, ask for it. Ask for a GitHub brain repo in `OWNER/REPO` format only when sync is requested. Do not guess silently.
 
    Diagnose the machine first:
 
@@ -46,19 +47,19 @@ After installation, run `graphmory doctor --json`; verify the skill and named cu
    node scripts/brain-sync.mjs detect --vault "<vault-path>" --json
    ```
 
-4. If the result is `missing` or `empty-directory`, bootstrap:
+4. If the result is `missing` or `empty-directory`, use the reviewed layout from [vault architecture](../../docs/guides/vault-setup.md). For local-only use, create the chosen vault directory and minimal project folders; do not run `bootstrap` or create a remote. If private GitHub sync was chosen and remote creation was authorized, bootstrap:
 
    ```sh
    node scripts/brain-sync.mjs bootstrap --vault "<vault-path>" --repo "<owner/repo>" --create-remote
    ```
 
-5. If the result is `existing-obsidian-vault`, `custom-markdown-memory`, `generic-git-repo`, or `non-empty-directory`, generate an adoption plan first:
+5. If the result is `existing-obsidian-vault`, `custom-markdown-memory`, `generic-git-repo`, or `non-empty-directory`, keep existing notes in place. For an as-is vault, map its current project folders to retrieval scopes. For a dedicated subfolder, create only that new folder and its reviewed minimal layout. If the user wants to adopt the existing vault into private Git sync or restructure it, generate an adoption plan outside the vault first:
 
    ```sh
-   node scripts/brain-sync.mjs adoption-plan --vault "<vault-path>" --out "<vault-path>/.memory-patch-harness/adoption-plan.md"
+   node scripts/brain-sync.mjs adoption-plan --vault "<vault-path>" --out "<outside-path>/adoption-plan.md"
    ```
 
-   Show the plan path and ask the user before running:
+   Show the plan path and ask the user before running the following command for private Git sync. Do not run it for local-only use:
 
    ```sh
    node scripts/brain-sync.mjs bootstrap --vault "<vault-path>" --repo "<owner/repo>" --adopt-existing
@@ -105,8 +106,11 @@ After installation, run `graphmory doctor --json`; verify the skill and named cu
 
 ```sh
 npm run check
-node scripts/brain-sync.mjs status --vault "<vault-path>"
+node scripts/brain-sync.mjs audit --vault "<vault-path>" --json
+node scripts/brain-sync.mjs graph-audit --vault "<vault-path>" --json
 ```
+
+Run `status --vault "<vault-path>"` only if private Git sync was configured. Audit findings are review items; an empty new vault cannot demonstrate recall quality. Verify one bounded recall after real notes exist.
 
 Report what changed and what remains manual for the user's agent harness.
 

@@ -42,6 +42,7 @@
     "docs/guides/managed-retrieval.md",
     "docs/guides/token-efficient-language.md",
     "docs/guides/knowledge-graph.md",
+    "docs/guides/vault-setup.md",
     "docs/evaluation/graph-structure-2026-09-26.md",
     "docs/design/learning-loop.md",
     "docs/guides/portable-brain-sync.md",

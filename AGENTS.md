@@ -17,6 +17,7 @@ Graphmory adds a durable Markdown memory layer for coding agents. The tool repo 
    graphmory-setup --host codex --apply
    ```
    Replace `codex` with `claude` or `cursor` for that host. Cursor requires `--model <host-model-id>`. If the helper does not fit the host, follow its current agent/skill documentation and create the files manually. For OpenCode, run `node scripts/install.mjs --target "<agent-config-root>"` and follow `docs/guides/install.md#opencode-adapter`. Do not overwrite an existing host agent or skill.
+   Choose the Obsidian/Markdown [vault layout](docs/guides/vault-setup.md) in the same interview; show the resolved `--vault` path and minimal path tree before creating files. Local-only memory does not need GitHub sync.
 4. Verify the selected CLI works after installation:
    ```sh
    graphmory doctor --json
@@ -50,19 +51,19 @@ node scripts/brain-sync.mjs doctor --vault "<vault-path>" --json
 node scripts/brain-sync.mjs detect --vault "<vault-path>" --json
 ```
 
-If the vault is missing or empty, you may run:
+If the vault is missing or empty and the user chose local-only memory, create the reviewed minimal folders described in `docs/guides/vault-setup.md`. If private GitHub sync and remote creation were chosen, you may run:
 
 ```sh
 node scripts/brain-sync.mjs bootstrap --vault "<vault-path>" --repo "<owner/repo>" --create-remote
 ```
 
-If the vault already contains Markdown, Obsidian data, or another memory system, stop and ask the user before adoption:
+If the vault already contains Markdown, Obsidian data, or another memory system, preserve its layout. If the user wants private Git sync adoption or structural migration, prepare a plan outside the vault:
 
 ```sh
-node scripts/brain-sync.mjs adoption-plan --vault "<vault-path>" --out "<vault-path>/.memory-patch-harness/adoption-plan.md"
+node scripts/brain-sync.mjs adoption-plan --vault "<vault-path>" --out "<path-outside-vault>/adoption-plan.md"
 ```
 
-Only after user approval:
+Only after user approval for private Git sync:
 
 ```sh
 node scripts/brain-sync.mjs bootstrap --vault "<vault-path>" --repo "<owner/repo>" --adopt-existing
