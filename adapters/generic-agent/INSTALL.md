@@ -63,9 +63,11 @@ Use this guide when an AI coding agent is asked to install or connect Graphmory 
 
    ```text
    The lead agent authors Memory Patches after verified work.
-   The memory curator retrieves, links, deduplicates, and validates memory without inventing facts.
+   When durable memory is warranted, dispatch a bounded curator sub-agent using the memory-curator skill to retrieve, link, deduplicate, and validate the lead-authored patch without inventing facts. If the host cannot dispatch, run the skill in the lead agent.
    Use Brain Briefs for bounded recall. Do not save secrets, raw logs, or full transcripts.
    ```
+
+   Codex and Cursor can dispatch from this guide without a Graphmory model config step. If the user wants a dedicated model across projects, follow `docs/guides/agent-hosts.md` for optional host-specific setup; Graphmory's saved model name does not pin a host sub-agent.
 
 ## Do Not
 
