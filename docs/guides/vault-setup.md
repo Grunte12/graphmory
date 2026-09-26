@@ -44,3 +44,7 @@ graphmory graph-audit --vault "<vault>" --json
 `audit` and `graph-audit` inspect the vault without changing notes. Review broken or ambiguous links and missing provenance before relying on those notes. Once the vault contains real memory, test a scoped query with `graphmory recall --vault "<vault>" --query "<known question>" --scope "<project folder>" --agent` and have the lead agent check the returned source. The graph is a navigation aid; retrieved text still needs evidence review.
 
 Private GitHub sync is an optional later step. Configure it only after the user chooses a repo and reviews any adoption plan. Local-only setup does not need `bootstrap` or `status`.
+
+## Evidence for this default
+
+The layout is a small convention for safe setup and project scoping, not a proven optimal taxonomy. A [controlled 2×2 ablation](../evaluation/vault-structure-ablation-2026-09-26.md) on the public research fixture found no direct retrieval gain from its grouped folders or MOC pages. Keep existing layouts; add an index only when it helps real navigation. A held-out, multi-project task evaluation is still needed before changing the retrieval default or migrating notes.
