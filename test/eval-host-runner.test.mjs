@@ -5,7 +5,7 @@ import os from "node:os"
 import path from "node:path"
 import { spawnSync } from "node:child_process"
 
-function trial(t, { mutate = false, labels = false, basicMemory = false, wrongVersion = false, noAnswer = false, partial = false, orderOffset = 0 } = {}) {
+function trial(t, { mutate = false, labels = false, basicMemory = false, graphPaths = false, wrongVersion = false, noAnswer = false, partial = false, orderOffset = 0 } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-host-test-"))
   t.after(() => fs.rmSync(root, { recursive: true, force: true }))
   for (const dir of ["bin", "config", "workspace/vault"]) fs.mkdirSync(path.join(root, dir), { recursive: true })
@@ -24,6 +24,7 @@ console.log(JSON.stringify({type:'step_finish',part:{reason:${JSON.stringify(par
 }`
   fs.writeFileSync(path.join(root, "bin/opencode"), fake, { mode: 0o700 })
   const controlArgs = ["--order-offset", String(orderOffset)]
+  if (graphPaths) controlArgs.push("--control", "graphmory-paths", "--graph-preview")
   if (basicMemory) {
     const exe = path.join(root, "bin/bm")
     fs.writeFileSync(exe, `#!${process.execPath}\nconsole.log('Basic Memory version: ${wrongVersion ? "0.99.0" : "0.23.2"}');`, { mode: 0o700 })
@@ -103,6 +104,15 @@ test("order offset reverses a separately launched case without changing task inp
   const data = JSON.parse(fs.readFileSync(report))
   assert.equal(data.orderOffset, 1)
   assert.deepEqual(data.rows.map((row) => row.arm), ["basic-memory-text", "graphmory", "graphmory", "basic-memory-text"])
+})
+
+test("preview can be compared with the same Graphmory path-only reader", (t) => {
+  const { result, report } = trial(t, { graphPaths: true })
+  assert.equal(result.status, 0, result.stderr)
+  const data = JSON.parse(fs.readFileSync(report))
+  assert.equal(data.control, "graphmory-paths")
+  assert.equal(data.graphPreview, true)
+  assert.deepEqual(data.rows.map((row) => row.arm), ["graphmory", "graphmory-paths", "graphmory-paths", "graphmory"])
 })
 
 test("interim text followed by an unfinished tool step cannot pass as an answer", (t) => {

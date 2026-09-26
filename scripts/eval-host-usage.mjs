@@ -24,8 +24,9 @@ const defaultQuestion = "What fields belong in a Memory Patch, who authors its m
 const suite = args.includes("--questions") ? JSON.parse(fs.readFileSync(path.resolve(option("--questions")), "utf8")) : [{ id: "patch-development", question: defaultQuestion }]
 if (!Array.isArray(suite) || !suite.length || suite.some((item) => !/^[a-z0-9-]+$/.test(item.id) || (item.date !== undefined && typeof item.date !== "string") || typeof item.question !== "string" || !item.question.trim() || Object.keys(item).some((key) => !["id", "question", "date"].includes(key))) || new Set(suite.map((item) => item.id)).size !== suite.length) throw new Error("Questions must have unique safe IDs and question text only; keep gold labels separate")
 const control = args.includes("--control") ? option("--control") : "plain"
-if (!["plain", "basic-memory-text"].includes(control)) throw new Error("Control must be plain or basic-memory-text")
+if (!["plain", "basic-memory-text", "graphmory-paths"].includes(control)) throw new Error("Control must be plain, basic-memory-text, or graphmory-paths")
 const graphPreview = args.includes("--graph-preview")
+if (control === "graphmory-paths" && !graphPreview) throw new Error("graphmory-paths control requires --graph-preview")
 let basicMemory = null
 if (control === "basic-memory-text") {
   if (!args.includes("--control-config")) throw new Error("Basic Memory requires an isolated --control-config")
@@ -80,6 +81,8 @@ for (const [questionIndex, { id, question, date }] of suite.entries()) {
       const nativeSearch = basicMemory ? `env BASIC_MEMORY_CONFIG_DIR=${shellQuote(basicMemory.state)} BASIC_MEMORY_HOME=${shellQuote(basicMemory.notes)} XDG_CONFIG_HOME=${shellQuote(basicMemory.home)} BASIC_MEMORY_AUTO_UPDATE=false BASIC_MEMORY_SEMANTIC_SEARCH_ENABLED=false BASIC_MEMORY_DEFAULT_SEARCH_TYPE=text BASIC_MEMORY_RERANKER_ENABLED=false ${shellQuote(basicMemory.exe)} tool search-notes ${shellQuote(question)} --project ${shellQuote(basicMemory.project)} --local --page-size 10 --json` : null
       const strategy = arm === "graphmory"
         ? `Start with node ${shellQuote(cli)} recall-managed --vault ${shellQuote(vault)} --config ${shellQuote(runtime)} --query ${shellQuote(question)} --agent${graphPreview ? " --evidence-preview" : ""}. ${graphPreview ? "Use previews to triage candidates, but inspect original source notes when needed for support or completeness. " : ""}Follow pagination if evidence is missing; read relevant source notes.`
+        : arm === "graphmory-paths"
+          ? `Start with node ${shellQuote(cli)} recall-managed --vault ${shellQuote(vault)} --config ${shellQuote(runtime)} --query ${shellQuote(question)} --agent. Follow pagination if evidence is missing; read relevant source notes.`
         : arm === "basic-memory-text"
           ? `Start with ${nativeSearch}. Read returned note paths from ./vault. If evidence is missing, paginate with --page 2, --page 3 etc or reformulate the query using the same native command. Do not use Graphmory or ordinary file search to discover candidates.`
           : "Use ordinary file search and read to find relevant evidence in ./vault. Do not use Graphmory commands."
