@@ -10,22 +10,25 @@ Graphmory adds a durable Markdown memory layer for coding agents. The tool repo 
 
 1. Run `npm test` to verify the repo works.
 2. Read `docs/guides/install.md` for full installation steps.
-3. Run the installer to copy the skill, CLI, and source modules:
+3. Follow the [agent-guided setup](adapters/generic-agent/INSTALL.md#agent-guided-setup): inspect the host and machine, ask the user for missing choices, and keep those answers in the conversation. For Codex, Cursor, or Claude Code, the optional helper can preview and write the named curator agent after the host format and model are confirmed:
    ```sh
-   node scripts/install.mjs --target "<agent-config-root>"
+   npm install -g --omit=optional .
+   graphmory-setup --host codex
+   graphmory-setup --host codex --apply
    ```
-   Replace `<agent-config-root>` with the target configuration directory (e.g. `~/.config/opencode` for OpenCode). The installer copies `skills/memory-curator/`, `src/` modules, and `bin/graphmory.mjs`. It does **not** edit your agent config.
-4. Verify the CLI works after installation:
+   Replace `codex` with `claude` or `cursor` for that host. Cursor requires `--model <host-model-id>`. If the helper does not fit the host, follow its current agent/skill documentation and create the files manually. For OpenCode, run `node scripts/install.mjs --target "<agent-config-root>"` and follow `docs/guides/install.md#opencode-adapter`. Do not overwrite an existing host agent or skill.
+   Choose the Obsidian/Markdown [vault layout](docs/guides/vault-setup.md) in the same interview; show the resolved `--vault` path and minimal path tree before creating files. Local-only memory does not need GitHub sync.
+4. Verify the selected CLI works after installation:
    ```sh
-   node <target>/bin/graphmory.mjs doctor --json
-   # or, after adding <target>/bin/ to your PATH:
-   graphmory.mjs doctor --json
+   graphmory doctor --json
+   # OpenCode's copied launcher: node <target>/bin/graphmory.mjs doctor --json
    ```
 5. Apply the adapter for your runtime. For OpenCode, review and apply the files under `adapters/opencode/`:
    - Merge `AGENTS.snippet.md` into the lead agent instructions.
    - In curator mode, use `memory-curator-prompt.md` as the `memory_curator` sub-agent prompt and `opencode.agent.example.json` as its configuration template.
    - In Jev/local decision modes, route managed recall directly to the lead agent.
    See `docs/guides/install.md#opencode-adapter` for detailed instructions.
+   For Codex, Cursor, or Claude Code, follow `docs/guides/agent-hosts.md` to select a vault and add the short lead-agent instruction.
 6. If the user wants portable memory across machines/accounts, read `docs/guides/portable-brain-sync.md`.
 7. If setup or a command fails, run `doctor --json` and follow `docs/guides/troubleshooting.md`.
 8. Do not edit the user's agent config until you know which adapter they use.
@@ -48,19 +51,19 @@ node scripts/brain-sync.mjs doctor --vault "<vault-path>" --json
 node scripts/brain-sync.mjs detect --vault "<vault-path>" --json
 ```
 
-If the vault is missing or empty, you may run:
+If the vault is missing or empty and the user chose local-only memory, create the reviewed minimal folders described in `docs/guides/vault-setup.md`. If private GitHub sync and remote creation were chosen, you may run:
 
 ```sh
 node scripts/brain-sync.mjs bootstrap --vault "<vault-path>" --repo "<owner/repo>" --create-remote
 ```
 
-If the vault already contains Markdown, Obsidian data, or another memory system, stop and ask the user before adoption:
+If the vault already contains Markdown, Obsidian data, or another memory system, preserve its layout. If the user wants private Git sync adoption or structural migration, prepare a plan outside the vault:
 
 ```sh
-node scripts/brain-sync.mjs adoption-plan --vault "<vault-path>" --out "<vault-path>/.memory-patch-harness/adoption-plan.md"
+node scripts/brain-sync.mjs adoption-plan --vault "<vault-path>" --out "<path-outside-vault>/adoption-plan.md"
 ```
 
-Only after user approval:
+Only after user approval for private Git sync:
 
 ```sh
 node scripts/brain-sync.mjs bootstrap --vault "<vault-path>" --repo "<owner/repo>" --adopt-existing
@@ -83,6 +86,8 @@ node scripts/brain-sync.mjs restructure-verify --vault "<vault-path>" --record "
 The apply command requires a clean Git worktree and baseline commit, creates a local backup branch, limits the default batch to 20 notes, and records exact moves. Verification proves path state only. Repair and validate wikilinks/Markdown links before committing. Use `restructure-rollback --approve` if the result is wrong.
 
 ## Memory Roles
+
+- Write new canonical memory in concise English; the lead agent answers the user in their chosen language. Preserve exact identifiers and provenance, and do not create translated duplicate notes. See `docs/guides/token-efficient-language.md`.
 
 - Lead agent: decides what was learned and writes the Memory Patch.
 - In curator mode, Memory Curator retrieves, places, links, deduplicates, and validates memory without inventing missing facts.
@@ -138,6 +143,8 @@ node <harness-path>/scripts/brain-sync.mjs recall-managed --vault "<vault-path>"
 ```
 
 Add `--scope "<known project-or-domain path>"` when the active project/domain is known. Read only the returned paths. Raw inbox/clipping paths and stale/superseded lifecycle states are excluded by default. If `needsExpansion` is true, reformulate once using project vocabulary or inspect the named MOC/backlink neighborhood; do not immediately scan the whole vault.
+
+For explicit note relationships or multi-hop exploration, use `recall-explore --agent` and inspect the returned path trails. Run `graph-audit --agent` to check unresolved/ambiguous references and isolated notes before proposing curation. Optional relation properties and minimal folder guidance are in `docs/guides/knowledge-graph.md`. Do not infer facts from graph connectivity alone.
 
 If bounded recall misses repeatedly, use the diagnostic sparse-fusion loop once before broad manual vault search:
 

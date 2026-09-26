@@ -26,7 +26,8 @@ import {
   validateRestructureManifest,
   verifyRestructureRecord,
 } from "../src/brain-sync.mjs"
-import { recallVault, recallVaultLoop } from "../src/memory-recall.mjs"
+import { summarizeNoteGraph } from "../src/graph-navigation.mjs"
+import { loadVaultDocuments, recallVault, recallVaultLoop } from "../src/memory-recall.mjs"
 import { recallVaultSemantic } from "../src/semantic-recall.mjs"
 import { buildCurationRecommendations, renderCurationRecommendations } from "../src/curation-recommendations.mjs"
 import { auditMemoryLifecycle } from "../src/memory-lifecycle-audit.mjs"
@@ -58,8 +59,9 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs detect --vault <path> [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs doctor [--vault <path>] [--json] [--require-github]\n`)
   out.write(`  node scripts/brain-sync.mjs health --vault <path> [--json] [--out <file>]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--rerank] [--json]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall-loop --vault <path> --query <text> [--scope <path>] [--k 3] [--rerank] [--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--include-navigation] [--rerank] [--agent|--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs graph-audit --vault <path> [--scope <path>] [--agent|--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-loop --vault <path> --query <text> [--scope <path>] [--k 3] [--include-navigation] [--rerank] [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs config [show] [--config <path>] [--json]\n`)
@@ -495,6 +497,18 @@ function health() {
   if (!report.ok) process.exitCode = 1
 }
 
+function agentRecallPacket(report, { includeLanes = false } = {}) {
+  return {
+    confidence: report.confidence,
+    needsExpansion: report.needsExpansion,
+    scanLimitReached: report.scanLimitReached,
+    ...(report.excludedByLifecycle ? { excludedByLifecycle: report.excludedByLifecycle } : {}),
+    results: report.results.map(({ path, status, lanes }) => ({
+      path, status, ...(includeLanes ? { lanes } : {}),
+    })),
+  }
+}
+
 function recall() {
   const vault = requireVault()
   const query = requiredOption("--query")
@@ -504,10 +518,15 @@ function recall() {
     method,
     k,
     includeNoncanonical: flag("--include-noncanonical"),
+    includeNavigation: flag("--include-navigation"),
     includeRawPaths: flag("--include-raw-paths"),
     scope: option("--scope", ""),
     rerank: flag("--rerank"),
   })
+  if (flag("--agent")) {
+    console.log(JSON.stringify(agentRecallPacket(report)))
+    return
+  }
   if (flag("--json")) {
     console.log(JSON.stringify(report, null, 2))
     return
@@ -709,10 +728,15 @@ function recallLoop() {
     methods,
     k,
     includeNoncanonical: flag("--include-noncanonical"),
+    includeNavigation: flag("--include-navigation"),
     includeRawPaths: flag("--include-raw-paths"),
     scope: option("--scope", ""),
     rerank: flag("--rerank"),
   })
+  if (flag("--agent")) {
+    console.log(JSON.stringify(agentRecallPacket(report, { includeLanes: true })))
+    return
+  }
   if (flag("--json")) {
     console.log(JSON.stringify(report, null, 2))
     return
@@ -739,15 +763,17 @@ async function configureRuntime() {
   const ask = async (label, current) => (await input.question(`${label} [${current}]: `)).trim() || current
   try {
     console.log("Graphmory · setup")
-    console.log("1 Curator only   2 Hosted Jev decision gate   3 Local System One decision gate   4 Local retrieval reranker")
+    console.log("1 Curator sub-agent (recommended; uses a model available in your coding agent host)")
+    console.log("Advanced: 2 Hosted Jev API   3 Local decision model   4 Local reranker")
     const selected = await ask("Workflow", { curator: "1", "hosted-jev": "2", "local-decision": "3", "local-rerank": "4" }[config.workflow])
     const workflows = { "1": "curator", "2": "hosted-jev", "3": "local-decision", "4": "local-rerank" }
     if (!workflows[selected]) throw new Error("Choose workflow 1, 2, 3, or 4")
     config.workflow = workflows[selected]
     if (config.workflow === "curator") {
       config.curator ??= { provider: "openai", model: "gpt-6-luna" }
+      console.log("Curator examples: Codex → Luna; Claude Code → Haiku; Cursor/OpenCode → a low-cost model available in that host.")
       config.curator.provider = await ask("Curator provider (openai/anthropic/google/other)", config.curator.provider)
-      config.curator.model = await ask("Curator model", config.curator.model)
+      config.curator.model = await ask("Curator model in your agent host", config.curator.model)
     }
     if (config.workflow === "hosted-jev") {
       const gateway = config.decision.endpoint === "https://ai-gateway.vercel.sh/typesafe/v1/systemone"
@@ -785,11 +811,15 @@ async function configureRuntime() {
     if (config.workflow !== "curator") {
       config.decision.maxCandidates = Number(await ask("Maximum candidates (1–10)", config.workflow === "local-rerank" && config.decision.maxCandidates === 8 ? 4 : config.decision.maxCandidates))
     }
+    const profile = await ask("Memory content (1 Mixed project notes, 2 Conversation histories)", config.retrievalProfile === "conversations" ? "2" : "1")
+    if (!["1", "2"].includes(profile)) throw new Error("Choose memory content option 1 or 2")
+    config.retrievalProfile = profile === "2" ? "conversations" : "mixed-notes"
     saveRuntimeConfig(file, config)
     console.log(`Saved ${file}`)
     console.log(config.workflow === "curator"
       ? `Workflow: curator; agent: ${config.curator.provider}/${config.curator.model}`
       : `Workflow: ${config.workflow}; decision model: ${config.decision.model}; evidence goes directly to the lead agent`)
+    if (config.workflow === "curator") console.log("Codex and Cursor can dispatch a curator sub-agent from the agent guide. This saved model is metadata, not a host model override; pin a model in host settings only if needed. See docs/guides/agent-hosts.md.")
   } finally {
     input.close()
   }
@@ -816,6 +846,11 @@ async function recallManaged() {
   }
 }
 
+function graphAudit() {
+  const report = summarizeNoteGraph(loadVaultDocuments(requireVault()), { scope: option("--scope", "") })
+  console.log(JSON.stringify(report, null, flag("--agent") ? 0 : 2))
+}
+
 async function recallExplore() {
   const report = await recallVaultAdaptive(requireVault(), requiredOption("--query"), {
     k: Number.parseInt(option("--k", "3"), 10), scope: option("--scope", ""), graphPolicy: "auto",
@@ -823,7 +858,7 @@ async function recallExplore() {
   if (flag("--agent")) console.log(JSON.stringify({ workflow: report.workflow, evidenceStatus: report.evidenceStatus,
     stopReason: report.stopReason, rounds: report.rounds, uniqueCandidates: report.uniqueCandidates,
     scanLimitReached: report.scanLimitReached, graphLimitReached: report.graphLimitReached,
-    results: report.results.map(({ path, via, parent, depth }) => ({ path, via, ...(parent ? { parent } : {}), depth })),
+    results: report.results.map(({ path, via, parent, depth, trail }) => ({ path, via, ...(parent ? { parent, trail } : {}), depth })),
     nextAction: report.nextAction }))
   else if (flag("--json")) console.log(JSON.stringify(report, null, 2))
   else {
@@ -1821,6 +1856,7 @@ try {
   else if (command === "recall") recall()
   else if (command === "recall-loop") recallLoop()
   else if (command === "recall-managed") await recallManaged()
+  else if (command === "graph-audit") graphAudit()
   else if (command === "recall-explore") await recallExplore()
   else if (command === "curate-plan") await curatePlan()
   else if (command === "config") await configureRuntime()

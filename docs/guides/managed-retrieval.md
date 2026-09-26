@@ -34,4 +34,12 @@ Compare managed workflows with `node scripts/eval-managed-recall.mjs --vault /pa
 
 ## Experimental link navigation
 
-For a question that explicitly asks about related notes or papers, `graphmory recall-explore --vault /path/to/vault --query "Which other papers are linked to this design?" --agent` tries a bounded link and backlink expansion after local sparse retrieval. It does not call a model, create embeddings, or write to the vault. The compact response lists candidate paths and marks them `unverified`; the lead agent must read the notes before answering. Ordinary questions keep the sparse ranking. This is an opt-in experiment, not a replacement for `recall-managed`. See the [design](../design/adaptive-retrieval-loop.md) and [pilot results](../evaluation/adaptive-graph-pilot-2026-09-24.md).
+The normal `recall` and `recall-loop` commands keep `canonical_memory: false` navigation notes in the ranked corpus but omit them from the answer results. Managed recall inherits this rule, including when optional semantic expansion proposes extra candidates. Use `--include-navigation` with the ordinary recall commands when intentionally inspecting a MOC or derived index. This preserves source-note slots in the default three-result packet without deleting the index or its links.
+
+For a question that explicitly asks about related notes, papers, or a route through a shared index/MOC, `graphmory recall-explore --vault /path/to/vault --query "Which other papers are linked to this design?" --agent` tries a bounded link and backlink expansion after local sparse retrieval. It does not call a model, create embeddings, or write to the vault. The compact response lists candidate paths and marks them `unverified`; the lead agent must read the notes before answering. Ordinary questions keep the sparse ranking. This is an opt-in experiment, not a replacement for `recall-managed`. See the [design](../design/adaptive-retrieval-loop.md) and [pilot results](../evaluation/adaptive-graph-pilot-2026-09-24.md).
+
+## Conversation histories
+
+`graphmory config` now asks whether memory contains mixed project notes or conversation histories. The conversation choice uses one governed BM25 lane before the selected curator/decision workflow; the default mixed-note choice preserves sparse fusion. Existing configuration files keep their previous behavior.
+
+This opt-in choice follows a [controlled LongMemEval retrieval experiment](../evaluation/comparable-benchmarks-2026-09-26.md), not a claim that BM25 wins on every vault or that downstream answer accuracy has been established. It adds no downloads or running services. For a one-off diagnostic, use `recall-loop --methods bm25 --agent`.

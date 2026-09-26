@@ -27,6 +27,7 @@ test("package ships the AI-agent entry instructions", () => {
 test("package exposes portable brain sync CLI aliases", () => {
   assert.equal(pkg.name, "graphmory")
   assert.equal(pkg.bin.graphmory, "scripts/brain-sync.mjs")
+  assert.equal(pkg.bin["graphmory-setup"], "scripts/setup-curator-agent.mjs")
   assert.equal(pkg.bin["memory-patch-harness"], "scripts/brain-sync.mjs")
   assert.equal(pkg.bin.mph, "scripts/brain-sync.mjs")
   assert.equal(fs.existsSync(path.join(root, pkg.bin.mph)), true)

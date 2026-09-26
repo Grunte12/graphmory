@@ -1,7 +1,8 @@
+import { retrievalMethods } from "./runtime-config.mjs"
 import { createHash } from "node:crypto"
 import { loadVaultDocuments, recallVaultLoop } from "./memory-recall.mjs"
 import { recallVaultSemantic } from "./semantic-recall.mjs"
-import { splitMarkdownSections, tokenize } from "./retrieval.mjs"
+import { isAnswerCandidate, splitMarkdownSections, tokenize } from "./retrieval.mjs"
 
 export async function managedRecall(vault, query, config, {
   k = 3,
@@ -13,7 +14,7 @@ export async function managedRecall(vault, query, config, {
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be 1–10")
   const limit = config.decision.maxCandidates
   const vaultDocuments = loadVaultDocuments(vault, { scope })
-  const initial = recallVaultLoop(vault, query, { k: 10, scope, perMethodLimit: limit, documents: vaultDocuments })
+  const initial = recallVaultLoop(vault, query, { k: 10, scope, perMethodLimit: limit, documents: vaultDocuments, methods: retrievalMethods(config.retrievalProfile) })
   if (config.workflow === "curator") return {
     query, workflow: "curator", curator: config.curator,
     confidence: initial.confidence, retrievalConfidence: initial.confidence, needsExpansion: initial.needsExpansion, scanLimitReached: initial.scanLimitReached,
@@ -48,7 +49,8 @@ export async function managedRecall(vault, query, config, {
   if (!results.some((item) => item.relevance >= config.decision.relevanceThreshold) && semanticExpansion) {
     const semantic = await semanticRecallImpl(vault, query, { k: 10, scope })
     const scoredPaths = new Set(initial.results.slice(0, limit).map((item) => item.path))
-    const unseen = semantic.results.filter((item) => !scoredPaths.has(item.path)).slice(0, limit)
+    const unseen = semantic.results.filter((item) => !scoredPaths.has(item.path)
+      && documents.has(item.path) && isAnswerCandidate(documents.get(item.path))).slice(0, limit)
     if (unseen.length) {
       results = results.concat(await scoreCandidates(unseen, documents, query, config, fetchImpl))
       expanded = true
@@ -160,7 +162,7 @@ export function relevantExcerpt(document, query) {
     overlap: [...new Set(section.tokens)].filter((term) => terms.has(term)).length,
   })).sort((a, b) => b.overlap - a.overlap || a.index - b.index)
     .slice(0, 2)
-    .map(({ section }) => `## ${section.title}\n${section.markdown.slice(0, 1150)}`)
+    .map(({ section }) => `## ${section.title}\n${(section.markdown ?? document.markdown).slice(0, 1150)}`)
     .join("\n\n")
     .slice(0, 2500)
 }

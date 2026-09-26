@@ -7,6 +7,8 @@ description: Retrieve compact Brain Briefs from a Markdown or Obsidian memory wi
 
 Treat durable memory as a governed knowledge base, not a diary.
 
+Write new canonical memory in concise English, including titles, claims, rationale, and summaries. Keep exact identifiers, paths, commands, and source references unchanged. Do not create a Thai translation of the same note. The lead agent answers the user in the user's language; a Thai reply does not require a Thai memory copy. Do not rewrite existing notes or raw evidence merely to enforce this convention.
+
 Read `references/protocol.md` before applying a Memory Patch. Read `references/note-schema.md` only when creating, reshaping, or auditing canonical notes.
 
 ## CLI recall
@@ -23,7 +25,7 @@ Pass `--scope "<known-project-or-domain-path>"` when the scope is known. Read on
 
 1. Start from the project map or index.
 2. Search only the task-relevant neighborhood.
-3. Return 1-7 relevant memory items, constraints, watchouts, note paths, and at most three optional direct-read paths.
+3. Return only the memory items needed for the task (at most seven), constraints, watchouts, note paths, and at most three optional direct-read paths. Prefer paths and short claims; include excerpts only when the lead needs their exact wording.
 4. Do not edit in recall mode.
 
 ## Consolidation

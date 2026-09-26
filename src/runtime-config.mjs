@@ -17,6 +17,12 @@ export const DEFAULT_RUNTIME_CONFIG = Object.freeze({
   },
 })
 
+export function retrievalMethods(profile = "mixed-notes") {
+  if (profile === "mixed-notes") return ["bm25", "bm25f-focused-sections"]
+  if (profile === "conversations") return ["bm25"]
+  throw new Error("retrievalProfile must be mixed-notes or conversations")
+}
+
 export function runtimeConfigPath(override = process.env.GRAPHMORY_CONFIG_PATH || process.env.MPH_CONFIG_PATH) {
   if (override) return path.resolve(override)
   const current = path.join(os.homedir(), ".config", "graphmory", "runtime.json")
@@ -31,6 +37,7 @@ export function validateRuntimeConfig(value) {
   if (value.workflow === "curator") for (const key of ["provider", "model"]) {
     if (typeof value.curator?.[key] !== "string" || !value.curator[key].trim()) throw new Error(`curator.${key} is required`)
   }
+  retrievalMethods(value.retrievalProfile)
   const decision = value.decision
   if (typeof decision?.model !== "string" || !decision.model.trim()) throw new Error("decision.model is required")
   if (typeof decision?.apiKeyEnv !== "string" || !/^[A-Z_][A-Z0-9_]*$/u.test(decision.apiKeyEnv)) throw new Error("decision.apiKeyEnv must name an environment variable")

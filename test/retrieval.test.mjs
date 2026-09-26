@@ -142,6 +142,38 @@ test("section retrieval follows a link outside the winning section", () => {
   assert.equal(results[1].retrievalSource, "wikilink:hub.md")
 })
 
+test("governed retrieval resolves relative paths and aliases while skipping ambiguous short names", () => {
+  const parent = parseMarkdown("folder/parent", "# Primary routing policy\n\nUse primary routing policy. See [[Child]], [[restore-guide]], [[Same]], and [[Shared]].")
+  const child = parseMarkdown("folder/Child.md", "# Child\n\nSupporting detail.")
+  const alias = parseMarkdown("Reference/Recovery.md", "---\naliases: restore-guide\n---\n# Recovery\n\nRecovery steps.")
+  const sameA = parseMarkdown("A/Same.md", "# Same A\n\nFirst duplicate.")
+  const sameB = parseMarkdown("B/Same.md", "# Same B\n\nSecond duplicate.")
+  const staleShared = parseMarkdown("C/Shared.md", "---\nstatus: stale\n---\n# Shared stale\n\nOld target.")
+  const currentShared = parseMarkdown("D/Shared.md", "# Shared current\n\nCurrent target.")
+
+  const results = governedRank([parent, child, alias, sameA, sameB, staleShared, currentShared], "primary routing policy", "bm25")
+  const paths = results.results.map((item) => item.id)
+
+  assert.ok(paths.includes("folder/Child.md"), "relative link should resolve against the source directory")
+  assert.ok(paths.includes("Reference/Recovery.md"), "unique frontmatter alias should resolve")
+  assert.equal(paths.includes("A/Same.md") || paths.includes("B/Same.md"), false, "ambiguous basename should not select a target")
+  assert.equal(paths.includes("D/Shared.md"), false, "a stale duplicate should keep a short name ambiguous")
+})
+
+test("governed retrieval preserves exact path case and skips extensionless path collisions", () => {
+  const parent = parseMarkdown("Parent.md", "# Zephyr routing protocol\n\nUse Zephyr routing protocol. See [[Folder/Target.md]] and [[Legacy]].")
+  const exact = parseMarkdown("Folder/Target.md", "# Exact target\n\nCase-sensitive target.")
+  const caseVariant = parseMarkdown("folder/target.md", "# Case variant\n\nDifferent path.")
+  const legacyWithoutExtension = parseMarkdown("Legacy", "# Legacy without extension\n\nFirst collision.")
+  const legacyWithExtension = parseMarkdown("Legacy.md", "# Legacy with extension\n\nSecond collision.")
+
+  const results = governedRank([parent, exact, caseVariant, legacyWithoutExtension, legacyWithExtension], "Zephyr routing protocol", "bm25")
+  const paths = results.results.map((item) => item.id)
+  assert.ok(paths.includes("Folder/Target.md"), "an exact mixed-case path should resolve to its matching note")
+  assert.equal(paths.includes("folder/target.md"), false, "a case variant should not replace the exact target")
+  assert.equal(paths.includes("Legacy") || paths.includes("Legacy.md"), false, "extensionless ID collisions should remain ambiguous")
+})
+
 test("governed retrieval can rerank an already-matching linked note", () => {
   const hub = parseMarkdown("hub", "# Recovery Hub\n\nrollback procedure [[canonical]]")
   const noise = parseMarkdown("noise", "# Rollback Procedure\n\nrollback rollback procedure")

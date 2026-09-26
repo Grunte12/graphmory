@@ -29,7 +29,7 @@ const documents = loadVaultDocuments(vault, { includeRawPaths: true })
 const queries = JSON.parse(fs.readFileSync(queriesPath, "utf8"))
 if (!Array.isArray(queries) || queries.length < 1) throw new Error("query set must be a non-empty array")
 
-const methods = ["lexical", "bm25", "bm25-sections", "governed-bm25-sections", "governed-bm25f-sections", "recall-loop"]
+const methods = ["lexical", "bm25", "bm25-sections", "governed-bm25-sections", "governed-bm25f-sections", "recall-loop-with-navigation", "recall-loop"]
 const report = { vault: "[private]", querySet: path.basename(queriesPath), documents: documents.length, queries: queries.length, k, methods: {} }
 const scopedDocumentsByScope = new Map()
 function scopedDocuments(scope) {
@@ -52,10 +52,12 @@ for (const label of methods) {
       throw new Error(`invalid query case: ${item.id ?? "missing-id"}`)
     }
     const scopedDocumentsForQuery = scopedDocuments(item.scope ?? "")
-    const results = label === "recall-loop"
+    const results = label.startsWith("recall-loop")
       ? fuseRankedLanes(["bm25", "bm25f-focused-sections"].map((laneMethod) => ({
           method: laneMethod,
-          results: governedRank(scopedDocumentsForQuery, item.query, laneMethod).results.slice(0, 8),
+          results: governedRank(scopedDocumentsForQuery, item.query, laneMethod, {
+            answerCandidatesOnly: label === "recall-loop",
+          }).results.slice(0, 8),
         })))
       : governed
         ? governedRank(scopedDocumentsForQuery, item.query, method).results
@@ -88,6 +90,7 @@ for (const [method, result] of Object.entries(report.methods)) {
   const summary = result.summary
   console.log(`| ${method} | ${percent(summary.hitAtK)} | ${percent(summary.recallAtK)} | ${summary.mrr.toFixed(3)} | ${summary.ndcgAtK.toFixed(3)} | ${summary.averageContextCharacters.toFixed(0)} | ${result.misses.length} |`)
 }
+console.log("\nAverage context characters describe retrieved candidate text, not the compact --agent CLI output.")
 
 if (output) {
   const target = path.resolve(output)

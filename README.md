@@ -45,20 +45,24 @@ Raw evidence is the immutable evidentiary source of truth. Markdown is canonical
 
 ## Quick Start
 
-Requirements: Node.js 20 or newer.
+Requirements: Node.js 20 or newer and Git. The npm package is not published yet, so install from this GitHub checkout. You do not need to fork it to use it.
 
-If you are an AI coding agent installing this for a user, read [AGENTS.md](AGENTS.md) first.
+For the easiest setup, ask your coding agent: **“Install Graphmory from this repository. Follow `adapters/generic-agent/INSTALL.md`. Ask me for missing choices using your question UI, including where and how to organize my Obsidian vault. Then verify CLI, vault, skill discovery, and curator dispatch.”** The agent can adapt the files to its own host and machine. See the [minimal vault architecture](docs/guides/vault-setup.md); GitHub sync is optional.
 
-```powershell
+The commands below are a manual path for Codex. `graphmory-setup` is a helper for known hosts, not a requirement for agent-guided setup. Coding agents should read [AGENTS.md](AGENTS.md) and the install guide first.
+
+```sh
 git clone https://github.com/Grunte12/graphmory.git
 cd graphmory
-npm test
-node scripts/install.mjs --target "$HOME/.config/opencode"
+npm install -g --omit=optional .
+graphmory doctor --json
+graphmory-setup --host codex
+graphmory-setup --host codex --apply
 ```
 
-The installer copies the `memory-curator` skill, the `src/` modules, and the CLI to the target directory. It does not overwrite `opencode.json` or agent prompts. Review the generated instructions, then apply the files under `adapters/opencode/`.
+Keep the checkout after `npm install -g .`: npm may link a local folder rather than copy it. The first `graphmory-setup` call previews the agent path, skill path, and model; `--apply` installs them. Use `--host claude` for Claude Code. For Cursor, use `--host cursor --model <supported-small-model-id>`. The recommended curator workflow uses the CLI, skill, and named agent together; copying `SKILL.md` alone does not install the CLI. Follow the [host setup guide](docs/guides/agent-hosts.md) to select a vault and add the short lead-agent instruction. The installer will not overwrite existing agent or skill files.
 
-After installation, add the target's `bin/` directory to your `PATH` to run `graphmory.mjs` from anywhere. Try `node <target>/bin/graphmory.mjs doctor --json` to verify the CLI works.
+OpenCode uses its [separate adapter](docs/guides/install.md#opencode-adapter). Contributors who edit or evaluate Graphmory should keep a checkout; ordinary users do not need a fork. When an npm release is published, `npm install -g --omit=optional graphmory` can replace the clone and local install steps. Do not use that registry command before a release exists.
 
 The package name, GitHub repository, and primary CLI command are `graphmory`. Existing `memory-patch-harness` and `mph` commands remain as compatibility aliases. Existing vault metadata under `.memory-patch-harness/` remains readable without migration.
 
@@ -159,7 +163,7 @@ Existing Obsidian/custom memory is never restructured silently. The reviewed flo
 ## Guides
 
 - [Installation](docs/guides/install.md): install the skill and adapt it to OpenCode or any other coding agent.
-- [Codex, Cursor, and Claude Code](docs/guides/agent-hosts.md): set up the CLI and skill for each host.
+- [Codex, Cursor, and Claude Code](docs/guides/agent-hosts.md): preview and install a named curator sub-agent, skill, and CLI for each host.
 - [Portable Brain Sync](docs/guides/portable-brain-sync.md): connect a private GitHub-backed memory repo for account and machine portability.
 - [Troubleshooting](docs/guides/troubleshooting.md): machine diagnostics, stable error codes, platform notes, and safe agent recovery.
 - [Demo Workflow](docs/guides/demo-workflow.md): see one realistic task become a Memory Patch, Brain Brief, and Hot Context Pack.

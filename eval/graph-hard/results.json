@@ -1,0 +1,2362 @@
+{
+  "suite": "graph-hard-v1",
+  "notes": 209,
+  "questions": 30,
+  "candidateCap": 12,
+  "baseline": {
+    "hitAt3": 1,
+    "recallAt3": 0.8260869565217392,
+    "hitAt12": 1,
+    "recallAt12": 0.9420289855072462,
+    "completeAt3": 0.6086956521739131,
+    "completeAt12": 0.8260869565217391,
+    "noAnswerWithCandidates": 7,
+    "noAnswerCases": 7,
+    "meanMs": 6.187341500000003,
+    "p95Ms": 10.205332999999996,
+    "missesAt12": []
+  },
+  "graph": {
+    "hitAt3": 1,
+    "recallAt3": 0.8260869565217392,
+    "hitAt12": 1,
+    "recallAt12": 0.9420289855072462,
+    "completeAt3": 0.6086956521739131,
+    "completeAt12": 0.8260869565217391,
+    "noAnswerWithCandidates": 7,
+    "noAnswerCases": 7,
+    "meanMs": 6.631609500000002,
+    "p95Ms": 13.067332999999998,
+    "missesAt12": []
+  },
+  "runs": {
+    "baseline": [
+      {
+        "id": "Cobalt-direct",
+        "category": "direct",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 12.283333000000006,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Cobalt/Evidence.md",
+          "Projects/Cobalt/Index.md",
+          "Teams/Index.md",
+          "Teams/North/Relay.md"
+        ]
+      },
+      {
+        "id": "Cobalt-natural",
+        "category": "natural-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 0.3333333333333333,
+          "reciprocalRank": 1,
+          "ndcg": 0.46927872602275644,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 0.6666666666666666,
+          "reciprocalRank": 1,
+          "ndcg": 0.6105456988825855,
+          "contextCharacters": null
+        },
+        "elapsedMs": 10.076833,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Cobalt/Index.md",
+          "Noise/N0-0.md",
+          "Noise/N0-1.md",
+          "Noise/N0-2.md",
+          "Noise/N0-3.md",
+          "Noise/N0-4.md",
+          "Noise/N0-5.md",
+          "Noise/N0-6.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Vesper/Runbook.md"
+        ]
+      },
+      {
+        "id": "Cobalt-scoped",
+        "category": "scoped-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 7.973917,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Cobalt/Index.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Cobalt/Hub.md",
+          "Projects/Cobalt/Evidence.md"
+        ]
+      },
+      {
+        "id": "Cobalt-graph",
+        "category": "explicit-graph",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 0.5,
+          "ndcg": 0.6934264036172708,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 0.5,
+          "ndcg": 0.6934264036172708,
+          "contextCharacters": null
+        },
+        "elapsedMs": 4.585208000000009,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Cobalt/Index.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Cobalt/Evidence.md",
+          "Projects/Cobalt/Hub.md"
+        ]
+      },
+      {
+        "id": "Cobalt-long-chain",
+        "category": "three-hop-capacity",
+        "top3": {
+          "hit": 1,
+          "recall": 0.75,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 3.948457999999988,
+        "completeAt3": false,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Cobalt/Index.md",
+          "Projects/Cobalt/Evidence.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Cobalt/Hub.md"
+        ]
+      },
+      {
+        "id": "Cobalt-missing",
+        "category": "unsupported",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 4.795625000000001,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Cobalt/Index.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Cobalt/Hub.md",
+          "Projects/Cobalt/Evidence.md"
+        ]
+      },
+      {
+        "id": "Juniper-direct",
+        "category": "direct",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 7.624791999999999,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Juniper/Runbook.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Juniper/Evidence.md",
+          "Projects/Juniper/Index.md",
+          "Teams/Index.md",
+          "Teams/North/Relay.md"
+        ]
+      },
+      {
+        "id": "Juniper-natural",
+        "category": "natural-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 0.3333333333333333,
+          "reciprocalRank": 1,
+          "ndcg": 0.46927872602275644,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 0.6666666666666666,
+          "reciprocalRank": 1,
+          "ndcg": 0.6105456988825855,
+          "contextCharacters": null
+        },
+        "elapsedMs": 8.949457999999993,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Juniper/Index.md",
+          "Noise/N1-0.md",
+          "Noise/N1-1.md",
+          "Noise/N1-2.md",
+          "Noise/N1-3.md",
+          "Noise/N1-4.md",
+          "Noise/N1-5.md",
+          "Noise/N1-6.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Vesper/Runbook.md"
+        ]
+      },
+      {
+        "id": "Juniper-scoped",
+        "category": "scoped-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 5.597499999999997,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Juniper/Runbook.md",
+          "Projects/Juniper/Index.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Juniper/Hub.md",
+          "Projects/Juniper/Evidence.md"
+        ]
+      },
+      {
+        "id": "Juniper-graph",
+        "category": "explicit-graph",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 0.5,
+          "ndcg": 0.6934264036172708,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 0.5,
+          "ndcg": 0.6934264036172708,
+          "contextCharacters": null
+        },
+        "elapsedMs": 3.979791000000006,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Juniper/Index.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Juniper/Evidence.md",
+          "Projects/Juniper/Hub.md"
+        ]
+      },
+      {
+        "id": "Juniper-long-chain",
+        "category": "three-hop-capacity",
+        "top3": {
+          "hit": 1,
+          "recall": 0.75,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 6.853041000000019,
+        "completeAt3": false,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Juniper/Index.md",
+          "Projects/Juniper/Evidence.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Juniper/Hub.md"
+        ]
+      },
+      {
+        "id": "Juniper-missing",
+        "category": "unsupported",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 3.672165999999976,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Juniper/Index.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Juniper/Hub.md",
+          "Projects/Juniper/Evidence.md"
+        ]
+      },
+      {
+        "id": "Saffron-direct",
+        "category": "direct",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 7.677291999999994,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Saffron/Runbook.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Saffron/Evidence.md",
+          "Projects/Saffron/Index.md",
+          "Teams/Index.md",
+          "Teams/North/Relay.md"
+        ]
+      },
+      {
+        "id": "Saffron-natural",
+        "category": "natural-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 0.3333333333333333,
+          "reciprocalRank": 1,
+          "ndcg": 0.46927872602275644,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 0.6666666666666666,
+          "reciprocalRank": 1,
+          "ndcg": 0.6105456988825855,
+          "contextCharacters": null
+        },
+        "elapsedMs": 10.205332999999996,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Saffron/Index.md",
+          "Noise/N2-0.md",
+          "Noise/N2-1.md",
+          "Noise/N2-2.md",
+          "Noise/N2-3.md",
+          "Noise/N2-4.md",
+          "Noise/N2-5.md",
+          "Noise/N2-6.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Vesper/Runbook.md"
+        ]
+      },
+      {
+        "id": "Saffron-scoped",
+        "category": "scoped-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 4.900790999999998,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Saffron/Runbook.md",
+          "Projects/Saffron/Index.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Saffron/Hub.md",
+          "Projects/Saffron/Evidence.md"
+        ]
+      },
+      {
+        "id": "Saffron-graph",
+        "category": "explicit-graph",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 0.5,
+          "ndcg": 0.6934264036172708,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 0.5,
+          "ndcg": 0.6934264036172708,
+          "contextCharacters": null
+        },
+        "elapsedMs": 3.768749999999983,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Saffron/Index.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Saffron/Evidence.md",
+          "Projects/Saffron/Hub.md"
+        ]
+      },
+      {
+        "id": "Saffron-long-chain",
+        "category": "three-hop-capacity",
+        "top3": {
+          "hit": 1,
+          "recall": 0.75,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 4.383207999999996,
+        "completeAt3": false,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Saffron/Index.md",
+          "Projects/Saffron/Evidence.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Saffron/Hub.md"
+        ]
+      },
+      {
+        "id": "Saffron-missing",
+        "category": "unsupported",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 3.7660419999999704,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Saffron/Index.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Saffron/Hub.md",
+          "Projects/Saffron/Evidence.md"
+        ]
+      },
+      {
+        "id": "Vesper-direct",
+        "category": "direct",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 8.383832999999981,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Vesper/Runbook.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Vesper/Evidence.md",
+          "Projects/Vesper/Index.md",
+          "Teams/Index.md",
+          "Teams/North/Relay.md"
+        ]
+      },
+      {
+        "id": "Vesper-natural",
+        "category": "natural-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 0.3333333333333333,
+          "reciprocalRank": 1,
+          "ndcg": 0.46927872602275644,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 0.6666666666666666,
+          "reciprocalRank": 1,
+          "ndcg": 0.6105456988825855,
+          "contextCharacters": null
+        },
+        "elapsedMs": 7.443833000000041,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Vesper/Index.md",
+          "Noise/N3-0.md",
+          "Noise/N3-1.md",
+          "Noise/N3-2.md",
+          "Noise/N3-3.md",
+          "Noise/N3-4.md",
+          "Noise/N3-5.md",
+          "Noise/N3-6.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Saffron/Runbook.md"
+        ]
+      },
+      {
+        "id": "Vesper-scoped",
+        "category": "scoped-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 8.555500000000052,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Vesper/Runbook.md",
+          "Projects/Vesper/Index.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Vesper/Hub.md",
+          "Projects/Vesper/Evidence.md"
+        ]
+      },
+      {
+        "id": "Vesper-graph",
+        "category": "explicit-graph",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 0.5,
+          "ndcg": 0.6934264036172708,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 0.5,
+          "ndcg": 0.6934264036172708,
+          "contextCharacters": null
+        },
+        "elapsedMs": 4.180375000000026,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Vesper/Index.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Vesper/Evidence.md",
+          "Projects/Vesper/Hub.md"
+        ]
+      },
+      {
+        "id": "Vesper-long-chain",
+        "category": "three-hop-capacity",
+        "top3": {
+          "hit": 1,
+          "recall": 0.75,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 4.789416000000017,
+        "completeAt3": false,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Vesper/Index.md",
+          "Projects/Vesper/Evidence.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Vesper/Hub.md"
+        ]
+      },
+      {
+        "id": "Vesper-missing",
+        "category": "unsupported",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 3.625665999999967,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Vesper/Index.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Vesper/Hub.md",
+          "Projects/Vesper/Evidence.md"
+        ]
+      },
+      {
+        "id": "ambiguous-relay",
+        "category": "ambiguous",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 8.139166999999986,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Teams/North/Relay.md",
+          "Teams/South/Relay.md",
+          "Teams/Index.md"
+        ]
+      },
+      {
+        "id": "scoped-relay",
+        "category": "disambiguation",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 4.34050000000002,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Teams/North/Relay.md"
+        ]
+      },
+      {
+        "id": "conflict-evidence",
+        "category": "conflict",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 3.521500000000003,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Policies/A.md",
+          "Policies/B.md"
+        ]
+      },
+      {
+        "id": "conflict-unresolved",
+        "category": "unsupported",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 3.562417000000039,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Policies/A.md",
+          "Policies/B.md"
+        ]
+      },
+      {
+        "id": "unknown-service",
+        "category": "unsupported",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 7.297875000000033,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Cobalt/Index.md",
+          "Projects/Juniper/Index.md",
+          "Projects/Saffron/Index.md",
+          "Projects/Vesper/Index.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Vesper/Runbook.md",
+          "Noise/N0-0.md"
+        ]
+      },
+      {
+        "id": "alias-gap",
+        "category": "semantic-gap",
+        "top3": {
+          "hit": 1,
+          "recall": 0.6666666666666666,
+          "reciprocalRank": 1,
+          "ndcg": 0.7039180890341347,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 0.9060254355346823,
+          "contextCharacters": null
+        },
+        "elapsedMs": 6.738625000000013,
+        "completeAt3": false,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Cobalt/Index.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Juniper/Index.md",
+          "Projects/Saffron/Index.md",
+          "Projects/Vesper/Index.md"
+        ]
+      }
+    ],
+    "graph": [
+      {
+        "id": "Cobalt-direct",
+        "category": "direct",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 13.067332999999998,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Cobalt/Evidence.md",
+          "Projects/Cobalt/Index.md",
+          "Teams/Index.md",
+          "Teams/North/Relay.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Cobalt-natural",
+        "category": "natural-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 0.3333333333333333,
+          "reciprocalRank": 1,
+          "ndcg": 0.46927872602275644,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 0.6666666666666666,
+          "reciprocalRank": 1,
+          "ndcg": 0.6105456988825855,
+          "contextCharacters": null
+        },
+        "elapsedMs": 12.257292000000007,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Cobalt/Index.md",
+          "Noise/N0-0.md",
+          "Noise/N0-1.md",
+          "Noise/N0-2.md",
+          "Noise/N0-3.md",
+          "Noise/N0-4.md",
+          "Noise/N0-5.md",
+          "Noise/N0-6.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Vesper/Runbook.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Cobalt-scoped",
+        "category": "scoped-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 4.824541999999994,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Cobalt/Index.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Cobalt/Hub.md",
+          "Projects/Cobalt/Evidence.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Cobalt-graph",
+        "category": "explicit-graph",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 7.860583000000005,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Cobalt/Hub.md",
+          "Projects/Cobalt/Evidence.md",
+          "Projects/Cobalt/Index.md"
+        ],
+        "rounds": 2,
+        "stopReason": "round-budget",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Cobalt-long-chain",
+        "category": "three-hop-capacity",
+        "top3": {
+          "hit": 1,
+          "recall": 0.75,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 0.9828920819566879,
+          "contextCharacters": null
+        },
+        "elapsedMs": 4.720332999999997,
+        "completeAt3": false,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Cobalt/Index.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Cobalt/Hub.md",
+          "Projects/Cobalt/Evidence.md"
+        ],
+        "rounds": 2,
+        "stopReason": "round-budget",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Cobalt-missing",
+        "category": "unsupported",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 3.843416000000005,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Cobalt/Index.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Cobalt/Hub.md",
+          "Projects/Cobalt/Evidence.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Juniper-direct",
+        "category": "direct",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 9.84341599999999,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Juniper/Runbook.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Juniper/Evidence.md",
+          "Projects/Juniper/Index.md",
+          "Teams/Index.md",
+          "Teams/North/Relay.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Juniper-natural",
+        "category": "natural-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 0.3333333333333333,
+          "reciprocalRank": 1,
+          "ndcg": 0.46927872602275644,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 0.6666666666666666,
+          "reciprocalRank": 1,
+          "ndcg": 0.6105456988825855,
+          "contextCharacters": null
+        },
+        "elapsedMs": 9.87420800000001,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Juniper/Index.md",
+          "Noise/N1-0.md",
+          "Noise/N1-1.md",
+          "Noise/N1-2.md",
+          "Noise/N1-3.md",
+          "Noise/N1-4.md",
+          "Noise/N1-5.md",
+          "Noise/N1-6.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Vesper/Runbook.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Juniper-scoped",
+        "category": "scoped-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 4.550583000000017,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Juniper/Runbook.md",
+          "Projects/Juniper/Index.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Juniper/Hub.md",
+          "Projects/Juniper/Evidence.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Juniper-graph",
+        "category": "explicit-graph",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 4.65787499999999,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Juniper/Runbook.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Juniper/Hub.md",
+          "Projects/Juniper/Evidence.md",
+          "Projects/Juniper/Index.md"
+        ],
+        "rounds": 2,
+        "stopReason": "round-budget",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Juniper-long-chain",
+        "category": "three-hop-capacity",
+        "top3": {
+          "hit": 1,
+          "recall": 0.75,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 0.9828920819566879,
+          "contextCharacters": null
+        },
+        "elapsedMs": 3.7546250000000043,
+        "completeAt3": false,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Juniper/Index.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Juniper/Hub.md",
+          "Projects/Juniper/Evidence.md"
+        ],
+        "rounds": 2,
+        "stopReason": "round-budget",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Juniper-missing",
+        "category": "unsupported",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 4.329290999999984,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Juniper/Index.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Juniper/Hub.md",
+          "Projects/Juniper/Evidence.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Saffron-direct",
+        "category": "direct",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 8.304082999999991,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Saffron/Runbook.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Saffron/Evidence.md",
+          "Projects/Saffron/Index.md",
+          "Teams/Index.md",
+          "Teams/North/Relay.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Saffron-natural",
+        "category": "natural-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 0.3333333333333333,
+          "reciprocalRank": 1,
+          "ndcg": 0.46927872602275644,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 0.6666666666666666,
+          "reciprocalRank": 1,
+          "ndcg": 0.6105456988825855,
+          "contextCharacters": null
+        },
+        "elapsedMs": 8.402542000000011,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Saffron/Index.md",
+          "Noise/N2-0.md",
+          "Noise/N2-1.md",
+          "Noise/N2-2.md",
+          "Noise/N2-3.md",
+          "Noise/N2-4.md",
+          "Noise/N2-5.md",
+          "Noise/N2-6.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Vesper/Runbook.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Saffron-scoped",
+        "category": "scoped-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 3.6727089999999976,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Saffron/Runbook.md",
+          "Projects/Saffron/Index.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Saffron/Hub.md",
+          "Projects/Saffron/Evidence.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Saffron-graph",
+        "category": "explicit-graph",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 4.983915999999994,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Saffron/Runbook.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Saffron/Hub.md",
+          "Projects/Saffron/Evidence.md",
+          "Projects/Saffron/Index.md"
+        ],
+        "rounds": 2,
+        "stopReason": "round-budget",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Saffron-long-chain",
+        "category": "three-hop-capacity",
+        "top3": {
+          "hit": 1,
+          "recall": 0.75,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 0.9828920819566879,
+          "contextCharacters": null
+        },
+        "elapsedMs": 3.7208330000000274,
+        "completeAt3": false,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Saffron/Index.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Saffron/Hub.md",
+          "Projects/Saffron/Evidence.md"
+        ],
+        "rounds": 2,
+        "stopReason": "round-budget",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Saffron-missing",
+        "category": "unsupported",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 3.7248749999999973,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Saffron/Index.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Saffron/Hub.md",
+          "Projects/Saffron/Evidence.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Vesper-direct",
+        "category": "direct",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 9.509374999999977,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Vesper/Runbook.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Vesper/Evidence.md",
+          "Projects/Vesper/Index.md",
+          "Teams/Index.md",
+          "Teams/North/Relay.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Vesper-natural",
+        "category": "natural-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 0.3333333333333333,
+          "reciprocalRank": 1,
+          "ndcg": 0.46927872602275644,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 0.6666666666666666,
+          "reciprocalRank": 1,
+          "ndcg": 0.6105456988825855,
+          "contextCharacters": null
+        },
+        "elapsedMs": 8.36666600000001,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Vesper/Index.md",
+          "Noise/N3-0.md",
+          "Noise/N3-1.md",
+          "Noise/N3-2.md",
+          "Noise/N3-3.md",
+          "Noise/N3-4.md",
+          "Noise/N3-5.md",
+          "Noise/N3-6.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Saffron/Runbook.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Vesper-scoped",
+        "category": "scoped-multihop",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 4.527040999999997,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Vesper/Runbook.md",
+          "Projects/Vesper/Index.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Vesper/Hub.md",
+          "Projects/Vesper/Evidence.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Vesper-graph",
+        "category": "explicit-graph",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 9.728833000000009,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Vesper/Runbook.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Vesper/Hub.md",
+          "Projects/Vesper/Evidence.md",
+          "Projects/Vesper/Index.md"
+        ],
+        "rounds": 2,
+        "stopReason": "round-budget",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Vesper-long-chain",
+        "category": "three-hop-capacity",
+        "top3": {
+          "hit": 1,
+          "recall": 0.75,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 0.9828920819566879,
+          "contextCharacters": null
+        },
+        "elapsedMs": 4.0262500000000045,
+        "completeAt3": false,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Vesper/Index.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Vesper/Hub.md",
+          "Projects/Vesper/Evidence.md"
+        ],
+        "rounds": 2,
+        "stopReason": "round-budget",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "Vesper-missing",
+        "category": "unsupported",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 3.93429100000003,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Vesper/Index.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Vesper/Hub.md",
+          "Projects/Vesper/Evidence.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "ambiguous-relay",
+        "category": "ambiguous",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 13.334249999999997,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Teams/North/Relay.md",
+          "Teams/South/Relay.md",
+          "Teams/Index.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "scoped-relay",
+        "category": "disambiguation",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 3.6922910000000115,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Teams/North/Relay.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "conflict-evidence",
+        "category": "conflict",
+        "top3": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 1,
+          "contextCharacters": null
+        },
+        "elapsedMs": 3.9788750000000164,
+        "completeAt3": true,
+        "completeAt12": true,
+        "retrieved": [
+          "Policies/A.md",
+          "Policies/B.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "conflict-unresolved",
+        "category": "unsupported",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 3.9056659999999965,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Policies/A.md",
+          "Policies/B.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "unknown-service",
+        "category": "unsupported",
+        "top3": null,
+        "at12": null,
+        "elapsedMs": 10.07566700000001,
+        "completeAt3": false,
+        "completeAt12": false,
+        "retrieved": [
+          "Projects/Cobalt/Index.md",
+          "Projects/Juniper/Index.md",
+          "Projects/Saffron/Index.md",
+          "Projects/Vesper/Index.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Vesper/Runbook.md",
+          "Noise/N0-0.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      },
+      {
+        "id": "alias-gap",
+        "category": "semantic-gap",
+        "top3": {
+          "hit": 1,
+          "recall": 0.6666666666666666,
+          "reciprocalRank": 1,
+          "ndcg": 0.7039180890341347,
+          "contextCharacters": null
+        },
+        "at12": {
+          "hit": 1,
+          "recall": 1,
+          "reciprocalRank": 1,
+          "ndcg": 0.9060254355346823,
+          "contextCharacters": null
+        },
+        "elapsedMs": 7.476625000000013,
+        "completeAt3": false,
+        "completeAt12": true,
+        "retrieved": [
+          "Projects/Cobalt/Runbook.md",
+          "Projects/Juniper/Runbook.md",
+          "Projects/Cobalt/Decision.md",
+          "Projects/Cobalt/Index.md",
+          "Projects/Saffron/Runbook.md",
+          "Projects/Juniper/Decision.md",
+          "Projects/Vesper/Runbook.md",
+          "Projects/Saffron/Decision.md",
+          "Projects/Vesper/Decision.md",
+          "Projects/Juniper/Index.md",
+          "Projects/Saffron/Index.md",
+          "Projects/Vesper/Index.md"
+        ],
+        "rounds": 0,
+        "stopReason": "lead-review",
+        "evidenceStatus": "unverified"
+      }
+    ]
+  },
+  "fixtureHash": "af31c446edb08302d724520e560a1f04cebd926497b114b300db51b5a650c2e9",
+  "queryHash": "6cde17aef38673db8ffa8d625895a13ac902faf77ed0beceee71e6c41350940a",
+  "implementationHash": "dfd0bb59917dfd276278633d2d7f2eb723a788d1d8fc79255c4a422278dee040",
+  "design": "Synthetic challenge frozen before first run; not an external benchmark or generated-answer evaluation. Runtime not tuned against this suite.",
+  "queries": [
+    {
+      "id": "Cobalt-direct",
+      "category": "direct",
+      "query": "Which team follows the K41 guard procedure?",
+      "relevant_groups": [
+        [
+          "Projects/Cobalt/Runbook.md"
+        ]
+      ]
+    },
+    {
+      "id": "Cobalt-natural",
+      "category": "natural-multihop",
+      "query": "For Cobalt, when must we undo a rollout, and which team handles it?",
+      "relevant_groups": [
+        [
+          "Projects/Cobalt/Index.md"
+        ],
+        [
+          "Projects/Cobalt/Decision.md"
+        ],
+        [
+          "Projects/Cobalt/Runbook.md"
+        ]
+      ]
+    },
+    {
+      "id": "Cobalt-scoped",
+      "category": "scoped-multihop",
+      "query": "For Cobalt, when must we undo a rollout, and which team handles it?",
+      "relevant_groups": [
+        [
+          "Projects/Cobalt/Index.md"
+        ],
+        [
+          "Projects/Cobalt/Decision.md"
+        ],
+        [
+          "Projects/Cobalt/Runbook.md"
+        ]
+      ],
+      "scope": "Projects/Cobalt"
+    },
+    {
+      "id": "Cobalt-graph",
+      "category": "explicit-graph",
+      "query": "What other notes are linked to Cobalt production service and its guard procedure?",
+      "relevant_groups": [
+        [
+          "Projects/Cobalt/Decision.md"
+        ],
+        [
+          "Projects/Cobalt/Runbook.md"
+        ]
+      ],
+      "scope": "Projects/Cobalt"
+    },
+    {
+      "id": "Cobalt-long-chain",
+      "category": "three-hop-capacity",
+      "query": "Which notes connected to Cobalt establish its policy, stopping rule and tested recovery?",
+      "relevant_groups": [
+        [
+          "Projects/Cobalt/Index.md"
+        ],
+        [
+          "Projects/Cobalt/Decision.md"
+        ],
+        [
+          "Projects/Cobalt/Runbook.md"
+        ],
+        [
+          "Projects/Cobalt/Evidence.md"
+        ]
+      ],
+      "scope": "Projects/Cobalt"
+    },
+    {
+      "id": "Cobalt-missing",
+      "category": "unsupported",
+      "query": "What is the approved monthly budget for Cobalt?",
+      "relevant_groups": [],
+      "scope": "Projects/Cobalt"
+    },
+    {
+      "id": "Juniper-direct",
+      "category": "direct",
+      "query": "Which team follows the K42 guard procedure?",
+      "relevant_groups": [
+        [
+          "Projects/Juniper/Runbook.md"
+        ]
+      ]
+    },
+    {
+      "id": "Juniper-natural",
+      "category": "natural-multihop",
+      "query": "For Juniper, when must we undo a rollout, and which team handles it?",
+      "relevant_groups": [
+        [
+          "Projects/Juniper/Index.md"
+        ],
+        [
+          "Projects/Juniper/Decision.md"
+        ],
+        [
+          "Projects/Juniper/Runbook.md"
+        ]
+      ]
+    },
+    {
+      "id": "Juniper-scoped",
+      "category": "scoped-multihop",
+      "query": "For Juniper, when must we undo a rollout, and which team handles it?",
+      "relevant_groups": [
+        [
+          "Projects/Juniper/Index.md"
+        ],
+        [
+          "Projects/Juniper/Decision.md"
+        ],
+        [
+          "Projects/Juniper/Runbook.md"
+        ]
+      ],
+      "scope": "Projects/Juniper"
+    },
+    {
+      "id": "Juniper-graph",
+      "category": "explicit-graph",
+      "query": "What other notes are linked to Juniper production service and its guard procedure?",
+      "relevant_groups": [
+        [
+          "Projects/Juniper/Decision.md"
+        ],
+        [
+          "Projects/Juniper/Runbook.md"
+        ]
+      ],
+      "scope": "Projects/Juniper"
+    },
+    {
+      "id": "Juniper-long-chain",
+      "category": "three-hop-capacity",
+      "query": "Which notes connected to Juniper establish its policy, stopping rule and tested recovery?",
+      "relevant_groups": [
+        [
+          "Projects/Juniper/Index.md"
+        ],
+        [
+          "Projects/Juniper/Decision.md"
+        ],
+        [
+          "Projects/Juniper/Runbook.md"
+        ],
+        [
+          "Projects/Juniper/Evidence.md"
+        ]
+      ],
+      "scope": "Projects/Juniper"
+    },
+    {
+      "id": "Juniper-missing",
+      "category": "unsupported",
+      "query": "What is the approved monthly budget for Juniper?",
+      "relevant_groups": [],
+      "scope": "Projects/Juniper"
+    },
+    {
+      "id": "Saffron-direct",
+      "category": "direct",
+      "query": "Which team follows the K43 guard procedure?",
+      "relevant_groups": [
+        [
+          "Projects/Saffron/Runbook.md"
+        ]
+      ]
+    },
+    {
+      "id": "Saffron-natural",
+      "category": "natural-multihop",
+      "query": "For Saffron, when must we undo a rollout, and which team handles it?",
+      "relevant_groups": [
+        [
+          "Projects/Saffron/Index.md"
+        ],
+        [
+          "Projects/Saffron/Decision.md"
+        ],
+        [
+          "Projects/Saffron/Runbook.md"
+        ]
+      ]
+    },
+    {
+      "id": "Saffron-scoped",
+      "category": "scoped-multihop",
+      "query": "For Saffron, when must we undo a rollout, and which team handles it?",
+      "relevant_groups": [
+        [
+          "Projects/Saffron/Index.md"
+        ],
+        [
+          "Projects/Saffron/Decision.md"
+        ],
+        [
+          "Projects/Saffron/Runbook.md"
+        ]
+      ],
+      "scope": "Projects/Saffron"
+    },
+    {
+      "id": "Saffron-graph",
+      "category": "explicit-graph",
+      "query": "What other notes are linked to Saffron production service and its guard procedure?",
+      "relevant_groups": [
+        [
+          "Projects/Saffron/Decision.md"
+        ],
+        [
+          "Projects/Saffron/Runbook.md"
+        ]
+      ],
+      "scope": "Projects/Saffron"
+    },
+    {
+      "id": "Saffron-long-chain",
+      "category": "three-hop-capacity",
+      "query": "Which notes connected to Saffron establish its policy, stopping rule and tested recovery?",
+      "relevant_groups": [
+        [
+          "Projects/Saffron/Index.md"
+        ],
+        [
+          "Projects/Saffron/Decision.md"
+        ],
+        [
+          "Projects/Saffron/Runbook.md"
+        ],
+        [
+          "Projects/Saffron/Evidence.md"
+        ]
+      ],
+      "scope": "Projects/Saffron"
+    },
+    {
+      "id": "Saffron-missing",
+      "category": "unsupported",
+      "query": "What is the approved monthly budget for Saffron?",
+      "relevant_groups": [],
+      "scope": "Projects/Saffron"
+    },
+    {
+      "id": "Vesper-direct",
+      "category": "direct",
+      "query": "Which team follows the K44 guard procedure?",
+      "relevant_groups": [
+        [
+          "Projects/Vesper/Runbook.md"
+        ]
+      ]
+    },
+    {
+      "id": "Vesper-natural",
+      "category": "natural-multihop",
+      "query": "For Vesper, when must we undo a rollout, and which team handles it?",
+      "relevant_groups": [
+        [
+          "Projects/Vesper/Index.md"
+        ],
+        [
+          "Projects/Vesper/Decision.md"
+        ],
+        [
+          "Projects/Vesper/Runbook.md"
+        ]
+      ]
+    },
+    {
+      "id": "Vesper-scoped",
+      "category": "scoped-multihop",
+      "query": "For Vesper, when must we undo a rollout, and which team handles it?",
+      "relevant_groups": [
+        [
+          "Projects/Vesper/Index.md"
+        ],
+        [
+          "Projects/Vesper/Decision.md"
+        ],
+        [
+          "Projects/Vesper/Runbook.md"
+        ]
+      ],
+      "scope": "Projects/Vesper"
+    },
+    {
+      "id": "Vesper-graph",
+      "category": "explicit-graph",
+      "query": "What other notes are linked to Vesper production service and its guard procedure?",
+      "relevant_groups": [
+        [
+          "Projects/Vesper/Decision.md"
+        ],
+        [
+          "Projects/Vesper/Runbook.md"
+        ]
+      ],
+      "scope": "Projects/Vesper"
+    },
+    {
+      "id": "Vesper-long-chain",
+      "category": "three-hop-capacity",
+      "query": "Which notes connected to Vesper establish its policy, stopping rule and tested recovery?",
+      "relevant_groups": [
+        [
+          "Projects/Vesper/Index.md"
+        ],
+        [
+          "Projects/Vesper/Decision.md"
+        ],
+        [
+          "Projects/Vesper/Runbook.md"
+        ],
+        [
+          "Projects/Vesper/Evidence.md"
+        ]
+      ],
+      "scope": "Projects/Vesper"
+    },
+    {
+      "id": "Vesper-missing",
+      "category": "unsupported",
+      "query": "What is the approved monthly budget for Vesper?",
+      "relevant_groups": [],
+      "scope": "Projects/Vesper"
+    },
+    {
+      "id": "ambiguous-relay",
+      "category": "ambiguous",
+      "query": "Who owns Relay?",
+      "relevant_groups": []
+    },
+    {
+      "id": "scoped-relay",
+      "category": "disambiguation",
+      "query": "Who owns Relay?",
+      "relevant_groups": [
+        [
+          "Teams/North/Relay.md"
+        ]
+      ],
+      "scope": "Teams/North"
+    },
+    {
+      "id": "conflict-evidence",
+      "category": "conflict",
+      "query": "Which records disagree about how many reviewers are required?",
+      "relevant_groups": [
+        [
+          "Policies/A.md"
+        ],
+        [
+          "Policies/B.md"
+        ]
+      ],
+      "scope": "Policies"
+    },
+    {
+      "id": "conflict-unresolved",
+      "category": "unsupported",
+      "query": "What is the single authoritative reviewer count?",
+      "relevant_groups": [],
+      "scope": "Policies"
+    },
+    {
+      "id": "unknown-service",
+      "category": "unsupported",
+      "query": "What is the deployment key for the nonexistent Quartz service?",
+      "relevant_groups": []
+    },
+    {
+      "id": "alias-gap",
+      "category": "semantic-gap",
+      "query": "Who handles reversing a launch for the blue-metal project?",
+      "relevant_groups": [
+        [
+          "Projects/Cobalt/Index.md"
+        ],
+        [
+          "Projects/Cobalt/Decision.md"
+        ],
+        [
+          "Projects/Cobalt/Runbook.md"
+        ]
+      ]
+    }
+  ],
+  "categories": {
+    "direct": {
+      "baseline": {
+        "cases": 4,
+        "answerable": 4,
+        "completeAt3": 4,
+        "completeAt12": 4,
+        "noAnswerWithCandidates": 0
+      },
+      "graph": {
+        "cases": 4,
+        "answerable": 4,
+        "completeAt3": 4,
+        "completeAt12": 4,
+        "noAnswerWithCandidates": 0
+      }
+    },
+    "natural-multihop": {
+      "baseline": {
+        "cases": 4,
+        "answerable": 4,
+        "completeAt3": 0,
+        "completeAt12": 0,
+        "noAnswerWithCandidates": 0
+      },
+      "graph": {
+        "cases": 4,
+        "answerable": 4,
+        "completeAt3": 0,
+        "completeAt12": 0,
+        "noAnswerWithCandidates": 0
+      }
+    },
+    "scoped-multihop": {
+      "baseline": {
+        "cases": 4,
+        "answerable": 4,
+        "completeAt3": 4,
+        "completeAt12": 4,
+        "noAnswerWithCandidates": 0
+      },
+      "graph": {
+        "cases": 4,
+        "answerable": 4,
+        "completeAt3": 4,
+        "completeAt12": 4,
+        "noAnswerWithCandidates": 0
+      }
+    },
+    "explicit-graph": {
+      "baseline": {
+        "cases": 4,
+        "answerable": 4,
+        "completeAt3": 4,
+        "completeAt12": 4,
+        "noAnswerWithCandidates": 0
+      },
+      "graph": {
+        "cases": 4,
+        "answerable": 4,
+        "completeAt3": 4,
+        "completeAt12": 4,
+        "noAnswerWithCandidates": 0
+      }
+    },
+    "three-hop-capacity": {
+      "baseline": {
+        "cases": 4,
+        "answerable": 4,
+        "completeAt3": 0,
+        "completeAt12": 4,
+        "noAnswerWithCandidates": 0
+      },
+      "graph": {
+        "cases": 4,
+        "answerable": 4,
+        "completeAt3": 0,
+        "completeAt12": 4,
+        "noAnswerWithCandidates": 0
+      }
+    },
+    "unsupported": {
+      "baseline": {
+        "cases": 6,
+        "answerable": 0,
+        "completeAt3": 0,
+        "completeAt12": 0,
+        "noAnswerWithCandidates": 6
+      },
+      "graph": {
+        "cases": 6,
+        "answerable": 0,
+        "completeAt3": 0,
+        "completeAt12": 0,
+        "noAnswerWithCandidates": 6
+      }
+    },
+    "ambiguous": {
+      "baseline": {
+        "cases": 1,
+        "answerable": 0,
+        "completeAt3": 0,
+        "completeAt12": 0,
+        "noAnswerWithCandidates": 1
+      },
+      "graph": {
+        "cases": 1,
+        "answerable": 0,
+        "completeAt3": 0,
+        "completeAt12": 0,
+        "noAnswerWithCandidates": 1
+      }
+    },
+    "disambiguation": {
+      "baseline": {
+        "cases": 1,
+        "answerable": 1,
+        "completeAt3": 1,
+        "completeAt12": 1,
+        "noAnswerWithCandidates": 0
+      },
+      "graph": {
+        "cases": 1,
+        "answerable": 1,
+        "completeAt3": 1,
+        "completeAt12": 1,
+        "noAnswerWithCandidates": 0
+      }
+    },
+    "conflict": {
+      "baseline": {
+        "cases": 1,
+        "answerable": 1,
+        "completeAt3": 1,
+        "completeAt12": 1,
+        "noAnswerWithCandidates": 0
+      },
+      "graph": {
+        "cases": 1,
+        "answerable": 1,
+        "completeAt3": 1,
+        "completeAt12": 1,
+        "noAnswerWithCandidates": 0
+      }
+    },
+    "semantic-gap": {
+      "baseline": {
+        "cases": 1,
+        "answerable": 1,
+        "completeAt3": 0,
+        "completeAt12": 1,
+        "noAnswerWithCandidates": 0
+      },
+      "graph": {
+        "cases": 1,
+        "answerable": 1,
+        "completeAt3": 0,
+        "completeAt12": 1,
+        "noAnswerWithCandidates": 0
+      }
+    }
+  },
+  "boundaries": {
+    "baseline": {
+      "staleCandidates": 0,
+      "outOfScopeCandidates": 0
+    },
+    "graph": {
+      "staleCandidates": 0,
+      "outOfScopeCandidates": 0
+    }
+  },
+  "graphActivation": {
+    "queries": [
+      "Cobalt-graph",
+      "Cobalt-long-chain",
+      "Juniper-graph",
+      "Juniper-long-chain",
+      "Saffron-graph",
+      "Saffron-long-chain",
+      "Vesper-graph",
+      "Vesper-long-chain"
+    ],
+    "unverifiedResults": true
+  },
+  "top3Capacity": {
+    "answerable": 23,
+    "impossibleAt3": [
+      "Cobalt-long-chain",
+      "Juniper-long-chain",
+      "Saffron-long-chain",
+      "Vesper-long-chain"
+    ],
+    "achievableCompleteAt3": {
+      "baseline": {
+        "complete": 14,
+        "total": 19
+      },
+      "graph": {
+        "complete": 14,
+        "total": 19
+      }
+    }
+  }
+}

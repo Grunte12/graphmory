@@ -1,14 +1,24 @@
 # Installation
 
-Graphmory is file-first. It installs a skill and gives you adapter snippets, but it does not rewrite your agent configuration automatically.
+Graphmory is file-first. For Codex, Cursor, and Claude Code, its setup script can install a named curator agent and skill after a path/model preview. The OpenCode installer still uses adapter snippets and does not rewrite `opencode.json`.
 
 For Codex, Cursor, or Claude Code, follow the [cross-host setup guide](agent-hosts.md). The steps below describe the existing OpenCode installer and vault setup.
+
+## Where installation instructions live
+
+- [README Quick Start](../../README.md#quick-start) is the first path for a person arriving from GitHub; its agent-guided setup is recommended.
+- This guide explains setup and vault choices; [host setup](agent-hosts.md) gives exact commands and agent paths.
+- [Vault setup and architecture](vault-setup.md) explains the minimal Markdown layout, existing-vault choices, and graph links.
+- [Generic agent install guide](../../adapters/generic-agent/INSTALL.md) is the checklist for a coding agent doing setup for someone.
+- [AGENTS.md](../../AGENTS.md) guides agents working in this repository; [`memory-curator/SKILL.md`](../../skills/memory-curator/SKILL.md) defines curator behavior after installation. Neither is a substitute for installing the CLI.
+
+For now, clone the GitHub repository and run `npm install -g --omit=optional .` from it. A fork is needed only if you intend to maintain your own changes. The npm registry package name is not published yet, so `npm install -g graphmory` is a future distribution path, not a current command.
 
 ## Requirements
 
 - Node.js 20 or newer
 - A Markdown memory folder or Obsidian vault
-- A coding agent that can read files and run the CLI; a memory-curator sub-agent is optional in curator mode
+- A coding agent that can read files and run the CLI; install a named memory-curator sub-agent for consistent curator mode
 
 ## Install The Skill
 
@@ -39,7 +49,7 @@ node scripts/install.mjs --target "$HOME/.config/opencode" --check
 node scripts/init-project.mjs --vault "/path/to/ObsidianVault" --project "my-project"
 ```
 
-This creates a small project home under the vault. Keep project-specific facts there; keep global harness rules in this repository.
+This creates the fuller project template under the vault. For a minimal new vault, follow [vault setup](vault-setup.md) and create only the needed folders and notes. Keep project-specific facts there; keep global harness rules in this repository.
 
 ## Optional Portable Brain Sync
 

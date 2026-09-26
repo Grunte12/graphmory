@@ -40,7 +40,8 @@ for (const item of queries) {
       : results.slice(0, n).some((entry) => gold.includes(entry.id))
     runs[arm].push({ id: item.id, category: item.category, top3, at12, elapsedMs,
       completeAt3: answerable && complete(3), completeAt12: answerable && complete(12),
-      retrieved: results.slice(0, 12).map((entry) => entry.id) })
+      retrieved: results.slice(0, 12).map((entry) => entry.id),
+      ...(arm === "graph" ? { rounds: graph.rounds, stopReason: graph.stopReason, evidenceStatus: graph.evidenceStatus } : {}) })
   }
 }
 const summarize = (arm) => {
@@ -49,9 +50,10 @@ const summarize = (arm) => {
   const top3 = summarizeRuns(answerable.map((run) => ({ metrics: run.top3 })))
   const at12 = summarizeRuns(answerable.map((run) => ({ metrics: run.at12 })))
   const timings = runs[arm].map((run) => run.elapsedMs).sort((a, b) => a - b)
-  return { hitAt3: top3.hitAtK, recallAt3: top3.recallAtK, hitAt12: at12.hitAtK, recallAt12: at12.recallAtK,
-    completeAt3: answerable.filter((run) => run.completeAt3).length / answerable.length,
-    completeAt12: answerable.filter((run) => run.completeAt12).length / answerable.length,
+  return { hitAt3: answerable.length ? top3.hitAtK : null, recallAt3: answerable.length ? top3.recallAtK : null,
+    hitAt12: answerable.length ? at12.hitAtK : null, recallAt12: answerable.length ? at12.recallAtK : null,
+    completeAt3: answerable.length ? answerable.filter((run) => run.completeAt3).length / answerable.length : null,
+    completeAt12: answerable.length ? answerable.filter((run) => run.completeAt12).length / answerable.length : null,
     noAnswerWithCandidates: noAnswer.filter((run) => run.retrieved.length > 0).length,
     noAnswerCases: noAnswer.length,
     meanMs: timings.reduce((a, b) => a + b, 0) / timings.length, p95Ms: timings[Math.ceil(timings.length * .95) - 1],
@@ -61,6 +63,7 @@ const report = { suite: "adaptive-graph", notes: documents.length, questions: qu
   baseline: summarize("baseline"), graph: summarize("graph"), runs }
 for (const arm of ["baseline", "graph"]) {
   const value = report[arm]
-  console.log(`${arm}: Hit@3 ${(value.hitAt3 * 100).toFixed(1)}%, complete@3 ${(value.completeAt3 * 100).toFixed(1)}%, Recall@3 ${(value.recallAt3 * 100).toFixed(1)}%, Hit@12 ${(value.hitAt12 * 100).toFixed(1)}%, no-answer candidates ${value.noAnswerWithCandidates}/${value.noAnswerCases}, mean ${value.meanMs.toFixed(1)} ms, p95 ${value.p95Ms.toFixed(1)} ms`)
+  const percent = (number) => number === null ? "N/A" : `${(number * 100).toFixed(1)}%`
+  console.log(`${arm}: Hit@3 ${percent(value.hitAt3)}, complete@3 ${percent(value.completeAt3)}, Recall@3 ${percent(value.recallAt3)}, Hit@12 ${percent(value.hitAt12)}, no-answer candidates ${value.noAnswerWithCandidates}/${value.noAnswerCases}, mean ${value.meanMs.toFixed(1)} ms, p95 ${value.p95Ms.toFixed(1)} ms`)
 }
 if (args.includes("--json")) fs.writeFileSync(path.resolve(option("--json")), `${JSON.stringify(report, null, 2)}\n`)

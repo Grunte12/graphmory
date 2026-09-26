@@ -1,0 +1,725 @@
+{
+  "suite": "basic-memory-local-text-retrieval-pilot",
+  "competitor": "Basic Memory",
+  "version": "0.23.2",
+  "environment": "macOS arm64, Python 3.12.13, uv isolated venv; config/home per case",
+  "search": "Native bm tool search-notes plain query with --page-size 12 --json; semantic search disabled (default_type=text); question plus As of date; no query rewrites.",
+  "ingestionAdaptation": "Same original Markdown inputs; native Basic Memory ingestion may add frontmatter and normalize formatting. Changed file counts and before/after hashes are recorded; post-ingest byte equality is not claimed.",
+  "install": {
+    "command": "uv pip install --python tmp/competitors/basic-memory/venv/bin/python --cache-dir tmp/competitors/uv-cache --prerelease=allow 'basic-memory==0.23.2'",
+    "venvBytes": 433982447,
+    "cacheBytes": 385652220
+  },
+  "datasetSha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "selectedIds": [
+    "09ba9854_abs",
+    "a96c20ee_abs",
+    "50635ada",
+    "945e3d21",
+    "67e0d0f2",
+    "gpt4_d84a3211",
+    "a40e080f",
+    "c7cf7dfd",
+    "07b6f563",
+    "caf03d32",
+    "d52b4f67",
+    "29f2956b",
+    "gpt4_6ed717ea",
+    "gpt4_cd90e484"
+  ],
+  "cases": [
+    {
+      "id": "09ba9854_abs",
+      "category": "abstention",
+      "sessions": 50,
+      "duplicateSessionIds": 0,
+      "evidenceCount": null,
+      "recallAt3": null,
+      "recallAt12": null,
+      "completeAt3": null,
+      "completeAt12": null,
+      "candidates": 0,
+      "indexedFiles": 50,
+      "ingestMs": 11231.2775,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 50,
+      "sourceBodyHash": "01ebbce4b2bbc59f6428e2edb8ad9beaf90f46d0d9a7c6e8cce8eb820e72d166",
+      "ingestedHash": "c3712a0da7302d6125705f59ddeec0dc1cbb2295eecfefa4fb9bb8a3387608bd",
+      "repeats": [
+        {
+          "elapsedMs": 3872.074875000002,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 3900.620708000002,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 3820.101458000001,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "a96c20ee_abs",
+      "category": "abstention",
+      "sessions": 53,
+      "duplicateSessionIds": 0,
+      "evidenceCount": null,
+      "recallAt3": null,
+      "recallAt12": null,
+      "completeAt3": null,
+      "completeAt12": null,
+      "candidates": 0,
+      "indexedFiles": 53,
+      "ingestMs": 10012.146041999997,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 53,
+      "sourceBodyHash": "eb14a1955013bc8d0a23e5d86fa10ffe836c8c28e55802af829bd68342527564",
+      "ingestedHash": "1b2b10125c49c944d229949497b5df5757fd0c4814786fea04dd90b57894fb09",
+      "repeats": [
+        {
+          "elapsedMs": 3839.128417,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 3823.807375000004,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 3840.639374999999,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "50635ada",
+      "category": "knowledge-update",
+      "sessions": 48,
+      "duplicateSessionIds": 0,
+      "evidenceCount": 2,
+      "recallAt3": 0,
+      "recallAt12": 0,
+      "completeAt3": false,
+      "completeAt12": false,
+      "candidates": 0,
+      "indexedFiles": 48,
+      "ingestMs": 9264.168749999997,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 48,
+      "sourceBodyHash": "1c037776302d623c6d5e9ed0121e13912449b797e33d292c3f4c780c5e0bc1ea",
+      "ingestedHash": "515d2384d78e6a260f7f215ce7ab24a83050301ef7688991d2a4efbf722b9af4",
+      "repeats": [
+        {
+          "elapsedMs": 3863.107250000001,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 4457.041417,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 4144.198292000001,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "945e3d21",
+      "category": "knowledge-update",
+      "sessions": 48,
+      "duplicateSessionIds": 0,
+      "evidenceCount": 2,
+      "recallAt3": 0,
+      "recallAt12": 0,
+      "completeAt3": false,
+      "completeAt12": false,
+      "candidates": 0,
+      "indexedFiles": 48,
+      "ingestMs": 9657.981958000004,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 48,
+      "sourceBodyHash": "afda75798defe077d2f168969c878499b61e515b97cc26df167f41e40ca048a2",
+      "ingestedHash": "1ee5f5c8c44c74cc938bbf72fc60ec5f8f52e2a3ed8e9f8e4d14dc5124649594",
+      "repeats": [
+        {
+          "elapsedMs": 3836.6790000000037,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 3842.3675000000076,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 3819.8023329999996,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "67e0d0f2",
+      "category": "multi-session",
+      "sessions": 52,
+      "duplicateSessionIds": 0,
+      "evidenceCount": 2,
+      "recallAt3": 0,
+      "recallAt12": 0,
+      "completeAt3": false,
+      "completeAt12": false,
+      "candidates": 0,
+      "indexedFiles": 52,
+      "ingestMs": 26449.920667,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 52,
+      "sourceBodyHash": "20f8009f599d5e09d06314efd9d783ee5728bb2b4cc675618870b123e555b60b",
+      "ingestedHash": "cd0d648dbc3a7e741d06100b46c87fdbe43c0327205a1a5181798b75faa77df1",
+      "repeats": [
+        {
+          "elapsedMs": 4023.4844589999993,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 4005.6279579999973,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 4002.736291999987,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "category": "multi-session",
+      "sessions": 48,
+      "duplicateSessionIds": 0,
+      "evidenceCount": 4,
+      "recallAt3": 0,
+      "recallAt12": 0,
+      "completeAt3": false,
+      "completeAt12": false,
+      "candidates": 0,
+      "indexedFiles": 48,
+      "ingestMs": 8570.461125000002,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 48,
+      "sourceBodyHash": "cece9edbaa27f5fd0be1b734ec6fe743fa5fa19ea0f9767b1ec72607137fb032",
+      "ingestedHash": "6cd0977377db81835d9f075ae91559753ccd65969ec60a9e0fb186a68b9a1151",
+      "repeats": [
+        {
+          "elapsedMs": 3863.8354589999944,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 3894.9376249999914,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 3914.0115839999926,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "a40e080f",
+      "category": "single-session-assistant",
+      "sessions": 48,
+      "duplicateSessionIds": 0,
+      "evidenceCount": 1,
+      "recallAt3": 0,
+      "recallAt12": 0,
+      "completeAt3": false,
+      "completeAt12": false,
+      "candidates": 0,
+      "indexedFiles": 48,
+      "ingestMs": 9044.316917000018,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 48,
+      "sourceBodyHash": "35590750d203ca689d34aef4634779cd634cb456d4d17ae7a4fb2abab6581cc4",
+      "ingestedHash": "94847b67a0f63c371e6a4a20080342263dfcefd9c600eea04380cba94eb572a5",
+      "repeats": [
+        {
+          "elapsedMs": 3875.2880409999925,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 3879.0252080000064,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 3989.133167000022,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "c7cf7dfd",
+      "category": "single-session-assistant",
+      "sessions": 51,
+      "duplicateSessionIds": 0,
+      "evidenceCount": 1,
+      "recallAt3": 0,
+      "recallAt12": 0,
+      "completeAt3": false,
+      "completeAt12": false,
+      "candidates": 0,
+      "indexedFiles": 51,
+      "ingestMs": 10591.130250000017,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 51,
+      "sourceBodyHash": "cb6e328f68ccc61473b5e4486bd9d5a7a30cae8a9a747b824407b7d9847ad3c1",
+      "ingestedHash": "4a7677d35a1bfecf3f7b68462215d173ab0fa505887539024e9e9399f0d4cfc1",
+      "repeats": [
+        {
+          "elapsedMs": 3735.1278750000056,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 3765.6701659999962,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 3738.732667000004,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "07b6f563",
+      "category": "single-session-preference",
+      "sessions": 52,
+      "duplicateSessionIds": 0,
+      "evidenceCount": 1,
+      "recallAt3": 0,
+      "recallAt12": 0,
+      "completeAt3": false,
+      "completeAt12": false,
+      "candidates": 0,
+      "indexedFiles": 52,
+      "ingestMs": 8978.154249999992,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 52,
+      "sourceBodyHash": "2c9180971290c79afbdaaead4781f37085635a7c90f629c744413507c2a50d57",
+      "ingestedHash": "7ff41e26aadb71049f167461b71e186585a3c8613940a95bcc05859859d33965",
+      "repeats": [
+        {
+          "elapsedMs": 3679.9183340000163,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 3712.3493749999907,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 2270.782582999993,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "caf03d32",
+      "category": "single-session-preference",
+      "sessions": 51,
+      "duplicateSessionIds": 1,
+      "evidenceCount": 1,
+      "recallAt3": 0,
+      "recallAt12": 0,
+      "completeAt3": false,
+      "completeAt12": false,
+      "candidates": 0,
+      "indexedFiles": 51,
+      "ingestMs": 5034.649582999991,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 51,
+      "sourceBodyHash": "749cd7eb40eeea9a3541261dc86cb1add5d1cc6a54b8ccd793649f7c3da42888",
+      "ingestedHash": "d7265032773745c66fc90e98925a6bbe754253eb2dfcff5aa5e0e48f87e8a2e9",
+      "repeats": [
+        {
+          "elapsedMs": 2042.8001250000088,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 2021.4379999999946,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 1977.9468329999945,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "d52b4f67",
+      "category": "single-session-user",
+      "sessions": 52,
+      "duplicateSessionIds": 0,
+      "evidenceCount": 1,
+      "recallAt3": 0,
+      "recallAt12": 0,
+      "completeAt3": false,
+      "completeAt12": false,
+      "candidates": 0,
+      "indexedFiles": 52,
+      "ingestMs": 4815.811041000008,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 52,
+      "sourceBodyHash": "fa6d50438a80f6654eba9c894fc65f0440d483bd34414cc786522216a94cac31",
+      "ingestedHash": "292c924b33c1d23c5dc3a88838303b3ae8a9e901f0f7ec360e9841958fd21796",
+      "repeats": [
+        {
+          "elapsedMs": 1951.1260830000392,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 1949.1908750000293,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 1992.1750000000466,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "29f2956b",
+      "category": "single-session-user",
+      "sessions": 47,
+      "duplicateSessionIds": 0,
+      "evidenceCount": 1,
+      "recallAt3": 0,
+      "recallAt12": 0,
+      "completeAt3": false,
+      "completeAt12": false,
+      "candidates": 0,
+      "indexedFiles": 47,
+      "ingestMs": 4597.870207999949,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 47,
+      "sourceBodyHash": "5b7014a0cb4f997f957f689860aa35533a92db06bf4e7c70edd07cd322c10292",
+      "ingestedHash": "0c4f5f58b0e3017fdf351e0289ef1a04a2f7bcfa00882d87f5462af44d0100dd",
+      "repeats": [
+        {
+          "elapsedMs": 1939.5086250000168,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 1930.0358329999726,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 1943.7005000000354,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "gpt4_6ed717ea",
+      "category": "temporal-reasoning",
+      "sessions": 46,
+      "duplicateSessionIds": 0,
+      "evidenceCount": 2,
+      "recallAt3": 0,
+      "recallAt12": 0,
+      "completeAt3": false,
+      "completeAt12": false,
+      "candidates": 0,
+      "indexedFiles": 46,
+      "ingestMs": 4587.385791999986,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 46,
+      "sourceBodyHash": "4f1a7338b298bb96f58166b573986219bdf9400d7400415330d534aad26538a6",
+      "ingestedHash": "acc534d2018ec82f76fb7ee490f00cc315549560f47be04a75f76977403bc64a",
+      "repeats": [
+        {
+          "elapsedMs": 1940.5372500000522,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 1938.5421249999781,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 1937.3724999999977,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "gpt4_cd90e484",
+      "category": "temporal-reasoning",
+      "sessions": 52,
+      "duplicateSessionIds": 0,
+      "evidenceCount": 2,
+      "recallAt3": 0,
+      "recallAt12": 0,
+      "completeAt3": false,
+      "completeAt12": false,
+      "candidates": 0,
+      "indexedFiles": 52,
+      "ingestMs": 4676.621584000008,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 52,
+      "sourceBodyHash": "141f36772a6dc214d3d574d51b51fb5d5967e110a4493088a006bc326582bc19",
+      "ingestedHash": "c5cb3506364f45fb9ed3ab3eb2baab32290d08bbc7d192ddc6597a7fead464b1",
+      "repeats": [
+        {
+          "elapsedMs": 1950.8896249999525,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 1935.8609999999753,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 1951.7147910000058,
+          "outputBytes": 121,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    }
+  ],
+  "summary": {
+    "metricDenominator": "Successful answerable cases only; failed cases must be included separately before comparisons",
+    "cases": 14,
+    "failedCases": 0,
+    "answerable": 12,
+    "recallAt3": 0,
+    "recallAt12": 0,
+    "completeAt3": 0,
+    "completeAt12": 0,
+    "abstentionCases": 2,
+    "abstentionWithCandidates": 0,
+    "medianIngestMs": 9044.316917000018,
+    "medianWarmSearchMs": 3819.8023329999996,
+    "medianWarmOutputBytes": 121
+  },
+  "limitations": [
+    "Development pilot only; not answer-accuracy or full memory-system evaluation.",
+    "Text-only native search, no Basic Memory semantic vectors or reranking; source sessions are separate Markdown notes.",
+    "Search timing includes CLI startup and SQLite setup on each call; not directly comparable with in-process Graphmory timings.",
+    "Candidates mapped only when Basic Memory result output exposes the generated session note path; unmapped results remain in candidateCount."
+  ]
+}

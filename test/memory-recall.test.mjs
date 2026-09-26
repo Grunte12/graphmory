@@ -3,7 +3,7 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import test from "node:test"
-import { filterByScope, fuseRankedLanes, loadVaultDocuments, recallVault } from "../src/memory-recall.mjs"
+import { filterByScope, fuseRankedLanes, loadVaultDocuments, recallVault, recallVaultLoop } from "../src/memory-recall.mjs"
 import { parseMarkdown } from "../src/retrieval.mjs"
 
 test("scoped recall prunes unrelated notes before applying maxFiles", () => {
@@ -44,4 +44,19 @@ test("rank fusion uses standard reciprocal rank fusion damping", () => {
   ])
   assert.equal(fused[0].fusedScore, 1 / 61 + 1 / 62)
   assert.equal(fused[0].lanes.length, 2)
+})
+
+test("recall keeps navigation pages available on request without spending answer slots on them", () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-answer-slots-"))
+  try {
+    fs.writeFileSync(path.join(vault, "Index.md"), "---\ncanonical_memory: false\n---\n# Rollback protocol index\nrollback protocol [[Policy]] [[Evidence]]\n")
+    fs.writeFileSync(path.join(vault, "Policy.md"), "# Rollback policy\nrollback protocol [[Index]]\n")
+    fs.writeFileSync(path.join(vault, "Evidence.md"), "# Recovery evidence\nrollback protocol [[Index]]\n")
+    for (const run of [recallVault, recallVaultLoop]) {
+      const answer = run(vault, "rollback protocol", { k: 3 }).results.map((item) => item.path)
+      const navigation = run(vault, "rollback protocol", { k: 3, includeNavigation: true }).results.map((item) => item.path)
+      assert.deepEqual(new Set(answer), new Set(["Policy.md", "Evidence.md"]))
+      assert.ok(navigation.includes("Index.md"))
+    }
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
 })
