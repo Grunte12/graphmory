@@ -30,13 +30,13 @@ mkdir -p "<project>/.agents/skills"
 cp -R skills/memory-curator "<project>/.agents/skills/"
 ```
 
-Substitute the Cursor or Claude Code project directory from the table when appropriate. Restart or reload the agent session after copying. In curator mode, confirm the agent can discover `memory-curator` before configuring a sub-agent. Jev/local decision modes can use the CLI without a curator sub-agent.
+Substitute the Cursor or Claude Code project directory from the table when appropriate. Restart or reload the agent session after copying. In curator mode, confirm the agent can discover `memory-curator` before configuring a sub-agent. The default workflow needs no Jev account or additional model API key. Jev/local decision modes remain optional advanced setups.
 
 The host locations follow [Codex's repository skill convention](https://developers.openai.com/blog/skills-agents-sdk), [Cursor's skill directories](https://prod.cursor.com/help/customization/skills), and [Claude Code's directory reference](https://code.claude.com/docs/en/claude-directory). Cursor also discovers `.agents/skills/`, but use its native `.cursor/skills/` path when testing Cursor by itself. Keep only one installed copy per host scope to avoid duplicate discovery.
 
 ## 3. Configure retrieval
 
-Run the human-facing menu once:
+Run the human-facing menu once. Choose `1 Curator sub-agent` for the host-managed setup:
 
 ```sh
 graphmory config
@@ -52,7 +52,9 @@ The result is one compact JSON line. The agent should open only relevant returne
 
 ## 4. Register a curator subagent only if desired
 
-The skill works with the lead agent alone. For a dedicated curator, use `adapters/opencode/memory-curator-prompt.md` as the role prompt and give the curator filesystem read access plus permission to run `graphmory`. Keep the lead agent responsible for authoring Memory Patches. Configure the curator's model in the host's own agent settings: the model identifier saved by `graphmory config` is routing metadata and does not create or select a Codex, Cursor, or Claude subagent automatically. Start with the host's default subagent model, then select a cheaper model only after checking Brain Brief quality.
+The skill works with the lead agent alone. For a dedicated curator, use `adapters/opencode/memory-curator-prompt.md` as the role prompt and give the curator filesystem read access plus permission to run `graphmory`. Keep the lead agent responsible for authoring Memory Patches. Configure the curator's model in the host's own agent settings: the model identifier saved by `graphmory config` is routing metadata and does not create or select a Codex, Cursor, or Claude subagent automatically. Start with a low-cost model available in that host (for example Luna in Codex or Haiku in Claude Code), then check Brain Brief and patch-placement quality. The host may expose a model alias rather than a full model ID; use the name its own agent settings accept. Cursor and OpenCode users can choose any supported curator model.
+
+For a Memory Patch, the lead agent supplies the claim, scope, and source IDs. The curator searches only likely destinations and checks current note contents before applying an edit. This second search is for placement and conflict detection, so it can reuse candidate paths found earlier but must not trust stale excerpts. Keep the curator's stable instructions ahead of the changing patch and excerpts to preserve any prompt caching the host/provider offers; compare reported cache usage and actual cost before claiming savings.
 
 ## 5. Smoke check
 

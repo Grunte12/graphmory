@@ -761,15 +761,17 @@ async function configureRuntime() {
   const ask = async (label, current) => (await input.question(`${label} [${current}]: `)).trim() || current
   try {
     console.log("Graphmory · setup")
-    console.log("1 Curator only   2 Hosted Jev decision gate   3 Local System One decision gate   4 Local retrieval reranker")
+    console.log("1 Curator sub-agent (recommended; uses a model available in your coding agent host)")
+    console.log("Advanced: 2 Hosted Jev API   3 Local decision model   4 Local reranker")
     const selected = await ask("Workflow", { curator: "1", "hosted-jev": "2", "local-decision": "3", "local-rerank": "4" }[config.workflow])
     const workflows = { "1": "curator", "2": "hosted-jev", "3": "local-decision", "4": "local-rerank" }
     if (!workflows[selected]) throw new Error("Choose workflow 1, 2, 3, or 4")
     config.workflow = workflows[selected]
     if (config.workflow === "curator") {
       config.curator ??= { provider: "openai", model: "gpt-6-luna" }
+      console.log("Curator examples: Codex → Luna; Claude Code → Haiku; Cursor/OpenCode → a low-cost model available in that host.")
       config.curator.provider = await ask("Curator provider (openai/anthropic/google/other)", config.curator.provider)
-      config.curator.model = await ask("Curator model", config.curator.model)
+      config.curator.model = await ask("Curator model in your agent host", config.curator.model)
     }
     if (config.workflow === "hosted-jev") {
       const gateway = config.decision.endpoint === "https://ai-gateway.vercel.sh/typesafe/v1/systemone"
@@ -815,6 +817,7 @@ async function configureRuntime() {
     console.log(config.workflow === "curator"
       ? `Workflow: curator; agent: ${config.curator.provider}/${config.curator.model}`
       : `Workflow: ${config.workflow}; decision model: ${config.decision.model}; evidence goes directly to the lead agent`)
+    if (config.workflow === "curator") console.log("Next: register the curator sub-agent with this model in your coding agent. Graphmory saves routing metadata; it does not change host agent settings. See docs/guides/agent-hosts.md.")
   } finally {
     input.close()
   }
