@@ -92,6 +92,28 @@ test("forced traversal ranks actual neighbors and no-neighbor queries retain lex
   } finally { fs.rmSync(solo, { recursive: true, force: true }) }
 })
 
+test("navigation index can bridge two hops without occupying an evidence slot", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-route-index-"))
+  try {
+    fs.writeFileSync(path.join(vault, "Seed.md"), "# Zephyr architecture\n[[Index]]\n")
+    fs.writeFileSync(path.join(vault, "Index.md"), "---\ncanonical_memory: false\n---\n# Index\n[[Answer]]\n")
+    fs.writeFileSync(path.join(vault, "Answer.md"), "# Evidence\nThe Zephyr design uses a bounded route.\n")
+    const result = await recallVaultAdaptive(vault, "Zephyr architecture", { graphPolicy: "force", maxRounds: 2 })
+    assert.ok(result.expansionSources.some((item) => item.path === "Index.md"))
+    assert.ok(result.expansionSources.some((item) => item.path === "Answer.md"))
+    assert.ok(result.candidatePool.includes("Answer.md"))
+    assert.equal(result.candidatePool.includes("Index.md"), false)
+    assert.equal(result.results.some((item) => item.path === "Index.md"), false)
+    const navigationOnly = await recallVaultAdaptive(vault, "Index", { assessEvidence: async ({ candidates }) => {
+      const index = candidates.find((item) => item.path === "Index.md")
+      assert.equal(index.role, "navigation")
+      return { status: "enough", evidenceIds: [index.path] }
+    } })
+    assert.ok(navigationOnly.rounds > 0)
+    assert.notEqual(navigationOnly.stopReason, "assessor-enough")
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
+})
+
 test("assessor sees bounded evidence and an unknown query never claims sufficiency", async () => {
   const vault = makeVault()
   try {

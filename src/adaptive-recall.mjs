@@ -7,6 +7,10 @@ import { relevantExcerpt } from "./decision-recall.mjs"
 const ACTIONS = new Set(["enough", "partial", "none", "conflict"])
 const DIRECTIONS = new Set(["outgoing", "backlinks", "both"])
 
+function isAnswerCandidate(document) {
+  return String(document?.metadata?.canonical_memory ?? "").toLowerCase() !== "false"
+}
+
 export function graphNavigationIntent(query) {
   const text = query.toLocaleLowerCase("en")
   if (!/(?:\bother\s+(?:papers|notes|documents|sources|files)\b|\b(?:papers|notes|documents|sources|files)\s+(?:associated|related|linked|connected)\b|\b(?:backlinks|wikilinks)\b|(?:โน้ต|บันทึก|เอกสาร|งานวิจัย).*(?:เกี่ยวข้อง|เชื่อมโยง|อ้างถึง))/u.test(text)) return null
@@ -39,7 +43,7 @@ export async function recallVaultAdaptive(vault, query, {
   const initial = fuseRankedLanes(["bm25", "bm25f-focused-sections"].map((method) => ({
     method, results: governedRank(documents, query, method).results.slice(0, maxCandidates),
   }))).slice(0, maxCandidates)
-  const baseline = initial.slice(0, k)
+  const baseline = initial.filter((item) => isAnswerCandidate(item)).slice(0, k)
   const intent = graphNavigationIntent(query)
   const navigate = Boolean(assessEvidence) || graphPolicy === "force" || graphPolicy === "auto" && Boolean(intent)
   const pool = new Map(initial.slice(0, navigate ? Math.min(Math.max(4, k), maxCandidates) : maxCandidates).map((item) => [item.id, {
@@ -59,10 +63,12 @@ export async function recallVaultAdaptive(vault, query, {
       decisionCalls++
       const evidenceItems = [...new Map([...pool.values()].slice(0, 2).concat(frontier).map((item) => [item.path, item])).values()].slice(0, 6)
       const boundedEvidence = evidenceItems.map(({ path, depth, via }) => {
-        const excerpt = relevantExcerpt(graph.byId.get(path), query).slice(0, 800)
-        return { path, depth, via, excerpt, excerptHash: createHash("sha256").update(excerpt).digest("hex") }
+        const document = graph.byId.get(path)
+        const excerpt = relevantExcerpt(document, query).slice(0, 800)
+        return { path, depth, via, role: isAnswerCandidate(document) ? "evidence" : "navigation",
+          excerpt, excerptHash: createHash("sha256").update(excerpt).digest("hex") }
       })
-      assessedEvidence = boundedEvidence.map(({ path, excerptHash }) => ({ path, excerptHash }))
+      assessedEvidence = boundedEvidence.map(({ path, role, excerptHash }) => ({ path, role, excerptHash }))
       const controller = new AbortController()
       let timer
       try {
@@ -75,6 +81,10 @@ export async function recallVaultAdaptive(vault, query, {
       if (assessment.status === "enough" && (!Array.isArray(assessment.evidenceIds) || !assessment.evidenceIds.length
         || assessment.evidenceIds.some((id) => !assessedEvidence.some((item) => item.path === id)))) {
         throw new Error("Enough assessment must cite assessed evidence IDs")
+      }
+      if (assessment.status === "enough" && assessment.evidenceIds.some((id) => assessedEvidence.some((item) => item.path === id && item.role === "navigation"))) {
+        // An index may route the next hop, but it cannot finish evidence review.
+        assessment = { ...assessment, status: "partial" }
       }
       if (assessment.status === "enough" || assessment.status === "conflict") {
         stopReason = assessment.status === "enough" ? "assessor-enough" : "assessor-conflict"
@@ -155,8 +165,11 @@ export async function recallVaultAdaptive(vault, query, {
     const canonicalB = graph.byId.get(b.path)?.metadata?.canonical_memory === "true" || graph.byId.get(b.path)?.metadata?.canonical_memory === true
     return Number(canonicalB) - Number(canonicalA) || (destinationRelevance.get(b.path) ?? 0) - (destinationRelevance.get(a.path) ?? 0) || b.score - a.score || a.path.localeCompare(b.path)
   })
-  const ranked = expanded.length && navigate ? (intent?.excludeSeed ? [...expanded, ...lexical.slice(1)] : [lexical[0], ...expanded, ...lexical.slice(1)]) : lexical
-  const candidatePool = [...ranked.map((item) => item.path), ...[...pool.keys()].filter((id) => !ranked.some((item) => item.path === id))]
+  const rankedWithRoutes = expanded.length && navigate ? (intent?.excludeSeed ? [...expanded, ...lexical.slice(1)] : [lexical[0], ...expanded, ...lexical.slice(1)]) : lexical
+  // MOCs and derived indexes stay in the traversal pool, but cannot crowd out
+  // source notes in the evidence returned to the lead agent.
+  const ranked = rankedWithRoutes.filter((item) => isAnswerCandidate(graph.byId.get(item.path)))
+  const candidatePool = [...ranked.map((item) => item.path), ...[...pool.keys()].filter((id) => !ranked.some((item) => item.path === id) && isAnswerCandidate(graph.byId.get(id)))]
   return {
     query, workflow: "adaptive-graph-experiment", results: ranked.slice(0, k),
     baseline: baseline.map(({ id }) => id), candidatePool,
