@@ -10,25 +10,48 @@ export async function managedRecall(vault, query, config, {
   scope = "",
   semanticExpansion = false,
   evidencePreview = false,
+  bundleBytes = 0,
+  adaptiveBundle = false,
   semanticRecallImpl = recallVaultSemantic,
   fetchImpl = fetch,
 } = {}) {
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be 1–10")
   if (!Number.isInteger(offset) || offset < 0) throw new Error("offset must be a non-negative integer")
+  if (!Number.isInteger(bundleBytes) || (bundleBytes !== 0 && (bundleBytes < 2000 || bundleBytes > 65536))) throw new Error("bundleBytes must be 0 or 2000–65536")
+  if (bundleBytes && adaptiveBundle) throw new Error("Choose bundleBytes or adaptiveBundle")
+  if (bundleBytes && config.workflow !== "curator") throw new Error("Evidence bundles are supported only in curator mode")
+  if (adaptiveBundle && config.workflow !== "curator") throw new Error("Adaptive bundles are supported only in curator mode")
   if (config.workflow !== "curator" && offset !== 0) throw new Error("offset is supported only in curator mode")
   const limit = config.decision.maxCandidates
   const vaultDocuments = loadVaultDocuments(vault, { scope })
   const methods = retrievalMethods(config.retrievalProfile)
   if (config.workflow === "curator") {
-    const page = recallVaultLoop(vault, query, { k, offset, scope, perMethodLimit: vaultDocuments.length, shortlistLimit: limit, documents: vaultDocuments, methods })
-    const documentsByPath = evidencePreview ? new Map(vaultDocuments.map((item) => [item.id, item])) : null
+    const page = recallVaultLoop(vault, query, { k: bundleBytes || adaptiveBundle ? Math.max(1, vaultDocuments.length) : k, offset, scope,
+      perMethodLimit: vaultDocuments.length, shortlistLimit: limit, documents: vaultDocuments, methods,
+      allowLargePage: Boolean(bundleBytes || adaptiveBundle) })
+    const adaptiveMode = adaptiveBundle ? chooseAdaptiveMode(query, page.results.slice(0, 10)) : null
+    const effectiveBundleBytes = bundleBytes || (adaptiveMode === "wide" ? 32000 : 0)
+    const documentsByPath = evidencePreview || bundleBytes || adaptiveBundle ? new Map(vaultDocuments.map((item) => [item.id, item])) : null
+    const results = []
+    let bundleUsedBytes = 0
+    for (const { path, title, score, status } of page.results) {
+      if (adaptiveMode === "focused" && results.length >= 10) break
+      const result = { path, title, score, status,
+        ...(documentsByPath?.has(path) ? { evidencePreview: curatorEvidencePreview(documentsByPath.get(path), query) } : {}),
+      }
+      const bytes = Buffer.byteLength(JSON.stringify(result), "utf8")
+      if (effectiveBundleBytes && results.length && bundleUsedBytes + bytes > effectiveBundleBytes) break
+      results.push(result)
+      bundleUsedBytes += bytes
+    }
+    const hasMore = bundleBytes || adaptiveBundle ? offset + results.length < page.totalCandidates : page.hasMore
     return {
       query, workflow: "curator", curator: config.curator,
       confidence: page.confidence, retrievalConfidence: page.confidence, needsExpansion: page.needsExpansion, scanLimitReached: page.scanLimitReached,
-      offset: page.offset, totalCandidates: page.totalCandidates, hasMore: page.hasMore, nextOffset: page.nextOffset,
-      results: page.results.map(({ path, title, score, status }) => ({ path, title, score, status,
-        ...(documentsByPath?.has(path) ? { evidencePreview: curatorEvidencePreview(documentsByPath.get(path), query) } : {}),
-      })),
+      offset: page.offset, totalCandidates: page.totalCandidates, hasMore, nextOffset: hasMore ? offset + results.length : null,
+      ...(effectiveBundleBytes ? { bundleBytes: effectiveBundleBytes, bundleUsedBytes } : {}),
+      ...(adaptiveMode ? { adaptiveMode } : {}),
+      results,
       nextSteps: page.nextSteps.slice(0, 2),
     }
   }
@@ -93,6 +116,13 @@ export async function managedRecall(vault, query, config, {
     candidateCount: results.length,
     nextSteps: passing.length ? [] : ["No candidate passed the relevance gate. Narrow the scope or reformulate the query; optionally enable --semantic-expansion."],
   }
+}
+
+export function chooseAdaptiveMode(query, firstResults) {
+  const exhaustive = /\b(how many|how much|how often|list|all|every|across|compare|differences|changes over time)\b|กี่|ทั้งหมด|เปรียบเทียบ/iu.test(query)
+  const signatures = firstResults.map((item) => tokenize(item.title).filter((term) => !/^\d+$/u.test(term)).join(" "))
+  const genericTitles = signatures.length >= 5 && new Set(signatures).size <= 2
+  return exhaustive || genericTitles ? "wide" : "focused"
 }
 
 export function curatorEvidencePreview(document, query) {

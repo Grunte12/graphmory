@@ -3,7 +3,7 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import test from "node:test"
-import { curatorEvidencePreview, managedRecall } from "../src/decision-recall.mjs"
+import { chooseAdaptiveMode, curatorEvidencePreview, managedRecall } from "../src/decision-recall.mjs"
 import { loadVaultDocuments, recallVaultLoop } from "../src/memory-recall.mjs"
 import { DEFAULT_RUNTIME_CONFIG, loadRuntimeConfig, saveRuntimeConfig, validateRuntimeConfig, retrievalMethods } from "../src/runtime-config.mjs"
 
@@ -55,6 +55,52 @@ test("optional curator previews keep every candidate and prefer matched user evi
     assert.ok(all.every((item) => item.evidencePreview.every((section) => section.text.length <= 350)))
     assert.ok(baseline.results.every((item) => !Object.hasOwn(item, "evidencePreview")))
   } finally { fs.rmSync(vault, { recursive: true, force: true }) }
+})
+
+test("byte-budgeted curator bundle preserves ranking and continuation across note layouts", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-curator-bundle-"))
+  try {
+    for (let index = 0; index < 25; index++) {
+      const markdown = index % 2
+        ? `# Project note ${index}\n## Decision\nProject memory evidence: choose the current API.`
+        : `# Conversation ${index}\n## user\nProject memory evidence for the release.\n## assistant\nAcknowledged.`
+      fs.writeFileSync(path.join(vault, `note-${index}.md`), markdown)
+    }
+    const baseline = []
+    for (let offset = 0; ; offset += 10) {
+      const page = await managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG, { offset })
+      baseline.push(...page.results.map((item) => item.path))
+      if (!page.hasMore) break
+    }
+    const bundled = []
+    let offset = 0
+    do {
+      const page = await managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG, { offset, bundleBytes: 2000 })
+      assert.equal(page.totalCandidates, baseline.length)
+      assert.ok(page.results.length > 0)
+      assert.ok(page.bundleUsedBytes <= page.bundleBytes)
+      assert.ok(page.results.every((item) => item.evidencePreview.length > 0))
+      bundled.push(...page.results.map((item) => item.path))
+      if (!page.hasMore) break
+      assert.ok(page.nextOffset > offset)
+      offset = page.nextOffset
+    } while (true)
+    assert.deepEqual(bundled, baseline)
+    assert.equal(new Set(bundled).size, 25)
+    const adaptive = await managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG, { adaptiveBundle: true })
+    assert.equal(adaptive.adaptiveMode, "wide")
+    assert.ok(adaptive.results.length > 10)
+    await assert.rejects(managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG, { bundleBytes: 1999 }), /bundleBytes/u)
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
+})
+
+test("adaptive routing keeps descriptive, narrow lookups small and expands exhaustive questions", () => {
+  const descriptive = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa"]
+    .map((name) => ({ title: `Distinct architecture concept ${name}` }))
+  assert.equal(chooseAdaptiveMode("Which paper explains memory layers?", descriptive), "focused")
+  assert.equal(chooseAdaptiveMode("List all memory layers", descriptive), "wide")
+  const generic = Array.from({ length: 10 }, (_, index) => ({ title: `Conversation ${index + 1}` }))
+  assert.equal(chooseAdaptiveMode("What happened to the project?", generic), "wide")
 })
 
 test("runtime configuration persists without a secret and validates endpoint isolation", () => {

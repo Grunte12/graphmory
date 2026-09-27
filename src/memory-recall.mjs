@@ -93,9 +93,10 @@ export function recallVaultLoop(vault, query, {
   shortlistLimit = 0,
   rerank = false,
   documents: suppliedDocuments,
+  allowLargePage = false,
 } = {}) {
   if (!query?.trim()) throw new Error("query is required")
-  if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be between 1 and 10")
+  if (!Number.isInteger(k) || k < 1 || k > (allowLargePage ? maxFiles : 10)) throw new Error(`k must be between 1 and ${allowLargePage ? maxFiles : 10}`)
   if (!Number.isInteger(offset) || offset < 0) throw new Error("offset must be a non-negative integer")
   const documents = suppliedDocuments ?? loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
   const lanes = methods.map((method) => {
