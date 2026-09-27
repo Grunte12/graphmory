@@ -5,7 +5,7 @@ import os from "node:os"
 import path from "node:path"
 import { spawnSync } from "node:child_process"
 
-function trial(t, { mutate = false, labels = false, basicMemory = false, graphPaths = false, graphPreviewControl = false, graphAutoControl = false, wrongVersion = false, noAnswer = false, partial = false, orderOffset = 0 } = {}) {
+function trial(t, { mutate = false, labels = false, basicMemory = false, graphPaths = false, graphAutoPaths = false, graphPreviewControl = false, graphAutoControl = false, wrongVersion = false, noAnswer = false, partial = false, orderOffset = 0 } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-host-test-"))
   t.after(() => fs.rmSync(root, { recursive: true, force: true }))
   for (const dir of ["bin", "config", "workspace/vault"]) fs.mkdirSync(path.join(root, dir), { recursive: true })
@@ -25,6 +25,7 @@ console.log(JSON.stringify({type:'step_finish',part:{reason:${JSON.stringify(par
   fs.writeFileSync(path.join(root, "bin/opencode"), fake, { mode: 0o700 })
   const controlArgs = ["--order-offset", String(orderOffset)]
   if (graphPaths) controlArgs.push("--control", "graphmory-paths", "--graph-preview")
+  if (graphAutoPaths) controlArgs.push("--control", "graphmory-paths", "--graph-auto")
   if (graphPreviewControl) controlArgs.push("--control", "graphmory-preview", "--graph-bundle")
   if (graphAutoControl) controlArgs.push("--control", "graphmory-preview", "--graph-auto")
   if (basicMemory) {
@@ -124,6 +125,15 @@ test("bundle can be compared with the same Graphmory paged-preview reader", (t) 
   assert.equal(data.control, "graphmory-preview")
   assert.equal(data.graphBundle, true)
   assert.deepEqual(data.rows.map((row) => row.arm), ["graphmory", "graphmory-preview", "graphmory-preview", "graphmory"])
+})
+
+test("adaptive retrieval can be compared with the same path-only reader", (t) => {
+  const { result, report } = trial(t, { graphAutoPaths: true })
+  assert.equal(result.status, 0, result.stderr)
+  const data = JSON.parse(fs.readFileSync(report))
+  assert.equal(data.control, "graphmory-paths")
+  assert.equal(data.graphAuto, true)
+  assert.deepEqual(data.rows.map((row) => row.arm), ["graphmory", "graphmory-paths", "graphmory-paths", "graphmory"])
 })
 
 test("adaptive retrieval can be compared with the same paged-preview reader", (t) => {

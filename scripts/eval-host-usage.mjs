@@ -28,7 +28,7 @@ if (!["plain", "basic-memory-text", "graphmory-paths", "graphmory-preview"].incl
 const graphPreview = args.includes("--graph-preview")
 const graphBundle = args.includes("--graph-bundle")
 const graphAuto = args.includes("--graph-auto")
-if (control === "graphmory-paths" && !graphPreview) throw new Error("graphmory-paths control requires --graph-preview")
+if (control === "graphmory-paths" && !(graphPreview || graphBundle || graphAuto)) throw new Error("graphmory-paths control requires a Graphmory treatment flag")
 if (control === "graphmory-preview" && !(graphBundle || graphAuto)) throw new Error("graphmory-preview control requires --graph-bundle or --graph-auto")
 if ([graphPreview, graphBundle, graphAuto].filter(Boolean).length > 1) throw new Error("Choose one Graphmory treatment")
 let basicMemory = null
