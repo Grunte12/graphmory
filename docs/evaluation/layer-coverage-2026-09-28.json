@@ -243,7 +243,10 @@
         "docs/evaluation/curator-continuation-experiment-2026-09-28.md",
         "eval/reader-pilot/curator-paging-live-2026-09-28.json",
         "eval/reader-pilot/curator-auto-v1-failed-2026-09-28.json",
-        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json"
+        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json",
+        "docs/evaluation/longmemeval-cli-delivery-2026-09-28.md",
+        "eval/reader-pilot/longmemeval-cli-delivery-initial-2026-09-28.json",
+        "eval/reader-pilot/longmemeval-cli-delivery-pagebytes-2026-09-28.json"
       ],
       "source_ids": [
         "locomo",
@@ -303,7 +306,10 @@
         "docs/evaluation/curator-continuation-experiment-2026-09-28.md",
         "eval/reader-pilot/curator-paging-live-2026-09-28.json",
         "eval/reader-pilot/curator-auto-v1-failed-2026-09-28.json",
-        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json"
+        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json",
+        "docs/evaluation/longmemeval-cli-delivery-2026-09-28.md",
+        "eval/reader-pilot/longmemeval-cli-delivery-initial-2026-09-28.json",
+        "eval/reader-pilot/longmemeval-cli-delivery-pagebytes-2026-09-28.json"
       ],
       "source_ids": [
         "bfcl_memory",
@@ -547,7 +553,10 @@
         "docs/evaluation/curator-continuation-experiment-2026-09-28.md",
         "eval/reader-pilot/curator-paging-live-2026-09-28.json",
         "eval/reader-pilot/curator-auto-v1-failed-2026-09-28.json",
-        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json"
+        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json",
+        "docs/evaluation/longmemeval-cli-delivery-2026-09-28.md",
+        "eval/reader-pilot/longmemeval-cli-delivery-initial-2026-09-28.json",
+        "eval/reader-pilot/longmemeval-cli-delivery-pagebytes-2026-09-28.json"
       ],
       "source_ids": [
         "openai_cache",
@@ -584,7 +593,8 @@
         "scripts/lib/locomo.mjs",
         "scripts/lib/longmemeval.mjs",
         "scripts/eval-live-agent-score.mjs",
-        "scripts/eval-host-usage.mjs"
+        "scripts/eval-host-usage.mjs",
+        "scripts/eval-longmemeval-cli-delivery.mjs"
       ],
       "tests": [
         "test/live-agent-score.test.mjs",
@@ -605,7 +615,10 @@
         "docs/evaluation/curator-continuation-experiment-2026-09-28.md",
         "eval/reader-pilot/curator-paging-live-2026-09-28.json",
         "eval/reader-pilot/curator-auto-v1-failed-2026-09-28.json",
-        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json"
+        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json",
+        "docs/evaluation/longmemeval-cli-delivery-2026-09-28.md",
+        "eval/reader-pilot/longmemeval-cli-delivery-initial-2026-09-28.json",
+        "eval/reader-pilot/longmemeval-cli-delivery-pagebytes-2026-09-28.json"
       ],
       "source_ids": [
         "locomo",
@@ -639,5 +652,6 @@
     "evidence_class": "regression",
     "note": "Does not establish live answer correctness or competitor superiority"
   },
-  "latest_live_development": "One exposed LoCoMo question, bundle and paged/failed protocols; raw pinned QA function scores exist but full official split and independently adjudicated supported-complete remain unmeasured."
+  "latest_live_development": "One exposed LoCoMo question, bundle and paged/failed protocols; raw pinned QA function scores exist but full official split and independently adjudicated supported-complete remain unmeasured.",
+  "latest_cross_dataset_development": "LongMemEval exposed development, 14 cases x 4 CLI modes, 56/56 protocol-complete; 12/12 answerable first-page gold session reachability across modes; no answer-model or official full benchmark score."
 }

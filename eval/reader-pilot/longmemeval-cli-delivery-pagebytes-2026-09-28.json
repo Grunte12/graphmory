@@ -1,0 +1,2231 @@
+{
+  "protocol": "longmemeval-actual-cli-delivery-development-v1",
+  "sourceSha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "developmentArtifact": "eval/longmemeval/development-v2.json",
+  "selection": "First two already selected exposed development IDs from each category, including abstention; not a fresh or random holdout",
+  "selectedIds": [
+    "09ba9854_abs",
+    "a96c20ee_abs",
+    "50635ada",
+    "945e3d21",
+    "67e0d0f2",
+    "gpt4_d84a3211",
+    "a40e080f",
+    "c7cf7dfd",
+    "07b6f563",
+    "caf03d32",
+    "d52b4f67",
+    "29f2956b",
+    "gpt4_6ed717ea",
+    "gpt4_cd90e484"
+  ],
+  "expected": [
+    {
+      "id": "09ba9854_abs",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "09ba9854_abs",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "09ba9854_abs",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "09ba9854_abs",
+      "profile": "conversations",
+      "mode": "bundle"
+    },
+    {
+      "id": "a96c20ee_abs",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "a96c20ee_abs",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "a96c20ee_abs",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "a96c20ee_abs",
+      "profile": "conversations",
+      "mode": "bundle"
+    },
+    {
+      "id": "50635ada",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "50635ada",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "50635ada",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "50635ada",
+      "profile": "conversations",
+      "mode": "bundle"
+    },
+    {
+      "id": "945e3d21",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "945e3d21",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "945e3d21",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "945e3d21",
+      "profile": "conversations",
+      "mode": "bundle"
+    },
+    {
+      "id": "67e0d0f2",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "67e0d0f2",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "67e0d0f2",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "67e0d0f2",
+      "profile": "conversations",
+      "mode": "bundle"
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "profile": "conversations",
+      "mode": "bundle"
+    },
+    {
+      "id": "a40e080f",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "a40e080f",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "a40e080f",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "a40e080f",
+      "profile": "conversations",
+      "mode": "bundle"
+    },
+    {
+      "id": "c7cf7dfd",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "c7cf7dfd",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "c7cf7dfd",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "c7cf7dfd",
+      "profile": "conversations",
+      "mode": "bundle"
+    },
+    {
+      "id": "07b6f563",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "07b6f563",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "07b6f563",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "07b6f563",
+      "profile": "conversations",
+      "mode": "bundle"
+    },
+    {
+      "id": "caf03d32",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "caf03d32",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "caf03d32",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "caf03d32",
+      "profile": "conversations",
+      "mode": "bundle"
+    },
+    {
+      "id": "d52b4f67",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "d52b4f67",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "d52b4f67",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "d52b4f67",
+      "profile": "conversations",
+      "mode": "bundle"
+    },
+    {
+      "id": "29f2956b",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "29f2956b",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "29f2956b",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "29f2956b",
+      "profile": "conversations",
+      "mode": "bundle"
+    },
+    {
+      "id": "gpt4_6ed717ea",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "gpt4_6ed717ea",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "gpt4_6ed717ea",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "gpt4_6ed717ea",
+      "profile": "conversations",
+      "mode": "bundle"
+    },
+    {
+      "id": "gpt4_cd90e484",
+      "profile": "mixed-notes",
+      "mode": "auto"
+    },
+    {
+      "id": "gpt4_cd90e484",
+      "profile": "mixed-notes",
+      "mode": "bundle"
+    },
+    {
+      "id": "gpt4_cd90e484",
+      "profile": "conversations",
+      "mode": "auto"
+    },
+    {
+      "id": "gpt4_cd90e484",
+      "profile": "conversations",
+      "mode": "bundle"
+    }
+  ],
+  "sourceHashes": {
+    "scripts/eval-longmemeval-cli-delivery.mjs": "b53e020fad60f4670d99a25422f2752f0c1ab567ca2a207469673130f97f201b",
+    "scripts/brain-sync.mjs": "10042aa96568345118d928d699c3d5d7e370404f9fe0a111cc4bd7a105f43b62",
+    "scripts/lib/longmemeval.mjs": "4ff4ac50d455d3004ee63870cb729d5a65bde4e5e8e6a87930848da3bcca8640",
+    "src/decision-recall.mjs": "ec5c8df19dc056c348920e59b0c28d18db686b59450d21238fdc54b32cebd5a8",
+    "src/memory-recall.mjs": "4f8765badf33121957f9d29c25cf0480c552606cfbb09676acf045c040bb703f"
+  },
+  "rows": [
+    {
+      "id": "09ba9854_abs",
+      "category": "abstention",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 50,
+      "abstention": true,
+      "requiredGroups": null,
+      "firstCompletePage": null,
+      "candidateCount": 50,
+      "outputBytes": 44113,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30564,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 18,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 13549,
+          "sourceReadRequired": 18,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "09ba9854_abs",
+      "category": "abstention",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 50,
+      "abstention": true,
+      "requiredGroups": null,
+      "firstCompletePage": null,
+      "candidateCount": 50,
+      "outputBytes": 44069,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30542,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 18,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 13527,
+          "sourceReadRequired": 18,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "09ba9854_abs",
+      "category": "abstention",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 50,
+      "abstention": true,
+      "requiredGroups": null,
+      "firstCompletePage": null,
+      "candidateCount": 50,
+      "outputBytes": 44113,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30877,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 18,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 13236,
+          "sourceReadRequired": 18,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "09ba9854_abs",
+      "category": "abstention",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 50,
+      "abstention": true,
+      "requiredGroups": null,
+      "firstCompletePage": null,
+      "candidateCount": 50,
+      "outputBytes": 44069,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30855,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 18,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 13214,
+          "sourceReadRequired": 18,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "a96c20ee_abs",
+      "category": "abstention",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 53,
+      "abstention": true,
+      "requiredGroups": null,
+      "firstCompletePage": null,
+      "candidateCount": 53,
+      "outputBytes": 42581,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 10,
+          "nextOffset": 10,
+          "hasMore": true,
+          "bytes": 10003,
+          "sourceReadRequired": 10,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 10,
+          "returned": 40,
+          "nextOffset": 50,
+          "hasMore": true,
+          "bytes": 29757,
+          "sourceReadRequired": 40,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 50,
+          "returned": 3,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 2821,
+          "sourceReadRequired": 3,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "a96c20ee_abs",
+      "category": "abstention",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 53,
+      "abstention": true,
+      "requiredGroups": null,
+      "firstCompletePage": null,
+      "candidateCount": 53,
+      "outputBytes": 42379,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 38,
+          "nextOffset": 38,
+          "hasMore": true,
+          "bytes": 30619,
+          "sourceReadRequired": 38,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 38,
+          "returned": 15,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 11760,
+          "sourceReadRequired": 15,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "a96c20ee_abs",
+      "category": "abstention",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 53,
+      "abstention": true,
+      "requiredGroups": null,
+      "firstCompletePage": null,
+      "candidateCount": 53,
+      "outputBytes": 42423,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 37,
+          "nextOffset": 37,
+          "hasMore": true,
+          "bytes": 30118,
+          "sourceReadRequired": 37,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 37,
+          "returned": 16,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 12305,
+          "sourceReadRequired": 16,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "a96c20ee_abs",
+      "category": "abstention",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 53,
+      "abstention": true,
+      "requiredGroups": null,
+      "firstCompletePage": null,
+      "candidateCount": 53,
+      "outputBytes": 42379,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 37,
+          "nextOffset": 37,
+          "hasMore": true,
+          "bytes": 30096,
+          "sourceReadRequired": 37,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 37,
+          "returned": 16,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 12283,
+          "sourceReadRequired": 16,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "50635ada",
+      "category": "knowledge-update",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 41982,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 10,
+          "nextOffset": 10,
+          "hasMore": true,
+          "bytes": 10142,
+          "sourceReadRequired": 10,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 10,
+          "returned": 36,
+          "nextOffset": 46,
+          "hasMore": true,
+          "bytes": 30567,
+          "sourceReadRequired": 36,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 46,
+          "returned": 2,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 1273,
+          "sourceReadRequired": 2,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "50635ada",
+      "category": "knowledge-update",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 41775,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 33,
+          "nextOffset": 33,
+          "hasMore": true,
+          "bytes": 30712,
+          "sourceReadRequired": 33,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 33,
+          "returned": 15,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 11063,
+          "sourceReadRequired": 15,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "50635ada",
+      "category": "knowledge-update",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 41819,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 33,
+          "nextOffset": 33,
+          "hasMore": true,
+          "bytes": 30671,
+          "sourceReadRequired": 33,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 33,
+          "returned": 15,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 11148,
+          "sourceReadRequired": 15,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "50635ada",
+      "category": "knowledge-update",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 41775,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 33,
+          "nextOffset": 33,
+          "hasMore": true,
+          "bytes": 30649,
+          "sourceReadRequired": 33,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 33,
+          "returned": 15,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 11126,
+          "sourceReadRequired": 15,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "945e3d21",
+      "category": "knowledge-update",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 40702,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 31,
+          "nextOffset": 31,
+          "hasMore": true,
+          "bytes": 30329,
+          "sourceReadRequired": 31,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 31,
+          "returned": 17,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 10373,
+          "sourceReadRequired": 17,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "945e3d21",
+      "category": "knowledge-update",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 40658,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 31,
+          "nextOffset": 31,
+          "hasMore": true,
+          "bytes": 30307,
+          "sourceReadRequired": 31,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 31,
+          "returned": 17,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 10351,
+          "sourceReadRequired": 17,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "945e3d21",
+      "category": "knowledge-update",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 40702,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 33,
+          "nextOffset": 33,
+          "hasMore": true,
+          "bytes": 30734,
+          "sourceReadRequired": 33,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 33,
+          "returned": 15,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 9968,
+          "sourceReadRequired": 15,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "945e3d21",
+      "category": "knowledge-update",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 40658,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 33,
+          "nextOffset": 33,
+          "hasMore": true,
+          "bytes": 30712,
+          "sourceReadRequired": 33,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 33,
+          "returned": 15,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 9946,
+          "sourceReadRequired": 15,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "67e0d0f2",
+      "category": "multi-session",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 52,
+      "outputBytes": 45194,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 10,
+          "nextOffset": 10,
+          "hasMore": true,
+          "bytes": 9517,
+          "sourceReadRequired": 10,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 10,
+          "returned": 34,
+          "nextOffset": 44,
+          "hasMore": true,
+          "bytes": 30298,
+          "sourceReadRequired": 34,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 44,
+          "returned": 8,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 5379,
+          "sourceReadRequired": 7,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "67e0d0f2",
+      "category": "multi-session",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 52,
+      "outputBytes": 44947,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 31,
+          "nextOffset": 31,
+          "hasMore": true,
+          "bytes": 30316,
+          "sourceReadRequired": 31,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 31,
+          "returned": 21,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 14631,
+          "sourceReadRequired": 20,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "67e0d0f2",
+      "category": "multi-session",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 52,
+      "outputBytes": 44991,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 31,
+          "nextOffset": 31,
+          "hasMore": true,
+          "bytes": 30519,
+          "sourceReadRequired": 31,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 31,
+          "returned": 21,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 14472,
+          "sourceReadRequired": 20,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "67e0d0f2",
+      "category": "multi-session",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 52,
+      "outputBytes": 44947,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 31,
+          "nextOffset": 31,
+          "hasMore": true,
+          "bytes": 30497,
+          "sourceReadRequired": 31,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 31,
+          "returned": 21,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 14450,
+          "sourceReadRequired": 20,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "category": "multi-session",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 4,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 42302,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 31,
+          "nextOffset": 31,
+          "hasMore": true,
+          "bytes": 30212,
+          "sourceReadRequired": 31,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 31,
+          "returned": 17,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 12090,
+          "sourceReadRequired": 17,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "category": "multi-session",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 4,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 42258,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 31,
+          "nextOffset": 31,
+          "hasMore": true,
+          "bytes": 30190,
+          "sourceReadRequired": 31,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 31,
+          "returned": 17,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 12068,
+          "sourceReadRequired": 17,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "category": "multi-session",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 4,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 42292,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30806,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 16,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 11486,
+          "sourceReadRequired": 16,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "category": "multi-session",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 4,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 42248,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30784,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 16,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 11464,
+          "sourceReadRequired": 16,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "a40e080f",
+      "category": "single-session-assistant",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 44017,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 30,
+          "nextOffset": 30,
+          "hasMore": true,
+          "bytes": 30389,
+          "sourceReadRequired": 30,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 30,
+          "returned": 18,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 13628,
+          "sourceReadRequired": 18,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "a40e080f",
+      "category": "single-session-assistant",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 43973,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 30,
+          "nextOffset": 30,
+          "hasMore": true,
+          "bytes": 30367,
+          "sourceReadRequired": 30,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 30,
+          "returned": 18,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 13606,
+          "sourceReadRequired": 18,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "a40e080f",
+      "category": "single-session-assistant",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 44017,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 31,
+          "nextOffset": 31,
+          "hasMore": true,
+          "bytes": 30657,
+          "sourceReadRequired": 31,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 31,
+          "returned": 17,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 13360,
+          "sourceReadRequired": 17,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "a40e080f",
+      "category": "single-session-assistant",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 48,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 48,
+      "outputBytes": 43973,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 31,
+          "nextOffset": 31,
+          "hasMore": true,
+          "bytes": 30635,
+          "sourceReadRequired": 31,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 31,
+          "returned": 17,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 13338,
+          "sourceReadRequired": 17,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "c7cf7dfd",
+      "category": "single-session-assistant",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 51,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 51,
+      "outputBytes": 45177,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 10,
+          "nextOffset": 10,
+          "hasMore": true,
+          "bytes": 9723,
+          "sourceReadRequired": 10,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 10,
+          "returned": 34,
+          "nextOffset": 44,
+          "hasMore": true,
+          "bytes": 30508,
+          "sourceReadRequired": 34,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 44,
+          "returned": 7,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 4946,
+          "sourceReadRequired": 7,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "c7cf7dfd",
+      "category": "single-session-assistant",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 51,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 51,
+      "outputBytes": 44930,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 34,
+          "nextOffset": 34,
+          "hasMore": true,
+          "bytes": 30574,
+          "sourceReadRequired": 34,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 34,
+          "returned": 17,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 14356,
+          "sourceReadRequired": 17,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "c7cf7dfd",
+      "category": "single-session-assistant",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 51,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 51,
+      "outputBytes": 44974,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30779,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 19,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 14195,
+          "sourceReadRequired": 19,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "c7cf7dfd",
+      "category": "single-session-assistant",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 51,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 51,
+      "outputBytes": 44930,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30757,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 19,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 14173,
+          "sourceReadRequired": 19,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "07b6f563",
+      "category": "single-session-preference",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 52,
+      "outputBytes": 44008,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 10,
+          "nextOffset": 10,
+          "hasMore": true,
+          "bytes": 9262,
+          "sourceReadRequired": 10,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 10,
+          "returned": 34,
+          "nextOffset": 44,
+          "hasMore": true,
+          "bytes": 30363,
+          "sourceReadRequired": 34,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 44,
+          "returned": 8,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 4383,
+          "sourceReadRequired": 8,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "07b6f563",
+      "category": "single-session-preference",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 52,
+      "outputBytes": 43761,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 29979,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 20,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 13782,
+          "sourceReadRequired": 20,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "07b6f563",
+      "category": "single-session-preference",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 52,
+      "outputBytes": 43805,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30412,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 20,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 13393,
+          "sourceReadRequired": 20,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "07b6f563",
+      "category": "single-session-preference",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 52,
+      "outputBytes": 43761,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30390,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 20,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 13371,
+          "sourceReadRequired": 20,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "caf03d32",
+      "category": "single-session-preference",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 51,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 50,
+      "outputBytes": 40469,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 10,
+          "nextOffset": 10,
+          "hasMore": true,
+          "bytes": 9166,
+          "sourceReadRequired": 10,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 10,
+          "returned": 39,
+          "nextOffset": 49,
+          "hasMore": true,
+          "bytes": 30553,
+          "sourceReadRequired": 39,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 49,
+          "returned": 1,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 750,
+          "sourceReadRequired": 1,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "caf03d32",
+      "category": "single-session-preference",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 51,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 50,
+      "outputBytes": 40262,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 35,
+          "nextOffset": 35,
+          "hasMore": true,
+          "bytes": 30467,
+          "sourceReadRequired": 35,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 35,
+          "returned": 15,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 9795,
+          "sourceReadRequired": 15,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "caf03d32",
+      "category": "single-session-preference",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 51,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 50,
+      "outputBytes": 40306,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 35,
+          "nextOffset": 35,
+          "hasMore": true,
+          "bytes": 30190,
+          "sourceReadRequired": 35,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 35,
+          "returned": 15,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 10116,
+          "sourceReadRequired": 15,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "caf03d32",
+      "category": "single-session-preference",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 51,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 50,
+      "outputBytes": 40262,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 35,
+          "nextOffset": 35,
+          "hasMore": true,
+          "bytes": 30168,
+          "sourceReadRequired": 35,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 35,
+          "returned": 15,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 10094,
+          "sourceReadRequired": 15,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "d52b4f67",
+      "category": "single-session-user",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 36,
+      "outputBytes": 32184,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 34,
+          "nextOffset": 34,
+          "hasMore": true,
+          "bytes": 30504,
+          "sourceReadRequired": 34,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 34,
+          "returned": 2,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 1680,
+          "sourceReadRequired": 2,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "d52b4f67",
+      "category": "single-session-user",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 36,
+      "outputBytes": 32180,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 34,
+          "nextOffset": 34,
+          "hasMore": true,
+          "bytes": 30482,
+          "sourceReadRequired": 34,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 34,
+          "returned": 2,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 1698,
+          "sourceReadRequired": 2,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "d52b4f67",
+      "category": "single-session-user",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 36,
+      "outputBytes": 32184,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 34,
+          "nextOffset": 34,
+          "hasMore": true,
+          "bytes": 29978,
+          "sourceReadRequired": 34,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 34,
+          "returned": 2,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 2206,
+          "sourceReadRequired": 2,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "d52b4f67",
+      "category": "single-session-user",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 36,
+      "outputBytes": 32180,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 34,
+          "nextOffset": 34,
+          "hasMore": true,
+          "bytes": 29956,
+          "sourceReadRequired": 34,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 34,
+          "returned": 2,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 2224,
+          "sourceReadRequired": 2,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "29f2956b",
+      "category": "single-session-user",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 47,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 47,
+      "outputBytes": 40698,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 33,
+          "nextOffset": 33,
+          "hasMore": true,
+          "bytes": 30772,
+          "sourceReadRequired": 33,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 33,
+          "returned": 14,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 9926,
+          "sourceReadRequired": 14,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "29f2956b",
+      "category": "single-session-user",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 47,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 47,
+      "outputBytes": 40654,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 33,
+          "nextOffset": 33,
+          "hasMore": true,
+          "bytes": 30750,
+          "sourceReadRequired": 33,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 33,
+          "returned": 14,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 9904,
+          "sourceReadRequired": 14,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "29f2956b",
+      "category": "single-session-user",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 47,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 47,
+      "outputBytes": 40698,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 33,
+          "nextOffset": 33,
+          "hasMore": true,
+          "bytes": 30099,
+          "sourceReadRequired": 33,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 33,
+          "returned": 14,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 10599,
+          "sourceReadRequired": 14,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "29f2956b",
+      "category": "single-session-user",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 47,
+      "abstention": false,
+      "requiredGroups": 1,
+      "firstCompletePage": 1,
+      "candidateCount": 47,
+      "outputBytes": 40654,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 33,
+          "nextOffset": 33,
+          "hasMore": true,
+          "bytes": 30077,
+          "sourceReadRequired": 33,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 33,
+          "returned": 14,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 10577,
+          "sourceReadRequired": 14,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "gpt4_6ed717ea",
+      "category": "temporal-reasoning",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 46,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 46,
+      "outputBytes": 40808,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30384,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 14,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 10424,
+          "sourceReadRequired": 14,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "gpt4_6ed717ea",
+      "category": "temporal-reasoning",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 46,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 46,
+      "outputBytes": 40764,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30362,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 14,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 10402,
+          "sourceReadRequired": 14,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "gpt4_6ed717ea",
+      "category": "temporal-reasoning",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 46,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 46,
+      "outputBytes": 40798,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30845,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 14,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 9953,
+          "sourceReadRequired": 14,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "gpt4_6ed717ea",
+      "category": "temporal-reasoning",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 46,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 46,
+      "outputBytes": 40754,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 32,
+          "nextOffset": 32,
+          "hasMore": true,
+          "bytes": 30823,
+          "sourceReadRequired": 32,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 32,
+          "returned": 14,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 9931,
+          "sourceReadRequired": 14,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "gpt4_cd90e484",
+      "category": "temporal-reasoning",
+      "profile": "mixed-notes",
+      "mode": "auto",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 52,
+      "outputBytes": 45252,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 10,
+          "nextOffset": 10,
+          "hasMore": true,
+          "bytes": 11015,
+          "sourceReadRequired": 10,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 10,
+          "returned": 36,
+          "nextOffset": 46,
+          "hasMore": true,
+          "bytes": 30437,
+          "sourceReadRequired": 36,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 46,
+          "returned": 6,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 3800,
+          "sourceReadRequired": 6,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "gpt4_cd90e484",
+      "category": "temporal-reasoning",
+      "profile": "mixed-notes",
+      "mode": "bundle",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 52,
+      "outputBytes": 45005,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 29,
+          "nextOffset": 29,
+          "hasMore": true,
+          "bytes": 30791,
+          "sourceReadRequired": 29,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 29,
+          "returned": 23,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 14214,
+          "sourceReadRequired": 23,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "gpt4_cd90e484",
+      "category": "temporal-reasoning",
+      "profile": "conversations",
+      "mode": "auto",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 52,
+      "outputBytes": 45049,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 29,
+          "nextOffset": 29,
+          "hasMore": true,
+          "bytes": 31035,
+          "sourceReadRequired": 29,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 29,
+          "returned": 23,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 14014,
+          "sourceReadRequired": 23,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    },
+    {
+      "id": "gpt4_cd90e484",
+      "category": "temporal-reasoning",
+      "profile": "conversations",
+      "mode": "bundle",
+      "sessions": 52,
+      "abstention": false,
+      "requiredGroups": 2,
+      "firstCompletePage": 1,
+      "candidateCount": 52,
+      "outputBytes": 45005,
+      "pages": [
+        {
+          "offset": 0,
+          "returned": 29,
+          "nextOffset": 29,
+          "hasMore": true,
+          "bytes": 31013,
+          "sourceReadRequired": 29,
+          "previewOmitted": 0
+        },
+        {
+          "offset": 29,
+          "returned": 23,
+          "nextOffset": null,
+          "hasMore": false,
+          "bytes": 13992,
+          "sourceReadRequired": 23,
+          "previewOmitted": 0
+        }
+      ],
+      "failure": null
+    }
+  ],
+  "runComplete": true,
+  "limitations": [
+    "Exhaustion is deterministic and does not demonstrate autonomous curator continuation",
+    "Gold-session path reachability is not gold-turn delivery, source reading, answer quality or official LongMemEval score",
+    "Response bytes are not model tokens; single-pass CLI times do not estimate p95 or end-to-end latency",
+    "Abstention cases have no gold evidence, so candidate presence is not a false-answer score"
+  ]
+}
