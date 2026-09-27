@@ -97,3 +97,12 @@ metadata tokens once per note. Exact section, ranking, and managed-response
 parity held. Complete recall medians improved 11–16% on 100/1,000 synthetic
 12-section notes. No cache/daemon or retrieval policy change; real-agent
 latency and answer quality were not measured in this experiment.
+
+## Correctness-first external benchmark expansion
+
+[LoCoMo protocol and adapter audit](locomo-correctness-2026-09-27.md) scored
+1,099 development questions from seven conversations; three conversations
+remain unscored holdouts. Multi-hop complete evidence at ten notes is only
+85/180 BM25 and 96/180 fusion. All-candidate reachability is not answer accuracy.
+Ten invalid/missing evidence cases are quarantined; 330 adversarial cases need
+reader evaluation. No product policy changes or official QA-score claims.
