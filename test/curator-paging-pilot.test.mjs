@@ -25,11 +25,12 @@ function runFixture(mode) {
     const response=schema.properties.answer?{answer:'Ada owns the fixture (note.md)'}:
       count===0?{read_paths:[process.env.PAGING_TEST_MODE==='unseen'?'hidden-gold.md':'note.md'],next_page:process.env.PAGING_TEST_MODE==='exhausted-next',brief:''}:
       {read_paths:[],next_page:false,brief:'Ada owns the fixture (note.md)'};
+    if(schema.properties.citations)response.citations=[process.env.PAGING_TEST_MODE==='bad-citation'?'unread.md':'note.md'];
     console.log(JSON.stringify({type:'item.completed',item:{type:'agent_message',text:JSON.stringify(response)}}));
     console.log(JSON.stringify({type:'turn.completed',usage:{input_tokens:10,output_tokens:3}}));
   });\n`
   fs.writeFileSync(path.join(bin, 'codex'), fake, { mode: 0o700 })
-  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), ...(['persistent', 'changed-session'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : [])], {
+  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), ...(['persistent', 'changed-session'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : []), ...(['citation', 'bad-citation'].includes(mode) ? ['--structured-citations'] : [])], {
     encoding: 'utf8', timeout: 10000,
     env: { ...process.env, PATH: bin + path.delimiter + process.env.PATH, PAGING_TEST_MODE: mode, PAGING_TEST_COUNTER: path.join(dir, 'counter') },
   })
@@ -80,4 +81,14 @@ test('changed resumed session is counted as a failed call and never reaches lead
   assert.equal(report.modelCalls[1].failed, true)
   assert.equal(report.modelCalls[1].sessionIdentityFailed, true)
   assert.equal(report.answer, null)
+})
+test('structured citations accept verified brief source and reject unread provenance', () => {
+  const valid = runFixture('citation')
+  assert.equal(valid.child.status, 0, valid.child.stderr)
+  assert.deepEqual(valid.report.citations, ['note.md'])
+  assert.equal(valid.report.citationProvenanceValid, true)
+  const invalid = runFixture('bad-citation')
+  assert.notEqual(invalid.child.status, 0)
+  assert.equal(invalid.report.runComplete, false)
+  assert.match(invalid.report.stopReason, /citation provenance/)
 })

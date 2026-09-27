@@ -17,6 +17,7 @@ parser.add_argument('--max-rounds', type=int, default=3)
 parser.add_argument('--max-input-bytes', type=int, default=300000)
 parser.add_argument('--persistent-curator', action='store_true')
 parser.add_argument('--compact-followup', action='store_true')
+parser.add_argument('--structured-citations', action='store_true')
 args = parser.parse_args()
 if not 1 <= args.max_rounds <= 10 or args.max_input_bytes < 1000:
     raise RuntimeError('Invalid economic/protocol budget')
@@ -42,6 +43,7 @@ cli = root / 'scripts/brain-sync.mjs'
 report = {'protocol': 'curator-paging-development-v2-boolean-continuation', 'id': case['id'], 'question': case['question'],
           'model': args.model, 'mode': args.mode, 'maxRounds': args.max_rounds, 'maxInputBytes': args.max_input_bytes,
           'persistentCurator': args.persistent_curator, 'compactFollowup': args.compact_followup,
+          'structuredCitations': args.structured_citations,
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
           'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [],
           'brief': None, 'answer': None, 'runComplete': False, 'stopReason': None,
@@ -198,12 +200,22 @@ try:
     if report['brief'] is None:
         raise RuntimeError('round-budget')
     answer_schema = {'type': 'object', 'properties': {'answer': {'type': 'string'}}, 'required': ['answer'], 'additionalProperties': False}
+    if args.structured_citations:
+        answer_schema['properties']['citations'] = {'type': 'array', 'items': {'type': 'string'}}
+        answer_schema['required'].append('citations')
     answer = generate('Use only this curator brief. Preserve scope, time, negation and uncertainty. Do not use tools or files. '
                       'Answer concisely with exact source paths; do not invent missing facts.\nQuestion: ' + case['question']
+                      + ('\nReturn citations separately: only paths supporting your answer, explicitly cited in the brief and present in verified reads. Use [] for unsupported/abstaining answers.\nVerified read paths: ' + json.dumps(sorted(read)) if args.structured_citations else '')
                       + '\nBrief: ' + report['brief'], 'lead', answer_schema)
-    if set(answer) != {'answer'} or not isinstance(answer['answer'], str) or not answer['answer'].strip():
+    if set(answer) != ({'answer', 'citations'} if args.structured_citations else {'answer'}) or not isinstance(answer['answer'], str) or not answer['answer'].strip():
         raise RuntimeError('Invalid lead answer')
     report['answer'] = answer['answer']
+    if args.structured_citations:
+        citations = answer['citations']
+        report['citations'] = citations
+        if not isinstance(citations, list) or any(not isinstance(name, str) or name not in read or name not in report['brief'] for name in citations) or len(set(citations)) != len(citations):
+            raise RuntimeError('Invalid lead citation provenance')
+        report['citationProvenanceValid'] = True
     for name, expected in case['sources'].items():
         if hashlib.sha256((vault / name).read_bytes()).hexdigest() != expected:
             raise RuntimeError('Source mutation')
