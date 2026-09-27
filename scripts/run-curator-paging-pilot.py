@@ -102,20 +102,24 @@ def generate(prompt, stage, schema):
     (out / (trace + '.stderr')).write_text(child.stderr)
     events = [json.loads(line) for line in child.stdout.splitlines() if line.startswith('{')]
     started = next((event.get('thread_id') for event in events if event.get('type') == 'thread.started'), None)
+    identity_failed = False
     if stage == 'curator' and args.persistent_curator:
-        if not started or (resumed and started != curator_session):
-            raise RuntimeError('Persistent Curator session identity missing or changed')
-        curator_session = started
+        identity_failed = not started or (resumed and started != curator_session)
+        if not identity_failed:
+            curator_session = started
     texts = [event['item']['text'] for event in events if event.get('type') == 'item.completed' and event.get('item', {}).get('type') == 'agent_message']
     prohibited = [event for event in events if event.get('item', {}).get('type') not in (None, 'agent_message', 'reasoning', 'error')]
     complete = next((event for event in reversed(events) if event.get('type') == 'turn.completed'), None)
-    failed = child.returncode != 0 or not complete or not texts or prohibited or any(event.get('type') in ('error', 'turn.failed') for event in events)
+    failed = identity_failed or child.returncode != 0 or not complete or not texts or prohibited or any(event.get('type') in ('error', 'turn.failed') for event in events)
     report['modelCalls'].append({'stage': stage, 'sessionResumed': resumed,
                                   'elapsedSeconds': round(time.monotonic() - start, 3),
                                   'promptBytes': len(prompt.encode()), 'promptSha256': hashlib.sha256(prompt.encode()).hexdigest(),
                                   'usage': complete.get('usage') if complete else None, 'failed': bool(failed),
+                                  'sessionIdentityFailed': bool(identity_failed),
                                   'warnings': [event['item'].get('message') for event in events if event.get('item', {}).get('type') == 'error']})
     save()
+    if identity_failed:
+        raise RuntimeError('Persistent Curator session identity missing or changed')
     if failed:
         raise RuntimeError('Host failed or used prohibited tools; preserve traces')
     return json.loads(texts[-1])
