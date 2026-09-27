@@ -55,6 +55,11 @@ if (!fs.existsSync(incidentsPath)) {
 }
 
 const incidents = JSON.parse(fs.readFileSync(incidentsPath, "utf8"))
+if (!Array.isArray(incidents) || incidents.some((incident) => !incident ||
+    typeof incident.id !== "string" || !incident.id) ||
+    new Set(incidents.map((incident) => incident.id)).size !== incidents.length) {
+  throw new Error("Incidents must have unique nonempty string IDs")
+}
 const incidentsById = Object.fromEntries(incidents.map((inc) => [inc.id, inc]))
 
 const SCORE_WEIGHTS = {
@@ -102,8 +107,8 @@ function scoreProvenance(candidate, incident) {
   // Check for path overlap
   const evidenceSet = new Set(evidence.map((e) => e.toLowerCase()))
   const pathSet = new Set(paths.map((p) => p.toLowerCase()))
-  const overlap = [...pathSet].filter((p) => [...evidenceSet].some((e) => p.includes(e) || e.includes(p)))
-  if (overlap.length >= evidence.length) return 1
+  const overlap = [...evidenceSet].filter((e) => pathSet.has(e))
+  if (overlap.length >= evidenceSet.size) return 1
   if (overlap.length > 0) return 0.5
   return 0.1 // cited evidence not matching expected
 }
@@ -212,27 +217,43 @@ const metadata = fs.existsSync(metadataPath)
   ? JSON.parse(fs.readFileSync(metadataPath, "utf8"))
   : {}
 
-// Score each curator output
-const scored = curatorList.map((candidate) => {
-  const incident = incidentsById[candidate.incident_id]
-  if (!incident) {
-    return {
-      incident_id: candidate.incident_id,
-      error: "unknown incident",
-      totalScore: 0,
-    }
+// The incident file defines the evaluation universe. To run an intentional
+// subset, supply a subset incident file; omitted outputs cannot shrink it.
+const candidatesById = new Map()
+const invalidOutputs = []
+for (const candidate of curatorList) {
+  if (!candidate || typeof candidate !== "object" ||
+      !Object.hasOwn(incidentsById, candidate.incident_id)) {
+    invalidOutputs.push({ incident_id: candidate?.incident_id ?? null, error: "unknown or malformed incident output" })
+    continue
   }
+  const entries = candidatesById.get(candidate.incident_id) ?? []
+  entries.push(candidate)
+  candidatesById.set(candidate.incident_id, entries)
+}
+const scored = incidents.map((incident) => {
+  const entries = candidatesById.get(incident.id) ?? []
+  const candidate = entries[0]
 
   if (!isWriteScorable(incident.expected_memory_action)) {
     return {
-      incident_id: candidate.incident_id,
+      incident_id: incident.id,
       expectedAction: incident.expected_memory_action,
-      observedAction: candidate.action ?? "unknown",
+      observedAction: candidate?.action ?? "missing",
       skipped: true,
       skipReason: `expected_memory_action "${incident.expected_memory_action}" is a recall-type verdict, not a write action scorable by this instrument`,
       totalScore: null,
       error: null,
     }
+  }
+
+  if (entries.length !== 1) return {
+    incident_id: incident.id,
+    expectedAction: incident.expected_memory_action,
+    observedAction: candidate?.action ?? "missing",
+    error: entries.length ? "duplicate incident outputs" : "missing incident output",
+    totalScore: 0,
+    passed: false,
   }
 
   const components = {
@@ -250,22 +271,33 @@ const scored = curatorList.map((candidate) => {
     observedAction: candidate.action ?? "unknown",
     components,
     totalScore: rubricScore(components),
+    actionCorrect: candidate.action === incident.expected_memory_action || (
+      incident.expected_memory_action === "tension-or-supersede" && (
+        candidate.action === "tension" || (candidate.action === "save" &&
+          Array.isArray(candidate.supersedes) && candidate.supersedes.length > 0)
+      )
+    ),
     error: null,
   }
 })
+for (const row of scored) {
+  if (row.error || row.skipped) continue
+  row.passed = row.actionCorrect && row.totalScore >= 70 &&
+    row.components.noLeakage === 1 && row.components.noFabrication >= 0.5
+}
 
 // Aggregate. Skipped (recall-type) incidents are excluded from scoring
 // entirely -- they should neither count as scored-and-passed nor silently
 // drag the average down as a 0.
 const totalIncidents = incidents.length
-const scorable = scored.filter((s) => !s.error && !s.skipped)
+const scorable = scored.filter((s) => !s.skipped)
 const skippedCount = scored.filter((s) => s.skipped).length
 const scoredCount = scorable.length
 const averageScore = scoredCount
   ? scorable.reduce((sum, s) => sum + s.totalScore, 0) / scoredCount
   : 0
-const passCount = scorable.filter((s) => s.totalScore >= 70).length
-const failCount = scorable.filter((s) => s.totalScore < 70).length
+const passCount = scorable.filter((s) => s.passed).length
+const failCount = scoredCount - passCount
 
 // Count failure types
 const failureBreakdown = {}
@@ -274,7 +306,11 @@ const conflictFailures = []
 const lifecycleFailures = []
 
 for (const s of scored) {
-  if (s.error || s.skipped) continue
+  if (s.skipped) continue
+  if (s.error) {
+    failureBreakdown[s.incident_id] = [s.error]
+    continue
+  }
   if (s.components.noFabrication < 0.5) {
     falseMemoryFailures.push(s.incident_id)
     failureBreakdown[s.incident_id] = failureBreakdown[s.incident_id] ?? []
@@ -285,7 +321,7 @@ for (const s of scored) {
     failureBreakdown[s.incident_id] = failureBreakdown[s.incident_id] ?? []
     failureBreakdown[s.incident_id].push("lifecycle-omission")
   }
-  if (s.components.action < 0.3) {
+  if (!s.actionCorrect) {
     failureBreakdown[s.incident_id] = failureBreakdown[s.incident_id] ?? []
     failureBreakdown[s.incident_id].push("wrong-action")
   }
@@ -297,11 +333,19 @@ for (const s of scored) {
 }
 
 const report = {
+  protocol: "write-decision-v2-complete-denominator",
+  limitations: ["Metadata heuristics do not establish semantic grounding, scope correctness or absence of fabrication.", "Pass requires a correct action and heuristic safety gates; it is not official LoCoMo or LongMemEval answer accuracy."],
   run: path.basename(runDir),
   metadata,
   totalIncidents,
   scoredIncidents: scoredCount,
   skippedIncidents: skippedCount,
+  observedIncidents: scorable.filter((s) => !s.error).length,
+  missingIncidents: scorable.filter((s) => s.error === "missing incident output").length,
+  duplicateIncidents: [...candidatesById.values()].filter((entries) => entries.length > 1).length,
+  invalidOutputs,
+  runComplete: scorable.every((s) => !s.error) && invalidOutputs.length === 0 &&
+    [...candidatesById.values()].every((entries) => entries.length === 1),
   passRate: scoredCount ? passCount / scoredCount : 0,
   averageScore: Number(averageScore.toFixed(1)),
   passCount,
@@ -321,15 +365,21 @@ const report = {
     expectedAction: s.expectedAction,
     observedAction: s.observedAction,
     totalScore: s.totalScore,
+    passed: s.passed ?? false,
+    actionCorrect: s.actionCorrect ?? false,
     skipped: s.skipped ?? false,
     skipReason: s.skipReason ?? null,
     details: s.error ?? s.components ?? null,
   })),
 }
+report.runPassed = report.runComplete && scoredCount > 0 && failCount === 0
 
 // Print report
 const pct = (v) => `${(v * 100).toFixed(1)}%`
 console.log(`Run: ${report.run}`)
+console.log(`Protocol: ${report.protocol}`)
+console.log(`Run status: ${report.runComplete ? "complete" : "incomplete or invalid"}; passed: ${report.runPassed}`)
+console.log(`Missing: ${report.missingIncidents}; duplicate IDs: ${report.duplicateIncidents}; invalid outputs: ${report.invalidOutputs.length}`)
 console.log(`Incidents: ${report.scoredIncidents}/${report.totalIncidents} scored (${report.skippedIncidents} recall-type, not write-scorable)`)
 console.log(`Pass rate: ${pct(report.passRate)} (${report.passCount} pass, ${report.failCount} fail)`)
 console.log(`Average score: ${report.averageScore}/100`)

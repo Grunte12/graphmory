@@ -62,9 +62,13 @@ test("eval-live-agent-score reports pass for correct curator output", () => {
     fs.writeFileSync(path.join(dir, "curator-output.json"), `${JSON.stringify(curatorOutput, null, 2)}\n`)
 
     const report = runScore(dir)
-    assert.equal(report.scoredIncidents, 3)
-    assert.ok(report.passRate > 0.5, `expected pass rate > 0.5, got ${report.passRate}`)
-    assert.ok(report.averageScore >= 50)
+    assert.equal(report.scoredIncidents, 11)
+    assert.equal(report.observedIncidents, 3)
+    assert.equal(report.missingIncidents, 8)
+    assert.equal(report.runComplete, false)
+    assert.equal(report.passCount, 2)
+    assert.equal(report.passRate, 2 / 11)
+    assert.ok(report.averageScore > 0)
     assert.equal(report.toolCallCount, 0)
   } finally {
     fs.rmSync(dir, { recursive: true, force: true })
@@ -85,7 +89,7 @@ test("eval-live-agent-score detects false-memory failures", () => {
     fs.writeFileSync(path.join(dir, "curator-output.json"), `${JSON.stringify(curatorOutput, null, 2)}\n`)
 
     const report = runScore(dir)
-    assert.equal(report.scoredIncidents, 1)
+    assert.equal(report.scoredIncidents, 11)
     assert.ok(report.falseMemoryFailures >= 1)
     assert.ok(report.averageScore < 50)
   } finally {
@@ -107,7 +111,7 @@ test("eval-live-agent-score handles conflict detection", () => {
     fs.writeFileSync(path.join(dir, "curator-output.json"), `${JSON.stringify(curatorOutput, null, 2)}\n`)
 
     const report = runScore(dir)
-    assert.equal(report.scoredIncidents, 1)
+    assert.equal(report.scoredIncidents, 11)
     // Expected action is "tension", observed is "block" - expect some penalty
     assert.ok(report.conflictFailures >= 1)
   } finally {
@@ -121,7 +125,8 @@ test("eval-live-agent-score handles empty run dir gracefully", () => {
     // Create empty curator output
     fs.writeFileSync(path.join(dir, "curator-output.json"), "[]\n")
     const report = runScore(dir)
-    assert.equal(report.scoredIncidents, 0)
+    assert.equal(report.scoredIncidents, 11)
+    assert.equal(report.missingIncidents, 11)
     assert.equal(report.averageScore, 0)
     assert.equal(report.passRate, 0)
   } finally {
@@ -145,8 +150,8 @@ test("eval-live-agent-score accepts tension or supersede for a stale-pricing inc
     fs.writeFileSync(path.join(dir, "curator-output.json"), `${JSON.stringify(curatorOutput, null, 2)}\n`)
 
     const report = runScore(dir)
-    assert.equal(report.scoredIncidents, 1)
-    assert.equal(report.items[0].details.action, 1)
+    assert.equal(report.scoredIncidents, 11)
+    assert.equal(report.items.find((i) => i.incident_id === "old-provider-pricing").details.action, 1)
   } finally {
     fs.rmSync(dir, { recursive: true, force: true })
   }
@@ -172,8 +177,8 @@ test("eval-live-agent-score skips recall-type incidents instead of scoring them 
     fs.writeFileSync(path.join(dir, "curator-output.json"), `${JSON.stringify(curatorOutput, null, 2)}\n`)
 
     const report = runScore(dir)
-    // Only the write-scorable incident counts toward scoredIncidents/passRate.
-    assert.equal(report.scoredIncidents, 1)
+    // All expected write incidents count, including omitted outputs.
+    assert.equal(report.scoredIncidents, 11)
     assert.equal(report.skippedIncidents, 1)
     const recallItem = report.items.find((i) => i.incident_id === "large-vault-recall")
     assert.equal(recallItem.skipped, true)
@@ -198,7 +203,7 @@ test("eval-live-agent-score does not flag a confident, evidence-free block as fa
     fs.writeFileSync(path.join(dir, "curator-output.json"), `${JSON.stringify(curatorOutput, null, 2)}\n`)
 
     const report = runScore(dir)
-    assert.equal(report.items[0].details.noFabrication, 1)
+    assert.equal(report.items.find((i) => i.incident_id === "missing-evidence-memory-request").details.noFabrication, 1)
     assert.equal(report.falseMemoryFailures, 0)
   } finally {
     fs.rmSync(dir, { recursive: true, force: true })
@@ -224,7 +229,7 @@ test("eval-live-agent-score does not flag leakage from the incident's own id/act
     // "secret-in-transcript" and "block-or-redact" both contain the substring
     // "secret" via structural fields (incident_id), not candidate content --
     // this must not zero out noLeakage on its own.
-    assert.equal(report.items[0].details.noLeakage, 1)
+    assert.equal(report.items.find((i) => i.incident_id === "secret-in-transcript").details.noLeakage, 1)
   } finally {
     fs.rmSync(dir, { recursive: true, force: true })
   }
@@ -243,4 +248,72 @@ test("eval-live-agent-score includes tool-call metadata when provided", () => {
   } finally {
     fs.rmSync(dir, { recursive: true, force: true })
   }
+})
+
+test("wrong actions cannot pass through metadata points, and duplicates cannot inflate coverage", () => {
+  const dir = tmpDir()
+  try {
+    const incidents = JSON.parse(fs.readFileSync(path.join(projectRoot, "eval/live-agent/incidents.json")))
+    const candidate = { incident_id: incidents[0].id, action: "block", confidence: "high",
+      evidence_paths: incidents[0].evidence, status: "current", revalidate_when: ["next review"] }
+    fs.writeFileSync(path.join(dir, "curator-output.json"), JSON.stringify([candidate]))
+    let report = runScore(dir)
+    let row = report.items.find((i) => i.incident_id === candidate.incident_id)
+    assert.equal(row.totalScore, 70)
+    assert.equal(row.actionCorrect, false)
+    assert.equal(row.passed, false)
+    assert.equal(report.passCount, 0)
+    assert.equal(report.missingIncidents, 10)
+    fs.writeFileSync(path.join(dir, "curator-output.json"), JSON.stringify([candidate, candidate]))
+    report = runScore(dir)
+    assert.equal(report.duplicateIncidents, 1)
+    assert.equal(report.scoredIncidents, 11)
+    assert.equal(report.passRate, 0)
+    assert.equal(report.runComplete, false)
+    row = report.items.find((i) => i.incident_id === candidate.incident_id)
+    assert.equal(row.details, "duplicate incident outputs")
+  } finally { fs.rmSync(dir, { recursive: true, force: true }) }
+})
+
+test("a complete run is scored once per expected incident and malformed extras invalidate it", () => {
+  const dir = tmpDir()
+  try {
+    const incidents = JSON.parse(fs.readFileSync(path.join(projectRoot, "eval/live-agent/incidents.json")))
+    const candidates = incidents.filter((i) => i.expected_memory_action !== "brain-brief").map((i) => ({
+      incident_id: i.id, action: i.expected_memory_action === "tension-or-supersede" ? "save" : i.expected_memory_action,
+      confidence: "medium", evidence_paths: i.evidence, status: "current",
+      revalidate_when: ["next review"], supersedes: i.expected_memory_action === "tension-or-supersede" ? ["old pricing note"] : [],
+    }))
+    fs.writeFileSync(path.join(dir, "curator-output.json"), JSON.stringify(candidates))
+    let report = runScore(dir)
+    assert.equal(report.runComplete, true)
+    assert.equal(report.runPassed, true)
+    assert.equal(report.passCount, 11)
+    assert.equal(report.passRate, 1)
+    fs.writeFileSync(path.join(dir, "curator-output.json"), JSON.stringify([...candidates, null, { incident_id: "__proto__" }]))
+    report = runScore(dir)
+    assert.equal(report.runComplete, false)
+    assert.equal(report.invalidOutputs.length, 2)
+    assert.equal(report.runPassed, false)
+    assert.equal(report.scoredIncidents, 11)
+    assert.equal(report.passCount, 11)
+  } finally { fs.rmSync(dir, { recursive: true, force: true }) }
+})
+
+test("partial provenance identifiers do not earn exact evidence credit, detected leaks block a pass", () => {
+  const dir = tmpDir()
+  try {
+    const candidate = { incident_id: "model-routing-preference", action: "save", confidence: "medium",
+      evidence_paths: ["user"], status: "current", revalidate_when: ["next review"] }
+    fs.writeFileSync(path.join(dir, "curator-output.json"), JSON.stringify([candidate]))
+    let report = runScore(dir)
+    assert.equal(report.items.find((i) => i.incident_id === candidate.incident_id).details.provenance, 0.1)
+    candidate.evidence_paths = ["user statement"]
+    candidate.claim = "password: synthetic-example"
+    fs.writeFileSync(path.join(dir, "curator-output.json"), JSON.stringify([candidate]))
+    report = runScore(dir)
+    const row = report.items.find((i) => i.incident_id === candidate.incident_id)
+    assert.equal(row.totalScore, 90)
+    assert.equal(row.passed, false)
+  } finally { fs.rmSync(dir, { recursive: true, force: true }) }
 })

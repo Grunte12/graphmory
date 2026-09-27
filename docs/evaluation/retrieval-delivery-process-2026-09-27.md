@@ -106,3 +106,17 @@ remain unscored holdouts. Multi-hop complete evidence at ten notes is only
 85/180 BM25 and 96/180 fusion. All-candidate reachability is not answer accuracy.
 Ten invalid/missing evidence cases are quarantined; 330 adversarial cases need
 reader evaluation. No product policy changes or official QA-score claims.
+
+## Evaluation skills and independent correctness audit
+
+[Grok skill research and repo-scoped installation](evaluation-skills-2026-09-28.md)
+added three pinned Apache-2.0 development skills without runtime dependencies.
+[Astra's actual audit](astra-eval-skill-audit-2026-09-28.md) exactly reproduced
+the LoCoMo development artifact and inspected missing multi-hop evidence and
+unsupported relations in existing synthetic live traces. It demonstrated a
+false-pass/duplicate-coverage flaw in the write-decision scorer.
+[The scorer repair and historical-output regrade](scorer-correctness-repair-2026-09-28.md)
+add mandatory action/safety gates, full expected-incident accounting and
+invalid-run reporting. The same stored outputs now score A8/11,B7/11,C7/11;
+this changes evaluation validity, not underlying model behavior. Standard
+benchmark answer correctness and calibrated semantic judging remain unmeasured.

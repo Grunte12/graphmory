@@ -96,7 +96,21 @@ The rerank is a v0.6 candidate. It is evaluated separately from the v0.5 retriev
 
 `npm run eval:live-agent-score` scores a completed agent run against the incident dataset. It requires a run directory with `curator-output.json` and optionally `patches/`, `tool-calls.json`, and `metadata.json`. Use the expanded `eval/live-agent/run-template.md` worksheet for structured recording.
 
-The scorer computes a weighted rubric over: action correctness (30%), provenance accuracy (20%), scope boundedness (15%), lifecycle completeness (15%), fabrication avoidance (10%), and leakage prevention (10%). It classifies false-memory, conflict-handling, and lifecycle-omission failures independently.
+The `write-decision-v2-complete-denominator` scorer retains weighted diagnostic components:
+action compatibility (30%), evidence-identifier overlap (20%), citation-count
+boundedness (15%), lifecycle metadata presence (15%), fabrication-risk heuristic
+(10%), and secret-pattern heuristic (10%). These checks do not prove semantic
+grounding, correct topic scope, or absence of fabricated claims.
+
+A pass also requires an exact expected action (or an explicitly handled
+`tension-or-supersede` resolution), no detected leakage, and the fabrication
+heuristic gate. Missing or duplicate write outputs fail against the full expected
+write-incident denominator. Unknown/malformed outputs invalidate the run.
+Check `runComplete` and `runPassed` before interpreting aggregate scores; the
+pass rate alone describes expected rows and cannot certify a valid run. Supply
+a separate subset incident file for an intentional subset experiment.
+Historical weighted scores are not comparable without rescoring the same
+outputs. See the [audit and repair](astra-eval-skill-audit-2026-09-28.md).
 
 ```sh
 node scripts/eval-live-agent-score.mjs \

@@ -8,6 +8,15 @@ All evaluation infrastructure is in place (`eval/live-agent/incidents.json`, `ru
 
 ## Status
 
+**Scorer correction, 2026-09-28:** the historical tables below use an older
+weighted-score protocol that could pass wrong actions. Preserve them as
+historical observations, not current correctness evidence. The new protocol
+requires action/safety gates and complete incident accounting. See
+[evaluation audit](astra-eval-skill-audit-2026-09-28.md) and
+[scorer repair and regrading](scorer-correctness-repair-2026-09-28.md).
+Citation-count and evidence-identifier heuristics cannot establish semantic
+scope or factual entailment; the interpretations below require that qualification.
+
 **A pilot run has been completed with full incident coverage** (`pilot-2026-08-01`, see `eval/live-agent/runs/pilot-2026-08-01/`). It is a **single-model pilot** (Claude Sonnet 5 playing all three strategies, in fresh isolated sessions per incident/strategy, all 12 public incidents — 11 write-scorable + 1 correctly skipped as recall-type — 1 trial each) — it is evidence, not a definitive comparison, and it is **not** a cross-model benchmark. Do not cite it as proof this architecture beats vector RAG, GraphRAG, or managed memory systems. Full methodology and honest limitations are captured in this file (see "Failure Log" below) and in the raw run data under `eval/live-agent/runs/pilot-2026-08-01/`.
 
 The scorer (`scripts/eval-live-agent-score.mjs`) had 3 bugs when this pilot first ran on a 6-incident subset; all are now fixed (see the Failure Log below, rows marked "Fixed 2026-08-01"), and the pilot was subsequently extended to all 12 incidents under the corrected scorer.
