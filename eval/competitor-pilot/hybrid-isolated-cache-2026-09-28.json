@@ -1,0 +1,143 @@
+{
+  "suite": "basic-memory-local-hybrid-retrieval-pilot",
+  "competitor": "Basic Memory",
+  "version": "0.23.2",
+  "requestedSearchMode": "hybrid",
+  "rerankerEnabled": false,
+  "environment": "macOS arm64, Python 3.12.13, uv isolated venv; config/home per case",
+  "search": "Native bm tool search-notes plain query with --page-size 12 --json; semantic search enabled, explicit --hybrid; query format recorded separately; no keyword extraction.",
+  "ingestionAdaptation": "Same original Markdown inputs; native Basic Memory ingestion may add frontmatter and normalize formatting. Changed file counts and before/after hashes are recorded; post-ingest byte equality is not claimed.",
+  "install": {
+    "command": "uv pip install --python tmp/competitors/basic-memory/venv/bin/python --cache-dir tmp/competitors/uv-cache --prerelease=allow 'basic-memory==0.23.2'",
+    "venvBytes": 439029651,
+    "cacheBytes": 385652220
+  },
+  "queryFormat": "question-only",
+  "datasetSha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "selectedIds": [
+    "09ba9854_abs"
+  ],
+  "cases": [
+    {
+      "id": "09ba9854_abs",
+      "category": "abstention",
+      "sessions": 50,
+      "duplicateSessionIds": 0,
+      "evidenceCount": null,
+      "recallAt3": null,
+      "recallAt12": null,
+      "completeAt3": null,
+      "completeAt12": null,
+      "candidates": 12,
+      "indexedFiles": 50,
+      "ingestMs": 4608.931541999999,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 50,
+      "sourceBodyHash": "01ebbce4b2bbc59f6428e2edb8ad9beaf90f46d0d9a7c6e8cce8eb820e72d166",
+      "ingestedHash": "c3712a0da7302d6125705f59ddeec0dc1cbb2295eecfefa4fb9bb8a3387608bd",
+      "repeats": [
+        {
+          "elapsedMs": 1992.437750000001,
+          "outputBytes": 156004,
+          "rawRows": 12,
+          "uniqueSessions": 12,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": [
+            "sessions/0006-74b40853759b.md",
+            "sessions/0033-67233b2982aa.md",
+            "sessions/0031-3376b238ea96.md",
+            "sessions/0018-335e219873ed.md",
+            "sessions/0020-0a19ba38aa70.md",
+            "sessions/0038-0be7233ebfa0.md",
+            "sessions/0035-da92723d17d1.md",
+            "sessions/0012-fcaba16bd870.md",
+            "sessions/0023-19f764e20b96.md",
+            "sessions/0024-af1f61c95c51.md",
+            "sessions/0030-97ea6ae5f012.md",
+            "sessions/0013-0034f4b11829.md"
+          ]
+        },
+        {
+          "elapsedMs": 2162.7720419999987,
+          "outputBytes": 156004,
+          "rawRows": 12,
+          "uniqueSessions": 12,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": [
+            "sessions/0006-74b40853759b.md",
+            "sessions/0033-67233b2982aa.md",
+            "sessions/0031-3376b238ea96.md",
+            "sessions/0018-335e219873ed.md",
+            "sessions/0020-0a19ba38aa70.md",
+            "sessions/0038-0be7233ebfa0.md",
+            "sessions/0035-da92723d17d1.md",
+            "sessions/0012-fcaba16bd870.md",
+            "sessions/0023-19f764e20b96.md",
+            "sessions/0024-af1f61c95c51.md",
+            "sessions/0030-97ea6ae5f012.md",
+            "sessions/0013-0034f4b11829.md"
+          ]
+        },
+        {
+          "elapsedMs": 2214.425500000001,
+          "outputBytes": 156004,
+          "rawRows": 12,
+          "uniqueSessions": 12,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": [
+            "sessions/0006-74b40853759b.md",
+            "sessions/0033-67233b2982aa.md",
+            "sessions/0031-3376b238ea96.md",
+            "sessions/0018-335e219873ed.md",
+            "sessions/0020-0a19ba38aa70.md",
+            "sessions/0038-0be7233ebfa0.md",
+            "sessions/0035-da92723d17d1.md",
+            "sessions/0012-fcaba16bd870.md",
+            "sessions/0023-19f764e20b96.md",
+            "sessions/0024-af1f61c95c51.md",
+            "sessions/0030-97ea6ae5f012.md",
+            "sessions/0013-0034f4b11829.md"
+          ]
+        }
+      ],
+      "selectedSessionPaths": [
+        "sessions/0006-74b40853759b.md",
+        "sessions/0033-67233b2982aa.md",
+        "sessions/0031-3376b238ea96.md",
+        "sessions/0018-335e219873ed.md",
+        "sessions/0020-0a19ba38aa70.md",
+        "sessions/0038-0be7233ebfa0.md",
+        "sessions/0035-da92723d17d1.md",
+        "sessions/0012-fcaba16bd870.md",
+        "sessions/0023-19f764e20b96.md",
+        "sessions/0024-af1f61c95c51.md",
+        "sessions/0030-97ea6ae5f012.md",
+        "sessions/0013-0034f4b11829.md"
+      ]
+    }
+  ],
+  "summary": {
+    "metricDenominator": "Successful answerable cases only; failed cases must be included separately before comparisons",
+    "cases": 1,
+    "failedCases": 0,
+    "answerable": 0,
+    "recallAt3": null,
+    "recallAt12": null,
+    "completeAt3": null,
+    "completeAt12": null,
+    "abstentionCases": 1,
+    "abstentionWithCandidates": 1,
+    "medianIngestMs": 4608.931541999999,
+    "medianWarmSearchMs": 2214.425500000001,
+    "medianWarmOutputBytes": 156004
+  },
+  "limitations": [
+    "Development pilot only; not answer-accuracy or full memory-system evaluation.",
+    "Hybrid requested with local default embeddings; reranking disabled; successful retrieval does not itself prove vector contributions.",
+    "Search timing includes CLI startup and SQLite setup on each call; not directly comparable with in-process Graphmory timings.",
+    "Candidates mapped only when Basic Memory result output exposes the generated session note path; unmapped results remain in candidateCount."
+  ]
+}
