@@ -46,3 +46,11 @@ For a question that explicitly asks about related notes, papers, or a route thro
 `graphmory config` now asks whether memory contains mixed project notes or conversation histories. The conversation choice uses one governed BM25 lane before the selected curator/decision workflow; the default mixed-note choice preserves sparse fusion. Existing configuration files keep their previous behavior.
 
 This opt-in choice follows a [controlled LongMemEval retrieval experiment](../evaluation/comparable-benchmarks-2026-09-26.md), not a claim that BM25 wins on every vault or that downstream answer accuracy has been established. It adds no downloads or running services. For a one-off diagnostic, use `recall-loop --methods bm25 --agent`.
+
+### Incomplete evidence previews
+
+When a candidate has `sourceReadRequired: true`, read its original Markdown
+note before relying on it or ruling it out. `truncated: true` means a section
+preview ends before the section does. These flags are retrieval diagnostics,
+not judgments that the evidence supports an answer. Even unmarked previews
+may omit relevant sections; inspect originals when completeness is uncertain.

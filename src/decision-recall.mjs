@@ -41,6 +41,8 @@ export async function managedRecall(vault, query, config, {
       const preview = documentsByPath?.has(path) ? curatorEvidencePreview(documentsByPath.get(path), query, { matchedOnly: matchedPreviews && adaptiveMode === "wide" }) : []
       const result = { path, title, score, status,
         ...(preview.length ? { evidencePreview: preview } : {}),
+        ...((adaptiveBundle || evidencePreview || bundleBytes) && (!preview.length || preview.some((item) => item.truncated))
+          ? { sourceReadRequired: true } : {}),
       }
       const bytes = Buffer.byteLength(JSON.stringify(result), "utf8")
       if (effectiveBundleBytes && results.length && bundleUsedBytes + bytes > effectiveBundleBytes) break
@@ -147,12 +149,14 @@ export function curatorEvidencePreview(document, query, { matchedOnly = false } 
     const threshold = contentTerms.length >= 3 ? 2 : 1
     return [...pool].filter((item) => item.overlap >= threshold)
       .sort((a, b) => b.overlap - a.overlap || a.index - b.index).slice(0, 3)
-      .map(({ section }) => ({ heading: section.title, text: section.markdown.slice(0, 350) }))
+      .map(({ section }) => ({ heading: section.title, text: section.markdown.slice(0, 350),
+        ...(section.markdown.length > 350 ? { truncated: true } : {}) }))
   }
   const first = pool[0]
   const rankedMatches = [...pool].sort((a, b) => b.overlap - a.overlap || a.index - b.index)
   const selected = [first, ...rankedMatches.filter((item) => item !== first).slice(0, 2)]
-  return selected.map(({ section }) => ({ heading: section.title, text: section.markdown.slice(0, 350) }))
+  return selected.map(({ section }) => ({ heading: section.title, text: section.markdown.slice(0, 350),
+    ...(section.markdown.length > 350 ? { truncated: true } : {}) }))
 }
 
 async function rerankCandidates(candidates, documents, query, config, fetchImpl) {

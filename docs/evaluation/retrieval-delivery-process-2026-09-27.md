@@ -48,3 +48,10 @@ Next gate: use a new source with independently reviewed answers and enough
 unanswerable and conflicting cases, run repeated paired readers, audit each
 material cited claim, and measure latency/token distribution across coding
 hosts. Promote only after the quality and cost gates pass together.
+
+## Follow-up: evidence completeness stress
+
+[Eight synthetic diagnostic cases](evidence-stress-2026-09-27.md) preserved
+all 33 required paths but exposed filtered and truncated previews. Added
+explicit source-read flags without changing retrieval ranks. This is not
+a live answer-quality improvement claim; adaptive options remain experimental.

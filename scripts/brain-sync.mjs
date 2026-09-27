@@ -848,8 +848,9 @@ async function recallManaged() {
     ...(report.workflow === "curator" ? { offset: report.offset, totalCandidates: report.totalCandidates, hasMore: report.hasMore, nextOffset: report.nextOffset } : {}),
     ...(report.bundleBytes ? { bundleBytes: report.bundleBytes, bundleUsedBytes: report.bundleUsedBytes } : {}),
     ...(report.adaptiveMode ? { adaptiveMode: report.adaptiveMode } : {}),
-    results: report.results.map(({ path, relevance, status, evidencePreview }) => ({ path, ...(relevance === undefined ? {} : { relevance }), status,
+    results: report.results.map(({ path, relevance, status, evidencePreview, sourceReadRequired }) => ({ path, ...(relevance === undefined ? {} : { relevance }), status,
       ...(evidencePreview ? { evidencePreview } : {}),
+      ...(sourceReadRequired ? { sourceReadRequired: true } : {}),
     })),
   }))
   else if (flag("--json")) console.log(JSON.stringify(report, null, 2))
