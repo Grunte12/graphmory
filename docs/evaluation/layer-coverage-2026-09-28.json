@@ -234,7 +234,9 @@
       "artifacts": [
         "eval/locomo/development-v1.json",
         "eval/longmemeval/development-v2.json",
-        "docs/evaluation/astra-eval-skill-audit-2026-09-28.json"
+        "docs/evaluation/astra-eval-skill-audit-2026-09-28.json",
+        "docs/evaluation/reader-attribution-pilot-2026-09-28.md",
+        "eval/reader-pilot/development-2026-09-28.json"
       ],
       "source_ids": [
         "locomo",
@@ -269,7 +271,8 @@
       "status": "partial_evidence",
       "evidence_classes": [
         "regression",
-        "synthetic"
+        "synthetic",
+        "custom_dev_diagnostic"
       ],
       "code": [
         "src/source-read.mjs",
@@ -284,7 +287,9 @@
       "artifacts": [
         "scripts/eval-curator-pages.mjs",
         "eval/competitor-pilot/batch-source-read.json",
-        "docs/evaluation/curator-pagination-2026-09-27.md"
+        "docs/evaluation/curator-pagination-2026-09-27.md",
+        "docs/evaluation/reader-attribution-pilot-2026-09-28.md",
+        "eval/reader-pilot/development-2026-09-28.json"
       ],
       "source_ids": [
         "bfcl_memory",
@@ -315,7 +320,8 @@
       "status": "partial_evidence",
       "evidence_classes": [
         "regression",
-        "synthetic"
+        "synthetic",
+        "custom_dev_diagnostic"
       ],
       "code": [
         "src/contracts.mjs",
@@ -328,7 +334,9 @@
       "artifacts": [
         "scripts/eval-curator.mjs",
         "eval/competitor-pilot/preview-state-live.json",
-        "docs/evaluation/curator-loop-pilot-2026-09-27.md"
+        "docs/evaluation/curator-loop-pilot-2026-09-27.md",
+        "docs/evaluation/reader-attribution-pilot-2026-09-28.md",
+        "eval/reader-pilot/development-2026-09-28.json"
       ],
       "source_ids": [
         "alce"
@@ -356,7 +364,8 @@
       "status": "partial_evidence",
       "evidence_classes": [
         "regression",
-        "synthetic"
+        "synthetic",
+        "custom_dev_diagnostic"
       ],
       "code": [
         "scripts/eval-host-usage.mjs",
@@ -369,7 +378,9 @@
       ],
       "artifacts": [
         "eval/competitor-pilot/preview-state-live.json",
-        "docs/evaluation/astra-eval-skill-audit-2026-09-28.md"
+        "docs/evaluation/astra-eval-skill-audit-2026-09-28.md",
+        "docs/evaluation/reader-attribution-pilot-2026-09-28.md",
+        "eval/reader-pilot/development-2026-09-28.json"
       ],
       "source_ids": [
         "locomo",
@@ -505,7 +516,9 @@
         "scripts/bench-source-read.mjs",
         "scripts/bench-section-preparation.mjs",
         "eval/bm25f-optimization/paired-warm-results.json",
-        "docs/evaluation/prompt-cache-compatibility-2026-09-26.md"
+        "docs/evaluation/prompt-cache-compatibility-2026-09-26.md",
+        "docs/evaluation/reader-attribution-pilot-2026-09-28.md",
+        "eval/reader-pilot/development-2026-09-28.json"
       ],
       "source_ids": [
         "openai_cache",
@@ -535,7 +548,8 @@
       "order": 10,
       "status": "partial_evidence",
       "evidence_classes": [
-        "regression"
+        "regression",
+        "custom_dev_diagnostic"
       ],
       "code": [
         "scripts/lib/locomo.mjs",
@@ -547,11 +561,14 @@
         "test/live-agent-score.test.mjs",
         "test/locomo.test.mjs",
         "test/longmemeval.test.mjs",
-        "test/eval-host-runner.test.mjs"
+        "test/eval-host-runner.test.mjs",
+        "test/reader-pilot.test.mjs"
       ],
       "artifacts": [
         "docs/evaluation/scorer-correctness-repair-2026-09-28.md",
-        "docs/evaluation/astra-eval-skill-audit-2026-09-28.md"
+        "docs/evaluation/astra-eval-skill-audit-2026-09-28.md",
+        "docs/evaluation/reader-attribution-pilot-2026-09-28.md",
+        "eval/reader-pilot/development-2026-09-28.json"
       ],
       "source_ids": [
         "locomo",
@@ -576,5 +593,6 @@
       },
       "priority": "P1"
     }
-  ]
+  ],
+  "followup": "One selected development question, four actual generations; no official answer scorer or calibrated semantic judge; original baseline counts describe fd84bd5 only."
 }

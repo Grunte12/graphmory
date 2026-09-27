@@ -1,0 +1,230 @@
+{
+  "protocol": "reader-attribution-development-v1",
+  "model": "gpt-5.6-luna",
+  "inputSha256": "8efcebd098677474c552e41c7c404746a351b5a52660d134e5023b260cc4d6df",
+  "rows": [
+    {
+      "id": "conv-43:21",
+      "arm": "oracle",
+      "elapsedSeconds": 7.427,
+      "promptSha256": "1d0b99bc794ceaee395b26f020a9dce4f80c44b0f31c0018f5f4641b71f3e700",
+      "promptBytes": 13862,
+      "usage": {
+        "input_tokens": 18872,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 66,
+        "reasoning_output_tokens": 0
+      },
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ],
+      "answer": "John mentions visiting Seattle, Chicago, and New York City (NYC).\n\nSources: [session_3.md](session_3.md), [session_6.md](session_6.md), [session_9.md](session_9.md)",
+      "error": null
+    },
+    {
+      "id": "conv-43:21",
+      "arm": "predicted",
+      "elapsedSeconds": 6.762,
+      "promptSha256": "9ef81de2e91165ca4a3c725bb9681f395cfc928fc24683531535461fec236d8e",
+      "promptBytes": 45497,
+      "usage": {
+        "input_tokens": 27362,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 48,
+        "reasoning_output_tokens": 0
+      },
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ],
+      "answer": "Seattle and New York City (NYC). Sources: session_3.md (D3:19) and session_9.md (D9:6\u201310).",
+      "error": null
+    },
+    {
+      "id": "conv-43:21",
+      "arm": "curator",
+      "elapsedSeconds": 9.337,
+      "promptSha256": "acf781bf5cd1f1e2b04021bac869bd5d20541cec0c3192e8d5f4dbe27ff26173",
+      "promptBytes": 45638,
+      "usage": {
+        "input_tokens": 27388,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 165,
+        "reasoning_output_tokens": 77
+      },
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ],
+      "answer": "John mentions **New York City (NYC)** as a city he visited, and **Seattle** as a city he was headed to for a game the following month. Sources: `session_9.md` (John D9:6\u2013D9:10); `session_3.md` (John D3:17\u2013D3:21).",
+      "error": null
+    },
+    {
+      "id": "conv-43:21",
+      "arm": "brief-reader",
+      "elapsedSeconds": 9.833,
+      "promptSha256": "ec54025fea0db05446cfbf5be8fe31f35c30fa2503ffd1cd7a6836807d2f76df",
+      "promptBytes": 542,
+      "usage": {
+        "input_tokens": 15411,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 139,
+        "reasoning_output_tokens": 57
+      },
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ],
+      "answer": "John mentions visiting New York City (NYC) to Tim (`session_9.md`, John D9:6\u2013D9:10). Seattle is mentioned as a destination he was headed to for a game, not as a city he visited (`session_3.md`, John D3:17\u2013D3:21).",
+      "error": null
+    }
+  ],
+  "expectedTrials": [
+    {
+      "id": "conv-43:21",
+      "arm": "oracle"
+    },
+    {
+      "id": "conv-43:21",
+      "arm": "predicted"
+    },
+    {
+      "id": "conv-43:21",
+      "arm": "curator"
+    },
+    {
+      "id": "conv-43:21",
+      "arm": "brief-reader"
+    }
+  ],
+  "runnerSha256": "02430df10cc7a5a6b2058f61b2177fe327535610345bf5e65123972e3c9ba7ce",
+  "limitations": [
+    "No-tool policy is trace-checked, not a filesystem access-control guarantee",
+    "All arms share a reader model; curator uses the same cheap model",
+    "No official answer score or automatic semantic correctness verdict",
+    "Host-reported usage is not billed cost; tiny sample cannot estimate p95"
+  ],
+  "runComplete": true,
+  "case": {
+    "id": "conv-43:21",
+    "question": "Which US cities does John mention visiting to Tim?",
+    "category": 1,
+    "referenceAnswer": "Seattle, Chicago, New York",
+    "goldPaths": [
+      "session_3.md",
+      "session_6.md",
+      "session_9.md"
+    ],
+    "goldRanks": [
+      1,
+      26,
+      10
+    ],
+    "deliveredEvidence": {
+      "oracle": [
+        {
+          "path": "session_3.md",
+          "sha256": "16ad5ec66e9739484f206a3faa0692b7225c5295298770197cea7cc9d78df6a5"
+        },
+        {
+          "path": "session_6.md",
+          "sha256": "a5000c40e190b2557a133697c0027583f109250eff21471fa2bfc1073b288e5b"
+        },
+        {
+          "path": "session_9.md",
+          "sha256": "a022bf49529703665c1386a062cfaf796cf22c2e161ef09bc3188342d92a6c37"
+        }
+      ],
+      "predicted": [
+        {
+          "path": "session_3.md",
+          "sha256": "16ad5ec66e9739484f206a3faa0692b7225c5295298770197cea7cc9d78df6a5"
+        },
+        {
+          "path": "session_20.md",
+          "sha256": "6980155559487fe2aa2e60f20647ca83978c2d543c5cd99ef2d004f25dd73f49"
+        },
+        {
+          "path": "session_8.md",
+          "sha256": "b78bc6063ff2b1be2cbf9171d4dced4ef908687553a2935e6c6869aff219f83c"
+        },
+        {
+          "path": "session_24.md",
+          "sha256": "3ee5beabb4a686ed8465b3a60e8735b0eed65c1f4efd2bf54b6e2188f91b3159"
+        },
+        {
+          "path": "session_12.md",
+          "sha256": "3733c1a2a3cc2c2cb43acf78bba369570ede84776d8010dd2353b82d299334c9"
+        },
+        {
+          "path": "session_14.md",
+          "sha256": "b406d5a28ea29ec4607f8662dd1f850ec79a03d86d51065f410f4cb331d35bff"
+        },
+        {
+          "path": "session_11.md",
+          "sha256": "3eaee9f84d5052ce7d6540405fe4e5074837399e4aa7253d089edae5ff58b637"
+        },
+        {
+          "path": "session_2.md",
+          "sha256": "f84dec0c454de6f2b2dc9290778f85b53f31ebc136a7ef5ec8da9c9a5c0fb16e"
+        },
+        {
+          "path": "session_1.md",
+          "sha256": "5369a19054de66cf93bf934a073d4f5664e041c66b5a8199a1de73e92b930bc3"
+        },
+        {
+          "path": "session_9.md",
+          "sha256": "a022bf49529703665c1386a062cfaf796cf22c2e161ef09bc3188342d92a6c37"
+        }
+      ]
+    }
+  },
+  "manifest": {
+    "protocol": "reader-attribution-development-v1",
+    "datasetSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+    "readerInputSha256": "8efcebd098677474c552e41c7c404746a351b5a52660d134e5023b260cc4d6df",
+    "ids": [
+      "conv-43:21",
+      "conv-50:140"
+    ],
+    "sampling": "Two previously observed development retrieval failures; no holdout inspected",
+    "sourceHashes": {
+      "scripts/prepare-reader-pilot.mjs": "131fb6cf48fd9ee5dadec7c57fc680ec2922fea2e19c9da48518e5b767ca206e",
+      "scripts/run-reader-pilot.py": "02430df10cc7a5a6b2058f61b2177fe327535610345bf5e65123972e3c9ba7ce",
+      "scripts/lib/locomo.mjs": "b5138a78a26663238e0b619b4d24d057819a4eb8a6cec45472e3b64aee536d2a",
+      "src/retrieval.mjs": "4a85f5662bbf44d05eaeacb386711f05641bb550193d84c3dd7402853c3991fe",
+      "src/memory-recall.mjs": "4f8765badf33121957f9d29c25cf0480c552606cfbb09676acf045c040bb703f"
+    },
+    "limitations": [
+      "Top-10 is a deliberately restricted diagnostic arm, not product retrieval policy",
+      "Oracle session selection uses gold evidence, but session prose contains no QA answers",
+      "No official answer score or calibrated semantic judge is produced by this builder"
+    ]
+  },
+  "semanticVerdicts": null,
+  "officialAnswerScore": null,
+  "priorAttempts": [
+    {
+      "reason": "Codex state/app-server permission failure",
+      "generationProduced": false
+    },
+    {
+      "reason": "gpt-6-luna unsupported by authenticated CLI account",
+      "generationProduced": false
+    },
+    {
+      "reason": "Runner mistakenly treated advisory warning item as prohibited tool; actual generation preserved and excluded from paired result",
+      "generationProduced": true
+    }
+  ],
+  "review": {
+    "reviewer": "root agent, unblinded qualitative source inspection; not independent human calibration",
+    "findings": [
+      "Chicago evidence session_6.md is rank 26 and absent from predicted top-10; oracle includes it",
+      "Seattle reference label is temporally ambiguous: gold turn D3:19 describes a future game; brief retains that distinction",
+      "One deliberately selected development failure cannot establish general superiority, latency improvement or compression quality"
+    ],
+    "next": "Test actual adaptive paging coverage and delivered evidence on fresh development cases before any retrieval default change"
+  }
+}

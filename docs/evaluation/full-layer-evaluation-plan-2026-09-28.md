@@ -135,3 +135,7 @@ Repository-only Context Engineering evaluation/tool-design resources are guidanc
 ## Repository verification
 
 On 2026-09-28, `npm run check` exited successfully (274/274 tests and configured deterministic gates). All 17 vendored source/license SHA-256 entries matched their manifests; all coverage-registry local file references existed. `npm pack --dry-run --json` listed 95 files and no `.agents/` development resources. These checks verify repository consistency, not new reader accuracy. No private vault was changed or benchmark holdout opened.
+
+## Executed follow-up
+
+The [reader attribution pilot](reader-attribution-pilot-2026-09-28.md) completed four actual Codex Luna stages on one deliberately selected exposed development question. It identified absent late-ranked evidence and a temporal reference-label ambiguity; it does not establish an official answer score, independent semantic accuracy or general superiority. The coverage registry now links this evidence. Full repository checks after the runner/tests passed 277/277 tests and configured deterministic gates.
