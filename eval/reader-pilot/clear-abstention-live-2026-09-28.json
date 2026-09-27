@@ -1,0 +1,81 @@
+{
+  "protocol": "curator-paging-development-v2-boolean-continuation",
+  "id": "synthetic-missing-fare-v1",
+  "question": "How much will Mira save taking the bus from North Airport to Cedar Hotel instead of the quoted taxi?",
+  "model": "gpt-5.6-luna",
+  "mode": "auto",
+  "maxRounds": 4,
+  "maxInputBytes": 300000,
+  "persistentCurator": false,
+  "compactFollowup": false,
+  "structuredCitations": true,
+  "runnerSha256": "f222e2b8fe42311f5c78918eafa14cc2a5ccf8072852bf720394e3cbcb0c7499",
+  "inputSha256": "cb241f519d6335a3265513ad8d8f7e67add8ff1b7df22c9ec940f96a0b80ea3a",
+  "modelCalls": [
+    {
+      "stage": "curator",
+      "sessionResumed": false,
+      "elapsedSeconds": 7.256,
+      "promptBytes": 1923,
+      "promptSha256": "01a2ca10e86dfc993b897ee8ab72051c3c998ee9d74f8434d192467e341e37c5",
+      "usage": {
+        "input_tokens": 15830,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 136,
+        "reasoning_output_tokens": 77
+      },
+      "failed": false,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "lead",
+      "sessionResumed": false,
+      "elapsedSeconds": 5.066,
+      "promptBytes": 625,
+      "promptSha256": "8f72f01ee0b30ad65fd85e1d0227e7cf1c43b85663edecc6585d4771c17eca65",
+      "usage": {
+        "input_tokens": 15407,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 62,
+        "reasoning_output_tokens": 24
+      },
+      "failed": false,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "offset": 0,
+      "nextOffset": null,
+      "hasMore": false,
+      "paths": [
+        "trip.md",
+        "other-trip.md",
+        "preferences.md"
+      ],
+      "pageSha256": "dc6a9a041c2bcf800eff9c4ab482ae9a7490178f30d4e7ad4b23e37102482c33"
+    }
+  ],
+  "sourceReads": [],
+  "brief": "Mira\u2019s savings cannot be determined: the taxi quote is $60, but no bus fare has been obtained yet, so the difference is unknown. [trip.md]",
+  "answer": "Cannot be determined; the taxi is quoted at $60, but the bus fare is unknown.",
+  "runComplete": true,
+  "stopReason": "curator-finalized",
+  "limitations": [
+    "One exposed development case; no quality acceptance or latency tail claim",
+    "No-tool boundary is checked in trace, not a proven filesystem isolation guarantee",
+    "No official answer scorer or independent calibrated semantic judge",
+    "Subscription bill allocation unknown; native token categories retained"
+  ],
+  "citations": [],
+  "citationProvenanceValid": true,
+  "elapsedSeconds": 12.369
+}
