@@ -236,7 +236,10 @@
         "eval/longmemeval/development-v2.json",
         "docs/evaluation/astra-eval-skill-audit-2026-09-28.json",
         "docs/evaluation/reader-attribution-pilot-2026-09-28.md",
-        "eval/reader-pilot/development-2026-09-28.json"
+        "eval/reader-pilot/development-2026-09-28.json",
+        "docs/evaluation/cli-pagination-experiment-2026-09-28.md",
+        "docs/evaluation/cli-bundle-experiment-2026-09-28.md",
+        "docs/evaluation/omitted-section-repair-2026-09-28.md"
       ],
       "source_ids": [
         "locomo",
@@ -289,7 +292,10 @@
         "eval/competitor-pilot/batch-source-read.json",
         "docs/evaluation/curator-pagination-2026-09-27.md",
         "docs/evaluation/reader-attribution-pilot-2026-09-28.md",
-        "eval/reader-pilot/development-2026-09-28.json"
+        "eval/reader-pilot/development-2026-09-28.json",
+        "docs/evaluation/cli-pagination-experiment-2026-09-28.md",
+        "docs/evaluation/cli-bundle-experiment-2026-09-28.md",
+        "docs/evaluation/omitted-section-repair-2026-09-28.md"
       ],
       "source_ids": [
         "bfcl_memory",
@@ -518,7 +524,10 @@
         "eval/bm25f-optimization/paired-warm-results.json",
         "docs/evaluation/prompt-cache-compatibility-2026-09-26.md",
         "docs/evaluation/reader-attribution-pilot-2026-09-28.md",
-        "eval/reader-pilot/development-2026-09-28.json"
+        "eval/reader-pilot/development-2026-09-28.json",
+        "docs/evaluation/cli-pagination-experiment-2026-09-28.md",
+        "docs/evaluation/cli-bundle-experiment-2026-09-28.md",
+        "docs/evaluation/omitted-section-repair-2026-09-28.md"
       ],
       "source_ids": [
         "openai_cache",
@@ -568,7 +577,10 @@
         "docs/evaluation/scorer-correctness-repair-2026-09-28.md",
         "docs/evaluation/astra-eval-skill-audit-2026-09-28.md",
         "docs/evaluation/reader-attribution-pilot-2026-09-28.md",
-        "eval/reader-pilot/development-2026-09-28.json"
+        "eval/reader-pilot/development-2026-09-28.json",
+        "docs/evaluation/cli-pagination-experiment-2026-09-28.md",
+        "docs/evaluation/cli-bundle-experiment-2026-09-28.md",
+        "docs/evaluation/omitted-section-repair-2026-09-28.md"
       ],
       "source_ids": [
         "locomo",
@@ -594,5 +606,12 @@
       "priority": "P1"
     }
   ],
-  "followup": "One selected development question, four actual generations; no official answer scorer or calibrated semantic judge; original baseline counts describe fd84bd5 only."
+  "followup": "One selected development question, four actual generations; no official answer scorer or calibrated semantic judge; original baseline counts describe fd84bd5 only.",
+  "latest_regression_verification": {
+    "tests_passed": 278,
+    "tests_failed": 0,
+    "command": "npm run check",
+    "evidence_class": "regression",
+    "note": "Does not establish live answer correctness or competitor superiority"
+  }
 }

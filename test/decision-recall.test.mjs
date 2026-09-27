@@ -7,6 +7,18 @@ import { chooseAdaptiveMode, curatorEvidencePreview, managedRecall } from "../sr
 import { loadVaultDocuments, recallVaultLoop } from "../src/memory-recall.mjs"
 import { DEFAULT_RUNTIME_CONFIG, loadRuntimeConfig, saveRuntimeConfig, validateRuntimeConfig, retrievalMethods } from "../src/runtime-config.mjs"
 
+test("omitted short sections require original reads even when displayed previews are not truncated", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-preview-coverage-"))
+  try {
+    fs.writeFileSync(path.join(vault, "travel.md"), "# Travel\n## Overview\nJohn travel plans.\n## A\nJohn travel plans in spring.\n## B\nJohn travel plans in summer.\n## C\nI was in Chicago.")
+    const page = await managedRecall(vault, "John travel plans", DEFAULT_RUNTIME_CONFIG, { evidencePreview: true })
+    const candidate = page.results.find(item => item.path === "travel.md")
+    assert.ok(candidate.evidencePreview.every(section => !section.truncated))
+    assert.ok(candidate.evidencePreview.every(section => !section.text.includes("Chicago")))
+    assert.equal(candidate.sourceReadRequired, true)
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
+})
+
 test("curator pages through all matching paths while an explicit smaller page still works", async () => {
   const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-curator-depth-"))
   try {

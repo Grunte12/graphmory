@@ -38,10 +38,13 @@ export async function managedRecall(vault, query, config, {
     let bundleUsedBytes = 0
     for (const { path, title, score, status } of page.results) {
       if (adaptiveMode === "focused" && results.length >= 10) break
-      const preview = documentsByPath?.has(path) ? curatorEvidencePreview(documentsByPath.get(path), query, { matchedOnly: matchedPreviews && adaptiveMode === "wide" }) : []
+      const document = documentsByPath?.get(path)
+      const preview = document ? curatorEvidencePreview(document, query, { matchedOnly: matchedPreviews && adaptiveMode === "wide" }) : []
+      const incompletePreview = preview.length > 0 && (preview.some(item => item.truncated)
+        || preview.length < splitMarkdownSections(document).length)
       const result = { path, title, score, status,
         ...(preview.length ? { evidencePreview: preview } : {}),
-        ...(preview.some((item) => item.truncated) ? { sourceReadRequired: true } : {}),
+        ...(incompletePreview ? { sourceReadRequired: true } : {}),
         ...((adaptiveBundle || evidencePreview || bundleBytes) && !preview.length ? { previewOmitted: true } : {}),
       }
       const bytes = Buffer.byteLength(JSON.stringify(result), "utf8")
