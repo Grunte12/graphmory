@@ -61,4 +61,49 @@ first response (34/34). The filter operated in wide mode for three queries;
 median JSON response size was 10,459 versus 10,632 bytes. Two first-page
 path lists differed because shorter previews allowed more ranked paths within
 the same byte budget. This is candidate coverage only, not answer quality or
-proof that citation support improves. The frozen live trials remain pending.
+proof that citation support improves.
+
+The frozen five-case reader trial used identical Markdown sessions, the same
+question/date, OpenCode 1.18.29 and `openai/gpt-5.6-luna`. Each arm started a
+fresh session; order alternated. Gold and rubric were outside the workspaces.
+The grader saw anonymized answers before arm identity. All ten runs stopped
+normally, with no tool errors or vault changes. The [sanitized row data](../../eval/competitor-pilot/matched-preview-fresh-five.json)
+record runner/source/config/vault hashes, usage and grades. Raw traces and
+answers remain private. Source: LongMemEval S revision
+`98d7416c24c778c2fee6e6f3006e7a073259d48f`, SHA-256
+`d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442`.
+
+| Metric, five pairs | Matched wide previews | Ordinary `--auto` |
+| --- | ---: | ---: |
+| Core answer correct and required evidence complete | 5/5 | 5/5 |
+| All material claims directly supported | 5/5 | 4/5 |
+| Safe abstention | 1/1 | 1/1 |
+| Median elapsed | 17.9 s | 27.4 s |
+| Median tool calls | 3 | 5 |
+| Median host input counter, excluding cache | 21,386 | 25,943 |
+| Median cache-inclusive input | 41,524 | 102,493 |
+| Median first retrieval response | 7,011 bytes | 32,204 bytes |
+
+Matched previews were faster in **three of five** pairs and used fewer tool
+calls in three; one tied and one used more. Both arms preserved the required
+answer and evidence in all five. On the sole abstention task, matched output
+omitted a preview for one of two comparison paths, but kept the path; its
+reader still found both sources and abstained safely. Ordinary `--auto` added
+an author's name not present in its cited note on the book question. The name
+may be true from outside knowledge, but it was unsupported by vault evidence.
+This one difference cannot establish that filtering caused better support.
+
+The input and cache counters are host-reported, not subscription bills. Run
+order and provider cache state can affect them. With one run per case, five
+cases and only one unknown, we cannot estimate variance, p95, or a general
+quality gain. This remains a development observation, not a release gate.
+
+## Decision
+
+Keep `--matched-previews` opt-in, and retain ordinary `--auto` as the
+experimental baseline. The filter substantially shrinks wide bundles while
+preserving all five core outcomes in this small suite, but it has not met the
+[promotion criteria](optimization-loop-2026-09-27.md). The next iteration
+should first repair unnecessary wide routing on narrow questions, then test
+fresh answerability and citation support with repeated runs before any default
+change.
