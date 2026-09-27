@@ -80,3 +80,12 @@ support passed 12/16 old versus 13/16 new. The required gain was three; calls
 were equal and median input rose slightly. The behavioral optimization gate
 failed. Keep diagnostic semantics, stop tuning this intervention, and do not
 promote defaults or claim improved performance.
+
+## Mechanical source-read batching
+
+[A local source-read benchmark](batch-source-read-2026-09-27.md) compared 20
+individual CLI reads, one structured batch, and plain batch cat. Median times
+were 1,202 ms, 64 ms, and 3 ms respectively. Retain optional `read-notes` for
+full source envelopes; use native batched readers when suitable. This avoids
+repeated CLI startup but is not evidence of improved answer quality or reduced
+model tokens. Retrieval and curator defaults remain unchanged.

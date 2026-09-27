@@ -34,6 +34,7 @@ import { auditMemoryLifecycle } from "../src/memory-lifecycle-audit.mjs"
 import { writeFileAtomic, writeJsonAtomic } from "../src/atomic-write.mjs"
 import { loadRuntimeConfig, runtimeConfigPath, saveRuntimeConfig } from "../src/runtime-config.mjs"
 import { managedRecall } from "../src/decision-recall.mjs"
+import { readSourceNotes } from "../src/source-read.mjs"
 import { planDecisionCuration } from "../src/decision-curation.mjs"
 import { recallVaultAdaptive } from "../src/adaptive-recall.mjs"
 
@@ -54,6 +55,7 @@ function usage(exitCode = 0) {
   const out = exitCode === 0 ? process.stdout : process.stderr
   out.write(`Graphmory brain sync\n\n`)
   out.write(`Usage:\n`)
+  out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --paths '<JSON array of relative Markdown paths>' (full sources, compact JSON)\n`)
   out.write(`  node scripts/brain-sync.mjs adoption-plan --vault <path> [--out <file>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs bootstrap --vault <path> --repo <owner/repo> [--create-remote]\n`)
   out.write(`  node scripts/brain-sync.mjs detect --vault <path> [--json]\n`)
@@ -1873,6 +1875,10 @@ try {
   else if (command === "recall") recall()
   else if (command === "recall-loop") recallLoop()
   else if (command === "recall-managed") await recallManaged()
+  else if (command === "read-notes") {
+    if (!option("--vault") || !option("--paths")) throw new Error("read-notes requires --vault and --paths")
+    console.log(JSON.stringify(readSourceNotes(option("--vault"), JSON.parse(option("--paths")))))
+  }
   else if (command === "graph-audit") graphAudit()
   else if (command === "recall-explore") await recallExplore()
   else if (command === "curate-plan") await curatePlan()

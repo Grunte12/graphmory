@@ -56,3 +56,16 @@ was selected; it does not mean the note is irrelevant. Inspect that original
 when its path or topic may supply required evidence. These flags are retrieval diagnostics,
 not judgments that the evidence supports an answer. Even unmarked previews
 may omit relevant sections; inspect originals when completeness is uncertain.
+
+### Read selected originals together
+
+```sh
+graphmory read-notes --vault <path> --paths '["projects/one.md","decisions/two.md"]'
+```
+
+This local read-only command returns full Markdown per path, SHA-256 of file
+bytes, byte count, and line count as compact JSON. Select the notes needed
+for the question; output is not truncated or summarized. An unsafe or missing
+path fails the entire request. Hashes identify originals and do not validate
+the meaning of a claim. A host's existing batched file-read tool is also fine;
+this command is useful when separate source envelopes are needed.
