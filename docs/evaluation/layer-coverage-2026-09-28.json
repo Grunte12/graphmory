@@ -239,7 +239,11 @@
         "eval/reader-pilot/development-2026-09-28.json",
         "docs/evaluation/cli-pagination-experiment-2026-09-28.md",
         "docs/evaluation/cli-bundle-experiment-2026-09-28.md",
-        "docs/evaluation/omitted-section-repair-2026-09-28.md"
+        "docs/evaluation/omitted-section-repair-2026-09-28.md",
+        "docs/evaluation/curator-continuation-experiment-2026-09-28.md",
+        "eval/reader-pilot/curator-paging-live-2026-09-28.json",
+        "eval/reader-pilot/curator-auto-v1-failed-2026-09-28.json",
+        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json"
       ],
       "source_ids": [
         "locomo",
@@ -295,7 +299,11 @@
         "eval/reader-pilot/development-2026-09-28.json",
         "docs/evaluation/cli-pagination-experiment-2026-09-28.md",
         "docs/evaluation/cli-bundle-experiment-2026-09-28.md",
-        "docs/evaluation/omitted-section-repair-2026-09-28.md"
+        "docs/evaluation/omitted-section-repair-2026-09-28.md",
+        "docs/evaluation/curator-continuation-experiment-2026-09-28.md",
+        "eval/reader-pilot/curator-paging-live-2026-09-28.json",
+        "eval/reader-pilot/curator-auto-v1-failed-2026-09-28.json",
+        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json"
       ],
       "source_ids": [
         "bfcl_memory",
@@ -342,7 +350,11 @@
         "eval/competitor-pilot/preview-state-live.json",
         "docs/evaluation/curator-loop-pilot-2026-09-27.md",
         "docs/evaluation/reader-attribution-pilot-2026-09-28.md",
-        "eval/reader-pilot/development-2026-09-28.json"
+        "eval/reader-pilot/development-2026-09-28.json",
+        "docs/evaluation/curator-continuation-experiment-2026-09-28.md",
+        "eval/reader-pilot/curator-paging-live-2026-09-28.json",
+        "eval/reader-pilot/curator-auto-v1-failed-2026-09-28.json",
+        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json"
       ],
       "source_ids": [
         "alce"
@@ -386,7 +398,11 @@
         "eval/competitor-pilot/preview-state-live.json",
         "docs/evaluation/astra-eval-skill-audit-2026-09-28.md",
         "docs/evaluation/reader-attribution-pilot-2026-09-28.md",
-        "eval/reader-pilot/development-2026-09-28.json"
+        "eval/reader-pilot/development-2026-09-28.json",
+        "docs/evaluation/curator-continuation-experiment-2026-09-28.md",
+        "eval/reader-pilot/curator-paging-live-2026-09-28.json",
+        "eval/reader-pilot/curator-auto-v1-failed-2026-09-28.json",
+        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json"
       ],
       "source_ids": [
         "locomo",
@@ -527,7 +543,11 @@
         "eval/reader-pilot/development-2026-09-28.json",
         "docs/evaluation/cli-pagination-experiment-2026-09-28.md",
         "docs/evaluation/cli-bundle-experiment-2026-09-28.md",
-        "docs/evaluation/omitted-section-repair-2026-09-28.md"
+        "docs/evaluation/omitted-section-repair-2026-09-28.md",
+        "docs/evaluation/curator-continuation-experiment-2026-09-28.md",
+        "eval/reader-pilot/curator-paging-live-2026-09-28.json",
+        "eval/reader-pilot/curator-auto-v1-failed-2026-09-28.json",
+        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json"
       ],
       "source_ids": [
         "openai_cache",
@@ -571,7 +591,8 @@
         "test/locomo.test.mjs",
         "test/longmemeval.test.mjs",
         "test/eval-host-runner.test.mjs",
-        "test/reader-pilot.test.mjs"
+        "test/reader-pilot.test.mjs",
+        "test/curator-paging-pilot.test.mjs"
       ],
       "artifacts": [
         "docs/evaluation/scorer-correctness-repair-2026-09-28.md",
@@ -580,7 +601,11 @@
         "eval/reader-pilot/development-2026-09-28.json",
         "docs/evaluation/cli-pagination-experiment-2026-09-28.md",
         "docs/evaluation/cli-bundle-experiment-2026-09-28.md",
-        "docs/evaluation/omitted-section-repair-2026-09-28.md"
+        "docs/evaluation/omitted-section-repair-2026-09-28.md",
+        "docs/evaluation/curator-continuation-experiment-2026-09-28.md",
+        "eval/reader-pilot/curator-paging-live-2026-09-28.json",
+        "eval/reader-pilot/curator-auto-v1-failed-2026-09-28.json",
+        "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json"
       ],
       "source_ids": [
         "locomo",
@@ -613,5 +638,6 @@
     "command": "npm run check",
     "evidence_class": "regression",
     "note": "Does not establish live answer correctness or competitor superiority"
-  }
+  },
+  "latest_live_development": "One exposed LoCoMo question, bundle and paged/failed protocols; raw pinned QA function scores exist but full official split and independently adjudicated supported-complete remain unmeasured."
 }

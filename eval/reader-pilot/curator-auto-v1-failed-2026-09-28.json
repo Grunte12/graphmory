@@ -1,0 +1,201 @@
+{
+  "protocol": "curator-paging-development-v1",
+  "id": "conv-43:21",
+  "question": "Which US cities does John mention visiting to Tim?",
+  "model": "gpt-5.6-luna",
+  "mode": "auto",
+  "maxRounds": 5,
+  "maxInputBytes": 300000,
+  "runnerSha256": "4372a23b89b5b336248e673b003e0459192b8443865cf6759fccb85efac91a7a",
+  "inputSha256": "158c2c5cbb7d5ba36c0023c82a4223076f8d00ab14b00b534e6004fc56260fd2",
+  "modelCalls": [
+    {
+      "stage": "curator",
+      "elapsedSeconds": 9.323,
+      "promptBytes": 8298,
+      "promptSha256": "c34b56f0addf063e036342e0cde31fcc93d6f21d0ece28287beb5cc9955027ed",
+      "usage": {
+        "input_tokens": 17424,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 113,
+        "reasoning_output_tokens": 37
+      },
+      "failed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "curator",
+      "elapsedSeconds": 8.316,
+      "promptBytes": 66663,
+      "promptSha256": "ec682a33df22ac48e6dd1fbab7010facf63253b4c4c72d3d4e1265b82cc609eb",
+      "usage": {
+        "input_tokens": 32809,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 107,
+        "reasoning_output_tokens": 76
+      },
+      "failed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "curator",
+      "elapsedSeconds": 8.585,
+      "promptBytes": 77469,
+      "promptSha256": "5da1db683ab713e45370aa2b122cc1656d53fe8e7171a9299acab6b75af9b545",
+      "usage": {
+        "input_tokens": 35631,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 136,
+        "reasoning_output_tokens": 100
+      },
+      "failed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "offset": 0,
+      "nextOffset": 10,
+      "hasMore": true,
+      "paths": [
+        "session_3.md",
+        "session_20.md",
+        "session_8.md",
+        "session_24.md",
+        "session_14.md",
+        "session_11.md",
+        "session_12.md",
+        "session_2.md",
+        "session_1.md",
+        "session_15.md"
+      ],
+      "pageSha256": "32b8ab20f7138d38f6456c9f4db3ae58a461858c37247d5f296b4a622752fc93"
+    },
+    {
+      "offset": 10,
+      "nextOffset": 20,
+      "hasMore": true,
+      "paths": [
+        "session_9.md",
+        "session_29.md",
+        "session_16.md",
+        "session_19.md",
+        "session_17.md",
+        "session_27.md",
+        "session_25.md",
+        "session_26.md",
+        "session_5.md",
+        "session_4.md"
+      ],
+      "pageSha256": "321a19cdf759a81fac0119e184271b35671e1674e878149cba2e8c5b14322256"
+    },
+    {
+      "offset": 20,
+      "nextOffset": null,
+      "hasMore": false,
+      "paths": [
+        "session_22.md",
+        "session_13.md",
+        "session_23.md",
+        "session_10.md",
+        "session_28.md",
+        "session_6.md",
+        "session_18.md",
+        "session_21.md",
+        "session_7.md"
+      ],
+      "pageSha256": "7c51d02020cb866072e844cdc7c77edd7c6d8f46c0a54fa959940c88c3055ff9"
+    }
+  ],
+  "sourceReads": [
+    {
+      "path": "session_3.md",
+      "sha256": "16ad5ec66e9739484f206a3faa0692b7225c5295298770197cea7cc9d78df6a5",
+      "bytes": 5787
+    },
+    {
+      "path": "session_20.md",
+      "sha256": "6980155559487fe2aa2e60f20647ca83978c2d543c5cd99ef2d004f25dd73f49",
+      "bytes": 6041
+    },
+    {
+      "path": "session_8.md",
+      "sha256": "b78bc6063ff2b1be2cbf9171d4dced4ef908687553a2935e6c6869aff219f83c",
+      "bytes": 6713
+    },
+    {
+      "path": "session_24.md",
+      "sha256": "3ee5beabb4a686ed8465b3a60e8735b0eed65c1f4efd2bf54b6e2188f91b3159",
+      "bytes": 2821
+    },
+    {
+      "path": "session_14.md",
+      "sha256": "b406d5a28ea29ec4607f8662dd1f850ec79a03d86d51065f410f4cb331d35bff",
+      "bytes": 3458
+    },
+    {
+      "path": "session_11.md",
+      "sha256": "3eaee9f84d5052ce7d6540405fe4e5074837399e4aa7253d089edae5ff58b637",
+      "bytes": 4880
+    },
+    {
+      "path": "session_12.md",
+      "sha256": "3733c1a2a3cc2c2cb43acf78bba369570ede84776d8010dd2353b82d299334c9",
+      "bytes": 4735
+    },
+    {
+      "path": "session_2.md",
+      "sha256": "f84dec0c454de6f2b2dc9290778f85b53f31ebc136a7ef5ec8da9c9a5c0fb16e",
+      "bytes": 3178
+    },
+    {
+      "path": "session_1.md",
+      "sha256": "5369a19054de66cf93bf934a073d4f5664e041c66b5a8199a1de73e92b930bc3",
+      "bytes": 2895
+    },
+    {
+      "path": "session_15.md",
+      "sha256": "73497cb49250d7697f9c22a488b47eec8c08eb393ddb250ba644f4785e51f8bf",
+      "bytes": 6990
+    },
+    {
+      "path": "session_9.md",
+      "sha256": "a022bf49529703665c1386a062cfaf796cf22c2e161ef09bc3188342d92a6c37",
+      "bytes": 2540
+    },
+    {
+      "path": "session_6.md",
+      "sha256": "a5000c40e190b2557a133697c0027583f109250eff21471fa2bfc1073b288e5b",
+      "bytes": 4603
+    },
+    {
+      "path": "session_7.md",
+      "sha256": "196d66e73aaf8f70989bc0f7214fee841bcb6e3308e8a3d7610d019bc59bd085",
+      "bytes": 3287
+    }
+  ],
+  "brief": null,
+  "answer": null,
+  "runComplete": false,
+  "stopReason": "Invalid continuation",
+  "limitations": [
+    "One exposed development case; no quality acceptance or latency tail claim",
+    "No-tool boundary is checked in trace, not a proven filesystem isolation guarantee",
+    "No official answer scorer or independent calibrated semantic judge",
+    "Subscription bill allocation unknown; native token categories retained"
+  ],
+  "elapsedSeconds": 26.558,
+  "review": {
+    "classification": "Observed protocol failure, not a quality score",
+    "traceSummary": "After page 3 hasMore=false and nextOffset=null, model requested next_offset=20 again; runner rejected continuation after delivering requested originals. No lead answer."
+  }
+}

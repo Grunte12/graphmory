@@ -139,3 +139,5 @@ On 2026-09-28, `npm run check` exited successfully (274/274 tests and configured
 ## Executed follow-up
 
 The [reader attribution pilot](reader-attribution-pilot-2026-09-28.md) completed four actual Codex Luna stages on one deliberately selected exposed development question. It identified absent late-ranked evidence and a temporal reference-label ambiguity; it does not establish an official answer score, independent semantic accuracy or general superiority. The coverage registry now links this evidence. Full repository checks after the runner/tests passed 277/277 tests and configured deterministic gates.
+
+The next traced [Curator continuation experiment](curator-continuation-experiment-2026-09-28.md) documents one exposed development question, an actual pagination failure, a boolean-continuation recovery, full source-read traces and the pinned category-1 raw QA computation. It does not satisfy official full-split or strict-support gates.

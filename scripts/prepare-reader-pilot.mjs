@@ -17,7 +17,8 @@ const baseline = JSON.parse(fs.readFileSync(new URL('../eval/locomo/development-
 const items = JSON.parse(bytes)
 // Purposeful known-failure sample, not random, representative, or fresh holdout.
 const ids = ['conv-43:21', 'conv-50:140']
-const cases = [], labels = []
+const cases = [], labels = [], paging = []
+fs.mkdirSync(out, { recursive: true, mode: 0o700 })
 for (const id of ids) {
   const separator = id.lastIndexOf(':')
   const sample = id.slice(0, separator), index = Number(id.slice(separator + 1))
@@ -34,13 +35,17 @@ for (const id of ids) {
     return { path: name, sha256: digest(doc.markdown), markdown: doc.markdown }
   })
   cases.push({ id, question: q.query, oracle: render(q.evidence), predicted: render(ranking.slice(0, 10)) })
+  const vault = path.join(out, 'vaults', sample)
+  fs.mkdirSync(vault, { recursive: true })
+  for (const doc of prepared.documents) fs.writeFileSync(path.join(vault, doc.path), doc.markdown, { mode: 0o600 })
+  paging.push({ id, question: q.query, vault, sources: Object.fromEntries(prepared.documents.map(doc => [doc.path, digest(doc.markdown)])) })
   labels.push({ id, category: q.category, answer: item.qa[index].answer, evidence: item.qa[index].evidence,
     goldPaths: q.evidence, goldRanks: q.evidence.map((name) => ranking.indexOf(name) + 1) })
 }
-fs.mkdirSync(out, { recursive: true, mode: 0o700 })
 const payload = JSON.stringify(cases, null, 2) + '\n'
 fs.writeFileSync(path.join(out, 'reader-input.json'), payload, { mode: 0o600 })
 fs.writeFileSync(path.join(out, 'labels.json'), JSON.stringify(labels, null, 2) + '\n', { mode: 0o600 })
+fs.writeFileSync(path.join(out, 'paging-input.json'), JSON.stringify(paging, null, 2) + '\n', { mode: 0o600 })
 const files = ['scripts/prepare-reader-pilot.mjs', 'scripts/run-reader-pilot.py', 'scripts/lib/locomo.mjs', 'src/retrieval.mjs', 'src/memory-recall.mjs']
 fs.writeFileSync(path.join(out, 'manifest.json'), JSON.stringify({ protocol: 'reader-attribution-development-v1', datasetSha256: digest(bytes),
   readerInputSha256: digest(payload), ids, sampling: 'Two previously observed development retrieval failures; no holdout inspected',
