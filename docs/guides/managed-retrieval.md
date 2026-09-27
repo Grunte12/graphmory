@@ -51,6 +51,8 @@ This opt-in choice follows a [controlled LongMemEval retrieval experiment](../ev
 
 When a candidate has `sourceReadRequired: true`, read its original Markdown
 note before relying on it or ruling it out. `truncated: true` means a section
-preview ends before the section does. These flags are retrieval diagnostics,
+preview ends before the section does. `previewOmitted: true` means no preview
+was selected; it does not mean the note is irrelevant. Inspect that original
+when its path or topic may supply required evidence. These flags are retrieval diagnostics,
 not judgments that the evidence supports an answer. Even unmarked previews
 may omit relevant sections; inspect originals when completeness is uncertain.

@@ -41,8 +41,8 @@ export async function managedRecall(vault, query, config, {
       const preview = documentsByPath?.has(path) ? curatorEvidencePreview(documentsByPath.get(path), query, { matchedOnly: matchedPreviews && adaptiveMode === "wide" }) : []
       const result = { path, title, score, status,
         ...(preview.length ? { evidencePreview: preview } : {}),
-        ...((adaptiveBundle || evidencePreview || bundleBytes) && (!preview.length || preview.some((item) => item.truncated))
-          ? { sourceReadRequired: true } : {}),
+        ...(preview.some((item) => item.truncated) ? { sourceReadRequired: true } : {}),
+        ...((adaptiveBundle || evidencePreview || bundleBytes) && !preview.length ? { previewOmitted: true } : {}),
       }
       const bytes = Buffer.byteLength(JSON.stringify(result), "utf8")
       if (effectiveBundleBytes && results.length && bundleUsedBytes + bytes > effectiveBundleBytes) break

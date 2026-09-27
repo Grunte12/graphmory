@@ -64,3 +64,10 @@ failed. Both variants got required facts in 6/6 answers; strict relevant and
 cited answers passed 4/6 each. Metadata did not establish a quality improvement.
 Cross-topic requirement attribution, rather than lost note paths, is the next
 observed bottleneck. This pilot does not justify changing defaults.
+
+## Astra review: preview state semantics
+
+[Astra review and deterministic rerun](astra-preview-state-2026-09-27.md)
+separate omitted previews from truncated selected previews. Complete paths
+and ranking remain intact, including 80-note pagination. Live behavior
+improvement remains unverified; adaptive modes stay opt-in.

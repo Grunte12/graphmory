@@ -103,3 +103,7 @@ python3 scripts/eval-codex-source-flags.py --workspace /private/tmp/graphmory-co
 `npm run check` passed. The runner's Python syntax was checked. Test vaults
 and execution wrappers were removed after preserving trial evidence locally;
 no personal Obsidian files or credentials were copied into the repo.
+
+For the original experiment, use repository commit `d66ed2e`: subsequent
+preview-state changes alter the treatment payload. Repeating this command on
+newer code is a new experiment and must be reported separately.
