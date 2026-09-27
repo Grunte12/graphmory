@@ -1,0 +1,968 @@
+{
+  "model": "gpt-5.6-luna",
+  "reasoning": "low",
+  "baseCommit": "d313eb6",
+  "pairs": 16,
+  "uniqueQuestions": 8,
+  "repeats": 2,
+  "grading": "author manual audit; not blind or independent",
+  "decision": "behavioral-optimization-gate-failed",
+  "summary": {
+    "old": {
+      "strictPass": 12,
+      "medianSeconds": 17.34,
+      "medianInput": 32122.0,
+      "medianUncachedInput": 2936.0,
+      "totalCalls": 35,
+      "sourceReads": 48,
+      "totalInput": 559529,
+      "totalCachedInput": 443904
+    },
+    "new": {
+      "strictPass": 13,
+      "medianSeconds": 18.09,
+      "medianInput": 32147.5,
+      "medianUncachedInput": 12561.0,
+      "totalCalls": 35,
+      "sourceReads": 50,
+      "totalInput": 559549,
+      "totalCachedInput": 361984
+    }
+  },
+  "rows": [
+    {
+      "id": "paraphrase",
+      "arm": "old",
+      "repeat": 0,
+      "elapsedSeconds": 16.69,
+      "usage": {
+        "input_tokens": 31391,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 121,
+        "reasoning_output_tokens": 38
+      },
+      "answer": "Cedar is maintained by Anika, and its handoff is due November 9. Sources: responsibility.md; schedule.md",
+      "readPaths": [
+        "responsibility.md",
+        "schedule.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "paraphrase",
+      "arm": "new",
+      "repeat": 0,
+      "elapsedSeconds": 16.02,
+      "usage": {
+        "input_tokens": 31371,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 155,
+        "reasoning_output_tokens": 72
+      },
+      "answer": "Cedar is maintained by Anika; its handoff is due November 9. Sources: responsibility.md and schedule.md.",
+      "readPaths": [
+        "responsibility.md",
+        "schedule.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "later-page",
+      "arm": "new",
+      "repeat": 0,
+      "elapsedSeconds": 32.64,
+      "usage": {
+        "input_tokens": 63680,
+        "cached_input_tokens": 32000,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 311,
+        "reasoning_output_tokens": 173
+      },
+      "answer": "The Rowan recovery key is **sapphire**, from `z-final.md`.",
+      "readPaths": [
+        "context-0.md",
+        "context-1.md",
+        "z-final.md",
+        "context-10.md"
+      ],
+      "offsets": [
+        0,
+        2
+      ],
+      "modelCalls": 4,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "later-page",
+      "arm": "old",
+      "repeat": 0,
+      "elapsedSeconds": 30.04,
+      "usage": {
+        "input_tokens": 63626,
+        "cached_input_tokens": 44288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 288,
+        "reasoning_output_tokens": 157
+      },
+      "answer": "The Rowan recovery key is \"sapphire.\" Source: z-final.md",
+      "readPaths": [
+        "context-0.md",
+        "context-1.md",
+        "z-final.md"
+      ],
+      "offsets": [
+        0,
+        2
+      ],
+      "modelCalls": 4,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "long",
+      "arm": "old",
+      "repeat": 0,
+      "elapsedSeconds": 19.12,
+      "usage": {
+        "input_tokens": 32237,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 303,
+        "reasoning_output_tokens": 144
+      },
+      "answer": "Orion recovery requirements:\n- Restore the encrypted backup. (recovery.md)\n- Obtain approval before deployment; the approver is not recorded. (approval.md, policy.md)\n- Complete by October 12. (deadline.md)\n- Do not run the deployment on Friday. (policy.md)\n- Owner: Mira. (owner.md)\n\nSources: recovery.md, owner.md, approval.md, deadline.md, policy.md",
+      "readPaths": [
+        "recovery.md",
+        "owner.md",
+        "approval.md",
+        "deadline.md",
+        "policy.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": false,
+      "strictSupportedAnswer": false
+    },
+    {
+      "id": "long",
+      "arm": "new",
+      "repeat": 0,
+      "elapsedSeconds": 18.72,
+      "usage": {
+        "input_tokens": 32217,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 301,
+        "reasoning_output_tokens": 147
+      },
+      "answer": "Orion recovery requirements:\n- Restore the encrypted backup ([recovery.md](recovery.md)).\n- Obtain approval before deployment ([approval.md](approval.md); [policy.md](policy.md)). The approver is not recorded ([approval.md](approval.md)).\n- Complete recovery by October 12 ([deadline.md](deadline.md)).\n- Do not run the deployment on Friday ([policy.md](policy.md)).",
+      "readPaths": [
+        "recovery.md",
+        "owner.md",
+        "approval.md",
+        "deadline.md",
+        "policy.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": false,
+      "strictSupportedAnswer": false
+    },
+    {
+      "id": "split",
+      "arm": "new",
+      "repeat": 0,
+      "elapsedSeconds": 16.47,
+      "usage": {
+        "input_tokens": 32120,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 172,
+        "reasoning_output_tokens": 83
+      },
+      "answer": "Orion has one recorded owner and deadline: Mira \u2014 October 12. Sources: owner.md; deadline.md",
+      "readPaths": [
+        "owner.md",
+        "deadline.md",
+        "approval.md",
+        "policy.md",
+        "recovery.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "split",
+      "arm": "old",
+      "repeat": 0,
+      "elapsedSeconds": 15.29,
+      "usage": {
+        "input_tokens": 32120,
+        "cached_input_tokens": 29184,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 170,
+        "reasoning_output_tokens": 79
+      },
+      "answer": "Orion owner: Mira ([owner.md](owner.md)). Deadline: October 12 ([deadline.md](deadline.md)).",
+      "readPaths": [
+        "owner.md",
+        "deadline.md",
+        "approval.md",
+        "policy.md",
+        "recovery.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "conflict",
+      "arm": "old",
+      "repeat": 0,
+      "elapsedSeconds": 18.05,
+      "usage": {
+        "input_tokens": 31844,
+        "cached_input_tokens": 29184,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 228,
+        "reasoning_output_tokens": 108
+      },
+      "answer": "Vega storage has two conflicting decisions, both recorded in March 2025: [unresolved-a.md](unresolved-a.md) specifies SQLite, while [unresolved-b.md](unresolved-b.md) specifies PostgreSQL. Neither records a resolution, so no resolved choice can be identified.",
+      "readPaths": [
+        "unresolved-a.md",
+        "unresolved-b.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "conflict",
+      "arm": "new",
+      "repeat": 0,
+      "elapsedSeconds": 25.48,
+      "usage": {
+        "input_tokens": 48388,
+        "cached_input_tokens": 24064,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 354,
+        "reasoning_output_tokens": 192
+      },
+      "answer": "Vega storage has conflicting decisions: unresolved-a.md says SQLite, while unresolved-b.md says PostgreSQL. Both were recorded in March 2025, and both explicitly state that no resolution was recorded. Therefore, the resolved choice cannot be identified from the available sources. Sources: unresolved-a.md; unresolved-b.md",
+      "readPaths": [
+        "unresolved-a.md",
+        "unresolved-b.md",
+        "new.md",
+        "old.md",
+        "approval.md",
+        "recovery.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 3,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "unknown",
+      "arm": "new",
+      "repeat": 0,
+      "elapsedSeconds": 15.86,
+      "usage": {
+        "input_tokens": 31844,
+        "cached_input_tokens": 30208,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 130,
+        "reasoning_output_tokens": 64
+      },
+      "answer": "The approver has not been recorded. Source: approval.md",
+      "readPaths": [
+        "approval.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "unknown",
+      "arm": "old",
+      "repeat": 0,
+      "elapsedSeconds": 16.68,
+      "usage": {
+        "input_tokens": 31844,
+        "cached_input_tokens": 30208,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 167,
+        "reasoning_output_tokens": 99
+      },
+      "answer": "No approver was recorded for the Orion deployment. Source: approval.md",
+      "readPaths": [
+        "approval.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "temporal",
+      "arm": "old",
+      "repeat": 0,
+      "elapsedSeconds": 17.79,
+      "usage": {
+        "input_tokens": 32343,
+        "cached_input_tokens": 30208,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 173,
+        "reasoning_output_tokens": 82
+      },
+      "answer": "Nova currently uses PostgreSQL, as recorded in [new.md](new.md), which explicitly replaces the January 2025 SQLite decision in [old.md](old.md).",
+      "readPaths": [
+        "old.md",
+        "new.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "temporal",
+      "arm": "new",
+      "repeat": 0,
+      "elapsedSeconds": 7.98,
+      "usage": {
+        "input_tokens": 16135,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 117,
+        "reasoning_output_tokens": 59
+      },
+      "answer": "Nova currently uses PostgreSQL. Sources: new.md (current decision explicitly replacing the January SQLite decision); old.md (superseded January 2025 SQLite choice).",
+      "readPaths": [],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 1,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "negation",
+      "arm": "new",
+      "repeat": 0,
+      "elapsedSeconds": 18.04,
+      "usage": {
+        "input_tokens": 32195,
+        "cached_input_tokens": 24064,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 220,
+        "reasoning_output_tokens": 117
+      },
+      "answer": "Orion deployment restrictions:\n- Must not run on Friday.\n- Approval is required; the approver has not been recorded.\n\nSources: policy.md, approval.md",
+      "readPaths": [
+        "policy.md",
+        "approval.md",
+        "owner.md",
+        "deadline.md",
+        "recovery.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "negation",
+      "arm": "old",
+      "repeat": 0,
+      "elapsedSeconds": 17.76,
+      "usage": {
+        "input_tokens": 32124,
+        "cached_input_tokens": 14080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 197,
+        "reasoning_output_tokens": 94
+      },
+      "answer": "Orion deployment restrictions:\n- Must not run on Friday.\n- Requires approval.\n- Requires restoring the encrypted backup as the recovery procedure.\n\nSources: policy.md, approval.md, recovery.md",
+      "readPaths": [
+        "owner.md",
+        "deadline.md",
+        "recovery.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": false,
+      "strictSupportedAnswer": false
+    },
+    {
+      "id": "paraphrase",
+      "arm": "new",
+      "repeat": 1,
+      "elapsedSeconds": 15.9,
+      "usage": {
+        "input_tokens": 31375,
+        "cached_input_tokens": 28160,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 131,
+        "reasoning_output_tokens": 48
+      },
+      "answer": "Cedar is maintained by Anika, and its handoff is due November 9. Sources: responsibility.md; schedule.md",
+      "readPaths": [
+        "responsibility.md",
+        "schedule.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "paraphrase",
+      "arm": "old",
+      "repeat": 1,
+      "elapsedSeconds": 18.82,
+      "usage": {
+        "input_tokens": 31375,
+        "cached_input_tokens": 30208,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 134,
+        "reasoning_output_tokens": 56
+      },
+      "answer": "Cedar owner: Anika. Deadline: November 9. Sources: responsibility.md; schedule.md",
+      "readPaths": [
+        "responsibility.md",
+        "schedule.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "later-page",
+      "arm": "old",
+      "repeat": 1,
+      "elapsedSeconds": 29.34,
+      "usage": {
+        "input_tokens": 48082,
+        "cached_input_tokens": 44288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 328,
+        "reasoning_output_tokens": 222
+      },
+      "answer": "The Rowan recovery key is \"sapphire\". Source: z-final.md",
+      "readPaths": [
+        "context-0.md",
+        "context-1.md",
+        "z-final.md"
+      ],
+      "offsets": [
+        0,
+        2,
+        4
+      ],
+      "modelCalls": 3,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "later-page",
+      "arm": "new",
+      "repeat": 1,
+      "elapsedSeconds": 27.21,
+      "usage": {
+        "input_tokens": 47686,
+        "cached_input_tokens": 30208,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 276,
+        "reasoning_output_tokens": 180
+      },
+      "answer": "The Rowan recovery key is \"sapphire\". Source: z-final.md",
+      "readPaths": [
+        "z-final.md"
+      ],
+      "offsets": [
+        0,
+        2
+      ],
+      "modelCalls": 3,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "long",
+      "arm": "new",
+      "repeat": 1,
+      "elapsedSeconds": 18.14,
+      "usage": {
+        "input_tokens": 32217,
+        "cached_input_tokens": 30208,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 235,
+        "reasoning_output_tokens": 100
+      },
+      "answer": "Orion recovery requirements:\n- Restore the encrypted backup.\n- Obtain approval before deployment; the approver is not recorded.\n- Do not run deployment on Friday.\n- Complete recovery by October 12.\n- Owner: Mira.\n\nSources: recovery.md, approval.md, policy.md, deadline.md, owner.md",
+      "readPaths": [
+        "recovery.md",
+        "owner.md",
+        "approval.md",
+        "deadline.md",
+        "policy.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": false,
+      "strictSupportedAnswer": false
+    },
+    {
+      "id": "long",
+      "arm": "old",
+      "repeat": 1,
+      "elapsedSeconds": 20.59,
+      "usage": {
+        "input_tokens": 32217,
+        "cached_input_tokens": 29184,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 240,
+        "reasoning_output_tokens": 102
+      },
+      "answer": "Orion recovery requirements:\n- Restore the encrypted backup. [recovery.md]\n- Orion deployment requires approval; the approver is not recorded. [approval.md]\n- The deployment must not run on Friday. [policy.md]\n- Deadline: October 12. [deadline.md]\n- Owner: Mira. [owner.md]",
+      "readPaths": [
+        "recovery.md",
+        "owner.md",
+        "approval.md",
+        "deadline.md",
+        "policy.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": false,
+      "strictSupportedAnswer": false
+    },
+    {
+      "id": "split",
+      "arm": "old",
+      "repeat": 1,
+      "elapsedSeconds": 16.92,
+      "usage": {
+        "input_tokens": 32120,
+        "cached_input_tokens": 29184,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 176,
+        "reasoning_output_tokens": 87
+      },
+      "answer": "Orion has one recorded owner and deadline: Mira \u2014 October 12. Sources: owner.md; deadline.md",
+      "readPaths": [
+        "owner.md",
+        "deadline.md",
+        "approval.md",
+        "policy.md",
+        "recovery.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "split",
+      "arm": "new",
+      "repeat": 1,
+      "elapsedSeconds": 16.88,
+      "usage": {
+        "input_tokens": 32095,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 188,
+        "reasoning_output_tokens": 104
+      },
+      "answer": "Orion owner: Mira. Orion deadline: October 12. Sources: owner.md, deadline.md",
+      "readPaths": [
+        "owner.md",
+        "deadline.md",
+        "approval.md",
+        "recovery.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "conflict",
+      "arm": "new",
+      "repeat": 1,
+      "elapsedSeconds": 17.64,
+      "usage": {
+        "input_tokens": 31844,
+        "cached_input_tokens": 29184,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 198,
+        "reasoning_output_tokens": 79
+      },
+      "answer": "Vega storage decisions conflict: `unresolved-a.md` records SQLite, while `unresolved-b.md` records PostgreSQL. Both decisions are dated March 2025, and both state that no resolution was recorded. Therefore, no resolved storage choice can be identified from the available sources.",
+      "readPaths": [
+        "unresolved-a.md",
+        "unresolved-b.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "conflict",
+      "arm": "old",
+      "repeat": 1,
+      "elapsedSeconds": 16.69,
+      "usage": {
+        "input_tokens": 31844,
+        "cached_input_tokens": 28160,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 211,
+        "reasoning_output_tokens": 100
+      },
+      "answer": "Vega storage has two conflicting recorded decisions, both from March 2025: `unresolved-a.md` specifies SQLite, while `unresolved-b.md` specifies PostgreSQL. Neither source records a resolution, so no resolved choice can be identified.",
+      "readPaths": [
+        "unresolved-a.md",
+        "unresolved-b.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "unknown",
+      "arm": "old",
+      "repeat": 1,
+      "elapsedSeconds": 15.6,
+      "usage": {
+        "input_tokens": 31844,
+        "cached_input_tokens": 30208,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 136,
+        "reasoning_output_tokens": 70
+      },
+      "answer": "The approver has not been recorded. Source: approval.md",
+      "readPaths": [
+        "approval.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "unknown",
+      "arm": "new",
+      "repeat": 1,
+      "elapsedSeconds": 19.11,
+      "usage": {
+        "input_tokens": 31844,
+        "cached_input_tokens": 29184,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 163,
+        "reasoning_output_tokens": 97
+      },
+      "answer": "The approver has not been recorded. Source: approval.md",
+      "readPaths": [
+        "approval.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "temporal",
+      "arm": "new",
+      "repeat": 1,
+      "elapsedSeconds": 18.96,
+      "usage": {
+        "input_tokens": 32363,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 154,
+        "reasoning_output_tokens": 76
+      },
+      "answer": "PostgreSQL is the current Nova storage choice, replacing SQLite. Sources: new.md; old.md.",
+      "readPaths": [
+        "old.md",
+        "new.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "temporal",
+      "arm": "old",
+      "repeat": 1,
+      "elapsedSeconds": 15.28,
+      "usage": {
+        "input_tokens": 32343,
+        "cached_input_tokens": 30208,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 158,
+        "reasoning_output_tokens": 70
+      },
+      "answer": "Nova currently uses PostgreSQL, as documented in [new.md](new.md), which explicitly replaces the January SQLite decision in [old.md](old.md).",
+      "readPaths": [
+        "old.md",
+        "new.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "negation",
+      "arm": "old",
+      "repeat": 1,
+      "elapsedSeconds": 16.92,
+      "usage": {
+        "input_tokens": 32175,
+        "cached_input_tokens": 30208,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 270,
+        "reasoning_output_tokens": 151
+      },
+      "answer": "Orion deployment restrictions:\n- Must not run on Friday.\n- Approval is required; the approver has not been recorded.\n- The required recovery procedure is to restore the encrypted backup.\n\nSources: policy.md, approval.md, recovery.md",
+      "readPaths": [
+        "policy.md",
+        "approval.md",
+        "owner.md",
+        "deadline.md",
+        "recovery.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": false,
+      "strictSupportedAnswer": false
+    },
+    {
+      "id": "negation",
+      "arm": "new",
+      "repeat": 1,
+      "elapsedSeconds": 19.51,
+      "usage": {
+        "input_tokens": 32175,
+        "cached_input_tokens": 29184,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 254,
+        "reasoning_output_tokens": 132
+      },
+      "answer": "Orion deployment restrictions:\n- Must not run on Friday (`policy.md`).\n- Requires approval; the approver has not been recorded (`policy.md`, `approval.md`).\n- The required recovery procedure is to restore the encrypted backup (`recovery.md`).",
+      "readPaths": [
+        "policy.md",
+        "approval.md",
+        "owner.md",
+        "deadline.md",
+        "recovery.md"
+      ],
+      "offsets": [
+        0
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "literalGoldScreen": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": false,
+      "strictSupportedAnswer": false
+    }
+  ]
+}

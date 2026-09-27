@@ -71,3 +71,12 @@ observed bottleneck. This pilot does not justify changing defaults.
 separate omitted previews from truncated selected previews. Complete paths
 and ranking remain intact, including 80-note pagination. Live behavior
 improvement remains unverified; adaptive modes stay opt-in.
+
+## Live gate for preview state: stopped
+
+[16 paired trials](preview-state-live-2026-09-27.md), eight synthetic questions
+repeated twice, passed core facts/citations in both arms. Strict relevance and
+support passed 12/16 old versus 13/16 new. The required gain was three; calls
+were equal and median input rose slightly. The behavioral optimization gate
+failed. Keep diagnostic semantics, stop tuning this intervention, and do not
+promote defaults or claim improved performance.
