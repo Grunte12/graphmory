@@ -78,3 +78,18 @@ provenance manifest. `npm pack --dry-run --json --cache
 /private/tmp/graphmory-eval-skill-npm-cache` listed 95 package files, with
 zero `.agents/` files. The default npm cache was not writable in this
 sandbox; a temporary task cache was used without changing system ownership.
+
+## Follow-up: selected combination and full-layer audit
+
+Installed repository-only on 2026-09-28:
+
+- `write-code-eval`, same pinned AI Evals Course revision above: objective contract/state checks.
+- Context Engineering `evaluation` and `tool-design`, pinned revision `6dbe1a1d868eab51a3bc9011b0f55e2891513e40`, MIT: experiment design and agent-facing tool guidance. Their full resources and original license are retained; hashes are in `.agents/skills/context-engineering-provenance.json`.
+
+The earlier candidate list describes the initial installation, not the current state. Both bundled Python scripts were parsed and imports inspected; they use standard-library imports. They were not executed. The evaluation example uses heuristic/default dimension scores and a weighted pass threshold: these must not replace exact state gates, official benchmark scorers, or independently labeled semantic correctness. Stars do not establish evaluator validity. No hooks, global config, runtime dependencies or paid services were installed.
+
+DeepEval remains optional development tooling, not installed or executed. Its model initialization and judge-dependent metrics need a separate controlled pilot. The full-layer plan explains its proper boundary.
+
+See [full-layer plan](full-layer-evaluation-plan-2026-09-28.md) and [coverage registry](layer-coverage-2026-09-28.json). Grok researched primary sources and Luna inspected code/skills; Astra produced a draft but hit a usage limit before completing its turn. The root reviewed the produced draft and verified registry file references; this is not a completed independent Astra approval or a new model benchmark.
+
+Follow-up verification: 17 vendored source/license hashes matched; package dry-run still excludes every `.agents/` file. Authored documentation passes `git diff --check`. Vendored upstream files retain original whitespace (including trailing whitespace warnings) to preserve exact pinned-source hashes; they were not reformatted. `npm run check` passed 274/274 tests and configured deterministic gates after this follow-up.

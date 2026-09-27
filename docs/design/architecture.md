@@ -11,7 +11,7 @@ The lead agent has the richest task context. It owns the semantic decision:
 
 The curator owns memory operations:
 
-- retrieve a bounded working set,
+- retrieve relevant evidence across pages as needed,
 - locate an existing canonical note,
 - detect duplicates and contradictions,
 - merge without expanding the claim,
@@ -120,8 +120,15 @@ The Learning Packet contract records the lesson, trigger, future behavior change
 1. Lead agent asks a narrow memory question.
 2. Curator starts from the project map or index.
 3. Curator follows only relevant links.
-4. Curator returns a Brain Brief with 1-7 memory items.
-5. Lead agent may directly inspect at most three named notes when exact nuance matters.
+4. Curator reads additional pages and full source notes while evidence is
+   incomplete and candidates remain. Per-response budgets control delivery size,
+   not the total number of relevant notes it may inspect.
+5. Curator returns a concise Brain Brief with supported claims, source paths,
+   unresolved conflicts and missing evidence. Summary length does not establish
+   that retrieval was complete.
+6. Lead agent may inspect the named originals when exact nuance matters; there
+   is no fixed three-note limit. Trace the actual notes read and stop reason so
+   evaluation can detect premature stopping or unsupported summaries.
 
 ## Threat Model
 

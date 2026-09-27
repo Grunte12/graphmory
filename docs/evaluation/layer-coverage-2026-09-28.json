@@ -1,0 +1,580 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-28",
+  "scope": "Selected repository implementation/test/artifact inventory; no private vault or unopened holdout inspection; no benchmark run",
+  "baseline_commit": "fd84bd5",
+  "baseline_verification": {
+    "evidence_class": "regression",
+    "tests_passed": 274,
+    "source": "docs/evaluation/scorer-correctness-repair-2026-09-28.md",
+    "rerun_in_this_plan": false
+  },
+  "plan": "docs/evaluation/full-layer-evaluation-plan-2026-09-28.md",
+  "evidence_classes": [
+    "regression",
+    "synthetic",
+    "custom_dev_diagnostic",
+    "official_full",
+    "unmeasured"
+  ],
+  "null_policy": "Unmeasured, unavailable or undefined numerical fields are null, never inferred as zero; proposed metrics are not computed by this registry.",
+  "sources": {
+    "locomo": {
+      "url": "https://github.com/snap-research/locomo/blob/3eb6f2c585f5e1699204e3c3bdf7adc5c28cb376/task_eval/evaluation.py",
+      "execution_pin_required": false
+    },
+    "longmemeval": {
+      "url": "https://github.com/xiaowu0162/LongMemEval",
+      "execution_pin_required": true
+    },
+    "beir": {
+      "url": "https://github.com/beir-cellar/beir",
+      "execution_pin_required": true
+    },
+    "hotpotqa": {
+      "url": "https://github.com/hotpotqa/hotpot",
+      "execution_pin_required": true
+    },
+    "musique": {
+      "url": "https://github.com/StonyBrookNLP/musique",
+      "execution_pin_required": true
+    },
+    "bfcl_memory": {
+      "url": "https://gorilla.cs.berkeley.edu/blogs/16_bfcl_v4_memory.html",
+      "execution_pin_required": true
+    },
+    "tau": {
+      "url": "https://github.com/sierra-research/tau2-bench",
+      "execution_pin_required": true
+    },
+    "alce": {
+      "url": "https://github.com/princeton-nlp/ALCE",
+      "execution_pin_required": true
+    },
+    "agentdojo": {
+      "url": "https://github.com/ethz-spylab/agentdojo",
+      "execution_pin_required": true
+    },
+    "memoryagentbench": {
+      "url": "https://arxiv.org/abs/2507.05257",
+      "execution_pin_required": true
+    },
+    "deepeval": {
+      "url": "https://github.com/confident-ai/deepeval/tree/385117c9c46e6935866422b7aa1f67e5e2824472",
+      "execution_pin_required": false
+    },
+    "openai_cache": {
+      "url": "https://developers.openai.com/api/docs/guides/prompt-caching",
+      "execution_pin_required": true
+    },
+    "claude_cache": {
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+      "execution_pin_required": true
+    },
+    "gemini_cache": {
+      "url": "https://ai.google.dev/gemini-api/docs/caching",
+      "execution_pin_required": true
+    }
+  },
+  "observations": [
+    {
+      "metric": "locomo_development_case_arm_rows",
+      "value": 2198,
+      "unique_cases": 1099,
+      "conversation_groups": 7,
+      "evidence_class": "custom_dev_diagnostic",
+      "source": "docs/evaluation/astra-eval-skill-audit-2026-09-28.md"
+    },
+    {
+      "metric": "fusion_category_1_complete_at_5",
+      "numerator": 53,
+      "denominator": 180,
+      "evidence_class": "custom_dev_diagnostic",
+      "source": "docs/evaluation/astra-eval-skill-audit-2026-09-28.md"
+    },
+    {
+      "metric": "fusion_multisession_complete_at_5",
+      "numerator": 65,
+      "denominator": 209,
+      "evidence_class": "custom_dev_diagnostic",
+      "source": "docs/evaluation/astra-eval-skill-audit-2026-09-28.md"
+    },
+    {
+      "metric": "preview_live_strict_supported",
+      "numerator": 25,
+      "denominator": 32,
+      "unique_questions": 8,
+      "evidence_class": "synthetic",
+      "grading": "author manual unblinded, not calibrated human evaluation",
+      "source": "docs/evaluation/astra-eval-skill-audit-2026-09-28.md"
+    },
+    {
+      "metric": "official_full_answer_accuracy",
+      "value": null,
+      "evidence_class": "unmeasured"
+    },
+    {
+      "metric": "matched_billed_cost_per_supported_complete_answer",
+      "value": null,
+      "evidence_class": "unmeasured"
+    },
+    {
+      "metric": "independent_judge_tpr_tnr",
+      "value": null,
+      "evidence_class": "unmeasured"
+    }
+  ],
+  "layers": [
+    {
+      "id": "intake_write",
+      "order": 1,
+      "status": "partial_evidence",
+      "evidence_classes": [
+        "regression",
+        "synthetic"
+      ],
+      "code": [
+        "src/contracts.mjs",
+        "src/atomic-write.mjs",
+        "src/decision-curation.mjs"
+      ],
+      "tests": [
+        "test/contracts.test.mjs",
+        "test/decision-curation.test.mjs",
+        "test/live-agent-score.test.mjs"
+      ],
+      "artifacts": [
+        "scripts/eval-patch-quality.mjs",
+        "scripts/eval-curator.mjs",
+        "scripts/eval-learning-loop.mjs",
+        "scripts/eval-future-task.mjs",
+        "eval/live-agent/scorer-regrade-2026-09-28.json"
+      ],
+      "source_ids": [
+        "bfcl_memory",
+        "tau"
+      ],
+      "proposed_metrics": [
+        "action_state_success",
+        "retained_write_facts"
+      ],
+      "gaps": [
+        "Semantic write entailment and durable usefulness",
+        "Live action-to-post-state coverage"
+      ],
+      "official_full_score": null,
+      "unmeasured_metric_values": {
+        "action_state_success": null,
+        "retained_write_facts": null
+      },
+      "priority": "P1"
+    },
+    {
+      "id": "canonical_vault_graph",
+      "order": 2,
+      "status": "partial_evidence",
+      "evidence_classes": [
+        "regression",
+        "synthetic"
+      ],
+      "code": [
+        "src/brain-sync.mjs",
+        "src/graph-navigation.mjs",
+        "src/retrieval.mjs"
+      ],
+      "tests": [
+        "test/brain-sync.test.mjs",
+        "test/graph-structure.test.mjs",
+        "test/contracts.test.mjs"
+      ],
+      "artifacts": [
+        "eval/graph-structure/results.json",
+        "docs/design/architecture.md"
+      ],
+      "source_ids": [
+        "agentdojo"
+      ],
+      "proposed_metrics": [
+        "link_integrity",
+        "derived_freshness"
+      ],
+      "gaps": [
+        "Supported edge semantics",
+        "End-to-end freshness after edit/rename/delete"
+      ],
+      "official_full_score": null,
+      "unmeasured_metric_values": {
+        "link_integrity": null,
+        "derived_freshness": null
+      },
+      "priority": "P2"
+    },
+    {
+      "id": "retrieval_multihop_rerank",
+      "order": 3,
+      "status": "partial_evidence",
+      "evidence_classes": [
+        "regression",
+        "synthetic",
+        "custom_dev_diagnostic"
+      ],
+      "code": [
+        "src/retrieval.mjs",
+        "src/memory-recall.mjs",
+        "src/adaptive-recall.mjs",
+        "src/semantic-recall.mjs",
+        "src/decision-recall.mjs"
+      ],
+      "tests": [
+        "test/retrieval.test.mjs",
+        "test/adaptive-recall.test.mjs",
+        "test/bm25f-score-parity.test.mjs",
+        "test/semantic-recall.test.mjs"
+      ],
+      "artifacts": [
+        "eval/locomo/development-v1.json",
+        "eval/longmemeval/development-v2.json",
+        "docs/evaluation/astra-eval-skill-audit-2026-09-28.json"
+      ],
+      "source_ids": [
+        "locomo",
+        "longmemeval",
+        "beir",
+        "hotpotqa",
+        "musique"
+      ],
+      "proposed_metrics": [
+        "recall_at_k",
+        "complete_evidence_at_k",
+        "mrr",
+        "ndcg_at_k"
+      ],
+      "gaps": [
+        "Multi-session evidence completeness",
+        "Reader-visible supporting-span completeness",
+        "Optional modes need independent results"
+      ],
+      "official_full_score": null,
+      "unmeasured_metric_values": {
+        "recall_at_k": null,
+        "complete_evidence_at_k": null,
+        "mrr": null,
+        "ndcg_at_k": null
+      },
+      "priority": "P1"
+    },
+    {
+      "id": "source_delivery_tool_pagination",
+      "order": 4,
+      "status": "partial_evidence",
+      "evidence_classes": [
+        "regression",
+        "synthetic"
+      ],
+      "code": [
+        "src/source-read.mjs",
+        "src/memory-recall.mjs",
+        "src/brain-sync.mjs"
+      ],
+      "tests": [
+        "test/source-read.test.mjs",
+        "test/evidence-completeness.test.mjs",
+        "test/brain-sync-cli.test.mjs"
+      ],
+      "artifacts": [
+        "scripts/eval-curator-pages.mjs",
+        "eval/competitor-pilot/batch-source-read.json",
+        "docs/evaluation/curator-pagination-2026-09-27.md"
+      ],
+      "source_ids": [
+        "bfcl_memory",
+        "tau",
+        "deepeval"
+      ],
+      "proposed_metrics": [
+        "complete_delivered",
+        "premature_stop",
+        "tool_call_correctness"
+      ],
+      "gaps": [
+        "Agent continuation and stopping correctness",
+        "Tool argument and state correctness beyond source identity",
+        "No native MCP server confirmed"
+      ],
+      "official_full_score": null,
+      "unmeasured_metric_values": {
+        "complete_delivered": null,
+        "premature_stop": null,
+        "tool_call_correctness": null
+      },
+      "priority": "P1"
+    },
+    {
+      "id": "curator_compression_grounding",
+      "order": 5,
+      "status": "partial_evidence",
+      "evidence_classes": [
+        "regression",
+        "synthetic"
+      ],
+      "code": [
+        "src/contracts.mjs",
+        "skills/memory-curator/SKILL.md"
+      ],
+      "tests": [
+        "test/contracts.test.mjs",
+        "test/decision-curation.test.mjs"
+      ],
+      "artifacts": [
+        "scripts/eval-curator.mjs",
+        "eval/competitor-pilot/preview-state-live.json",
+        "docs/evaluation/curator-loop-pilot-2026-09-27.md"
+      ],
+      "source_ids": [
+        "alce"
+      ],
+      "proposed_metrics": [
+        "brief_retention",
+        "unsupported_brief_claims",
+        "compression_ratio"
+      ],
+      "gaps": [
+        "Independent brief entailment labels",
+        "Necessary qualifier retention at matched source set"
+      ],
+      "official_full_score": null,
+      "unmeasured_metric_values": {
+        "brief_retention": null,
+        "unsupported_brief_claims": null,
+        "compression_ratio": null
+      },
+      "priority": "P1"
+    },
+    {
+      "id": "final_answer_abstention",
+      "order": 6,
+      "status": "partial_evidence",
+      "evidence_classes": [
+        "regression",
+        "synthetic"
+      ],
+      "code": [
+        "scripts/eval-host-usage.mjs",
+        "scripts/eval-agent-run.mjs"
+      ],
+      "tests": [
+        "test/eval-host-runner.test.mjs",
+        "test/locomo.test.mjs",
+        "test/longmemeval.test.mjs"
+      ],
+      "artifacts": [
+        "eval/competitor-pilot/preview-state-live.json",
+        "docs/evaluation/astra-eval-skill-audit-2026-09-28.md"
+      ],
+      "source_ids": [
+        "locomo",
+        "longmemeval",
+        "alce"
+      ],
+      "proposed_metrics": [
+        "official_answer_score",
+        "strict_supported_answer",
+        "supported_complete_success",
+        "abstention_sensitivity_specificity"
+      ],
+      "gaps": [
+        "Official full benchmark answer score",
+        "Calibrated support/completeness/negation/currentness and abstention"
+      ],
+      "official_full_score": null,
+      "unmeasured_metric_values": {
+        "official_answer_score": null,
+        "strict_supported_answer": null,
+        "supported_complete_success": null,
+        "abstention_sensitivity_specificity": null
+      },
+      "priority": "P1"
+    },
+    {
+      "id": "lifecycle_conflict_sync",
+      "order": 7,
+      "status": "partial_evidence",
+      "evidence_classes": [
+        "regression",
+        "synthetic"
+      ],
+      "code": [
+        "src/memory-lifecycle-audit.mjs",
+        "src/brain-sync.mjs"
+      ],
+      "tests": [
+        "test/brain-sync.test.mjs",
+        "test/brain-sync-cli.test.mjs",
+        "test/eval-memory-management-ab.test.mjs"
+      ],
+      "artifacts": [
+        "scripts/eval-lifecycle-audit.mjs",
+        "scripts/eval-conflict-assist.mjs",
+        "eval/memory-management-ab/cases.json"
+      ],
+      "source_ids": [
+        "memoryagentbench",
+        "tau"
+      ],
+      "proposed_metrics": [
+        "action_state_success",
+        "currentness",
+        "contradiction_rate"
+      ],
+      "gaps": [
+        "Live semantic conflict decisions",
+        "Temporal sequence success after sync/reload",
+        "Stale derived-view behavior"
+      ],
+      "official_full_score": null,
+      "unmeasured_metric_values": {
+        "action_state_success": null,
+        "currentness": null,
+        "contradiction_rate": null
+      },
+      "priority": "P2"
+    },
+    {
+      "id": "host_setup_integration",
+      "order": 8,
+      "status": "partial_evidence",
+      "evidence_classes": [
+        "regression",
+        "synthetic",
+        "custom_dev_diagnostic"
+      ],
+      "code": [
+        "scripts/install.mjs",
+        "scripts/setup-curator-agent.mjs",
+        "src/runtime-config.mjs"
+      ],
+      "tests": [
+        "test/fresh-install.test.mjs",
+        "test/package.test.mjs",
+        "test/setup-curator-agent.test.mjs",
+        "test/eval-host-runner.test.mjs"
+      ],
+      "artifacts": [
+        "docs/evaluation/host-usage-pilot-2026-09-27.md",
+        "docs/guides/agent-hosts.md"
+      ],
+      "source_ids": [
+        "bfcl_memory"
+      ],
+      "proposed_metrics": [
+        "host_smoke_success",
+        "configuration_preservation",
+        "trace_completeness"
+      ],
+      "gaps": [
+        "Host/version/OS observed integration matrix",
+        "Full product workflow versus adapter-only pilot"
+      ],
+      "official_full_score": null,
+      "unmeasured_metric_values": {
+        "host_smoke_success": null,
+        "configuration_preservation": null,
+        "trace_completeness": null
+      },
+      "priority": "P2"
+    },
+    {
+      "id": "latency_tokens_cache_cost",
+      "order": 9,
+      "status": "partial_evidence",
+      "evidence_classes": [
+        "regression",
+        "synthetic",
+        "custom_dev_diagnostic"
+      ],
+      "code": [
+        "src/retrieval.mjs",
+        "scripts/lib/host-usage.mjs"
+      ],
+      "tests": [
+        "test/host-usage.test.mjs",
+        "test/bm25f-score-parity.test.mjs"
+      ],
+      "artifacts": [
+        "scripts/bench-scale.mjs",
+        "scripts/bench-source-read.mjs",
+        "scripts/bench-section-preparation.mjs",
+        "eval/bm25f-optimization/paired-warm-results.json",
+        "docs/evaluation/prompt-cache-compatibility-2026-09-26.md"
+      ],
+      "source_ids": [
+        "openai_cache",
+        "claude_cache",
+        "gemini_cache"
+      ],
+      "proposed_metrics": [
+        "latency_p50_p95",
+        "provider_token_fields",
+        "cost_per_success"
+      ],
+      "gaps": [
+        "Matched end-to-end cost per correct answer",
+        "Reliable latency tails",
+        "Provider cold/warm isolation and billing"
+      ],
+      "official_full_score": null,
+      "unmeasured_metric_values": {
+        "latency_p50_p95": null,
+        "provider_token_fields": null,
+        "cost_per_success": null
+      },
+      "priority": "P2"
+    },
+    {
+      "id": "evaluation_validity",
+      "order": 10,
+      "status": "partial_evidence",
+      "evidence_classes": [
+        "regression"
+      ],
+      "code": [
+        "scripts/lib/locomo.mjs",
+        "scripts/lib/longmemeval.mjs",
+        "scripts/eval-live-agent-score.mjs",
+        "scripts/eval-host-usage.mjs"
+      ],
+      "tests": [
+        "test/live-agent-score.test.mjs",
+        "test/locomo.test.mjs",
+        "test/longmemeval.test.mjs",
+        "test/eval-host-runner.test.mjs"
+      ],
+      "artifacts": [
+        "docs/evaluation/scorer-correctness-repair-2026-09-28.md",
+        "docs/evaluation/astra-eval-skill-audit-2026-09-28.md"
+      ],
+      "source_ids": [
+        "locomo",
+        "longmemeval",
+        "deepeval"
+      ],
+      "proposed_metrics": [
+        "run_coverage_validity",
+        "judge_tpr_tnr",
+        "grouped_paired_interval"
+      ],
+      "gaps": [
+        "Independent human labels and held-out judge calibration",
+        "Reader filesystem isolation verification",
+        "Fresh held-out generalization and grouped uncertainty"
+      ],
+      "official_full_score": null,
+      "unmeasured_metric_values": {
+        "run_coverage_validity": null,
+        "judge_tpr_tnr": null,
+        "grouped_paired_interval": null
+      },
+      "priority": "P1"
+    }
+  ]
+}

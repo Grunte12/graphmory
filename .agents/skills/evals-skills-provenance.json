@@ -11,7 +11,9 @@
     "validate-evaluator/SKILL.md": "dd601ca58d2165f51798e12934170a435af9a7938832b67bb00986b881752355",
     "eval-audit/agents/openai.yaml": "cfcb2a19fa1f5e655fe650c2e8f600d9dbff0d82ab7b8fcc3660f4a7c042406b",
     "evaluate-rag/agents/openai.yaml": "ba53b0727a83dc2d0a5657e20ef4904d7cfbc18b4f072888020e2687d41b4376",
-    "validate-evaluator/agents/openai.yaml": "5e3e1b5b7c466f6982d25bea5814fd2fbda0eb1a01ee0a4bc9f41f380a617bbf"
+    "validate-evaluator/agents/openai.yaml": "5e3e1b5b7c466f6982d25bea5814fd2fbda0eb1a01ee0a4bc9f41f380a617bbf",
+    "write-code-eval/SKILL.md": "6acf7d26f1b64d2dd7792675e3afefa0fc7accd6e0efd73184c6dd356c64338b",
+    "write-code-eval/agents/openai.yaml": "5e0a5fa940ad295c7693d712221e65c030b06a3e2044a52a772ec175ad61eb7e"
   },
   "researcher": "Existing Grok Bot conversation: Grok for codex",
   "runtimeDependenciesInstalled": []

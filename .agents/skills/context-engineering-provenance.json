@@ -1,0 +1,19 @@
+{
+  "repository": "https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering",
+  "revision": "6dbe1a1d868eab51a3bc9011b0f55e2891513e40",
+  "license": "MIT",
+  "installedAt": "2026-09-28",
+  "scope": "repository-only",
+  "usage": "Guidance only; heuristic demo scorers were not executed or adopted",
+  "unmodifiedSkillFiles": {
+    "LICENSE.context-engineering": "65bc33b0759a48b980962833b12bcb820404da9f5256bff39c00e89471bcf209",
+    "evaluation/SKILL.md": "1f31cda0910dfd48d928e1485b303b739608ceeb0babca0e9a6f821cbf4320ff",
+    "evaluation/references/metrics.md": "342db4111af7a627ea1ce90ac17a637d553ee3b8bcbcc3017b4cbc0c7695a4a8",
+    "evaluation/scripts/evaluator.py": "c4736f9211cd494d1da594f1ecccd1a0ed8d95ee50a084561f4432b624328c67",
+    "tool-design/SKILL.md": "14f5a12b69113bc6450da69c5b4d408fe91601832ab1055ae25311339c84a06b",
+    "tool-design/references/architectural_reduction.md": "0d27e7991ccaac97f0db37c151837d5cc795075ba7b44a82560aeb45bb35b1c7",
+    "tool-design/references/best_practices.md": "3dc82e05ba5f9e5d5e8b0f48e05241e5850130b9b0f365e032bf0635fd3380b6",
+    "tool-design/scripts/description_generator.py": "ad20d1550dc41b6cbedba6c09f927765d54d1267bbe4bc8bfdf930b8987697ce"
+  },
+  "runtimeDependenciesInstalled": []
+}
