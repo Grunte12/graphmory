@@ -1,0 +1,125 @@
+{
+  "protocol": "curator-paging-development-v2-boolean-continuation",
+  "id": "a40e080f",
+  "question": "I was going through our previous conversation and I was wondering if you could remind me of the two companies you mentioned that prioritize employee safety and well-being like Triumvirate?",
+  "model": "gpt-5.6-luna",
+  "mode": "auto",
+  "maxRounds": 3,
+  "maxInputBytes": 300000,
+  "persistentCurator": true,
+  "compactFollowup": true,
+  "runnerSha256": "53ba0ce25a04e71592ba76125b784bbb0197e51873eb58dd90990b0a19925e4e",
+  "inputSha256": "95159efacf1fab9d3f4aec02c237f8d337bf4d1b24a5319a3f8f4a7814c40946",
+  "modelCalls": [
+    {
+      "stage": "curator",
+      "sessionResumed": false,
+      "elapsedSeconds": 8.021,
+      "promptBytes": 32177,
+      "promptSha256": "506fc1ea627772e5ffea33f60ec5c786f7a42077a015bb5770f24bc52fa893bf",
+      "usage": {
+        "input_tokens": 23598,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 67,
+        "reasoning_output_tokens": 26
+      },
+      "failed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "curator",
+      "sessionResumed": true,
+      "elapsedSeconds": 8.113,
+      "promptBytes": 4994,
+      "promptSha256": "b1f7b823bf4eb0d2145914852621cfded41ab0a0c191e4189987c63f48786430",
+      "usage": {
+        "input_tokens": 56703,
+        "cached_input_tokens": 23296,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 161,
+        "reasoning_output_tokens": 26
+      },
+      "failed": false,
+      "warnings": []
+    },
+    {
+      "stage": "lead",
+      "sessionResumed": false,
+      "elapsedSeconds": 7.362,
+      "promptBytes": 776,
+      "promptSha256": "c271d11c52deec910bd999de2e9cea0ed995577e5420571096fc9e25180f6437",
+      "usage": {
+        "input_tokens": 15437,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 41,
+        "reasoning_output_tokens": 0
+      },
+      "failed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "offset": 0,
+      "nextOffset": 30,
+      "hasMore": true,
+      "paths": [
+        "sessions/0031-334e97a0e66d.md",
+        "sessions/0023-d482bf9e3040.md",
+        "sessions/0040-f79434f99b77.md",
+        "sessions/0018-afd02b6e7dc4.md",
+        "sessions/0017-dc4bcd9b1cef.md",
+        "sessions/0038-fed148dc37fd.md",
+        "sessions/0046-66af2fafa989.md",
+        "sessions/0019-99e068aa8ac6.md",
+        "sessions/0008-99209b1354e0.md",
+        "sessions/0048-837b905b1fcb.md",
+        "sessions/0033-3743a2df29d2.md",
+        "sessions/0006-0cd7bf8d4f87.md",
+        "sessions/0039-9d124459dd70.md",
+        "sessions/0010-d034f5d71781.md",
+        "sessions/0012-8c52fae232b6.md",
+        "sessions/0035-6c8e845b835d.md",
+        "sessions/0029-f888fcc257f9.md",
+        "sessions/0027-49267e7f8add.md",
+        "sessions/0043-18a8a68d202f.md",
+        "sessions/0001-f88d2d1310ee.md",
+        "sessions/0037-b908efd49008.md",
+        "sessions/0044-0bfaf2ce74d4.md",
+        "sessions/0047-e5bdcd6904c5.md",
+        "sessions/0042-b40e41afa292.md",
+        "sessions/0003-2d527155d540.md",
+        "sessions/0014-b62b9a4449fc.md",
+        "sessions/0005-96454b9468b2.md",
+        "sessions/0021-a0f22bc2792a.md",
+        "sessions/0004-09dee702163b.md",
+        "sessions/0028-70c6ef65d76f.md"
+      ],
+      "pageSha256": "326b55c43b8f730e42696885359a6d8197b380407bd823b38344fcd6d5efa444"
+    }
+  ],
+  "sourceReads": [
+    {
+      "path": "sessions/0031-334e97a0e66d.md",
+      "sha256": "95ad4946186f4089f9f8ad1e2cb8f7100ee7adfe9192ac9d82361b34c6359133",
+      "bytes": 4621
+    }
+  ],
+  "brief": "The two companies mentioned were Patagonia and Southwest Airlines. The conversation described Patagonia as supporting employee well-being through flexible work arrangements, generous parental leave, and education and wellness investments. It described Southwest Airlines as emphasizing employee training, benefits, a positive work environment, and safety. [Source: sessions/0031-334e97a0e66d.md]",
+  "answer": "The two companies were Patagonia and Southwest Airlines. [Source: sessions/0031-334e97a0e66d.md]",
+  "runComplete": true,
+  "stopReason": "curator-finalized",
+  "limitations": [
+    "One exposed development case; no quality acceptance or latency tail claim",
+    "No-tool boundary is checked in trace, not a proven filesystem isolation guarantee",
+    "No official answer scorer or independent calibrated semantic judge",
+    "Subscription bill allocation unknown; native token categories retained"
+  ],
+  "elapsedSeconds": 23.654
+}

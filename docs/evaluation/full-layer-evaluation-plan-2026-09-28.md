@@ -145,3 +145,5 @@ The next traced [Curator continuation experiment](curator-continuation-experimen
 The [LongMemEval actual CLI delivery check](longmemeval-cli-delivery-2026-09-28.md) adds a distinct exposed development corpus: 56/56 mechanical trials, no first-page gold-session gap on 12 answerable questions, and larger first-page bytes for bundle versus auto in mixed-notes mode. It does not alter reader or official answer-score priorities.
 
 The [follow-up live Curator source-read pilot](longmemeval-live-reader-2026-09-28.md) exercised one exposed LongMemEval question and found a source-supported answer after one original read. It also exposed large per-call host input with zero reported cache hits in the fresh-session mediator; no persistent-host or matched-comparator result follows from it.
+
+The [one-case persistent Curator diagnostic](curator-session-cache-ab-2026-09-28.md) confirmed cache hits under CLI resume but showed higher whole-workflow noncached input than the fresh-session protocol. Its bundled persistence and prompt-compaction changes remain confounded, so production mode selection and efficiency gates are unchanged.

@@ -15,9 +15,13 @@ parser.add_argument('--model', default='gpt-5.6-luna')
 parser.add_argument('--mode', choices=['auto', 'bundle'], default='bundle')
 parser.add_argument('--max-rounds', type=int, default=3)
 parser.add_argument('--max-input-bytes', type=int, default=300000)
+parser.add_argument('--persistent-curator', action='store_true')
+parser.add_argument('--compact-followup', action='store_true')
 args = parser.parse_args()
 if not 1 <= args.max_rounds <= 10 or args.max_input_bytes < 1000:
     raise RuntimeError('Invalid economic/protocol budget')
+if args.compact_followup and not args.persistent_curator:
+    raise RuntimeError('Compact follow-up requires persistent Curator context')
 data = pathlib.Path(args.input).resolve()
 case = json.loads(data.read_text())[args.case_index]
 if set(case) != {'id', 'question', 'vault', 'sources'}:
@@ -37,6 +41,7 @@ root = pathlib.Path(__file__).resolve().parents[1]
 cli = root / 'scripts/brain-sync.mjs'
 report = {'protocol': 'curator-paging-development-v2-boolean-continuation', 'id': case['id'], 'question': case['question'],
           'model': args.model, 'mode': args.mode, 'maxRounds': args.max_rounds, 'maxInputBytes': args.max_input_bytes,
+          'persistentCurator': args.persistent_curator, 'compactFollowup': args.compact_followup,
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
           'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [],
           'brief': None, 'answer': None, 'runComplete': False, 'stopReason': None,
@@ -69,25 +74,44 @@ def retrieval(offset):
     return page
 
 
+curator_session = None
+
+
 def generate(prompt, stage, schema):
+    global curator_session
     if len(prompt.encode()) > args.max_input_bytes:
         raise RuntimeError('input-byte-budget')
     schema_file = workspace / 'schema.json'
     schema_file.write_text(json.dumps(schema))
     start = time.monotonic()
-    child = subprocess.run(['codex', 'exec', '--ignore-user-config', '--ephemeral', '--skip-git-repo-check',
-                            '-C', str(workspace), '-s', 'read-only', '-m', args.model,
-                            '-c', 'model_reasoning_effort="low"', '--output-schema', str(schema_file), '--json', '-'],
+    resumed = stage == 'curator' and args.persistent_curator and curator_session is not None
+    if resumed:
+        command = ['codex', 'exec', 'resume', '--ignore-user-config', '--skip-git-repo-check',
+                   '-m', args.model, '-c', 'model_reasoning_effort="low"',
+                   '--output-schema', str(schema_file), '--json', curator_session, '-']
+    else:
+        command = ['codex', 'exec', '--ignore-user-config', '--skip-git-repo-check',
+                   '-C', str(workspace), '-s', 'read-only', '-m', args.model,
+                   '-c', 'model_reasoning_effort="low"', '--output-schema', str(schema_file), '--json', '-']
+        if stage != 'curator' or not args.persistent_curator:
+            command.insert(3, '--ephemeral')
+    child = subprocess.run(command,
                            input=prompt, text=True, capture_output=True, timeout=120)
     trace = str(len(report['modelCalls'])) + '-' + stage
     (out / (trace + '.jsonl')).write_text(child.stdout)
     (out / (trace + '.stderr')).write_text(child.stderr)
     events = [json.loads(line) for line in child.stdout.splitlines() if line.startswith('{')]
+    started = next((event.get('thread_id') for event in events if event.get('type') == 'thread.started'), None)
+    if stage == 'curator' and args.persistent_curator:
+        if not started or (resumed and started != curator_session):
+            raise RuntimeError('Persistent Curator session identity missing or changed')
+        curator_session = started
     texts = [event['item']['text'] for event in events if event.get('type') == 'item.completed' and event.get('item', {}).get('type') == 'agent_message']
     prohibited = [event for event in events if event.get('item', {}).get('type') not in (None, 'agent_message', 'reasoning', 'error')]
     complete = next((event for event in reversed(events) if event.get('type') == 'turn.completed'), None)
     failed = child.returncode != 0 or not complete or not texts or prohibited or any(event.get('type') in ('error', 'turn.failed') for event in events)
-    report['modelCalls'].append({'stage': stage, 'elapsedSeconds': round(time.monotonic() - start, 3),
+    report['modelCalls'].append({'stage': stage, 'sessionResumed': resumed,
+                                  'elapsedSeconds': round(time.monotonic() - start, 3),
                                   'promptBytes': len(prompt.encode()), 'promptSha256': hashlib.sha256(prompt.encode()).hexdigest(),
                                   'usage': complete.get('usage') if complete else None, 'failed': bool(failed),
                                   'warnings': [event['item'].get('message') for event in events if event.get('item', {}).get('type') == 'error']})
@@ -118,11 +142,18 @@ try:
     for turn in range(args.max_rounds):
         # Only the current page and verified original reads are supplied. Older previews
         # remain discoverable by path but cannot be mistaken for the current continuation.
-        prompt = (instruction + '\nQuestion: ' + case['question']
-                  + '\nAvailable paths from previous pages: ' + json.dumps(sorted(available - {row['path'] for row in page['results']}))
-                  + '\nCurrent retrieval page: ' + json.dumps(page)
-                  + '\nOriginal sources already read: ' + json.dumps(originals)
-                  + ('\nProtocol feedback: ' + feedback if feedback else ''))
+        if turn and args.compact_followup:
+            prompt = ('Continue the same Curator task using your previous context. '
+                      'Use the same read_paths/next_page/brief contract. '
+                      'New original sources since your last turn: ' + json.dumps(new_originals)
+                      + ('\nNew retrieval page: ' + json.dumps(page) if new_page else '')
+                      + ('\nProtocol feedback: ' + feedback if feedback else ''))
+        else:
+            prompt = (instruction + '\nQuestion: ' + case['question']
+                      + '\nAvailable paths from previous pages: ' + json.dumps(sorted(available - {row['path'] for row in page['results']}))
+                      + '\nCurrent retrieval page: ' + json.dumps(page)
+                      + '\nOriginal sources already read: ' + json.dumps(originals)
+                      + ('\nProtocol feedback: ' + feedback if feedback else ''))
         response = generate(prompt, 'curator', schema)
         if set(response) != {'read_paths', 'next_page', 'brief'} or not isinstance(response['read_paths'], list) or not isinstance(response['brief'], str) or not isinstance(response['next_page'], bool):
             raise RuntimeError('Invalid curator response')
@@ -136,6 +167,7 @@ try:
             break
         if response['brief']:
             raise RuntimeError('Brief returned while evidence request pending')
+        new_originals = []
         if requested:
             sources = command_json(['node', str(cli), 'read-notes', '--vault', str(vault), '--paths', json.dumps(requested)])
             if set(row['path'] for row in sources['sources']) != set(requested):
@@ -146,11 +178,14 @@ try:
             report['sourceReads'] += [{'path': row['path'], 'sha256': row['sha256'], 'bytes': row['bytes']} for row in sources['sources']]
             read.update(requested)
             originals.extend(sources['sources'])
+            new_originals = sources['sources']
         feedback = None
+        new_page = False
         if next_page:
             if page['hasMore'] and isinstance(page['nextOffset'], int) and not isinstance(page['nextOffset'], bool):
                 page = retrieval(page['nextOffset'])
                 available.update(row['path'] for row in page['results'])
+                new_page = True
             elif page['hasMore']:
                 raise RuntimeError('Invalid CLI continuation contract')
             else:

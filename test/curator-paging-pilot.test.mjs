@@ -19,6 +19,9 @@ function runFixture(mode) {
     const schema=JSON.parse(fs.readFileSync(process.argv[process.argv.indexOf('--output-schema')+1]));
     const counter=process.env.PAGING_TEST_COUNTER;const count=fs.existsSync(counter)?Number(fs.readFileSync(counter)):0;
     fs.writeFileSync(counter,String(count+1));
+    const resumed=process.argv.includes('resume');
+    if(process.env.PAGING_TEST_MODE==='persistent' && count===1 && !resumed)process.exit(9);
+    console.log(JSON.stringify({type:'thread.started',thread_id:'fixture-session'}));
     const response=schema.properties.answer?{answer:'Ada owns the fixture (note.md)'}:
       count===0?{read_paths:[process.env.PAGING_TEST_MODE==='unseen'?'hidden-gold.md':'note.md'],next_page:process.env.PAGING_TEST_MODE==='exhausted-next',brief:''}:
       {read_paths:[],next_page:false,brief:'Ada owns the fixture (note.md)'};
@@ -26,7 +29,7 @@ function runFixture(mode) {
     console.log(JSON.stringify({type:'turn.completed',usage:{input_tokens:10,output_tokens:3}}));
   });\n`
   fs.writeFileSync(path.join(bin, 'codex'), fake, { mode: 0o700 })
-  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run')], {
+  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), ...(mode === 'persistent' ? ['--persistent-curator', '--compact-followup'] : [])], {
     encoding: 'utf8', timeout: 10000,
     env: { ...process.env, PATH: bin + path.delimiter + process.env.PATH, PAGING_TEST_MODE: mode, PAGING_TEST_COUNTER: path.join(dir, 'counter') },
   })
@@ -60,4 +63,12 @@ test('requesting another page after exhaustion gets explicit feedback and can st
   assert.equal(report.pages.length, 1)
   assert.equal(report.modelCalls.length, 3)
   assert.deepEqual(report.sourceReads.map(row => row.path), ['note.md'])
+})
+test('persistent curator resumes its explicit session while lead stays fresh', () => {
+  const { child, report } = runFixture('persistent')
+  assert.equal(child.status, 0, child.stderr)
+  assert.equal(report.runComplete, true)
+  assert.deepEqual(report.modelCalls.map(row => row.sessionResumed), [false, true, false])
+  assert.equal(report.persistentCurator, true)
+  assert.equal(report.compactFollowup, true)
 })
