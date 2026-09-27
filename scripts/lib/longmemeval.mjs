@@ -41,6 +41,29 @@ export function selectCases(items, perCategory = 2, seed = 'graphmory-lme-pilot-
   return [...buckets].sort(([a], [b]) => a.localeCompare(b)).flatMap(([, cases]) => cases
     .sort((a, b) => hash(seed + a.question_id).localeCompare(hash(seed + b.question_id))).slice(0, perCategory))
 }
+export function selectSourceDisjointCases(items, perCategory, seed, forbiddenSessions = new Set()) {
+  if (!Number.isInteger(perCategory) || perCategory < 1) throw new Error('Invalid category quota')
+  const categoryOf = item => item.question_id.endsWith('_abs') ? 'abstention' : item.question_type
+  const categories = [...new Set(items.map(categoryOf))].sort()
+  const selected = [], unavailableCategories = [], used = new Set(forbiddenSessions)
+  for (const category of categories) {
+    const candidates = items.filter(item => categoryOf(item) === category)
+      .sort((a, b) => hash(seed + a.question_id).localeCompare(hash(seed + b.question_id)))
+    const chosen = []
+    for (const item of candidates) {
+      if (item.haystack_session_ids.some(id => used.has(id))) continue
+      chosen.push(item)
+      for (const id of item.haystack_session_ids) used.add(id)
+      if (chosen.length === perCategory) break
+    }
+    if (chosen.length === perCategory) selected.push(...chosen)
+    else {
+      for (const item of chosen) for (const id of item.haystack_session_ids) used.delete(id)
+      unavailableCategories.push(category)
+    }
+  }
+  return { selected, unavailableCategories }
+}
 export function prepareCase(item) {
   validateCase(item)
   // Only timestamps, roles and verbatim text are visible; no answer-bearing labels or generated graph edges.

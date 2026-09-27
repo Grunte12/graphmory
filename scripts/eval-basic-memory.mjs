@@ -22,7 +22,11 @@ if (!Number.isInteger(limit) || limit < 1 || limit > 14) throw new Error('--limi
 const base = path.join(root, 'tmp/competitors/basic-memory')
 const exe = path.join(base, 'venv/bin/bm')
 if (!fs.existsSync(exe)) throw new Error(`Missing pinned Basic Memory CLI: ${exe}`)
-const manifest = JSON.parse(fs.readFileSync(path.join(root, 'eval/longmemeval/pilot.json'), 'utf8'))
+const manifestPath = option('--ids-manifest') ?? path.join(root, 'eval/longmemeval/pilot.json')
+const manifestBytes = fs.readFileSync(manifestPath)
+const manifest = JSON.parse(manifestBytes)
+if (!Array.isArray(manifest.selectedIds) || !manifest.selectedIds.length || new Set(manifest.selectedIds).size !== manifest.selectedIds.length)
+  throw new Error('Manifest needs unique selectedIds')
 const selectedIds = manifest.selectedIds.slice(0, limit)
 const inputBytes = fs.readFileSync(inputPath)
 if (hash(inputBytes) !== manifest.sourceSha256) throw new Error('Input dataset SHA-256 differs from frozen pilot manifest')
@@ -159,7 +163,7 @@ const output = { suite: `basic-memory-local-${hybrid ? 'hybrid' : vector ? 'vect
   install: { command: "uv pip install --python tmp/competitors/basic-memory/venv/bin/python --cache-dir tmp/competitors/uv-cache --prerelease=allow 'basic-memory==0.23.2'",
     venvBytes: sizeTree(path.join(base, 'venv')), cacheBytes: sizeTree(path.join(root, 'tmp/competitors/uv-cache')) },
   queryFormat: args.includes('--question-only') ? 'question-only' : 'question-plus-date',
-  datasetSha256: hash(fs.readFileSync(inputPath)), selectedIds, cases: rows,
+  datasetSha256: hash(fs.readFileSync(inputPath)), idsManifestSha256: hash(manifestBytes), selectedIds, cases: rows,
   summary: { metricDenominator: 'Successful answerable cases only; failed cases must be included separately before comparisons', cases: rows.length, failedCases: rows.filter(row => row.failure).length, answerable: answerableRuns.length,
     recallAt3: average('recallAt3'), recallAt12: average('recallAt12'),
     completeAt3: average('completeAt3'), completeAt12: average('completeAt12'),
