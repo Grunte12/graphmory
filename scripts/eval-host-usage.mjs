@@ -24,12 +24,15 @@ const defaultQuestion = "What fields belong in a Memory Patch, who authors its m
 const suite = args.includes("--questions") ? JSON.parse(fs.readFileSync(path.resolve(option("--questions")), "utf8")) : [{ id: "patch-development", question: defaultQuestion }]
 if (!Array.isArray(suite) || !suite.length || suite.some((item) => !/^[a-z0-9-]+$/.test(item.id) || (item.date !== undefined && typeof item.date !== "string") || typeof item.question !== "string" || !item.question.trim() || Object.keys(item).some((key) => !["id", "question", "date"].includes(key))) || new Set(suite.map((item) => item.id)).size !== suite.length) throw new Error("Questions must have unique safe IDs and question text only; keep gold labels separate")
 const control = args.includes("--control") ? option("--control") : "plain"
-if (!["plain", "basic-memory-text", "graphmory-paths", "graphmory-preview"].includes(control)) throw new Error("Control must be plain, basic-memory-text, graphmory-paths, or graphmory-preview")
+if (!["plain", "basic-memory-text", "graphmory-paths", "graphmory-preview", "graphmory-auto"].includes(control)) throw new Error("Control must be plain, basic-memory-text, graphmory-paths, graphmory-preview, or graphmory-auto")
 const graphPreview = args.includes("--graph-preview")
 const graphBundle = args.includes("--graph-bundle")
 const graphAuto = args.includes("--graph-auto")
+const graphMatchedPreviews = args.includes("--graph-matched-previews")
 if (control === "graphmory-paths" && !(graphPreview || graphBundle || graphAuto)) throw new Error("graphmory-paths control requires a Graphmory treatment flag")
 if (control === "graphmory-preview" && !(graphBundle || graphAuto)) throw new Error("graphmory-preview control requires --graph-bundle or --graph-auto")
+if (control === "graphmory-auto" && !(graphAuto && graphMatchedPreviews)) throw new Error("graphmory-auto control requires --graph-auto and --graph-matched-previews")
+if (graphMatchedPreviews && !graphAuto) throw new Error("--graph-matched-previews requires --graph-auto")
 if ([graphPreview, graphBundle, graphAuto].filter(Boolean).length > 1) throw new Error("Choose one Graphmory treatment")
 let basicMemory = null
 if (control === "basic-memory-text") {
@@ -68,7 +71,7 @@ const configRoot = process.env.XDG_CONFIG_HOME
 if (!configRoot) throw new Error("Use an isolated XDG_CONFIG_HOME for the evaluation")
 const hostConfig = JSON.parse(fs.readFileSync(path.join(configRoot, "opencode.json"), "utf8"))
 if ((hostConfig.agent?.paired_eval?.model ?? hostConfig.model) !== "openai/gpt-5.6-luna") throw new Error("Paired evaluator model must match the recorded model")
-const metadata = { control, orderOffset, graphPreview, graphBundle, graphAuto, controlConfigHash: basicMemory ? digest(JSON.stringify(basicMemory)) : null,
+const metadata = { control, orderOffset, graphPreview, graphBundle, graphAuto, graphMatchedPreviews, controlConfigHash: basicMemory ? digest(JSON.stringify(basicMemory)) : null,
   indexedNotesHash: basicMemory ? snapshot(basicMemory.notes) : null,
   competitorVersion: basicMemory ? "0.23.2" : null,
   runnerHash: digest(fs.readFileSync(new URL(import.meta.url))), sourceHash: digest(snapshot(path.resolve("src")) + digest(fs.readFileSync(cli))), model: "openai/gpt-5.6-luna", host: "OpenCode", hostVersion: spawnSync("opencode", ["--version"], { encoding: "utf8" }).stdout.trim(),
@@ -84,11 +87,13 @@ for (const [questionIndex, { id, question, date }] of suite.entries()) {
     for (const arm of order) {
       const nativeSearch = basicMemory ? `env BASIC_MEMORY_CONFIG_DIR=${shellQuote(basicMemory.state)} BASIC_MEMORY_HOME=${shellQuote(basicMemory.notes)} XDG_CONFIG_HOME=${shellQuote(basicMemory.home)} BASIC_MEMORY_AUTO_UPDATE=false BASIC_MEMORY_SEMANTIC_SEARCH_ENABLED=false BASIC_MEMORY_DEFAULT_SEARCH_TYPE=text BASIC_MEMORY_RERANKER_ENABLED=false ${shellQuote(basicMemory.exe)} tool search-notes ${shellQuote(question)} --project ${shellQuote(basicMemory.project)} --local --page-size 10 --json` : null
       const strategy = arm === "graphmory"
-        ? `Start with node ${shellQuote(cli)} recall-managed --vault ${shellQuote(vault)} --config ${shellQuote(runtime)} --query ${shellQuote(question)} --agent${graphAuto ? " --auto" : graphBundle ? " --bundle" : graphPreview ? " --evidence-preview" : ""}. ${graphAuto || graphBundle || graphPreview ? "Use previews to triage candidates, but inspect original source notes when needed for support or completeness. " : ""}Follow pagination if evidence is missing; read relevant source notes.`
+        ? `Start with node ${shellQuote(cli)} recall-managed --vault ${shellQuote(vault)} --config ${shellQuote(runtime)} --query ${shellQuote(question)} --agent${graphAuto ? ` --auto${graphMatchedPreviews ? " --matched-previews" : ""}` : graphBundle ? " --bundle" : graphPreview ? " --evidence-preview" : ""}. ${graphAuto || graphBundle || graphPreview ? "Use previews to triage candidates, but inspect original source notes when needed for support or completeness. " : ""}Follow pagination if evidence is missing; read relevant source notes.`
         : arm === "graphmory-paths"
           ? `Start with node ${shellQuote(cli)} recall-managed --vault ${shellQuote(vault)} --config ${shellQuote(runtime)} --query ${shellQuote(question)} --agent. Follow pagination if evidence is missing; read relevant source notes.`
         : arm === "graphmory-preview"
           ? `Start with node ${shellQuote(cli)} recall-managed --vault ${shellQuote(vault)} --config ${shellQuote(runtime)} --query ${shellQuote(question)} --agent --evidence-preview. Use previews to triage candidates, but inspect original source notes when needed for support or completeness. Follow pagination if evidence is missing; read relevant source notes.`
+        : arm === "graphmory-auto"
+          ? `Start with node ${shellQuote(cli)} recall-managed --vault ${shellQuote(vault)} --config ${shellQuote(runtime)} --query ${shellQuote(question)} --agent --auto. Use previews to triage candidates, but inspect original source notes when needed for support or completeness. Follow pagination if evidence is missing; read relevant source notes.`
         : arm === "basic-memory-text"
           ? `Start with ${nativeSearch}. Read returned note paths from ./vault. If evidence is missing, paginate with --page 2, --page 3 etc or reformulate the query using the same native command. Do not use Graphmory or ordinary file search to discover candidates.`
           : "Use ordinary file search and read to find relevant evidence in ./vault. Do not use Graphmory commands."

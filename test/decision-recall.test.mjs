@@ -90,6 +90,15 @@ test("byte-budgeted curator bundle preserves ranking and continuation across not
     const adaptive = await managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG, { adaptiveBundle: true })
     assert.equal(adaptive.adaptiveMode, "wide")
     assert.ok(adaptive.results.length > 10)
+    const matchedPaths = []
+    let matchedOffset = 0
+    do {
+      const page = await managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG, { offset: matchedOffset, adaptiveBundle: true, matchedPreviews: true })
+      matchedPaths.push(...page.results.map((item) => item.path))
+      if (!page.hasMore) break
+      matchedOffset = page.nextOffset
+    } while (true)
+    assert.deepEqual(matchedPaths, baseline)
     await assert.rejects(managedRecall(vault, "project memory evidence", DEFAULT_RUNTIME_CONFIG, { bundleBytes: 1999 }), /bundleBytes/u)
   } finally { fs.rmSync(vault, { recursive: true, force: true }) }
 })
@@ -101,6 +110,24 @@ test("adaptive routing keeps descriptive, narrow lookups small and expands exhau
   assert.equal(chooseAdaptiveMode("List all memory layers", descriptive), "wide")
   const generic = Array.from({ length: 10 }, (_, index) => ({ title: `Conversation ${index + 1}` }))
   assert.equal(chooseAdaptiveMode("What happened to the project?", generic), "wide")
+})
+
+test("matched previews omit weak text without dropping ranked paths or changing ordinary auto", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-matched-preview-"))
+  try {
+    fs.writeFileSync(path.join(vault, "adjacent.md"), "# Adjacent gift\n## user\nI bought a gift for my coworker.\n## assistant\nThat sounds thoughtful.")
+    fs.writeFileSync(path.join(vault, "answer.md"), "# Birthday source\n## user\nMy sister gave me a birthday gift: a stand mixer.\n## assistant\nEnjoy it.")
+    const query = "What did dad give me as a birthday gift?"
+    const wideQuery = "List all evidence: what did dad give me as a birthday gift?"
+    const ordinary = await managedRecall(vault, wideQuery, DEFAULT_RUNTIME_CONFIG, { adaptiveBundle: true })
+    const matched = await managedRecall(vault, wideQuery, DEFAULT_RUNTIME_CONFIG, { adaptiveBundle: true, matchedPreviews: true })
+    assert.deepEqual(matched.results.map((item) => item.path), ordinary.results.map((item) => item.path))
+    assert.equal(matched.totalCandidates, ordinary.totalCandidates)
+    assert.ok(ordinary.results.find((item) => item.path === "adjacent.md").evidencePreview.length > 0)
+    assert.equal(matched.results.find((item) => item.path === "adjacent.md").evidencePreview, undefined)
+    assert.match(matched.results.find((item) => item.path === "answer.md").evidencePreview[0].text, /stand mixer/u)
+    await assert.rejects(managedRecall(vault, query, DEFAULT_RUNTIME_CONFIG, { matchedPreviews: true }), /requires adaptiveBundle/u)
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
 })
 
 test("runtime configuration persists without a secret and validates endpoint isolation", () => {

@@ -12,6 +12,7 @@ export async function managedRecall(vault, query, config, {
   evidencePreview = false,
   bundleBytes = 0,
   adaptiveBundle = false,
+  matchedPreviews = false,
   semanticRecallImpl = recallVaultSemantic,
   fetchImpl = fetch,
 } = {}) {
@@ -19,6 +20,7 @@ export async function managedRecall(vault, query, config, {
   if (!Number.isInteger(offset) || offset < 0) throw new Error("offset must be a non-negative integer")
   if (!Number.isInteger(bundleBytes) || (bundleBytes !== 0 && (bundleBytes < 2000 || bundleBytes > 65536))) throw new Error("bundleBytes must be 0 or 2000–65536")
   if (bundleBytes && adaptiveBundle) throw new Error("Choose bundleBytes or adaptiveBundle")
+  if (matchedPreviews && !adaptiveBundle) throw new Error("matchedPreviews requires adaptiveBundle")
   if (bundleBytes && config.workflow !== "curator") throw new Error("Evidence bundles are supported only in curator mode")
   if (adaptiveBundle && config.workflow !== "curator") throw new Error("Adaptive bundles are supported only in curator mode")
   if (config.workflow !== "curator" && offset !== 0) throw new Error("offset is supported only in curator mode")
@@ -36,8 +38,9 @@ export async function managedRecall(vault, query, config, {
     let bundleUsedBytes = 0
     for (const { path, title, score, status } of page.results) {
       if (adaptiveMode === "focused" && results.length >= 10) break
+      const preview = documentsByPath?.has(path) ? curatorEvidencePreview(documentsByPath.get(path), query, { matchedOnly: matchedPreviews && adaptiveMode === "wide" }) : []
       const result = { path, title, score, status,
-        ...(documentsByPath?.has(path) ? { evidencePreview: curatorEvidencePreview(documentsByPath.get(path), query) } : {}),
+        ...(preview.length ? { evidencePreview: preview } : {}),
       }
       const bytes = Buffer.byteLength(JSON.stringify(result), "utf8")
       if (effectiveBundleBytes && results.length && bundleUsedBytes + bytes > effectiveBundleBytes) break
@@ -125,9 +128,13 @@ export function chooseAdaptiveMode(query, firstResults) {
   return exhaustive || genericTitles ? "wide" : "focused"
 }
 
-export function curatorEvidencePreview(document, query) {
+const PREVIEW_STOPWORDS = new Set(["what", "when", "where", "which", "who", "whom", "whose", "how", "does", "did", "have", "has", "had", "with", "from", "that", "this", "there", "were", "been", "your", "mine", "about", "into", "the", "and", "for", "are", "was"])
+
+export function curatorEvidencePreview(document, query, { matchedOnly = false } = {}) {
   const normalize = (term) => term.endsWith("ed") ? [term, term.slice(0, -2), term.slice(0, -1)] : [term]
-  const terms = new Set(tokenize(query).flatMap(normalize))
+  const contentTerms = tokenize(query).filter((term) => term.length >= 3 && !PREVIEW_STOPWORDS.has(term))
+  const useMatchedOnly = matchedOnly && !/[\u0E00-\u0E7F]/u.test(query) && contentTerms.length > 0
+  const terms = new Set((useMatchedOnly ? contentTerms : tokenize(query)).flatMap(normalize))
   const sections = splitMarkdownSections(document)
   const ranked = sections.map((section, index) => {
     const overlap = [...new Set((section.fields?.body ?? section.tokens).flatMap(normalize))].filter((term) => terms.has(term)).length
@@ -136,6 +143,12 @@ export function curatorEvidencePreview(document, query) {
   })
   const userTurns = ranked.filter((item) => item.userEvidence)
   const pool = userTurns.length ? userTurns : ranked
+  if (useMatchedOnly) {
+    const threshold = contentTerms.length >= 3 ? 2 : 1
+    return [...pool].filter((item) => item.overlap >= threshold)
+      .sort((a, b) => b.overlap - a.overlap || a.index - b.index).slice(0, 3)
+      .map(({ section }) => ({ heading: section.title, text: section.markdown.slice(0, 350) }))
+  }
   const first = pool[0]
   const rankedMatches = [...pool].sort((a, b) => b.overlap - a.overlap || a.index - b.index)
   const selected = [first, ...rankedMatches.filter((item) => item !== first).slice(0, 2)]

@@ -5,7 +5,7 @@ import os from "node:os"
 import path from "node:path"
 import { spawnSync } from "node:child_process"
 
-function trial(t, { mutate = false, labels = false, basicMemory = false, graphPaths = false, graphAutoPaths = false, graphPreviewControl = false, graphAutoControl = false, wrongVersion = false, noAnswer = false, partial = false, orderOffset = 0 } = {}) {
+function trial(t, { mutate = false, labels = false, basicMemory = false, graphPaths = false, graphAutoPaths = false, graphPreviewControl = false, graphAutoControl = false, graphMatchedControl = false, wrongVersion = false, noAnswer = false, partial = false, orderOffset = 0 } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-host-test-"))
   t.after(() => fs.rmSync(root, { recursive: true, force: true }))
   for (const dir of ["bin", "config", "workspace/vault"]) fs.mkdirSync(path.join(root, dir), { recursive: true })
@@ -28,6 +28,7 @@ console.log(JSON.stringify({type:'step_finish',part:{reason:${JSON.stringify(par
   if (graphAutoPaths) controlArgs.push("--control", "graphmory-paths", "--graph-auto")
   if (graphPreviewControl) controlArgs.push("--control", "graphmory-preview", "--graph-bundle")
   if (graphAutoControl) controlArgs.push("--control", "graphmory-preview", "--graph-auto")
+  if (graphMatchedControl) controlArgs.push("--control", "graphmory-auto", "--graph-auto", "--graph-matched-previews")
   if (basicMemory) {
     const exe = path.join(root, "bin/bm")
     fs.writeFileSync(exe, `#!${process.execPath}\nconsole.log('Basic Memory version: ${wrongVersion ? "0.99.0" : "0.23.2"}');`, { mode: 0o700 })
@@ -142,6 +143,15 @@ test("adaptive retrieval can be compared with the same paged-preview reader", (t
   const data = JSON.parse(fs.readFileSync(report))
   assert.equal(data.graphAuto, true)
   assert.deepEqual(data.rows.map((row) => row.arm), ["graphmory", "graphmory-preview", "graphmory-preview", "graphmory"])
+})
+
+test("matched adaptive previews can be compared with ordinary auto", (t) => {
+  const { result, report } = trial(t, { graphMatchedControl: true })
+  assert.equal(result.status, 0, result.stderr)
+  const data = JSON.parse(fs.readFileSync(report))
+  assert.equal(data.control, "graphmory-auto")
+  assert.equal(data.graphMatchedPreviews, true)
+  assert.deepEqual(data.rows.map((row) => row.arm), ["graphmory", "graphmory-auto", "graphmory-auto", "graphmory"])
 })
 
 test("interim text followed by an unfinished tool step cannot pass as an answer", (t) => {
