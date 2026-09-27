@@ -246,7 +246,10 @@
         "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json",
         "docs/evaluation/longmemeval-cli-delivery-2026-09-28.md",
         "eval/reader-pilot/longmemeval-cli-delivery-initial-2026-09-28.json",
-        "eval/reader-pilot/longmemeval-cli-delivery-pagebytes-2026-09-28.json"
+        "eval/reader-pilot/longmemeval-cli-delivery-pagebytes-2026-09-28.json",
+        "eval/reader-pilot/longmemeval-cli-delivery-goldread-2026-09-28.json",
+        "docs/evaluation/longmemeval-live-reader-2026-09-28.md",
+        "eval/reader-pilot/longmemeval-live-a40-2026-09-28.json"
       ],
       "source_ids": [
         "locomo",
@@ -309,7 +312,10 @@
         "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json",
         "docs/evaluation/longmemeval-cli-delivery-2026-09-28.md",
         "eval/reader-pilot/longmemeval-cli-delivery-initial-2026-09-28.json",
-        "eval/reader-pilot/longmemeval-cli-delivery-pagebytes-2026-09-28.json"
+        "eval/reader-pilot/longmemeval-cli-delivery-pagebytes-2026-09-28.json",
+        "eval/reader-pilot/longmemeval-cli-delivery-goldread-2026-09-28.json",
+        "docs/evaluation/longmemeval-live-reader-2026-09-28.md",
+        "eval/reader-pilot/longmemeval-live-a40-2026-09-28.json"
       ],
       "source_ids": [
         "bfcl_memory",
@@ -556,7 +562,10 @@
         "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json",
         "docs/evaluation/longmemeval-cli-delivery-2026-09-28.md",
         "eval/reader-pilot/longmemeval-cli-delivery-initial-2026-09-28.json",
-        "eval/reader-pilot/longmemeval-cli-delivery-pagebytes-2026-09-28.json"
+        "eval/reader-pilot/longmemeval-cli-delivery-pagebytes-2026-09-28.json",
+        "eval/reader-pilot/longmemeval-cli-delivery-goldread-2026-09-28.json",
+        "docs/evaluation/longmemeval-live-reader-2026-09-28.md",
+        "eval/reader-pilot/longmemeval-live-a40-2026-09-28.json"
       ],
       "source_ids": [
         "openai_cache",
@@ -618,7 +627,10 @@
         "eval/reader-pilot/curator-auto-v2-live-2026-09-28.json",
         "docs/evaluation/longmemeval-cli-delivery-2026-09-28.md",
         "eval/reader-pilot/longmemeval-cli-delivery-initial-2026-09-28.json",
-        "eval/reader-pilot/longmemeval-cli-delivery-pagebytes-2026-09-28.json"
+        "eval/reader-pilot/longmemeval-cli-delivery-pagebytes-2026-09-28.json",
+        "eval/reader-pilot/longmemeval-cli-delivery-goldread-2026-09-28.json",
+        "docs/evaluation/longmemeval-live-reader-2026-09-28.md",
+        "eval/reader-pilot/longmemeval-live-a40-2026-09-28.json"
       ],
       "source_ids": [
         "locomo",

@@ -59,6 +59,7 @@ try {
     }
     const expectedDocs = new Map(prepared.documents.map(doc => [doc.path, hash(doc.markdown)]))
     const goldGroups = prepared.labels.evidence
+    const goldPaths = new Set(goldGroups.flat())
     const question = prepared.query.text // Date remains separate for any future reader; no benchmark-appended date in retrieval.
     for (const [profile, mode] of arms) {
       const config = path.join(temp, 'runtime.json')
@@ -84,11 +85,16 @@ try {
             seen.add(result.path)
           }
           const pageBytes = Buffer.byteLength(child.stdout)
+          const goldResults = page.results.filter(result => goldPaths.has(result.path))
           row.outputBytes += pageBytes
           row.pages.push({ offset, returned: page.results.length, nextOffset: page.nextOffset, hasMore: page.hasMore,
             bytes: pageBytes,
             sourceReadRequired: page.results.filter(result => result.sourceReadRequired).length,
-            previewOmitted: page.results.filter(result => result.previewOmitted).length })
+            previewOmitted: page.results.filter(result => result.previewOmitted).length,
+            goldPathsReturned: goldResults.length,
+            goldPathsNeedRead: goldResults.filter(result => result.sourceReadRequired || result.previewOmitted || !result.evidencePreview?.length).length,
+            goldPreviewBytes: goldResults.reduce((sum, result) => sum + Buffer.byteLength(JSON.stringify(result.evidencePreview ?? [])), 0),
+            goldOriginalBytes: goldResults.reduce((sum, result) => sum + Buffer.byteLength(fs.readFileSync(path.join(vault, result.path))), 0) })
           if (!prepared.labels.abstention && row.firstCompletePage === null && goldGroups.every(group => group.some(name => seen.has(name)))) row.firstCompletePage = row.pages.length
           if (!page.hasMore) {
             if (page.nextOffset !== null || seen.size !== row.candidateCount) throw new Error('Premature or inconsistent exhaustion')

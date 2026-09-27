@@ -35,6 +35,12 @@ The [initial 56-trial artifact](../../eval/reader-pilot/longmemeval-cli-delivery
 
 These 14 IDs and dataset bytes also match the earlier [Basic Memory 0.23.2 text-search pilot](../competitor-pilot/README.md). That prior controlled comparison measured **complete evidence@3/@12** for different search backends; it found Graphmory 10/12 versus Basic Memory text 8/12 at @3, with both 12/12 at @12. The current first-page results have variable page sizes (about 20–32 candidates on page one), so **12/12 first-page completeness is not a matched @12 comparison** and must not be used as a new competitor win. Basic Memory hybrid, final answers, model time and quality remain untested on these cases.
 
+## Follow-up diagnostic: first-page paths versus usable text
+
+A third mechanical run [recorded gold-source flags and bytes](../../eval/reader-pilot/longmemeval-cli-delivery-goldread-2026-09-28.json) for the same 14 exposed cases. After removing only the newly added fields, its rows matched the prior byte-instrumented run **56/56**. Each arm returned all 20 gold-session paths on page one across the 12 answerable cases. **All 20/20 carried `sourceReadRequired`**; none was a complete original-source preview. The combined gold-path previews occupied 18,004 JSON bytes, while the 20 original Markdown sessions occupied 285,237 bytes (about 15.8× as much). These counts are identical across arms because the same gold paths and previews were returned. The original-size total is an *oracle-selected lower bound* for reading just those sources; a real Curator does not know gold paths and may read more. A partial preview might already contain the answer, so `sourceReadRequired` is a completeness warning, not proof of answer failure.
+
+This corrects the interpretation of “first-page complete”: **path reachability is 12/12, but evidence sufficiency and answer quality remain unmeasured**. The next live experiment should trace which sources the Curator actually opens and score supported answers separately from paths and bytes.
+
 ## Decision
 
 No retrieval or bundle default changes. Keep `--auto` and `--bundle` as available modes; choose based on task evidence, not a universal rule. The next useful controlled test is *actual* Curator/Lead answer quality and whole-workflow cost on a larger family-diverse sample, with an independent support adjudication and matched candidate/source budgets. Preserve the LoCoMo late-evidence cases as a separate stress slice. This development study cannot satisfy the active goal's final quality, efficiency or broad competitor gates.

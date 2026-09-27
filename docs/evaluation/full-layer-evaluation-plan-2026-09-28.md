@@ -143,3 +143,5 @@ The [reader attribution pilot](reader-attribution-pilot-2026-09-28.md) completed
 The next traced [Curator continuation experiment](curator-continuation-experiment-2026-09-28.md) documents one exposed development question, an actual pagination failure, a boolean-continuation recovery, full source-read traces and the pinned category-1 raw QA computation. It does not satisfy official full-split or strict-support gates.
 
 The [LongMemEval actual CLI delivery check](longmemeval-cli-delivery-2026-09-28.md) adds a distinct exposed development corpus: 56/56 mechanical trials, no first-page gold-session gap on 12 answerable questions, and larger first-page bytes for bundle versus auto in mixed-notes mode. It does not alter reader or official answer-score priorities.
+
+The [follow-up live Curator source-read pilot](longmemeval-live-reader-2026-09-28.md) exercised one exposed LongMemEval question and found a source-supported answer after one original read. It also exposed large per-call host input with zero reported cache hits in the fresh-session mediator; no persistent-host or matched-comparator result follows from it.

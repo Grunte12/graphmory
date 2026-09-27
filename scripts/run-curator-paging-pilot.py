@@ -25,7 +25,7 @@ if set(case) != {'id', 'question', 'vault', 'sources'}:
 vault = pathlib.Path(case['vault']).resolve()
 for name, expected in case['sources'].items():
     file = vault / name
-    if file.is_symlink() or file.resolve().parent != vault or hashlib.sha256(file.read_bytes()).hexdigest() != expected:
+    if file.is_symlink() or not file.resolve().is_relative_to(vault) or hashlib.sha256(file.read_bytes()).hexdigest() != expected:
         raise RuntimeError('Invalid source boundary/hash')
 out = pathlib.Path(args.out).resolve()
 if out.exists():
