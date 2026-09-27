@@ -55,3 +55,12 @@ hosts. Promote only after the quality and cost gates pass together.
 all 33 required paths but exposed filtered and truncated previews. Added
 explicit source-read flags without changing retrieval ranks. This is not
 a live answer-quality improvement claim; adaptive options remain experimental.
+
+## Follow-up: live Codex curator
+
+[Six Codex CLI pairs](codex-source-flags-2026-09-27.md) tested completeness
+metadata with mediated source reads after native shell sandbox preflight
+failed. Both variants got required facts in 6/6 answers; strict relevant and
+cited answers passed 4/6 each. Metadata did not establish a quality improvement.
+Cross-topic requirement attribution, rather than lost note paths, is the next
+observed bottleneck. This pilot does not justify changing defaults.

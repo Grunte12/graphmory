@@ -1,0 +1,304 @@
+{
+  "model": "gpt-5.6-luna",
+  "reasoning": "low",
+  "cliVersion": "0.146.0",
+  "protocol": "mediated-source-read",
+  "pairs": 6,
+  "grading": "author manual audit, not blind or independent",
+  "rows": [
+    {
+      "id": "long",
+      "arm": "control",
+      "elapsedSeconds": 18.4,
+      "usage": {
+        "input_tokens": 32059,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 261,
+        "reasoning_output_tokens": 137
+      },
+      "answer": "Orion recovery requirements:\n- Restore the encrypted backup.\n- Obtain approval; the approver is not recorded.\n- Do not run the deployment on Friday.\n- Meet the October 12 deadline.\n- Owner: Mira.\n\nSources: recovery.md, approval.md, policy.md, deadline.md, owner.md",
+      "readPaths": [
+        "recovery.md",
+        "owner.md",
+        "approval.md",
+        "deadline.md",
+        "policy.md"
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": false,
+      "strictSupportedAnswer": false
+    },
+    {
+      "id": "long",
+      "arm": "flags",
+      "elapsedSeconds": 18.21,
+      "usage": {
+        "input_tokens": 32137,
+        "cached_input_tokens": 14080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 272,
+        "reasoning_output_tokens": 139
+      },
+      "answer": "Orion recovery requirements:\n- Restore the encrypted backup. (recovery.md)\n- Approval is required; the approver has not been recorded. (approval.md, policy.md)\n- Orion deployment must not run on Friday. (policy.md)\n- The deadline is October 12. (deadline.md)\n- The owner is Mira. (owner.md)",
+      "readPaths": [
+        "recovery.md",
+        "owner.md",
+        "approval.md",
+        "deadline.md",
+        "policy.md"
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": false,
+      "strictSupportedAnswer": false
+    },
+    {
+      "id": "split",
+      "arm": "flags",
+      "elapsedSeconds": 17.33,
+      "usage": {
+        "input_tokens": 32040,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 182,
+        "reasoning_output_tokens": 102
+      },
+      "answer": "Orion owner: Mira (source: owner.md). Orion deadline: October 12 (source: deadline.md).",
+      "readPaths": [
+        "owner.md",
+        "deadline.md",
+        "approval.md",
+        "policy.md",
+        "recovery.md"
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "split",
+      "arm": "control",
+      "elapsedSeconds": 17.22,
+      "usage": {
+        "input_tokens": 31972,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 211,
+        "reasoning_output_tokens": 108
+      },
+      "answer": "Orion has one recorded owner and deadline:\n- Owner: Mira \u2014 `owner.md`\n- Deadline: October 12 \u2014 `deadline.md`\n\nNo additional Orion owners or deadlines are recorded in the provided notes.",
+      "readPaths": [
+        "owner.md",
+        "deadline.md",
+        "approval.md",
+        "policy.md",
+        "recovery.md"
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "conflict",
+      "arm": "control",
+      "elapsedSeconds": 15.9,
+      "usage": {
+        "input_tokens": 31730,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 157,
+        "reasoning_output_tokens": 66
+      },
+      "answer": "Vega storage has two recorded decisions from March 2025: SQLite ([unresolved-a.md]) and PostgreSQL ([unresolved-b.md]). No resolved choice is recorded; the decision remains unresolved.",
+      "readPaths": [
+        "unresolved-a.md",
+        "unresolved-b.md"
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "conflict",
+      "arm": "flags",
+      "elapsedSeconds": 20.28,
+      "usage": {
+        "input_tokens": 32320,
+        "cached_input_tokens": 30208,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 292,
+        "reasoning_output_tokens": 162
+      },
+      "answer": "Vega has two conflicting storage decisions: SQLite and PostgreSQL, both recorded in March 2025. Neither source records a resolution, so no resolved Vega choice can be identified. Sources: unresolved-a.md; unresolved-b.md. The PostgreSQL resolution applies to Nova, not Vega: new.md replaces old.md\u2019s SQLite decision.",
+      "readPaths": [
+        "unresolved-a.md",
+        "unresolved-b.md",
+        "new.md",
+        "old.md",
+        "approval.md",
+        "recovery.md"
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "unknown",
+      "arm": "flags",
+      "elapsedSeconds": 9.44,
+      "usage": {
+        "input_tokens": 15857,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 165,
+        "reasoning_output_tokens": 132
+      },
+      "answer": "No approver is recorded in [approval.md](approval.md).",
+      "readPaths": [],
+      "modelCalls": 1,
+      "vaultUnchanged": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "unknown",
+      "arm": "control",
+      "elapsedSeconds": 14.31,
+      "usage": {
+        "input_tokens": 31742,
+        "cached_input_tokens": 8960,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 124,
+        "reasoning_output_tokens": 66
+      },
+      "answer": "The approver for the Orion deployment has not been recorded. Source: approval.md",
+      "readPaths": [
+        "approval.md"
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "temporal",
+      "arm": "control",
+      "elapsedSeconds": 15.09,
+      "usage": {
+        "input_tokens": 32241,
+        "cached_input_tokens": 30208,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 104,
+        "reasoning_output_tokens": 28
+      },
+      "answer": "PostgreSQL is the current Nova storage choice, adopted in March 2025 and explicitly replacing the January SQLite decision. Sources: old.md; new.md",
+      "readPaths": [
+        "old.md",
+        "new.md"
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "temporal",
+      "arm": "flags",
+      "elapsedSeconds": 13.59,
+      "usage": {
+        "input_tokens": 32263,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 109,
+        "reasoning_output_tokens": 33
+      },
+      "answer": "The current Nova storage choice is PostgreSQL, adopted in March 2025 and explicitly replacing the January SQLite decision. Sources: old.md and new.md.",
+      "readPaths": [
+        "old.md",
+        "new.md"
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": true,
+      "strictSupportedAnswer": true
+    },
+    {
+      "id": "negation",
+      "arm": "flags",
+      "elapsedSeconds": 17.54,
+      "usage": {
+        "input_tokens": 32095,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 216,
+        "reasoning_output_tokens": 108
+      },
+      "answer": "Orion deployment restrictions:\n- Must not run on Friday.\n- Requires approval; the approver has not been recorded.\n- The required recovery procedure is to restore the encrypted backup.\n\nSources: policy.md, approval.md, recovery.md",
+      "readPaths": [
+        "policy.md",
+        "approval.md",
+        "owner.md",
+        "deadline.md",
+        "recovery.md"
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": true,
+      "scopeClean": false,
+      "strictSupportedAnswer": false
+    },
+    {
+      "id": "negation",
+      "arm": "control",
+      "elapsedSeconds": 13.82,
+      "usage": {
+        "input_tokens": 32075,
+        "cached_input_tokens": 24064,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 118,
+        "reasoning_output_tokens": 43
+      },
+      "answer": "Orion deployment restrictions:\n- Must not run on Friday.\n- Requires approval before deployment.",
+      "readPaths": [
+        "policy.md",
+        "approval.md",
+        "owner.md",
+        "deadline.md",
+        "recovery.md"
+      ],
+      "modelCalls": 2,
+      "vaultUnchanged": true,
+      "requiredFactsCorrect": true,
+      "requiredSourcePathsCited": false,
+      "scopeClean": true,
+      "strictSupportedAnswer": false
+    }
+  ]
+}
