@@ -251,3 +251,16 @@ test("sectionFocusRerank handles document with only one section", () => {
   assert.ok("rerankApplied" in reranked[0])
   assert.ok("rerankSignals" in reranked[0])
 })
+
+test("document-invariant section fields retain independent token arrays", () => {
+  const document = parseMarkdown("projects/ไทย.md", "---\nstatus: current\naliases: [Records]\n---\n# Memory ไทย\n## First\nKeep records.\n## Second\nDo NOT erase records.")
+  const [first, second] = splitMarkdownSections(document)
+  for (const field of ["path", "title", "metadata"]) {
+    assert.deepEqual(first.fields[field], second.fields[field])
+    assert.notEqual(first.fields[field], second.fields[field])
+    const previous = [...second.fields[field]]
+    first.fields[field].push("mutation")
+    assert.deepEqual(second.fields[field], previous)
+  }
+  assert.match(second.markdown, /Do NOT erase/)
+})

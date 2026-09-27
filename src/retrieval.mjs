@@ -221,6 +221,10 @@ export function splitMarkdownSections(document) {
     : document.markdown
   const lines = markdown.split(/\r?\n/)
   const sections = []
+  const metadata = Object.entries(document.metadata ?? {}).map(([key, value]) => `${key}: ${value}`).join("\n")
+  const pathTokens = retrievalTokens(document.id)
+  const titleTokens = retrievalTokens(document.title)
+  const metadataTokens = retrievalTokens(metadata)
   const headingStack = [{ level: 1, text: document.title }]
   let heading = document.title
   let body = []
@@ -228,7 +232,6 @@ export function splitMarkdownSections(document) {
   function flush() {
     const content = body.join("\n").trim()
     if (!content) return
-    const metadata = Object.entries(document.metadata ?? {}).map(([key, value]) => `${key}: ${value}`).join("\n")
     const headingTrail = headingStack.map((item) => item.text).join(" > ")
     const text = `${document.id}\n${document.title}\n${metadata}\n${headingTrail}\n${heading}\n${content}`
     sections.push({
@@ -240,9 +243,9 @@ export function splitMarkdownSections(document) {
       characters: content.length,
       markdown: content,
       fields: {
-        path: retrievalTokens(document.id),
-        title: retrievalTokens(document.title),
-        metadata: retrievalTokens(metadata),
+        path: [...pathTokens],
+        title: [...titleTokens],
+        metadata: [...metadataTokens],
         headings: retrievalTokens(headingTrail),
         body: retrievalTokens(content),
       },

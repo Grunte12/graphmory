@@ -89,3 +89,11 @@ were 1,202 ms, 64 ms, and 3 ms respectively. Retain optional `read-notes` for
 full source envelopes; use native batched readers when suitable. This avoids
 repeated CLI startup but is not evidence of improved answer quality or reduced
 model tokens. Retrieval and curator defaults remain unchanged.
+
+## Section preparation without persistent caching
+
+[Invariant-token reuse](section-preparation-2026-09-27.md) computes path/title/
+metadata tokens once per note. Exact section, ranking, and managed-response
+parity held. Complete recall medians improved 11–16% on 100/1,000 synthetic
+12-section notes. No cache/daemon or retrieval policy change; real-agent
+latency and answer quality were not measured in this experiment.

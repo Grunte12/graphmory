@@ -1,0 +1,455 @@
+{
+  "baselineRevision": "c272cf4",
+  "kind": "synthetic-section-preparation-not-end-to-end",
+  "parity": "sections-and-three-ranking-queries",
+  "rows": [
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 0,
+      "arm": "baseline",
+      "elapsedMs": 16.579,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 0,
+      "arm": "candidate",
+      "elapsedMs": 13.13,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 1,
+      "arm": "candidate",
+      "elapsedMs": 12.422,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 1,
+      "arm": "baseline",
+      "elapsedMs": 13.846,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 2,
+      "arm": "baseline",
+      "elapsedMs": 13.279,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 2,
+      "arm": "candidate",
+      "elapsedMs": 8.75,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 3,
+      "arm": "candidate",
+      "elapsedMs": 9.481,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 3,
+      "arm": "baseline",
+      "elapsedMs": 18.38,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 4,
+      "arm": "baseline",
+      "elapsedMs": 16.736,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 4,
+      "arm": "candidate",
+      "elapsedMs": 10.125,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 5,
+      "arm": "candidate",
+      "elapsedMs": 9.926,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 5,
+      "arm": "baseline",
+      "elapsedMs": 13.59,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 6,
+      "arm": "baseline",
+      "elapsedMs": 14.23,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 6,
+      "arm": "candidate",
+      "elapsedMs": 8.007,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 7,
+      "arm": "candidate",
+      "elapsedMs": 10.633,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 7,
+      "arm": "baseline",
+      "elapsedMs": 14.005,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 8,
+      "arm": "baseline",
+      "elapsedMs": 10.934,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 100,
+      "repeat": 8,
+      "arm": "candidate",
+      "elapsedMs": 7.795,
+      "sections": 1200
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 0,
+      "arm": "baseline",
+      "elapsedMs": 130.098,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 0,
+      "arm": "candidate",
+      "elapsedMs": 125.988,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 1,
+      "arm": "candidate",
+      "elapsedMs": 93.204,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 1,
+      "arm": "baseline",
+      "elapsedMs": 127.41,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 2,
+      "arm": "baseline",
+      "elapsedMs": 128.61,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 2,
+      "arm": "candidate",
+      "elapsedMs": 90.884,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 3,
+      "arm": "candidate",
+      "elapsedMs": 91.366,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 3,
+      "arm": "baseline",
+      "elapsedMs": 128.304,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 4,
+      "arm": "baseline",
+      "elapsedMs": 127.142,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 4,
+      "arm": "candidate",
+      "elapsedMs": 90.205,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 5,
+      "arm": "candidate",
+      "elapsedMs": 92.071,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 5,
+      "arm": "baseline",
+      "elapsedMs": 129.142,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 6,
+      "arm": "baseline",
+      "elapsedMs": 127.891,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 6,
+      "arm": "candidate",
+      "elapsedMs": 92.368,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 7,
+      "arm": "candidate",
+      "elapsedMs": 131.366,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 7,
+      "arm": "baseline",
+      "elapsedMs": 125.794,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 8,
+      "arm": "baseline",
+      "elapsedMs": 124.881,
+      "sections": 12000
+    },
+    {
+      "phase": "section-preparation",
+      "count": 1000,
+      "repeat": 8,
+      "arm": "candidate",
+      "elapsedMs": 90.24,
+      "sections": 12000
+    },
+    {
+      "phase": "managed-recall",
+      "count": 100,
+      "repeat": 0,
+      "arm": "baseline",
+      "elapsedMs": 40.439,
+      "bytes": 32156
+    },
+    {
+      "phase": "managed-recall",
+      "count": 100,
+      "repeat": 0,
+      "arm": "candidate",
+      "elapsedMs": 36.914,
+      "bytes": 32156
+    },
+    {
+      "phase": "managed-recall",
+      "count": 100,
+      "repeat": 1,
+      "arm": "candidate",
+      "elapsedMs": 30.377,
+      "bytes": 32156
+    },
+    {
+      "phase": "managed-recall",
+      "count": 100,
+      "repeat": 1,
+      "arm": "baseline",
+      "elapsedMs": 36.222,
+      "bytes": 32156
+    },
+    {
+      "phase": "managed-recall",
+      "count": 100,
+      "repeat": 2,
+      "arm": "baseline",
+      "elapsedMs": 33.689,
+      "bytes": 32156
+    },
+    {
+      "phase": "managed-recall",
+      "count": 100,
+      "repeat": 2,
+      "arm": "candidate",
+      "elapsedMs": 27.729,
+      "bytes": 32156
+    },
+    {
+      "phase": "managed-recall",
+      "count": 100,
+      "repeat": 3,
+      "arm": "candidate",
+      "elapsedMs": 27.432,
+      "bytes": 32156
+    },
+    {
+      "phase": "managed-recall",
+      "count": 100,
+      "repeat": 3,
+      "arm": "baseline",
+      "elapsedMs": 33.699,
+      "bytes": 32156
+    },
+    {
+      "phase": "managed-recall",
+      "count": 100,
+      "repeat": 4,
+      "arm": "baseline",
+      "elapsedMs": 32.371,
+      "bytes": 32156
+    },
+    {
+      "phase": "managed-recall",
+      "count": 100,
+      "repeat": 4,
+      "arm": "candidate",
+      "elapsedMs": 30.079,
+      "bytes": 32156
+    },
+    {
+      "phase": "managed-recall",
+      "count": 1000,
+      "repeat": 0,
+      "arm": "baseline",
+      "elapsedMs": 286.059,
+      "bytes": 32559
+    },
+    {
+      "phase": "managed-recall",
+      "count": 1000,
+      "repeat": 0,
+      "arm": "candidate",
+      "elapsedMs": 234.26,
+      "bytes": 32559
+    },
+    {
+      "phase": "managed-recall",
+      "count": 1000,
+      "repeat": 1,
+      "arm": "candidate",
+      "elapsedMs": 246.12,
+      "bytes": 32559
+    },
+    {
+      "phase": "managed-recall",
+      "count": 1000,
+      "repeat": 1,
+      "arm": "baseline",
+      "elapsedMs": 275.322,
+      "bytes": 32559
+    },
+    {
+      "phase": "managed-recall",
+      "count": 1000,
+      "repeat": 2,
+      "arm": "baseline",
+      "elapsedMs": 515.321,
+      "bytes": 32559
+    },
+    {
+      "phase": "managed-recall",
+      "count": 1000,
+      "repeat": 2,
+      "arm": "candidate",
+      "elapsedMs": 277.524,
+      "bytes": 32559
+    },
+    {
+      "phase": "managed-recall",
+      "count": 1000,
+      "repeat": 3,
+      "arm": "candidate",
+      "elapsedMs": 239.645,
+      "bytes": 32559
+    },
+    {
+      "phase": "managed-recall",
+      "count": 1000,
+      "repeat": 3,
+      "arm": "baseline",
+      "elapsedMs": 319.697,
+      "bytes": 32559
+    },
+    {
+      "phase": "managed-recall",
+      "count": 1000,
+      "repeat": 4,
+      "arm": "baseline",
+      "elapsedMs": 277.411,
+      "bytes": 32559
+    },
+    {
+      "phase": "managed-recall",
+      "count": 1000,
+      "repeat": 4,
+      "arm": "candidate",
+      "elapsedMs": 237.571,
+      "bytes": 32559
+    }
+  ]
+}
