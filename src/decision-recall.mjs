@@ -122,7 +122,7 @@ export async function managedRecall(vault, query, config, {
 }
 
 export function chooseAdaptiveMode(query, firstResults) {
-  const exhaustive = /\b(how many|how much|how often|list|all|every|across|compare|differences|changes over time)\b|กี่|ทั้งหมด|เปรียบเทียบ/iu.test(query)
+  const exhaustive = /\b(how many|how often|list|every|compare|differences|changes over time)\b|\ball (?:the )?(?:notes|documents|papers|projects|memories|sources|sessions|files|items|results|decisions|changes)\b|กี่|ทั้งหมด|เปรียบเทียบ/iu.test(query)
   const signatures = firstResults.map((item) => tokenize(item.title).filter((term) => !/^\d+$/u.test(term)).join(" "))
   const genericTitles = signatures.length >= 5 && new Set(signatures).size <= 2
   return exhaustive || genericTitles ? "wide" : "focused"
