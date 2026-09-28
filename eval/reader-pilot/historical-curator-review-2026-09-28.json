@@ -1,0 +1,14 @@
+{
+  "protocol": "synthetic-history-answer-author-review-v1",
+  "reviewer": "Primary implementation agent, unblinded after generation; not independent or calibrated",
+  "rubric": "Answer resolves the requested state from the supplied synthetic originals, or correctly describes missing/unresolved evidence, preserves scope and attribution, and cites the needed source identity. A safe abstention can be supported yet incomplete when withheld prior sources contain the requested answer/conflict.",
+  "rows": [
+    {"id": "current", "existing": true, "history-capable": true, "reason": "Both answer the active PostgreSQL value and cite current.md."},
+    {"id": "prior", "existing": false, "history-capable": true, "reason": "Existing safely abstains but cannot supply the recorded January SQLite value; treatment cites prior.md and resolves it."},
+    {"id": "scope", "existing": true, "history-capable": true, "reason": "Both answer production PostgreSQL and cite production.md without substituting staging SQLite."},
+    {"id": "missing", "existing": true, "history-capable": true, "reason": "Both decline to invent a January database; treatment cites the explicit not-recorded statement."},
+    {"id": "conflict", "existing": false, "history-capable": true, "reason": "Existing safely abstains but cannot describe the recorded conflict; treatment identifies SQLite versus MySQL as unresolved and cites both originals."},
+    {"id": "attribution", "existing": false, "history-capable": true, "reason": "Existing safely abstains without the prior note; treatment cites the user's January SQLite statement and does not adopt the assistant's MongoDB suggestion."}
+  ],
+  "limitations": ["Six synthetic development questions from five source families", "One generation per arm, shared route choice and evaluator-driven full reads", "No independent support adjudication, official benchmark score, held-out acceptance or superiority claim"]
+}
