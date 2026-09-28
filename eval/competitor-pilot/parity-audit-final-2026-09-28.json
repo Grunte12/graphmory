@@ -1,0 +1,613 @@
+{
+  "protocol": "exposed-competitor-source-metric-audit-v1",
+  "datasetSha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "auditorSha256": "8d6568cb4263fbe976ee0e49c60579a4f70191cb9aa16cdcf3ef91c96ec4afaf",
+  "helperSha256": "3e548f416cf30b942461fd5bbe9450ec3bc91e8caf3659776094c64fd46340ce",
+  "historicalGraphmoryHelperSha256": "4ff4ac50d455d3004ee63870cb729d5a65bde4e5e8e6a87930848da3bcca8640",
+  "reportHashes": {
+    "question-only-results.json": "d72d299edef483d9cdbf8ec17a9e0c3e0b7d9ccf1df1e3a591d079ef996af928",
+    "hybrid-indexed-fourteen-2026-09-28.json": "8738d299a3dfb4373ba86576eb7639b0a54049d0b6c078ab45e71d0dee3a2ccc",
+    "graphmory-question-only.json": "ac5dc19c7ae0671959823b8c1cea5fb7bfe7f12bde1315932ceb38d51cdcb7fa"
+  },
+  "rows": [
+    {
+      "id": "09ba9854_abs",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 50,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "09ba9854_abs",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 50,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "09ba9854_abs",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "09ba9854_abs",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "a96c20ee_abs",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 53,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "a96c20ee_abs",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 53,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "a96c20ee_abs",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "a96c20ee_abs",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "50635ada",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 48,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "50635ada",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 48,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "50635ada",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "50635ada",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "945e3d21",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 48,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "945e3d21",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 48,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "945e3d21",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "945e3d21",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "67e0d0f2",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 52,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "67e0d0f2",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 52,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "67e0d0f2",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "67e0d0f2",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 48,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 48,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "a40e080f",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 48,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "a40e080f",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 48,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "a40e080f",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "a40e080f",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "c7cf7dfd",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 51,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "c7cf7dfd",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 51,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "c7cf7dfd",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "c7cf7dfd",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "07b6f563",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 52,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "07b6f563",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 52,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "07b6f563",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "07b6f563",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "caf03d32",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 51,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "caf03d32",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 51,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "caf03d32",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "caf03d32",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "d52b4f67",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 52,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "d52b4f67",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 52,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "d52b4f67",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "d52b4f67",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "29f2956b",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 47,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "29f2956b",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 47,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "29f2956b",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "29f2956b",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "gpt4_6ed717ea",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 46,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "gpt4_6ed717ea",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 46,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "gpt4_6ed717ea",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "gpt4_6ed717ea",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "gpt4_cd90e484",
+      "report": "question-only-results.json",
+      "arm": "text",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 52,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "gpt4_cd90e484",
+      "report": "hybrid-indexed-fourteen-2026-09-28.json",
+      "arm": "hybrid",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": true,
+      "postIngestChangedFiles": 52,
+      "graphmoryPerCaseBodyHashRecorded": null
+    },
+    {
+      "id": "gpt4_cd90e484",
+      "report": "graphmory-question-only.json",
+      "arm": "baseline",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    },
+    {
+      "id": "gpt4_cd90e484",
+      "report": "graphmory-question-only.json",
+      "arm": "bm25",
+      "metricsRecomputed": true,
+      "originalBodyHashVerified": false,
+      "postIngestChangedFiles": null,
+      "graphmoryPerCaseBodyHashRecorded": false
+    }
+  ],
+  "historyOverlapComponents": [
+    [
+      "09ba9854_abs"
+    ],
+    [
+      "a96c20ee_abs"
+    ],
+    [
+      "50635ada"
+    ],
+    [
+      "945e3d21",
+      "caf03d32"
+    ],
+    [
+      "67e0d0f2"
+    ],
+    [
+      "gpt4_d84a3211"
+    ],
+    [
+      "a40e080f"
+    ],
+    [
+      "c7cf7dfd"
+    ],
+    [
+      "07b6f563"
+    ],
+    [
+      "d52b4f67"
+    ],
+    [
+      "29f2956b"
+    ],
+    [
+      "gpt4_6ed717ea"
+    ],
+    [
+      "gpt4_cd90e484"
+    ]
+  ],
+  "goldSourceOverlapComponents": [
+    [
+      "09ba9854_abs"
+    ],
+    [
+      "a96c20ee_abs"
+    ],
+    [
+      "50635ada"
+    ],
+    [
+      "945e3d21"
+    ],
+    [
+      "67e0d0f2"
+    ],
+    [
+      "gpt4_d84a3211"
+    ],
+    [
+      "a40e080f"
+    ],
+    [
+      "c7cf7dfd"
+    ],
+    [
+      "07b6f563"
+    ],
+    [
+      "caf03d32"
+    ],
+    [
+      "d52b4f67"
+    ],
+    [
+      "29f2956b"
+    ],
+    [
+      "gpt4_6ed717ea"
+    ],
+    [
+      "gpt4_cd90e484"
+    ]
+  ],
+  "limitations": [
+    "Recomputes historical selected retrieval runs, not new independent trials",
+    "Basic Memory original-input hashes verified; Graphmory recorded dataset/helper metadata but no per-case body hashes",
+    "Native Basic Memory ingestion changes Markdown; equal original inputs do not mean equal indexed representation",
+    "Shared distractors alone do not prove outcome dependence; overlap components are diagnostics, not a calibrated clustering rule",
+    "Question-ID families alone do not establish independent histories; no new confidence intervals or superiority claim",
+    "Query format is declared but no per-call query hash is recorded in these historical reports",
+    "Timing harnesses and response formats differ; no matched end-to-end latency/cost or answer-quality verdict"
+  ]
+}
