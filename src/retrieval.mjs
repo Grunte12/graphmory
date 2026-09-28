@@ -93,7 +93,7 @@ export function isAnswerCandidate(document) {
 
 export function governedRank(documents, query, method, options = {}) {
   const eligible = eligibleDocuments(documents, options)
-  const direct = rank(eligible, query, method).map((item) => ({ ...item, retrievalSource: "direct" }))
+  const direct = (options.rankImpl ?? rank)(eligible, query, method).map((item) => ({ ...item, retrievalSource: "direct" }))
   const withNavigation = options.followLinks === false
     ? direct
     : expandLinkedResults(direct, eligible, options.linkSeeds ?? 3, documents)

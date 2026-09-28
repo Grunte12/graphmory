@@ -96,13 +96,15 @@ export function recallVaultLoop(vault, query, {
   documents: suppliedDocuments,
   precomputedRankedLanes = [],
   allowLargePage = false,
+  rankImpl,
 } = {}) {
   if (!query?.trim()) throw new Error("query is required")
   if (!Number.isInteger(k) || k < 1 || k > (allowLargePage ? maxFiles : 10)) throw new Error(`k must be between 1 and ${allowLargePage ? maxFiles : 10}`)
   if (!Number.isInteger(offset) || offset < 0) throw new Error("offset must be a non-negative integer")
   const documents = suppliedDocuments ?? loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
   const lanes = methods.map((method) => {
-    const retrieval = governedRank(documents, query, method, { includeNoncanonical, includeSuperseded, answerCandidatesOnly: !includeNavigation })
+    const retrieval = governedRank(documents, query, method, { includeNoncanonical, includeSuperseded,
+      answerCandidatesOnly: !includeNavigation, rankImpl })
     let laneResults = retrieval.results
     if (rerank) {
       laneResults = sectionFocusRerank(laneResults, query, documents)
