@@ -25,7 +25,7 @@ class CollectionCliTest(unittest.TestCase):
         self.vault = self.root / 'vault'
         self.vault.mkdir()
 
-    def run_collection(self, texts, mapper, page_bytes=650, max_pages=12):
+    def run_collection(self, texts, mapper, page_bytes=650, max_pages=12, max_map_calls=None):
         hashes = {}
         for name, body in texts.items():
             (self.vault / name).write_text(body)
@@ -37,6 +37,7 @@ class CollectionCliTest(unittest.TestCase):
             max_page_bytes=page_bytes, max_pages=max_pages,
             max_input_bytes=10000,
             generate=lambda prompt, stage, schema: mapper(prompt, hashes),
+            max_map_calls=max_map_calls,
         )
 
     def test_common_source_index_expands_read_allowlist_only_when_requested(self):
@@ -83,6 +84,15 @@ class CollectionCliTest(unittest.TestCase):
         self.assertGreater(len(result['summary']['pages']), 1)
         self.assertEqual(result['summary']['verifiedSpans'], 1)
         self.assertEqual(result['summary']['ledgerEntries'], 1)
+
+    def test_map_call_cap_stops_large_scope_before_synthesis(self):
+        body = ''.join(f'Fact row {number:02d} is deliberately separate.\n' for number in range(60))
+        result = self.run_collection({'fact.md': body}, lambda *_: {'spans': []},
+                                     page_bytes=650, max_pages=30, max_map_calls=2)
+        self.assertFalse(result['complete'])
+        self.assertEqual(result['summary']['incompleteReason'], 'collection-map-call-budget')
+        self.assertEqual(result['summary']['mapCalls'], 2)
+        self.assertIsNone(result['synthesisContext'])
 
     def test_runner_budget_stops_before_model_or_lead(self):
         body = 'A verifiable fixture fact.\n'
