@@ -30,7 +30,7 @@ function runFixture(mode) {
     console.log(JSON.stringify({type:'turn.completed',usage:{input_tokens:10,output_tokens:3}}));
   });\n`
   fs.writeFileSync(path.join(bin, 'codex'), fake, { mode: 0o700 })
-  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), ...(['persistent', 'changed-session'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : []), ...(['citation', 'bad-citation'].includes(mode) ? ['--structured-citations'] : [])], {
+  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), '--model', 'gpt-5.6-luna', '--lead-model', 'gpt-5.6-sol', ...(['persistent', 'changed-session'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : []), ...(['citation', 'bad-citation'].includes(mode) ? ['--structured-citations'] : [])], {
     encoding: 'utf8', timeout: 10000,
     env: { ...process.env, PATH: bin + path.delimiter + process.env.PATH, PAGING_TEST_MODE: mode, PAGING_TEST_COUNTER: path.join(dir, 'counter') },
   })
@@ -44,6 +44,7 @@ test('curator mediation delivers verified original through actual CLI and gives 
   assert.equal(child.status, 0, child.stderr)
   assert.equal(report.runComplete, true)
   assert.equal(report.modelCalls.length, 3)
+  assert.deepEqual(report.modelCalls.map(row => row.model), ['gpt-5.6-luna', 'gpt-5.6-luna', 'gpt-5.6-sol'])
   assert.deepEqual(report.sourceReads.map(row => row.path), ['note.md'])
   assert.equal(report.answer, 'Ada owns the fixture (note.md)')
   assert.equal(report.stopReason, 'curator-finalized')

@@ -12,6 +12,7 @@ parser.add_argument('--input', required=True)
 parser.add_argument('--out', required=True)
 parser.add_argument('--case-index', type=int, default=0)
 parser.add_argument('--model', default='gpt-5.6-luna')
+parser.add_argument('--lead-model')
 parser.add_argument('--mode', choices=['auto', 'bundle'], default='bundle')
 parser.add_argument('--max-rounds', type=int, default=3)
 parser.add_argument('--max-input-bytes', type=int, default=300000)
@@ -19,6 +20,7 @@ parser.add_argument('--persistent-curator', action='store_true')
 parser.add_argument('--compact-followup', action='store_true')
 parser.add_argument('--structured-citations', action='store_true')
 args = parser.parse_args()
+lead_model = args.lead_model or args.model
 if not 1 <= args.max_rounds <= 10 or args.max_input_bytes < 1000:
     raise RuntimeError('Invalid economic/protocol budget')
 if args.compact_followup and not args.persistent_curator:
@@ -41,7 +43,7 @@ workspace.mkdir()
 root = pathlib.Path(__file__).resolve().parents[1]
 cli = root / 'scripts/brain-sync.mjs'
 report = {'protocol': 'curator-paging-development-v2-boolean-continuation', 'id': case['id'], 'question': case['question'],
-          'model': args.model, 'mode': args.mode, 'maxRounds': args.max_rounds, 'maxInputBytes': args.max_input_bytes,
+          'model': args.model, 'leadModel': lead_model, 'mode': args.mode, 'maxRounds': args.max_rounds, 'maxInputBytes': args.max_input_bytes,
           'persistentCurator': args.persistent_curator, 'compactFollowup': args.compact_followup,
           'structuredCitations': args.structured_citations,
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
@@ -81,6 +83,7 @@ curator_session = None
 
 def generate(prompt, stage, schema):
     global curator_session
+    stage_model = lead_model if stage == 'lead' else args.model
     if len(prompt.encode()) > args.max_input_bytes:
         raise RuntimeError('input-byte-budget')
     schema_file = workspace / 'schema.json'
@@ -89,11 +92,11 @@ def generate(prompt, stage, schema):
     resumed = stage == 'curator' and args.persistent_curator and curator_session is not None
     if resumed:
         command = ['codex', 'exec', 'resume', '--ignore-user-config', '--skip-git-repo-check',
-                   '-m', args.model, '-c', 'model_reasoning_effort="low"',
+                   '-m', stage_model, '-c', 'model_reasoning_effort="low"',
                    '--output-schema', str(schema_file), '--json', curator_session, '-']
     else:
         command = ['codex', 'exec', '--ignore-user-config', '--skip-git-repo-check',
-                   '-C', str(workspace), '-s', 'read-only', '-m', args.model,
+                   '-C', str(workspace), '-s', 'read-only', '-m', stage_model,
                    '-c', 'model_reasoning_effort="low"', '--output-schema', str(schema_file), '--json', '-']
         if stage != 'curator' or not args.persistent_curator:
             command.insert(3, '--ephemeral')
@@ -113,10 +116,16 @@ def generate(prompt, stage, schema):
     prohibited = [event for event in events if event.get('item', {}).get('type') not in (None, 'agent_message', 'reasoning', 'error')]
     complete = next((event for event in reversed(events) if event.get('type') == 'turn.completed'), None)
     failed = identity_failed or child.returncode != 0 or not complete or not texts or prohibited or any(event.get('type') in ('error', 'turn.failed') for event in events)
-    report['modelCalls'].append({'stage': stage, 'sessionResumed': resumed,
+    host_errors = ' '.join(str(event.get('message', event.get('error', {}))) for event in events if event.get('type') in ('error', 'turn.failed')).lower()
+    failure_kind = ('session-identity' if identity_failed else 'prohibited-tool' if prohibited else
+                    'usage-limit' if 'usage limit' in host_errors else
+                    'unsupported-model' if 'not supported' in host_errors and 'model' in host_errors else
+                    'host-error' if failed else None)
+    report['modelCalls'].append({'stage': stage, 'model': stage_model, 'sessionResumed': resumed,
                                   'elapsedSeconds': round(time.monotonic() - start, 3),
                                   'promptBytes': len(prompt.encode()), 'promptSha256': hashlib.sha256(prompt.encode()).hexdigest(),
                                   'usage': complete.get('usage') if complete else None, 'failed': bool(failed),
+                                  'failureKind': failure_kind,
                                   'sessionIdentityFailed': bool(identity_failed),
                                   'warnings': [event['item'].get('message') for event in events if event.get('item', {}).get('type') == 'error']})
     save()
