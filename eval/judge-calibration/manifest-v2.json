@@ -1,0 +1,13 @@
+{
+  "protocol": "support-judge-calibration-v2",
+  "baseline": "bc93955",
+  "reviewer": "gpt-6-luna",
+  "reasoning": "low",
+  "plannedReviewers": 1,
+  "plannedCases": 24,
+  "hashes": {
+    "rubric-v2.md": "55f019ec78d9c7d44b7a1dea9c813ebc6b71013f6e16942816ab0b7f730578a5",
+    "packet-v2.json": "dcdd0ea5a0f796b5c55645353d0153c480c5f9693200db08474742a0e6812d20",
+    "labels-v2.json": "25402161c6ae58b28f27ca415a80398d8773da5bddc184c9bff35a4b6c1fc037"
+  }
+}

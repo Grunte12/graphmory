@@ -1,0 +1,29 @@
+{
+  "protocol": "support-judge-calibration-v2",
+  "reviews": [
+    {"blindId":"1889b56030e4","sourceSupport":"yes","complete":"no","citationCoverage":"yes","supportedComplete":"no","rationale":"people.md supports Ravi; review.md supplies the omitted August 14 date, so incomplete."},
+    {"blindId":"200e6a240d02","sourceSupport":"no","complete":"no","citationCoverage":"no","supportedComplete":"no","rationale":"bay.md says Bay's ticket cost was never recorded; lake.md's $18 is for Lake, not Bay."},
+    {"blindId":"68ad9618ab49","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"onyx.md identifies Suri as maintainer, fully answering the question."},
+    {"blindId":"53d94cc75891","sourceSupport":"no","complete":"yes","citationCoverage":"no","supportedComplete":"no","rationale":"onyx.md supports Suri, but says no release day is documented; September 7 is unsupported and the citation contradicts it."},
+    {"blindId":"2fdfbc36b74b","sourceSupport":"no","complete":"no","citationCoverage":"no","supportedComplete":"no","rationale":"permits.md describes two distinct completed denials; the repeated Feb 3 discussion is the same denial and the third application is pending."},
+    {"blindId":"c5a560254c41","sourceSupport":"no","complete":"no","citationCoverage":"no","supportedComplete":"no","rationale":"policy-b.md gives 28 days but policy-a.md also gives 14, with no precedence; 28 is not a single confirmed period."},
+    {"blindId":"858ed67d64d2","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"two.md explicitly gives the Helix-2 budget as $1,300."},
+    {"blindId":"6775d9842a50","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"bay.md says the Bay ticket cost was never recorded, supporting the answer that no price can be given."},
+    {"blindId":"18b82bb65383","sourceSupport":"yes","complete":"yes","citationCoverage":"no","supportedComplete":"no","rationale":"spruce.md supports Daria and fully answers the question; birch.md concerns Birch and does not support the claim."},
+    {"blindId":"e3cfc76d2615","sourceSupport":"yes","complete":"yes","citationCoverage":"no","supportedComplete":"no","rationale":"flint.md supports Lena, the complete answer, but the answer provides no citation path."},
+    {"blindId":"1ff5d52e8ee1","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"initial.md places Bea on Bronze on March 1, and change.md confirms the switch from Bronze on March 6."},
+    {"blindId":"38da9b178f88","sourceSupport":"no","complete":"no","citationCoverage":"no","supportedComplete":"no","rationale":"revision.md changes Larch's launch from June 11 to July 3; plan.md is superseded for the current day."},
+    {"blindId":"782b2e400162","sourceSupport":"no","complete":"no","citationCoverage":"no","supportedComplete":"no","rationale":"change.md says Bea switched from Bronze to Platinum on March 6, so before that she was on Bronze, not Platinum."},
+    {"blindId":"e40e99a3fa14","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"spruce.md identifies Daria as Spruce's owner."},
+    {"blindId":"b5989981033f","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"permits.md records two distinct completed denials; the Feb 3 entry revisits the Feb 1 denial and the third remains pending."},
+    {"blindId":"1164aa6fbef2","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"approval.md states Neve has not been approved, directly supporting the answer."},
+    {"blindId":"98b5205bb413","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"formats.md lists exactly CSV, JSON and YAML, all included."},
+    {"blindId":"3f5d881a4dbc","sourceSupport":"no","complete":"no","citationCoverage":"no","supportedComplete":"no","rationale":"one.md's $700 budget is for Helix-1; two.md gives Helix-2 as $1,300."},
+    {"blindId":"85085310b1db","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"policy-a.md and policy-b.md give conflicting 14- and 28-day values without precedence; the answer accurately reports no single confirmed period."},
+    {"blindId":"b1a9b9186fd7","sourceSupport":"yes","complete":"no","citationCoverage":"yes","supportedComplete":"no","rationale":"formats.md supports CSV and JSON, but also lists YAML, so not every supported format is supplied."},
+    {"blindId":"68c3098c6bde","sourceSupport":"no","complete":"no","citationCoverage":"no","supportedComplete":"no","rationale":"approval.md says Neve has not been approved; the cited source directly contradicts the asserted approval."},
+    {"blindId":"7fabb09d697d","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"revision.md states Larch's launch was changed to July 3, the current launch day."},
+    {"blindId":"f9274cf85105","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"flint.md identifies Lena as Flint's maintainer."},
+    {"blindId":"36542beffb10","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"people.md supports Ravi as manager and review.md supports August 14 as the review date."}
+  ]
+}

@@ -5,7 +5,8 @@ const verdicts = ['yes', 'no', 'unclear']
 
 export function scoreSupportCalibration(packetBytes, labels, review) {
   const packet = JSON.parse(packetBytes)
-  if ([packet, labels, review].some(item => item.protocol !== 'support-judge-calibration-v1'))
+  if (!['support-judge-calibration-v1', 'support-judge-calibration-v2'].includes(packet.protocol) ||
+      [labels, review].some(item => item.protocol !== packet.protocol))
     throw new Error('Calibration protocol mismatch')
   if (createHash('sha256').update(packetBytes).digest('hex') !== labels.packetSha256)
     throw new Error('Calibration packet changed')
@@ -20,6 +21,8 @@ export function scoreSupportCalibration(packetBytes, labels, review) {
   for (const row of labels.labels) {
     if (dimensions.some(key => !['yes', 'no'].includes(row.expected?.[key])) ||
         typeof row.rationale !== 'string' || !row.rationale.trim()) throw new Error('Invalid calibration label')
+    if ((row.expected.supportedComplete === 'yes') !== dimensions.slice(0, 3).every(key => row.expected[key] === 'yes'))
+      throw new Error('Inconsistent primary label')
   }
   for (const row of review.reviews) {
     if (dimensions.some(key => !verdicts.includes(row[key])) ||
@@ -50,11 +53,16 @@ export function scoreSupportCalibration(packetBytes, labels, review) {
   if (!gate || !Number.isFinite(gate.minimumExactPrimaryAgreement) || gate.minimumExactPrimaryAgreement < 0 ||
       gate.minimumExactPrimaryAgreement > 1 || !Number.isSafeInteger(gate.maximumFalseAcceptances) || gate.maximumFalseAcceptances < 0)
     throw new Error('Invalid frozen calibration gate')
+  const dimensionAgreement = Object.fromEntries(dimensions.map(key => [key, correct[key] / n]))
+  const minimumDimension = packet.protocol === 'support-judge-calibration-v2' ? gate.minimumDimensionAgreement : 0
+  if (!Number.isFinite(minimumDimension) || minimumDimension < 0 || minimumDimension > 1)
+    throw new Error('Invalid frozen dimension gate')
   return { protocol: packet.protocol, cases: n, exactPrimaryAgreement: agreement,
-    dimensionAgreement: Object.fromEntries(dimensions.map(key => [key, correct[key] / n])),
+    dimensionAgreement,
     confusion, positivePrecision: precision, positiveRecall: recall, positiveF1: f1,
     falseAcceptances: fp, falseAcceptanceRate: ratio(fp, negative),
     unclearPrimary: confusion.yes.unclear + confusion.no.unclear,
-    passesSanityGate: agreement >= gate.minimumExactPrimaryAgreement && fp <= gate.maximumFalseAcceptances,
+    passesSanityGate: agreement >= gate.minimumExactPrimaryAgreement && fp <= gate.maximumFalseAcceptances &&
+      Object.values(dimensionAgreement).every(value => value >= minimumDimension),
     disagreements, limitation: 'Author-constructed synthetic calibration only; not independent semantic acceptance.' }
 }

@@ -35,3 +35,24 @@ test('calibration preserves unclear verdicts and rejects missing/duplicate/unkno
   const inconsistent = perfect(); inconsistent.reviews[0].supportedComplete = inconsistent.reviews[0].supportedComplete === 'yes' ? 'no' : 'yes'
   assert.throws(() => scoreSupportCalibration(packet, labels, inconsistent), /primary verdict/)
 })
+
+test('v2 requires every component gate even when primary accuracy is perfect; v1 replay unchanged', () => {
+  const bytes = fs.readFileSync(new URL('../eval/judge-calibration/packet-v2.json', import.meta.url))
+  const frozen = JSON.parse(fs.readFileSync(new URL('../eval/judge-calibration/labels-v2.json', import.meta.url)))
+  const review = { protocol: frozen.protocol, reviews: frozen.labels.map(row => ({
+    blindId: row.blindId, ...row.expected, rationale: 'Controlled component test.' })) }
+  assert.equal(scoreSupportCalibration(bytes, frozen, review).passesSanityGate, true)
+  for (const row of review.reviews.filter(row => row.sourceSupport === 'no').slice(0, 3)) row.citationCoverage = 'yes'
+  const result = scoreSupportCalibration(bytes, frozen, review)
+  assert.equal(result.exactPrimaryAgreement, 1)
+  assert.equal(result.dimensionAgreement.citationCoverage, 21 / 24)
+  assert.equal(result.passesSanityGate, false)
+  assert.throws(() => scoreSupportCalibration(bytes, { ...frozen, gate: labels.gate }, review), /dimension gate/)
+  assert.throws(() => scoreSupportCalibration(bytes, frozen, perfect()), /protocol mismatch/)
+  const corrupted = structuredClone(frozen)
+  corrupted.labels[0].expected.supportedComplete = corrupted.labels[0].expected.supportedComplete === 'yes' ? 'no' : 'yes'
+  assert.throws(() => scoreSupportCalibration(bytes, corrupted, review), /primary label/)
+  const v1Review = JSON.parse(fs.readFileSync(new URL('../eval/judge-calibration/review-v1.json', import.meta.url)))
+  const v1Score = JSON.parse(fs.readFileSync(new URL('../eval/judge-calibration/score-v1.json', import.meta.url)))
+  assert.deepEqual(scoreSupportCalibration(packet, labels, v1Review), v1Score)
+})

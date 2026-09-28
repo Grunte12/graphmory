@@ -1,0 +1,276 @@
+{
+  "protocol": "support-judge-calibration-v2",
+  "packetSha256": "dcdd0ea5a0f796b5c55645353d0153c480c5f9693200db08474742a0e6812d20",
+  "labelOrigin": "Author-constructed new synthetic controls, not independent human adjudication.",
+  "gate": {
+    "minimumExactPrimaryAgreement": 0.9,
+    "minimumDimensionAgreement": 0.9,
+    "maximumFalseAcceptances": 0
+  },
+  "labels": [
+    {
+      "blindId": "b5989981033f",
+      "family": "distinct-events",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "All requested facts and claims supported by cited sources."
+    },
+    {
+      "blindId": "2fdfbc36b74b",
+      "family": "distinct-events",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "no",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Wrong requested fact is unsupported, incomplete and lacks a supporting citation."
+    },
+    {
+      "blindId": "7fabb09d697d",
+      "family": "latest-explicit-update",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "All requested facts and claims supported by cited sources."
+    },
+    {
+      "blindId": "38da9b178f88",
+      "family": "latest-explicit-update",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "no",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Wrong requested fact is unsupported, incomplete and lacks a supporting citation."
+    },
+    {
+      "blindId": "1ff5d52e8ee1",
+      "family": "prior-state",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "All requested facts and claims supported by cited sources."
+    },
+    {
+      "blindId": "782b2e400162",
+      "family": "prior-state",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "no",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Wrong requested fact is unsupported, incomplete and lacks a supporting citation."
+    },
+    {
+      "blindId": "36542beffb10",
+      "family": "linked-facts",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "All requested facts and claims supported by cited sources."
+    },
+    {
+      "blindId": "1889b56030e4",
+      "family": "linked-facts",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "no",
+        "citationCoverage": "yes",
+        "supportedComplete": "no"
+      },
+      "rationale": "Supported cited subset omits requested review date."
+    },
+    {
+      "blindId": "1164aa6fbef2",
+      "family": "explicit-negation",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "All requested facts and claims supported by cited sources."
+    },
+    {
+      "blindId": "68c3098c6bde",
+      "family": "explicit-negation",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "no",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Wrong requested fact is unsupported, incomplete and lacks a supporting citation."
+    },
+    {
+      "blindId": "858ed67d64d2",
+      "family": "similar-entity-scope",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "All requested facts and claims supported by cited sources."
+    },
+    {
+      "blindId": "3f5d881a4dbc",
+      "family": "similar-entity-scope",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "no",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Wrong requested fact is unsupported, incomplete and lacks a supporting citation."
+    },
+    {
+      "blindId": "6775d9842a50",
+      "family": "missing-price",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "All requested facts and claims supported by cited sources."
+    },
+    {
+      "blindId": "200e6a240d02",
+      "family": "missing-price",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "no",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Wrong requested fact is unsupported, incomplete and lacks a supporting citation."
+    },
+    {
+      "blindId": "85085310b1db",
+      "family": "equal-date-conflict",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "All requested facts and claims supported by cited sources."
+    },
+    {
+      "blindId": "c5a560254c41",
+      "family": "equal-date-conflict",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "no",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Wrong requested fact is unsupported, incomplete and lacks a supporting citation."
+    },
+    {
+      "blindId": "f9274cf85105",
+      "family": "empty-provenance",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "All requested facts and claims supported by cited sources."
+    },
+    {
+      "blindId": "e3cfc76d2615",
+      "family": "empty-provenance",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Correct requested fact without citation."
+    },
+    {
+      "blindId": "68ad9618ab49",
+      "family": "extraneous-hallucination",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "All requested facts and claims supported by cited sources."
+    },
+    {
+      "blindId": "53d94cc75891",
+      "family": "extraneous-hallucination",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "yes",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Requested maintainer is correct and complete, but extra release claim is unsupported/uncited."
+    },
+    {
+      "blindId": "98b5205bb413",
+      "family": "list-omission",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "All requested facts and claims supported by cited sources."
+    },
+    {
+      "blindId": "b1a9b9186fd7",
+      "family": "list-omission",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "no",
+        "citationCoverage": "yes",
+        "supportedComplete": "no"
+      },
+      "rationale": "Cited true subset misses YAML."
+    },
+    {
+      "blindId": "e40e99a3fa14",
+      "family": "wrong-provenance",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "All requested facts and claims supported by cited sources."
+    },
+    {
+      "blindId": "18b82bb65383",
+      "family": "wrong-provenance",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Correct answer supported by supplied Spruce source, but cited Birch file does not support it."
+    }
+  ]
+}

@@ -1,0 +1,284 @@
+{
+  "protocol": "support-judge-calibration-v2",
+  "instructions": "# Source-support rubric v2\n\nJudge only the question, complete supplied sources, answer and citation paths. Ignore tool identity, confidence, wording style and efficiency.\n\n- `sourceSupport`: **yes** iff every material factual assertion in the answer is supported by the supplied sources, respecting entity, scope, time, negation and distinct-event identity. A true subset can pass this dimension even when incomplete. Unsupported extra factual assertions fail this dimension. Missing citation paths alone do not make a supported fact false.\n- `complete`: **yes** iff the answer correctly supplies every requested fact/component supported by the sources. Merely stating a wrong value is **no**. A correct refusal or explicit unresolved conflict is complete when the sources do not establish a unique answer. Assess only requested components here; an unrelated unsupported addition does not negate correctly answered requested components, but fails sourceSupport.\n- `citationCoverage`: **yes** iff each material assertion has at least one cited path whose text supports that exact assertion in the requested entity/time/scope. A filename that discusses the subject but contradicts the answer is **no**. A missing or wrong path is **no**, even when another uncited supplied source supports the answer. Claims in a partial answer can have complete citation coverage while the answer itself is incomplete. A refusal/conflict explanation should cite the sources establishing missing or contradictory evidence. Do not pass an empty citation list automatically.\n- `supportedComplete`: **yes** iff all three dimensions are **yes**. Otherwise **no**, or **unclear** for genuine unresolved evidence interpretation. Use `unclear` in individual dimensions only when the supplied text really cannot determine the relevant judgment; do not silently count unclear as correct or discard it.\n- `rationale`: concise explanation citing exact source paths and the failed/satisfied dimension.\n\nThese are operational definitions for the experiment. They do not certify benchmark references or replace independent adjudication. Score each dimension separately; supporting filenames and factual evidence are different checks.\n\nRead only this packet. Do not inspect labels or any other repository artifact. Return one JSON review per blindId.",
+  "cases": [
+    {
+      "blindId": "1889b56030e4",
+      "question": "Who manages Juniper and which review date applies?",
+      "sources": {
+        "people.md": "Juniper manager: Ravi.",
+        "review.md": "Juniper review: August 14."
+      },
+      "answer": "Ravi manages it.",
+      "citations": [
+        "people.md"
+      ]
+    },
+    {
+      "blindId": "200e6a240d02",
+      "question": "What did the ferry ticket for Bay trip cost?",
+      "sources": {
+        "bay.md": "Bay trip used the ferry. Ticket cost was never recorded.",
+        "lake.md": "Lake trip ferry ticket cost $18."
+      },
+      "answer": "$18.",
+      "citations": [
+        "lake.md"
+      ]
+    },
+    {
+      "blindId": "68ad9618ab49",
+      "question": "Who maintains Onyx?",
+      "sources": {
+        "onyx.md": "Onyx maintainer: Suri. No release day is documented."
+      },
+      "answer": "Suri.",
+      "citations": [
+        "onyx.md"
+      ]
+    },
+    {
+      "blindId": "53d94cc75891",
+      "question": "Who maintains Onyx?",
+      "sources": {
+        "onyx.md": "Onyx maintainer: Suri. No release day is documented."
+      },
+      "answer": "Suri maintains Onyx; release is September 7.",
+      "citations": [
+        "onyx.md"
+      ]
+    },
+    {
+      "blindId": "2fdfbc36b74b",
+      "question": "How many completed permit denials did Ivo receive?",
+      "sources": {
+        "permits.md": "Feb 1: Oak office denied Ivo a permit. Feb 3: Ivo discussed that same denial again. Feb 8: Elm office denied a different permit. Feb 9: A third application remains pending."
+      },
+      "answer": "Four completed denials.",
+      "citations": [
+        "permits.md"
+      ]
+    },
+    {
+      "blindId": "c5a560254c41",
+      "question": "What single confirmed retention period applies to Willow?",
+      "sources": {
+        "policy-a.md": "April 5: Willow retention is 14 days.",
+        "policy-b.md": "April 5: Willow retention is 28 days. No replacement or precedence is given."
+      },
+      "answer": "28 days, confirmed.",
+      "citations": [
+        "policy-b.md"
+      ]
+    },
+    {
+      "blindId": "858ed67d64d2",
+      "question": "What is Helix-2 budget?",
+      "sources": {
+        "one.md": "Helix-1 budget $700.",
+        "two.md": "Helix-2 budget $1,300."
+      },
+      "answer": "$1,300.",
+      "citations": [
+        "two.md"
+      ]
+    },
+    {
+      "blindId": "6775d9842a50",
+      "question": "What did the ferry ticket for Bay trip cost?",
+      "sources": {
+        "bay.md": "Bay trip used the ferry. Ticket cost was never recorded.",
+        "lake.md": "Lake trip ferry ticket cost $18."
+      },
+      "answer": "Bay ticket cost is not recorded; I cannot give a price.",
+      "citations": [
+        "bay.md"
+      ]
+    },
+    {
+      "blindId": "18b82bb65383",
+      "question": "Who is Spruce owner?",
+      "sources": {
+        "spruce.md": "Spruce owner: Daria.",
+        "birch.md": "Birch owner: Tomas."
+      },
+      "answer": "Daria.",
+      "citations": [
+        "birch.md"
+      ]
+    },
+    {
+      "blindId": "e3cfc76d2615",
+      "question": "Who maintains Flint?",
+      "sources": {
+        "flint.md": "Flint maintainer: Lena."
+      },
+      "answer": "Lena.",
+      "citations": []
+    },
+    {
+      "blindId": "1ff5d52e8ee1",
+      "question": "Which plan was Bea on before March 6?",
+      "sources": {
+        "initial.md": "March 1: Bea is on the Bronze plan.",
+        "change.md": "March 6: Bea switched from Bronze to Platinum."
+      },
+      "answer": "Bronze.",
+      "citations": [
+        "initial.md"
+      ]
+    },
+    {
+      "blindId": "38da9b178f88",
+      "question": "What is Larch current launch day?",
+      "sources": {
+        "plan.md": "Feb 2: Larch launches June 11.",
+        "revision.md": "Feb 15: Larch launch is changed from June 11 to July 3."
+      },
+      "answer": "June 11.",
+      "citations": [
+        "plan.md"
+      ]
+    },
+    {
+      "blindId": "782b2e400162",
+      "question": "Which plan was Bea on before March 6?",
+      "sources": {
+        "initial.md": "March 1: Bea is on the Bronze plan.",
+        "change.md": "March 6: Bea switched from Bronze to Platinum."
+      },
+      "answer": "Platinum.",
+      "citations": [
+        "change.md"
+      ]
+    },
+    {
+      "blindId": "e40e99a3fa14",
+      "question": "Who is Spruce owner?",
+      "sources": {
+        "spruce.md": "Spruce owner: Daria.",
+        "birch.md": "Birch owner: Tomas."
+      },
+      "answer": "Daria.",
+      "citations": [
+        "spruce.md"
+      ]
+    },
+    {
+      "blindId": "b5989981033f",
+      "question": "How many completed permit denials did Ivo receive?",
+      "sources": {
+        "permits.md": "Feb 1: Oak office denied Ivo a permit. Feb 3: Ivo discussed that same denial again. Feb 8: Elm office denied a different permit. Feb 9: A third application remains pending."
+      },
+      "answer": "Two completed denials.",
+      "citations": [
+        "permits.md"
+      ]
+    },
+    {
+      "blindId": "1164aa6fbef2",
+      "question": "Does Neve have approval to publish?",
+      "sources": {
+        "approval.md": "Neve has not been approved to publish. A review is scheduled next week."
+      },
+      "answer": "No approval yet.",
+      "citations": [
+        "approval.md"
+      ]
+    },
+    {
+      "blindId": "98b5205bb413",
+      "question": "List every supported export format for Quartz.",
+      "sources": {
+        "formats.md": "Quartz supports exactly CSV, JSON and YAML export."
+      },
+      "answer": "CSV, JSON and YAML.",
+      "citations": [
+        "formats.md"
+      ]
+    },
+    {
+      "blindId": "3f5d881a4dbc",
+      "question": "What is Helix-2 budget?",
+      "sources": {
+        "one.md": "Helix-1 budget $700.",
+        "two.md": "Helix-2 budget $1,300."
+      },
+      "answer": "$700.",
+      "citations": [
+        "one.md"
+      ]
+    },
+    {
+      "blindId": "85085310b1db",
+      "question": "What single confirmed retention period applies to Willow?",
+      "sources": {
+        "policy-a.md": "April 5: Willow retention is 14 days.",
+        "policy-b.md": "April 5: Willow retention is 28 days. No replacement or precedence is given."
+      },
+      "answer": "The records conflict: 14 versus 28 days. No single period is confirmed.",
+      "citations": [
+        "policy-a.md",
+        "policy-b.md"
+      ]
+    },
+    {
+      "blindId": "b1a9b9186fd7",
+      "question": "List every supported export format for Quartz.",
+      "sources": {
+        "formats.md": "Quartz supports exactly CSV, JSON and YAML export."
+      },
+      "answer": "CSV and JSON.",
+      "citations": [
+        "formats.md"
+      ]
+    },
+    {
+      "blindId": "68c3098c6bde",
+      "question": "Does Neve have approval to publish?",
+      "sources": {
+        "approval.md": "Neve has not been approved to publish. A review is scheduled next week."
+      },
+      "answer": "Yes, approval is granted.",
+      "citations": [
+        "approval.md"
+      ]
+    },
+    {
+      "blindId": "7fabb09d697d",
+      "question": "What is Larch current launch day?",
+      "sources": {
+        "plan.md": "Feb 2: Larch launches June 11.",
+        "revision.md": "Feb 15: Larch launch is changed from June 11 to July 3."
+      },
+      "answer": "July 3.",
+      "citations": [
+        "revision.md"
+      ]
+    },
+    {
+      "blindId": "f9274cf85105",
+      "question": "Who maintains Flint?",
+      "sources": {
+        "flint.md": "Flint maintainer: Lena."
+      },
+      "answer": "Lena.",
+      "citations": [
+        "flint.md"
+      ]
+    },
+    {
+      "blindId": "36542beffb10",
+      "question": "Who manages Juniper and which review date applies?",
+      "sources": {
+        "people.md": "Juniper manager: Ravi.",
+        "review.md": "Juniper review: August 14."
+      },
+      "answer": "Ravi manages it; review is August 14.",
+      "citations": [
+        "people.md",
+        "review.md"
+      ]
+    }
+  ]
+}

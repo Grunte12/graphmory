@@ -1,0 +1,11 @@
+# Source-support rubric v2
+
+Judge only the question, complete supplied sources, answer and citation paths. Ignore tool identity, confidence, wording style and efficiency.
+
+- `sourceSupport`: **yes** iff every material factual assertion in the answer is supported by the supplied sources, respecting entity, scope, time, negation and distinct-event identity. A true subset can pass this dimension even when incomplete. Unsupported extra factual assertions fail this dimension. Missing citation paths alone do not make a supported fact false.
+- `complete`: **yes** iff the answer correctly supplies every requested fact/component supported by the sources. Merely stating a wrong value is **no**. A correct refusal or explicit unresolved conflict is complete when the sources do not establish a unique answer. Assess only requested components here; an unrelated unsupported addition does not negate correctly answered requested components, but fails sourceSupport.
+- `citationCoverage`: **yes** iff each material assertion has at least one cited path whose text supports that exact assertion in the requested entity/time/scope. A filename that discusses the subject but contradicts the answer is **no**. A missing or wrong path is **no**, even when another uncited supplied source supports the answer. Claims in a partial answer can have complete citation coverage while the answer itself is incomplete. A refusal/conflict explanation should cite the sources establishing missing or contradictory evidence. Do not pass an empty citation list automatically.
+- `supportedComplete`: **yes** iff all three dimensions are **yes**. Otherwise **no**, or **unclear** for genuine unresolved evidence interpretation. Use `unclear` in individual dimensions only when the supplied text really cannot determine the relevant judgment; do not silently count unclear as correct or discard it.
+- `rationale`: concise explanation citing exact source paths and the failed/satisfied dimension.
+
+These are operational definitions for the experiment. They do not certify benchmark references or replace independent adjudication. Score each dimension separately; supporting filenames and factual evidence are different checks.
