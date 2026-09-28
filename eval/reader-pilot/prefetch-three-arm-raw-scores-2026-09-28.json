@@ -1,0 +1,58 @@
+{
+  "protocol": "locomo-pinned-function-bodies-raw-qa-v1",
+  "source": "https://github.com/snap-research/locomo/blob/3eb6f2c585f5e1699204e3c3bdf7adc5c28cb376/task_eval/evaluation.py",
+  "sourceSha256": "8e3be5d57ff2ff9ec5cd05939592f468c5f3f1fd95d13e431932bdf6bf0fd6fd",
+  "sourceLicense": "CC BY-NC 4.0 (upstream LICENSE.txt)",
+  "extractedUnmodifiedFunctions": [
+    "eval_question_answering",
+    "f1",
+    "f1_score",
+    "normalize_answer"
+  ],
+  "environmentAdaptation": "Only the four unchanged QA function bodies are compiled from pinned source; explicit dependency bindings replace importing the full module, which imports unused BERTScore. This is not a full official CLI run.",
+  "rawPredictionsUnchanged": true,
+  "scores": [
+    {
+      "id": "conv-26:40:0",
+      "rawQaF1": 0.0
+    },
+    {
+      "id": "conv-26:40:1",
+      "rawQaF1": 0.0
+    },
+    {
+      "id": "conv-26:40:2",
+      "rawQaF1": 0.19999999999999998
+    },
+    {
+      "id": "conv-47:8:3",
+      "rawQaF1": 0.4
+    },
+    {
+      "id": "conv-47:8:4",
+      "rawQaF1": 0.3333333333333333
+    },
+    {
+      "id": "conv-47:8:5",
+      "rawQaF1": 0.0
+    },
+    {
+      "id": "conv-50:18:6",
+      "rawQaF1": 0.0
+    },
+    {
+      "id": "conv-50:18:7",
+      "rawQaF1": 0.0
+    },
+    {
+      "id": "conv-50:18:8",
+      "rawQaF1": 0.0
+    }
+  ],
+  "meanRawQaF1": 0.1037037037037037,
+  "limitations": [
+    "Category-specific token scoring, not semantic support/temporal correctness",
+    "Citations remain in raw predictions and can reduce F1",
+    "Selected development cases only; not a published full-split score"
+  ]
+}

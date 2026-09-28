@@ -1,0 +1,17 @@
+{
+  "protocol": "prefetch-three-arm-blind-support-v1",
+  "packetSha256": "ed25221730762aebe0e81fcff58c6f846c1657f34337ea03f89db3ec7710a3aa",
+  "rubricSha256": "ecbdd3400865583f1d5c89d8233fea4e7d7a29d1ab867308c3bea28fad0a4ee1",
+  "reviewer": "single treatment-blind gpt-6-luna, low reasoning",
+  "verdicts": [
+    {"id":"conv-26:40","tool":"basic","blindId":"dc830705b7e2","referenceAgreement":"unclear","sourceSupport":"unclear","complete":"unclear","citationCoverage":"no","supportedComplete":"no","rationale":"D6:16 and D10:8 each mention a beach outing, but the wording does not establish separate trips; D10:10 says usually once or twice yearly. No structured citations."},
+    {"id":"conv-26:40","tool":"graph","blindId":"5165e30c9901","referenceAgreement":"no","sourceSupport":"yes","complete":"no","citationCoverage":"no","supportedComplete":"no","rationale":"The answer hedges the count although the reference is two. Only session_10.md is cited; session_6.md supplies the other beach mention."},
+    {"id":"conv-26:40","tool":"prefetch","blindId":"ff3aa635fa65","referenceAgreement":"yes","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"D6:16 and D10:8 describe beach outings in different dated sessions. The answer gives the reference count and cites both paths, subject to uncertainty about distinct trips."},
+    {"id":"conv-47:8","tool":"basic","blindId":"046c9e73a486","referenceAgreement":"yes","sourceSupport":"yes","complete":"yes","citationCoverage":"no","supportedComplete":"no","rationale":"D31:13 explicitly says three dogs; D1:14 and D5:1 name the pets. The count and type agree, but no structured paths are cited."},
+    {"id":"conv-47:8","tool":"graph","blindId":"9b82e95b3d4e","referenceAgreement":"no","sourceSupport":"yes","complete":"no","citationCoverage":"yes","supportedComplete":"no","rationale":"D5:1 and D14:13 support at least two pets, but D31:13 explicitly gives three dogs. The lower bound does not answer the count."},
+    {"id":"conv-47:8","tool":"prefetch","blindId":"f1665dadfcdf","referenceAgreement":"yes","sourceSupport":"yes","complete":"yes","citationCoverage":"yes","supportedComplete":"yes","rationale":"D31:13 gives three dogs and D15:1 names Max, Daisy and Ned; both source paths are cited."},
+    {"id":"conv-50:18","tool":"basic","blindId":"12d3567ba82c","referenceAgreement":"unclear","sourceSupport":"yes","complete":"unclear","citationCoverage":"no","supportedComplete":"unclear","rationale":"D9:3 supports one explicit paperwork instance. D6:5 mentions flood insurance but not paperwork, so the reference count of two is source-ambiguous; no paths cited."},
+    {"id":"conv-50:18","tool":"graph","blindId":"97ef9e70a491","referenceAgreement":"unclear","sourceSupport":"yes","complete":"unclear","citationCoverage":"no","supportedComplete":"unclear","rationale":"D9:3 explicitly mentions paperwork; D6:5 mentions insurance but not paperwork. The answer alludes to a second insurance instance without citing session_6.md."},
+    {"id":"conv-50:18","tool":"prefetch","blindId":"ec3c5c7b2d9e","referenceAgreement":"unclear","sourceSupport":"yes","complete":"unclear","citationCoverage":"yes","supportedComplete":"unclear","rationale":"D9:3 and cited session_9.md support one paperwork instance. D6:5 does not explicitly mention paperwork, in tension with the reference count of two."}
+  ]
+}
