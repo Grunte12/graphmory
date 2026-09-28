@@ -1,0 +1,3981 @@
+{
+  "protocol": "collection-packing-transport-preflight-v1",
+  "id": "67e0d0f2",
+  "readerSha256": "312cd60f374d47e4946524f0bbb2d6f9620b081081892f5e231706e4a0a0915a",
+  "codeHashes": {
+    "scripts/preflight-collection-packing.py": "6347fcd5b69a4d0b6e731beff7bd47f0db09128c353b2b10b5020c9e852b19c4",
+    "scripts/curator_collection.py": "1537f4325940264eb9d9bf4b2375d6cf3efba24c99923b8cdc35adb6717eb75d",
+    "scripts/brain-sync.mjs": "d89630242319b61f7fbf9f519e5c7977ae150c0d360a09567ffaee4d510230b1",
+    "src/source-read.mjs": "79e5bd5e93191f2c30a8127d300d74f64b8c893ec0321362efb3046791ba1ed6"
+  },
+  "configuration": {
+    "maxPageBytes": 150000,
+    "maxPages": 32,
+    "maxMapCalls": 2,
+    "maxInputBytes": 300000
+  },
+  "sources": [
+    {
+      "path": "sessions/0001-37a5a2cfffcb.md",
+      "sha256": "ce396411381bbbe305fb8674ea4ba6b21d9f1dc5bf0a3d677129fe4514e9115e",
+      "bytes": 10453
+    },
+    {
+      "path": "sessions/0002-6f6a948ab9c0.md",
+      "sha256": "ebd10c3f5984470b48ec88fc55cc57350f614e868fb8c806feb7d5b2cfd094bd",
+      "bytes": 17145
+    },
+    {
+      "path": "sessions/0003-00cad4bf99ce.md",
+      "sha256": "ee4f69acf8e7d5273cdea0b4849ee7728ab69dcd11619176d9b2b4762dd831e2",
+      "bytes": 4765
+    },
+    {
+      "path": "sessions/0004-361b171214c6.md",
+      "sha256": "756b39e42fbefc01fbcec7ca866cc38f5b5b2eb7a93b8a8ffa5762ee3e534e39",
+      "bytes": 9410
+    },
+    {
+      "path": "sessions/0005-b2f18defe91b.md",
+      "sha256": "1c91765c7c5b76809c62cc6c40a88d47aa1b526b66525644d4c5c27ee86cb520",
+      "bytes": 4934
+    },
+    {
+      "path": "sessions/0006-5053c57c29fc.md",
+      "sha256": "c992002b44ec1534d6d6d932d3a70c7fae7ddf895e589546d666a464a1b5b2b4",
+      "bytes": 11653
+    },
+    {
+      "path": "sessions/0007-730ea6f80239.md",
+      "sha256": "7138f30c61b81a59cf62c0a7b96a94561b10859f20ecca3cc29036c6ef1ecc79",
+      "bytes": 17822
+    },
+    {
+      "path": "sessions/0008-6733bdd6f107.md",
+      "sha256": "cc455d5d1a230c9329e66275266ffd64dc8087154f1aa9e757a51b51efd241e2",
+      "bytes": 12991
+    },
+    {
+      "path": "sessions/0009-ac40d8037e42.md",
+      "sha256": "323e5d84b17007ee590fc991a86d4cb44b74e91bb137bf1b401094e66621cafa",
+      "bytes": 8680
+    },
+    {
+      "path": "sessions/0010-897d03f62884.md",
+      "sha256": "03f8bacd6aaa91dbe3400057a33c180c6e5054f1580f7856e5af82cfd7572368",
+      "bytes": 6756
+    },
+    {
+      "path": "sessions/0011-ea6d127d16d3.md",
+      "sha256": "9d9c0cb86c310f2144daff23db5b2d0cc33b316a1e4cb85c48cc1571acec3ac2",
+      "bytes": 6465
+    },
+    {
+      "path": "sessions/0012-61db214a6dd2.md",
+      "sha256": "20bf01db56215b1420433fc5d796b3fa86e26c1f0f5f712a9d2dc4f6aa9dcbab",
+      "bytes": 9963
+    },
+    {
+      "path": "sessions/0013-4da60f488cd4.md",
+      "sha256": "6a84c914356edcb884b8f7aa03cea4bd46c40dd3d03677f9fc7689e886bfcad9",
+      "bytes": 15325
+    },
+    {
+      "path": "sessions/0014-2ee06a6b258d.md",
+      "sha256": "afd72bfb9053334171e03dbdf0e932ed2d838dd043f66d7d1907468831aa9cff",
+      "bytes": 15744
+    },
+    {
+      "path": "sessions/0015-b906b6c52cdc.md",
+      "sha256": "621cefe92b1b3b644b2f4acde09294e092528605087468f55bce2905a05c3190",
+      "bytes": 7521
+    },
+    {
+      "path": "sessions/0016-28c7c28a696c.md",
+      "sha256": "200b716d8bb3e41c1c9c9cbba23b09167ec71258825e5327703dd1cc619357b0",
+      "bytes": 9245
+    },
+    {
+      "path": "sessions/0017-529a93a6c02c.md",
+      "sha256": "943a025337613ddea64d8a9d80add44a3f9c30137d45e875c3e7a4cb12612229",
+      "bytes": 10272
+    },
+    {
+      "path": "sessions/0018-49866a73de31.md",
+      "sha256": "319d659141df38b7ef8d9fe570542d44652be6b27e94400bd23d31fb739967b1",
+      "bytes": 8274
+    },
+    {
+      "path": "sessions/0019-6db6226a1dfd.md",
+      "sha256": "442e4c58177b4d393d8033619d60b166756345c4819b156acc56a93d6a333230",
+      "bytes": 13437
+    },
+    {
+      "path": "sessions/0020-dc1afb7a6dc4.md",
+      "sha256": "8b9539e43ad374f7c51e52d83342b86031081001d0d6111a79feeec9f50cb20d",
+      "bytes": 10324
+    },
+    {
+      "path": "sessions/0021-a278fb55032f.md",
+      "sha256": "f65b32fa314aacb70d8d532de5f18355a6dea51822821a7173394534c8f5356c",
+      "bytes": 15222
+    },
+    {
+      "path": "sessions/0022-ca6d95c69c07.md",
+      "sha256": "eece07687ca923b4e1cf732073ae564cb65dcf9a09c5f6197a51a3f377622e9d",
+      "bytes": 12638
+    },
+    {
+      "path": "sessions/0023-77032979a859.md",
+      "sha256": "ffd54ccb4b61cbad4f6beede91b817e713e59c4f5bffbb4d2212b4196be8d095",
+      "bytes": 22352
+    },
+    {
+      "path": "sessions/0024-9a9a8f6ea0f4.md",
+      "sha256": "54c54f29896e51892eea5c89a074c5805fe33519fdd33b9a88daed24c7f1dd6f",
+      "bytes": 16647
+    },
+    {
+      "path": "sessions/0025-863b136acd67.md",
+      "sha256": "b1c36cf7350aaa6c2947dd3fbbc8e122f4b1cf5b318de41a9de485cf0f6fcebe",
+      "bytes": 16108
+    },
+    {
+      "path": "sessions/0026-5098f0227e26.md",
+      "sha256": "b58c9b26e76cd196f02672942a4a1ad104ab62aba6f3da4dcd91cbe9fb918bf3",
+      "bytes": 2165
+    },
+    {
+      "path": "sessions/0027-a80bec8693d7.md",
+      "sha256": "a857ce36f743759c782bf8943b185a403648d2008977dbe70eb795dbba215dc0",
+      "bytes": 4404
+    },
+    {
+      "path": "sessions/0028-cc5d3814b9af.md",
+      "sha256": "4b5ea09fe9b660cec600fe43774c4250aa6d2d5dc0fdaafba0c57a90c1ec0a85",
+      "bytes": 14285
+    },
+    {
+      "path": "sessions/0029-56b047332b29.md",
+      "sha256": "d1394aaa2033998c4f9efa8ee64c5d18fe179dae8c644d2e7c276a1f9c9714ba",
+      "bytes": 13303
+    },
+    {
+      "path": "sessions/0030-3abef286a4a9.md",
+      "sha256": "40c5957856c824e8bb1a78c05a2be2be2254ac082020a38431327e2afa13f7ce",
+      "bytes": 3719
+    },
+    {
+      "path": "sessions/0031-38799ee73189.md",
+      "sha256": "9545d1660f9676210510c48a0a0605b6846df2ed7446164ce0b7b00008fdfdf6",
+      "bytes": 10861
+    },
+    {
+      "path": "sessions/0032-39ecaf77cdb7.md",
+      "sha256": "ac48e6a227e6c85e24a0ccd9a11e14bd06b85a75e24ec14d4d2690c893fbc88d",
+      "bytes": 15848
+    },
+    {
+      "path": "sessions/0033-7483f3d33de2.md",
+      "sha256": "dd3a1b5f6432b5e4311cb4a868e8814d18d73ecc986c6c7f954695e947d57cf5",
+      "bytes": 2166
+    },
+    {
+      "path": "sessions/0034-2e48efeb8ad1.md",
+      "sha256": "08df89309a62050e3712afda1f657d78ae9a8a1d010e321422aa286bae404d52",
+      "bytes": 4192
+    },
+    {
+      "path": "sessions/0035-dfff16a71d08.md",
+      "sha256": "89452cfed2540967205ece07975fb445706719a59a7c46cd15ac48ee5bee0789",
+      "bytes": 6351
+    },
+    {
+      "path": "sessions/0036-4d9f14184917.md",
+      "sha256": "17c5b469b170d19e2805dc6f3422ffcab6b89e265fa80b1aa39f91b6cc4b5700",
+      "bytes": 1821
+    },
+    {
+      "path": "sessions/0037-881fdd868746.md",
+      "sha256": "5119a34aaa0f4f3c070bf41f4675474398f0fe14b36021a3060c46cce87fb2dc",
+      "bytes": 11131
+    },
+    {
+      "path": "sessions/0038-e070111f44b2.md",
+      "sha256": "5538222e61681932515e71f4c47f5a16604f2c13b549644d9dc42286ac05055c",
+      "bytes": 16736
+    },
+    {
+      "path": "sessions/0039-466a64e63448.md",
+      "sha256": "7641b8925a284b55a6e69c86f28c7720baa5609991f4fdf679630e1e6516a69f",
+      "bytes": 5029
+    },
+    {
+      "path": "sessions/0040-26bbf52975d3.md",
+      "sha256": "cc483843f1277b2ba1f4a79af494a2f07d9aaa39a0f5951317dd150df8d9bf1b",
+      "bytes": 6825
+    },
+    {
+      "path": "sessions/0041-6437231d4c14.md",
+      "sha256": "d53c529f893176ff4c15d4ab1c35682c79ca147152a1b8a1ab499333177eeff8",
+      "bytes": 8126
+    },
+    {
+      "path": "sessions/0042-1bfdd852578f.md",
+      "sha256": "e314b0525be82b83f590357d066a84e0f9983e3fc8791bd0730784826cad4af6",
+      "bytes": 1665
+    },
+    {
+      "path": "sessions/0043-001c98e9b10f.md",
+      "sha256": "0bb3d1712107694209c74478aec6c0f89ae42a6ad7f071e5bc2146ef7ca02630",
+      "bytes": 4036
+    },
+    {
+      "path": "sessions/0044-eb04ad566548.md",
+      "sha256": "db5963476158fde85d2c7184d8100da96fe0ce7687c1439bd30b3328b0617198",
+      "bytes": 5043
+    },
+    {
+      "path": "sessions/0045-d08a4383acb0.md",
+      "sha256": "1c4311e27151fd9ee9b0a21760ee433d561e7d4413734766931bf214a0aadccf",
+      "bytes": 9498
+    },
+    {
+      "path": "sessions/0046-09c956375663.md",
+      "sha256": "795cbf0d1a445aee6fe11229f5b180988c9a059cc3430cd6fb4db53770d15c6a",
+      "bytes": 132
+    },
+    {
+      "path": "sessions/0047-0e6a15efe02e.md",
+      "sha256": "3693859447d7d5083c382467f56488fcd0d3cd2692ef8468a195d047d4d360c6",
+      "bytes": 10376
+    },
+    {
+      "path": "sessions/0048-65063946a1f0.md",
+      "sha256": "bd0d9ee9ed85bb5bd58b68d6f15b14d83bf051c34f8035f3b0a2cc931f056200",
+      "bytes": 18989
+    },
+    {
+      "path": "sessions/0049-bf4bae59ff65.md",
+      "sha256": "5bf75fddb6e6a48f0b9ddf842ad5abeff28bd56a4262aa45d511574126c7e115",
+      "bytes": 10137
+    },
+    {
+      "path": "sessions/0050-85dd2d4c86c1.md",
+      "sha256": "c71027982a9dd03d1324cd84c95e4d06e0145db1b0179199b970aa0f06d0c6e3",
+      "bytes": 417
+    },
+    {
+      "path": "sessions/0051-62c2f2b0f154.md",
+      "sha256": "b0c73638e0c1da06eb7eeb21910a25c81390deff52607c8b2b783d7e4c120a1d",
+      "bytes": 13353
+    },
+    {
+      "path": "sessions/0052-817273274698.md",
+      "sha256": "49cee491172f60aeb40112d5043ee73d22c8d2ce6d58d2ef2a4f4412662ef899",
+      "bytes": 11318
+    }
+  ],
+  "arms": [
+    {
+      "arm": "legacy",
+      "complete": false,
+      "summary": {
+        "deliveryComplete": false,
+        "semanticCompleteness": "unverified",
+        "incompleteReason": "collection-map-call-budget",
+        "sourceCount": 52,
+        "deliveredSources": 43,
+        "mapCalls": 2,
+        "candidateSpans": 0,
+        "verifiedSpans": 0,
+        "ledgerEntries": 0,
+        "unreadSources": [
+          "sessions/0044-eb04ad566548.md",
+          "sessions/0045-d08a4383acb0.md",
+          "sessions/0046-09c956375663.md",
+          "sessions/0047-0e6a15efe02e.md",
+          "sessions/0048-65063946a1f0.md",
+          "sessions/0049-bf4bae59ff65.md",
+          "sessions/0050-85dd2d4c86c1.md",
+          "sessions/0051-62c2f2b0f154.md",
+          "sessions/0052-817273274698.md"
+        ],
+        "pages": [
+          {
+            "page": 0,
+            "toolOutputBytes": 150001,
+            "toolSeconds": 0.134,
+            "stdoutSha256": "a5b4d041530eeb5a6d0c3c49079e4c4d5649a61f2b6a7405728bffc7fc338e38",
+            "pageSha256": "ec305957cc67de6b014799fab461e39a6747124f9a0e0f92de08f6ae3ea7bfdd",
+            "hasMore": true,
+            "deliveryComplete": false,
+            "fragmentCount": 14,
+            "fragments": [
+              {
+                "path": "sessions/0001-37a5a2cfffcb.md",
+                "sourceSha256": "ce396411381bbbe305fb8674ea4ba6b21d9f1dc5bf0a3d677129fe4514e9115e",
+                "byteStart": 0,
+                "byteEnd": 10453,
+                "totalBytes": 10453,
+                "startLine": 1,
+                "endLine": 120,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0002-6f6a948ab9c0.md",
+                "sourceSha256": "ebd10c3f5984470b48ec88fc55cc57350f614e868fb8c806feb7d5b2cfd094bd",
+                "byteStart": 0,
+                "byteEnd": 17145,
+                "totalBytes": 17145,
+                "startLine": 1,
+                "endLine": 232,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0003-00cad4bf99ce.md",
+                "sourceSha256": "ee4f69acf8e7d5273cdea0b4849ee7728ab69dcd11619176d9b2b4762dd831e2",
+                "byteStart": 0,
+                "byteEnd": 4765,
+                "totalBytes": 4765,
+                "startLine": 1,
+                "endLine": 48,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0004-361b171214c6.md",
+                "sourceSha256": "756b39e42fbefc01fbcec7ca866cc38f5b5b2eb7a93b8a8ffa5762ee3e534e39",
+                "byteStart": 0,
+                "byteEnd": 9410,
+                "totalBytes": 9410,
+                "startLine": 1,
+                "endLine": 181,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0005-b2f18defe91b.md",
+                "sourceSha256": "1c91765c7c5b76809c62cc6c40a88d47aa1b526b66525644d4c5c27ee86cb520",
+                "byteStart": 0,
+                "byteEnd": 4934,
+                "totalBytes": 4934,
+                "startLine": 1,
+                "endLine": 68,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0006-5053c57c29fc.md",
+                "sourceSha256": "c992002b44ec1534d6d6d932d3a70c7fae7ddf895e589546d666a464a1b5b2b4",
+                "byteStart": 0,
+                "byteEnd": 11653,
+                "totalBytes": 11653,
+                "startLine": 1,
+                "endLine": 143,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0007-730ea6f80239.md",
+                "sourceSha256": "7138f30c61b81a59cf62c0a7b96a94561b10859f20ecca3cc29036c6ef1ecc79",
+                "byteStart": 0,
+                "byteEnd": 17822,
+                "totalBytes": 17822,
+                "startLine": 1,
+                "endLine": 284,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0008-6733bdd6f107.md",
+                "sourceSha256": "cc455d5d1a230c9329e66275266ffd64dc8087154f1aa9e757a51b51efd241e2",
+                "byteStart": 0,
+                "byteEnd": 12991,
+                "totalBytes": 12991,
+                "startLine": 1,
+                "endLine": 201,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0009-ac40d8037e42.md",
+                "sourceSha256": "323e5d84b17007ee590fc991a86d4cb44b74e91bb137bf1b401094e66621cafa",
+                "byteStart": 0,
+                "byteEnd": 8680,
+                "totalBytes": 8680,
+                "startLine": 1,
+                "endLine": 102,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0010-897d03f62884.md",
+                "sourceSha256": "03f8bacd6aaa91dbe3400057a33c180c6e5054f1580f7856e5af82cfd7572368",
+                "byteStart": 0,
+                "byteEnd": 6756,
+                "totalBytes": 6756,
+                "startLine": 1,
+                "endLine": 92,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0011-ea6d127d16d3.md",
+                "sourceSha256": "9d9c0cb86c310f2144daff23db5b2d0cc33b316a1e4cb85c48cc1571acec3ac2",
+                "byteStart": 0,
+                "byteEnd": 6465,
+                "totalBytes": 6465,
+                "startLine": 1,
+                "endLine": 70,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0012-61db214a6dd2.md",
+                "sourceSha256": "20bf01db56215b1420433fc5d796b3fa86e26c1f0f5f712a9d2dc4f6aa9dcbab",
+                "byteStart": 0,
+                "byteEnd": 9963,
+                "totalBytes": 9963,
+                "startLine": 1,
+                "endLine": 116,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0013-4da60f488cd4.md",
+                "sourceSha256": "6a84c914356edcb884b8f7aa03cea4bd46c40dd3d03677f9fc7689e886bfcad9",
+                "byteStart": 0,
+                "byteEnd": 15325,
+                "totalBytes": 15325,
+                "startLine": 1,
+                "endLine": 203,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0014-2ee06a6b258d.md",
+                "sourceSha256": "afd72bfb9053334171e03dbdf0e932ed2d838dd043f66d7d1907468831aa9cff",
+                "byteStart": 0,
+                "byteEnd": 7549,
+                "totalBytes": 15744,
+                "startLine": 1,
+                "endLine": 112,
+                "startsMidLine": false,
+                "endsMidLine": true,
+                "sourceComplete": false
+              }
+            ]
+          },
+          {
+            "page": 1,
+            "toolOutputBytes": 150001,
+            "toolSeconds": 0.154,
+            "stdoutSha256": "3fe61a9ede9c3dd8a1d503e386c6dfe97ff2238cb5c91dc490f56e44aa2c9049",
+            "pageSha256": "bbf21ded5ee1541a8c554494425ced86b7187d52c1f0674dc8356a750ee59624",
+            "hasMore": true,
+            "deliveryComplete": false,
+            "fragmentCount": 12,
+            "fragments": [
+              {
+                "path": "sessions/0014-2ee06a6b258d.md",
+                "sourceSha256": "afd72bfb9053334171e03dbdf0e932ed2d838dd043f66d7d1907468831aa9cff",
+                "byteStart": 7549,
+                "byteEnd": 15744,
+                "totalBytes": 15744,
+                "startLine": 112,
+                "endLine": 241,
+                "startsMidLine": true,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0015-b906b6c52cdc.md",
+                "sourceSha256": "621cefe92b1b3b644b2f4acde09294e092528605087468f55bce2905a05c3190",
+                "byteStart": 0,
+                "byteEnd": 7521,
+                "totalBytes": 7521,
+                "startLine": 1,
+                "endLine": 147,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0016-28c7c28a696c.md",
+                "sourceSha256": "200b716d8bb3e41c1c9c9cbba23b09167ec71258825e5327703dd1cc619357b0",
+                "byteStart": 0,
+                "byteEnd": 9245,
+                "totalBytes": 9245,
+                "startLine": 1,
+                "endLine": 111,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0017-529a93a6c02c.md",
+                "sourceSha256": "943a025337613ddea64d8a9d80add44a3f9c30137d45e875c3e7a4cb12612229",
+                "byteStart": 0,
+                "byteEnd": 10272,
+                "totalBytes": 10272,
+                "startLine": 1,
+                "endLine": 118,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0018-49866a73de31.md",
+                "sourceSha256": "319d659141df38b7ef8d9fe570542d44652be6b27e94400bd23d31fb739967b1",
+                "byteStart": 0,
+                "byteEnd": 8274,
+                "totalBytes": 8274,
+                "startLine": 1,
+                "endLine": 77,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0019-6db6226a1dfd.md",
+                "sourceSha256": "442e4c58177b4d393d8033619d60b166756345c4819b156acc56a93d6a333230",
+                "byteStart": 0,
+                "byteEnd": 13437,
+                "totalBytes": 13437,
+                "startLine": 1,
+                "endLine": 159,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0020-dc1afb7a6dc4.md",
+                "sourceSha256": "8b9539e43ad374f7c51e52d83342b86031081001d0d6111a79feeec9f50cb20d",
+                "byteStart": 0,
+                "byteEnd": 10324,
+                "totalBytes": 10324,
+                "startLine": 1,
+                "endLine": 122,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0021-a278fb55032f.md",
+                "sourceSha256": "f65b32fa314aacb70d8d532de5f18355a6dea51822821a7173394534c8f5356c",
+                "byteStart": 0,
+                "byteEnd": 15222,
+                "totalBytes": 15222,
+                "startLine": 1,
+                "endLine": 232,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0022-ca6d95c69c07.md",
+                "sourceSha256": "eece07687ca923b4e1cf732073ae564cb65dcf9a09c5f6197a51a3f377622e9d",
+                "byteStart": 0,
+                "byteEnd": 12638,
+                "totalBytes": 12638,
+                "startLine": 1,
+                "endLine": 154,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0023-77032979a859.md",
+                "sourceSha256": "ffd54ccb4b61cbad4f6beede91b817e713e59c4f5bffbb4d2212b4196be8d095",
+                "byteStart": 0,
+                "byteEnd": 22352,
+                "totalBytes": 22352,
+                "startLine": 1,
+                "endLine": 327,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0024-9a9a8f6ea0f4.md",
+                "sourceSha256": "54c54f29896e51892eea5c89a074c5805fe33519fdd33b9a88daed24c7f1dd6f",
+                "byteStart": 0,
+                "byteEnd": 16647,
+                "totalBytes": 16647,
+                "startLine": 1,
+                "endLine": 241,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0025-863b136acd67.md",
+                "sourceSha256": "b1c36cf7350aaa6c2947dd3fbbc8e122f4b1cf5b318de41a9de485cf0f6fcebe",
+                "byteStart": 0,
+                "byteEnd": 9974,
+                "totalBytes": 16108,
+                "startLine": 1,
+                "endLine": 131,
+                "startsMidLine": false,
+                "endsMidLine": true,
+                "sourceComplete": false
+              }
+            ]
+          }
+        ],
+        "plannedMapCalls": null,
+        "mappingComplete": null,
+        "mappingCoverage": [],
+        "mapBatches": []
+      },
+      "callbacks": [
+        {
+          "promptBytes": 156714,
+          "promptSha256": "2df7b2023b998dc80c0b3cf4b85ea4e2a4010ae28ec62a09221ed544af4d7f4b",
+          "stage": "curator-collection-map",
+          "fragments": [
+            {
+              "path": "sessions/0001-37a5a2cfffcb.md",
+              "sourceSha256": "ce396411381bbbe305fb8674ea4ba6b21d9f1dc5bf0a3d677129fe4514e9115e",
+              "byteStart": 0,
+              "byteEnd": 10453,
+              "startLine": 1,
+              "endLine": 120
+            },
+            {
+              "path": "sessions/0002-6f6a948ab9c0.md",
+              "sourceSha256": "ebd10c3f5984470b48ec88fc55cc57350f614e868fb8c806feb7d5b2cfd094bd",
+              "byteStart": 0,
+              "byteEnd": 17145,
+              "startLine": 1,
+              "endLine": 232
+            },
+            {
+              "path": "sessions/0003-00cad4bf99ce.md",
+              "sourceSha256": "ee4f69acf8e7d5273cdea0b4849ee7728ab69dcd11619176d9b2b4762dd831e2",
+              "byteStart": 0,
+              "byteEnd": 4765,
+              "startLine": 1,
+              "endLine": 48
+            },
+            {
+              "path": "sessions/0004-361b171214c6.md",
+              "sourceSha256": "756b39e42fbefc01fbcec7ca866cc38f5b5b2eb7a93b8a8ffa5762ee3e534e39",
+              "byteStart": 0,
+              "byteEnd": 9410,
+              "startLine": 1,
+              "endLine": 181
+            },
+            {
+              "path": "sessions/0005-b2f18defe91b.md",
+              "sourceSha256": "1c91765c7c5b76809c62cc6c40a88d47aa1b526b66525644d4c5c27ee86cb520",
+              "byteStart": 0,
+              "byteEnd": 4934,
+              "startLine": 1,
+              "endLine": 68
+            },
+            {
+              "path": "sessions/0006-5053c57c29fc.md",
+              "sourceSha256": "c992002b44ec1534d6d6d932d3a70c7fae7ddf895e589546d666a464a1b5b2b4",
+              "byteStart": 0,
+              "byteEnd": 11653,
+              "startLine": 1,
+              "endLine": 143
+            },
+            {
+              "path": "sessions/0007-730ea6f80239.md",
+              "sourceSha256": "7138f30c61b81a59cf62c0a7b96a94561b10859f20ecca3cc29036c6ef1ecc79",
+              "byteStart": 0,
+              "byteEnd": 17822,
+              "startLine": 1,
+              "endLine": 284
+            },
+            {
+              "path": "sessions/0008-6733bdd6f107.md",
+              "sourceSha256": "cc455d5d1a230c9329e66275266ffd64dc8087154f1aa9e757a51b51efd241e2",
+              "byteStart": 0,
+              "byteEnd": 12991,
+              "startLine": 1,
+              "endLine": 201
+            },
+            {
+              "path": "sessions/0009-ac40d8037e42.md",
+              "sourceSha256": "323e5d84b17007ee590fc991a86d4cb44b74e91bb137bf1b401094e66621cafa",
+              "byteStart": 0,
+              "byteEnd": 8680,
+              "startLine": 1,
+              "endLine": 102
+            },
+            {
+              "path": "sessions/0010-897d03f62884.md",
+              "sourceSha256": "03f8bacd6aaa91dbe3400057a33c180c6e5054f1580f7856e5af82cfd7572368",
+              "byteStart": 0,
+              "byteEnd": 6756,
+              "startLine": 1,
+              "endLine": 92
+            },
+            {
+              "path": "sessions/0011-ea6d127d16d3.md",
+              "sourceSha256": "9d9c0cb86c310f2144daff23db5b2d0cc33b316a1e4cb85c48cc1571acec3ac2",
+              "byteStart": 0,
+              "byteEnd": 6465,
+              "startLine": 1,
+              "endLine": 70
+            },
+            {
+              "path": "sessions/0012-61db214a6dd2.md",
+              "sourceSha256": "20bf01db56215b1420433fc5d796b3fa86e26c1f0f5f712a9d2dc4f6aa9dcbab",
+              "byteStart": 0,
+              "byteEnd": 9963,
+              "startLine": 1,
+              "endLine": 116
+            },
+            {
+              "path": "sessions/0013-4da60f488cd4.md",
+              "sourceSha256": "6a84c914356edcb884b8f7aa03cea4bd46c40dd3d03677f9fc7689e886bfcad9",
+              "byteStart": 0,
+              "byteEnd": 15325,
+              "startLine": 1,
+              "endLine": 203
+            },
+            {
+              "path": "sessions/0014-2ee06a6b258d.md",
+              "sourceSha256": "afd72bfb9053334171e03dbdf0e932ed2d838dd043f66d7d1907468831aa9cff",
+              "byteStart": 0,
+              "byteEnd": 7485,
+              "startLine": 1,
+              "endLine": 112
+            }
+          ]
+        },
+        {
+          "promptBytes": 156811,
+          "promptSha256": "33437f97f00d7b8a47eaae08525bdc9e77a9f987037e31afbeecbba2720cad2f",
+          "stage": "curator-collection-map",
+          "fragments": [
+            {
+              "path": "sessions/0014-2ee06a6b258d.md",
+              "sourceSha256": "afd72bfb9053334171e03dbdf0e932ed2d838dd043f66d7d1907468831aa9cff",
+              "byteStart": 7485,
+              "byteEnd": 15744,
+              "startLine": 112,
+              "endLine": 241
+            },
+            {
+              "path": "sessions/0015-b906b6c52cdc.md",
+              "sourceSha256": "621cefe92b1b3b644b2f4acde09294e092528605087468f55bce2905a05c3190",
+              "byteStart": 0,
+              "byteEnd": 7521,
+              "startLine": 1,
+              "endLine": 147
+            },
+            {
+              "path": "sessions/0016-28c7c28a696c.md",
+              "sourceSha256": "200b716d8bb3e41c1c9c9cbba23b09167ec71258825e5327703dd1cc619357b0",
+              "byteStart": 0,
+              "byteEnd": 9245,
+              "startLine": 1,
+              "endLine": 111
+            },
+            {
+              "path": "sessions/0017-529a93a6c02c.md",
+              "sourceSha256": "943a025337613ddea64d8a9d80add44a3f9c30137d45e875c3e7a4cb12612229",
+              "byteStart": 0,
+              "byteEnd": 10272,
+              "startLine": 1,
+              "endLine": 118
+            },
+            {
+              "path": "sessions/0018-49866a73de31.md",
+              "sourceSha256": "319d659141df38b7ef8d9fe570542d44652be6b27e94400bd23d31fb739967b1",
+              "byteStart": 0,
+              "byteEnd": 8274,
+              "startLine": 1,
+              "endLine": 77
+            },
+            {
+              "path": "sessions/0019-6db6226a1dfd.md",
+              "sourceSha256": "442e4c58177b4d393d8033619d60b166756345c4819b156acc56a93d6a333230",
+              "byteStart": 0,
+              "byteEnd": 13437,
+              "startLine": 1,
+              "endLine": 159
+            },
+            {
+              "path": "sessions/0020-dc1afb7a6dc4.md",
+              "sourceSha256": "8b9539e43ad374f7c51e52d83342b86031081001d0d6111a79feeec9f50cb20d",
+              "byteStart": 0,
+              "byteEnd": 10324,
+              "startLine": 1,
+              "endLine": 122
+            },
+            {
+              "path": "sessions/0021-a278fb55032f.md",
+              "sourceSha256": "f65b32fa314aacb70d8d532de5f18355a6dea51822821a7173394534c8f5356c",
+              "byteStart": 0,
+              "byteEnd": 15222,
+              "startLine": 1,
+              "endLine": 232
+            },
+            {
+              "path": "sessions/0022-ca6d95c69c07.md",
+              "sourceSha256": "eece07687ca923b4e1cf732073ae564cb65dcf9a09c5f6197a51a3f377622e9d",
+              "byteStart": 0,
+              "byteEnd": 12638,
+              "startLine": 1,
+              "endLine": 154
+            },
+            {
+              "path": "sessions/0023-77032979a859.md",
+              "sourceSha256": "ffd54ccb4b61cbad4f6beede91b817e713e59c4f5bffbb4d2212b4196be8d095",
+              "byteStart": 0,
+              "byteEnd": 22352,
+              "startLine": 1,
+              "endLine": 327
+            },
+            {
+              "path": "sessions/0024-9a9a8f6ea0f4.md",
+              "sourceSha256": "54c54f29896e51892eea5c89a074c5805fe33519fdd33b9a88daed24c7f1dd6f",
+              "byteStart": 0,
+              "byteEnd": 16647,
+              "startLine": 1,
+              "endLine": 241
+            },
+            {
+              "path": "sessions/0025-863b136acd67.md",
+              "sourceSha256": "b1c36cf7350aaa6c2947dd3fbbc8e122f4b1cf5b318de41a9de485cf0f6fcebe",
+              "byteStart": 0,
+              "byteEnd": 9942,
+              "startLine": 1,
+              "endLine": 131
+            }
+          ]
+        }
+      ],
+      "coverage": [
+        {
+          "path": "sessions/0001-37a5a2cfffcb.md",
+          "mappedBytes": 10453,
+          "sourceBytes": 10453,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0002-6f6a948ab9c0.md",
+          "mappedBytes": 17145,
+          "sourceBytes": 17145,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0003-00cad4bf99ce.md",
+          "mappedBytes": 4765,
+          "sourceBytes": 4765,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0004-361b171214c6.md",
+          "mappedBytes": 9410,
+          "sourceBytes": 9410,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0005-b2f18defe91b.md",
+          "mappedBytes": 4934,
+          "sourceBytes": 4934,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0006-5053c57c29fc.md",
+          "mappedBytes": 11653,
+          "sourceBytes": 11653,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0007-730ea6f80239.md",
+          "mappedBytes": 17822,
+          "sourceBytes": 17822,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0008-6733bdd6f107.md",
+          "mappedBytes": 12991,
+          "sourceBytes": 12991,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0009-ac40d8037e42.md",
+          "mappedBytes": 8680,
+          "sourceBytes": 8680,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0010-897d03f62884.md",
+          "mappedBytes": 6756,
+          "sourceBytes": 6756,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0011-ea6d127d16d3.md",
+          "mappedBytes": 6465,
+          "sourceBytes": 6465,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0012-61db214a6dd2.md",
+          "mappedBytes": 9963,
+          "sourceBytes": 9963,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0013-4da60f488cd4.md",
+          "mappedBytes": 15325,
+          "sourceBytes": 15325,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0014-2ee06a6b258d.md",
+          "mappedBytes": 15744,
+          "sourceBytes": 15744,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0015-b906b6c52cdc.md",
+          "mappedBytes": 7521,
+          "sourceBytes": 7521,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0016-28c7c28a696c.md",
+          "mappedBytes": 9245,
+          "sourceBytes": 9245,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0017-529a93a6c02c.md",
+          "mappedBytes": 10272,
+          "sourceBytes": 10272,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0018-49866a73de31.md",
+          "mappedBytes": 8274,
+          "sourceBytes": 8274,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0019-6db6226a1dfd.md",
+          "mappedBytes": 13437,
+          "sourceBytes": 13437,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0020-dc1afb7a6dc4.md",
+          "mappedBytes": 10324,
+          "sourceBytes": 10324,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0021-a278fb55032f.md",
+          "mappedBytes": 15222,
+          "sourceBytes": 15222,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0022-ca6d95c69c07.md",
+          "mappedBytes": 12638,
+          "sourceBytes": 12638,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0023-77032979a859.md",
+          "mappedBytes": 22352,
+          "sourceBytes": 22352,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0024-9a9a8f6ea0f4.md",
+          "mappedBytes": 16647,
+          "sourceBytes": 16647,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0025-863b136acd67.md",
+          "mappedBytes": 9942,
+          "sourceBytes": 16108,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0026-5098f0227e26.md",
+          "mappedBytes": 0,
+          "sourceBytes": 2165,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0027-a80bec8693d7.md",
+          "mappedBytes": 0,
+          "sourceBytes": 4404,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0028-cc5d3814b9af.md",
+          "mappedBytes": 0,
+          "sourceBytes": 14285,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0029-56b047332b29.md",
+          "mappedBytes": 0,
+          "sourceBytes": 13303,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0030-3abef286a4a9.md",
+          "mappedBytes": 0,
+          "sourceBytes": 3719,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0031-38799ee73189.md",
+          "mappedBytes": 0,
+          "sourceBytes": 10861,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0032-39ecaf77cdb7.md",
+          "mappedBytes": 0,
+          "sourceBytes": 15848,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0033-7483f3d33de2.md",
+          "mappedBytes": 0,
+          "sourceBytes": 2166,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0034-2e48efeb8ad1.md",
+          "mappedBytes": 0,
+          "sourceBytes": 4192,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0035-dfff16a71d08.md",
+          "mappedBytes": 0,
+          "sourceBytes": 6351,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0036-4d9f14184917.md",
+          "mappedBytes": 0,
+          "sourceBytes": 1821,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0037-881fdd868746.md",
+          "mappedBytes": 0,
+          "sourceBytes": 11131,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0038-e070111f44b2.md",
+          "mappedBytes": 0,
+          "sourceBytes": 16736,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0039-466a64e63448.md",
+          "mappedBytes": 0,
+          "sourceBytes": 5029,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0040-26bbf52975d3.md",
+          "mappedBytes": 0,
+          "sourceBytes": 6825,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0041-6437231d4c14.md",
+          "mappedBytes": 0,
+          "sourceBytes": 8126,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0042-1bfdd852578f.md",
+          "mappedBytes": 0,
+          "sourceBytes": 1665,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0043-001c98e9b10f.md",
+          "mappedBytes": 0,
+          "sourceBytes": 4036,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0044-eb04ad566548.md",
+          "mappedBytes": 0,
+          "sourceBytes": 5043,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0045-d08a4383acb0.md",
+          "mappedBytes": 0,
+          "sourceBytes": 9498,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0046-09c956375663.md",
+          "mappedBytes": 0,
+          "sourceBytes": 132,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0047-0e6a15efe02e.md",
+          "mappedBytes": 0,
+          "sourceBytes": 10376,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0048-65063946a1f0.md",
+          "mappedBytes": 0,
+          "sourceBytes": 18989,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0049-bf4bae59ff65.md",
+          "mappedBytes": 0,
+          "sourceBytes": 10137,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0050-85dd2d4c86c1.md",
+          "mappedBytes": 0,
+          "sourceBytes": 417,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0051-62c2f2b0f154.md",
+          "mappedBytes": 0,
+          "sourceBytes": 13353,
+          "exactComplete": false
+        },
+        {
+          "path": "sessions/0052-817273274698.md",
+          "mappedBytes": 0,
+          "sourceBytes": 11318,
+          "exactComplete": false
+        }
+      ],
+      "preflightSeconds": 0.467,
+      "transportGate": false,
+      "toolOutputBytes": 450003,
+      "toolSeconds": 0.454
+    },
+    {
+      "arm": "packed",
+      "complete": true,
+      "summary": {
+        "deliveryComplete": true,
+        "semanticCompleteness": "unverified",
+        "sourceCount": 52,
+        "deliveredSources": 52,
+        "mapCalls": 2,
+        "candidateSpans": 0,
+        "verifiedSpans": 0,
+        "ledgerEntries": 0,
+        "unreadSources": [],
+        "pages": [
+          {
+            "page": 0,
+            "toolOutputBytes": 150001,
+            "toolSeconds": 0.167,
+            "stdoutSha256": "a5b4d041530eeb5a6d0c3c49079e4c4d5649a61f2b6a7405728bffc7fc338e38",
+            "pageSha256": "ec305957cc67de6b014799fab461e39a6747124f9a0e0f92de08f6ae3ea7bfdd",
+            "hasMore": true,
+            "deliveryComplete": false,
+            "fragmentCount": 14,
+            "fragments": [
+              {
+                "path": "sessions/0001-37a5a2cfffcb.md",
+                "sourceSha256": "ce396411381bbbe305fb8674ea4ba6b21d9f1dc5bf0a3d677129fe4514e9115e",
+                "byteStart": 0,
+                "byteEnd": 10453,
+                "totalBytes": 10453,
+                "startLine": 1,
+                "endLine": 120,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0002-6f6a948ab9c0.md",
+                "sourceSha256": "ebd10c3f5984470b48ec88fc55cc57350f614e868fb8c806feb7d5b2cfd094bd",
+                "byteStart": 0,
+                "byteEnd": 17145,
+                "totalBytes": 17145,
+                "startLine": 1,
+                "endLine": 232,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0003-00cad4bf99ce.md",
+                "sourceSha256": "ee4f69acf8e7d5273cdea0b4849ee7728ab69dcd11619176d9b2b4762dd831e2",
+                "byteStart": 0,
+                "byteEnd": 4765,
+                "totalBytes": 4765,
+                "startLine": 1,
+                "endLine": 48,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0004-361b171214c6.md",
+                "sourceSha256": "756b39e42fbefc01fbcec7ca866cc38f5b5b2eb7a93b8a8ffa5762ee3e534e39",
+                "byteStart": 0,
+                "byteEnd": 9410,
+                "totalBytes": 9410,
+                "startLine": 1,
+                "endLine": 181,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0005-b2f18defe91b.md",
+                "sourceSha256": "1c91765c7c5b76809c62cc6c40a88d47aa1b526b66525644d4c5c27ee86cb520",
+                "byteStart": 0,
+                "byteEnd": 4934,
+                "totalBytes": 4934,
+                "startLine": 1,
+                "endLine": 68,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0006-5053c57c29fc.md",
+                "sourceSha256": "c992002b44ec1534d6d6d932d3a70c7fae7ddf895e589546d666a464a1b5b2b4",
+                "byteStart": 0,
+                "byteEnd": 11653,
+                "totalBytes": 11653,
+                "startLine": 1,
+                "endLine": 143,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0007-730ea6f80239.md",
+                "sourceSha256": "7138f30c61b81a59cf62c0a7b96a94561b10859f20ecca3cc29036c6ef1ecc79",
+                "byteStart": 0,
+                "byteEnd": 17822,
+                "totalBytes": 17822,
+                "startLine": 1,
+                "endLine": 284,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0008-6733bdd6f107.md",
+                "sourceSha256": "cc455d5d1a230c9329e66275266ffd64dc8087154f1aa9e757a51b51efd241e2",
+                "byteStart": 0,
+                "byteEnd": 12991,
+                "totalBytes": 12991,
+                "startLine": 1,
+                "endLine": 201,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0009-ac40d8037e42.md",
+                "sourceSha256": "323e5d84b17007ee590fc991a86d4cb44b74e91bb137bf1b401094e66621cafa",
+                "byteStart": 0,
+                "byteEnd": 8680,
+                "totalBytes": 8680,
+                "startLine": 1,
+                "endLine": 102,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0010-897d03f62884.md",
+                "sourceSha256": "03f8bacd6aaa91dbe3400057a33c180c6e5054f1580f7856e5af82cfd7572368",
+                "byteStart": 0,
+                "byteEnd": 6756,
+                "totalBytes": 6756,
+                "startLine": 1,
+                "endLine": 92,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0011-ea6d127d16d3.md",
+                "sourceSha256": "9d9c0cb86c310f2144daff23db5b2d0cc33b316a1e4cb85c48cc1571acec3ac2",
+                "byteStart": 0,
+                "byteEnd": 6465,
+                "totalBytes": 6465,
+                "startLine": 1,
+                "endLine": 70,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0012-61db214a6dd2.md",
+                "sourceSha256": "20bf01db56215b1420433fc5d796b3fa86e26c1f0f5f712a9d2dc4f6aa9dcbab",
+                "byteStart": 0,
+                "byteEnd": 9963,
+                "totalBytes": 9963,
+                "startLine": 1,
+                "endLine": 116,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0013-4da60f488cd4.md",
+                "sourceSha256": "6a84c914356edcb884b8f7aa03cea4bd46c40dd3d03677f9fc7689e886bfcad9",
+                "byteStart": 0,
+                "byteEnd": 15325,
+                "totalBytes": 15325,
+                "startLine": 1,
+                "endLine": 203,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0014-2ee06a6b258d.md",
+                "sourceSha256": "afd72bfb9053334171e03dbdf0e932ed2d838dd043f66d7d1907468831aa9cff",
+                "byteStart": 0,
+                "byteEnd": 7549,
+                "totalBytes": 15744,
+                "startLine": 1,
+                "endLine": 112,
+                "startsMidLine": false,
+                "endsMidLine": true,
+                "sourceComplete": false
+              }
+            ]
+          },
+          {
+            "page": 1,
+            "toolOutputBytes": 150001,
+            "toolSeconds": 0.161,
+            "stdoutSha256": "3fe61a9ede9c3dd8a1d503e386c6dfe97ff2238cb5c91dc490f56e44aa2c9049",
+            "pageSha256": "bbf21ded5ee1541a8c554494425ced86b7187d52c1f0674dc8356a750ee59624",
+            "hasMore": true,
+            "deliveryComplete": false,
+            "fragmentCount": 12,
+            "fragments": [
+              {
+                "path": "sessions/0014-2ee06a6b258d.md",
+                "sourceSha256": "afd72bfb9053334171e03dbdf0e932ed2d838dd043f66d7d1907468831aa9cff",
+                "byteStart": 7549,
+                "byteEnd": 15744,
+                "totalBytes": 15744,
+                "startLine": 112,
+                "endLine": 241,
+                "startsMidLine": true,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0015-b906b6c52cdc.md",
+                "sourceSha256": "621cefe92b1b3b644b2f4acde09294e092528605087468f55bce2905a05c3190",
+                "byteStart": 0,
+                "byteEnd": 7521,
+                "totalBytes": 7521,
+                "startLine": 1,
+                "endLine": 147,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0016-28c7c28a696c.md",
+                "sourceSha256": "200b716d8bb3e41c1c9c9cbba23b09167ec71258825e5327703dd1cc619357b0",
+                "byteStart": 0,
+                "byteEnd": 9245,
+                "totalBytes": 9245,
+                "startLine": 1,
+                "endLine": 111,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0017-529a93a6c02c.md",
+                "sourceSha256": "943a025337613ddea64d8a9d80add44a3f9c30137d45e875c3e7a4cb12612229",
+                "byteStart": 0,
+                "byteEnd": 10272,
+                "totalBytes": 10272,
+                "startLine": 1,
+                "endLine": 118,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0018-49866a73de31.md",
+                "sourceSha256": "319d659141df38b7ef8d9fe570542d44652be6b27e94400bd23d31fb739967b1",
+                "byteStart": 0,
+                "byteEnd": 8274,
+                "totalBytes": 8274,
+                "startLine": 1,
+                "endLine": 77,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0019-6db6226a1dfd.md",
+                "sourceSha256": "442e4c58177b4d393d8033619d60b166756345c4819b156acc56a93d6a333230",
+                "byteStart": 0,
+                "byteEnd": 13437,
+                "totalBytes": 13437,
+                "startLine": 1,
+                "endLine": 159,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0020-dc1afb7a6dc4.md",
+                "sourceSha256": "8b9539e43ad374f7c51e52d83342b86031081001d0d6111a79feeec9f50cb20d",
+                "byteStart": 0,
+                "byteEnd": 10324,
+                "totalBytes": 10324,
+                "startLine": 1,
+                "endLine": 122,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0021-a278fb55032f.md",
+                "sourceSha256": "f65b32fa314aacb70d8d532de5f18355a6dea51822821a7173394534c8f5356c",
+                "byteStart": 0,
+                "byteEnd": 15222,
+                "totalBytes": 15222,
+                "startLine": 1,
+                "endLine": 232,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0022-ca6d95c69c07.md",
+                "sourceSha256": "eece07687ca923b4e1cf732073ae564cb65dcf9a09c5f6197a51a3f377622e9d",
+                "byteStart": 0,
+                "byteEnd": 12638,
+                "totalBytes": 12638,
+                "startLine": 1,
+                "endLine": 154,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0023-77032979a859.md",
+                "sourceSha256": "ffd54ccb4b61cbad4f6beede91b817e713e59c4f5bffbb4d2212b4196be8d095",
+                "byteStart": 0,
+                "byteEnd": 22352,
+                "totalBytes": 22352,
+                "startLine": 1,
+                "endLine": 327,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0024-9a9a8f6ea0f4.md",
+                "sourceSha256": "54c54f29896e51892eea5c89a074c5805fe33519fdd33b9a88daed24c7f1dd6f",
+                "byteStart": 0,
+                "byteEnd": 16647,
+                "totalBytes": 16647,
+                "startLine": 1,
+                "endLine": 241,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0025-863b136acd67.md",
+                "sourceSha256": "b1c36cf7350aaa6c2947dd3fbbc8e122f4b1cf5b318de41a9de485cf0f6fcebe",
+                "byteStart": 0,
+                "byteEnd": 9974,
+                "totalBytes": 16108,
+                "startLine": 1,
+                "endLine": 131,
+                "startsMidLine": false,
+                "endsMidLine": true,
+                "sourceComplete": false
+              }
+            ]
+          },
+          {
+            "page": 2,
+            "toolOutputBytes": 150001,
+            "toolSeconds": 0.165,
+            "stdoutSha256": "d5e16c4e6947ea6d212d9d5ff49564ac09f2f4097036f21b85e4c912f6ffbe1d",
+            "pageSha256": "6cbe12a9fdaae262fc6b674bfdf4507180f48ccead3e81ed94ed3f7b0f81c0ef",
+            "hasMore": true,
+            "deliveryComplete": false,
+            "fragmentCount": 20,
+            "fragments": [
+              {
+                "path": "sessions/0025-863b136acd67.md",
+                "sourceSha256": "b1c36cf7350aaa6c2947dd3fbbc8e122f4b1cf5b318de41a9de485cf0f6fcebe",
+                "byteStart": 9974,
+                "byteEnd": 16108,
+                "totalBytes": 16108,
+                "startLine": 131,
+                "endLine": 206,
+                "startsMidLine": true,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0026-5098f0227e26.md",
+                "sourceSha256": "b58c9b26e76cd196f02672942a4a1ad104ab62aba6f3da4dcd91cbe9fb918bf3",
+                "byteStart": 0,
+                "byteEnd": 2165,
+                "totalBytes": 2165,
+                "startLine": 1,
+                "endLine": 26,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0027-a80bec8693d7.md",
+                "sourceSha256": "a857ce36f743759c782bf8943b185a403648d2008977dbe70eb795dbba215dc0",
+                "byteStart": 0,
+                "byteEnd": 4404,
+                "totalBytes": 4404,
+                "startLine": 1,
+                "endLine": 54,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0028-cc5d3814b9af.md",
+                "sourceSha256": "4b5ea09fe9b660cec600fe43774c4250aa6d2d5dc0fdaafba0c57a90c1ec0a85",
+                "byteStart": 0,
+                "byteEnd": 14285,
+                "totalBytes": 14285,
+                "startLine": 1,
+                "endLine": 147,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0029-56b047332b29.md",
+                "sourceSha256": "d1394aaa2033998c4f9efa8ee64c5d18fe179dae8c644d2e7c276a1f9c9714ba",
+                "byteStart": 0,
+                "byteEnd": 13303,
+                "totalBytes": 13303,
+                "startLine": 1,
+                "endLine": 175,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0030-3abef286a4a9.md",
+                "sourceSha256": "40c5957856c824e8bb1a78c05a2be2be2254ac082020a38431327e2afa13f7ce",
+                "byteStart": 0,
+                "byteEnd": 3719,
+                "totalBytes": 3719,
+                "startLine": 1,
+                "endLine": 58,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0031-38799ee73189.md",
+                "sourceSha256": "9545d1660f9676210510c48a0a0605b6846df2ed7446164ce0b7b00008fdfdf6",
+                "byteStart": 0,
+                "byteEnd": 10861,
+                "totalBytes": 10861,
+                "startLine": 1,
+                "endLine": 109,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0032-39ecaf77cdb7.md",
+                "sourceSha256": "ac48e6a227e6c85e24a0ccd9a11e14bd06b85a75e24ec14d4d2690c893fbc88d",
+                "byteStart": 0,
+                "byteEnd": 15848,
+                "totalBytes": 15848,
+                "startLine": 1,
+                "endLine": 167,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0033-7483f3d33de2.md",
+                "sourceSha256": "dd3a1b5f6432b5e4311cb4a868e8814d18d73ecc986c6c7f954695e947d57cf5",
+                "byteStart": 0,
+                "byteEnd": 2166,
+                "totalBytes": 2166,
+                "startLine": 1,
+                "endLine": 42,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0034-2e48efeb8ad1.md",
+                "sourceSha256": "08df89309a62050e3712afda1f657d78ae9a8a1d010e321422aa286bae404d52",
+                "byteStart": 0,
+                "byteEnd": 4192,
+                "totalBytes": 4192,
+                "startLine": 1,
+                "endLine": 52,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0035-dfff16a71d08.md",
+                "sourceSha256": "89452cfed2540967205ece07975fb445706719a59a7c46cd15ac48ee5bee0789",
+                "byteStart": 0,
+                "byteEnd": 6351,
+                "totalBytes": 6351,
+                "startLine": 1,
+                "endLine": 74,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0036-4d9f14184917.md",
+                "sourceSha256": "17c5b469b170d19e2805dc6f3422ffcab6b89e265fa80b1aa39f91b6cc4b5700",
+                "byteStart": 0,
+                "byteEnd": 1821,
+                "totalBytes": 1821,
+                "startLine": 1,
+                "endLine": 25,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0037-881fdd868746.md",
+                "sourceSha256": "5119a34aaa0f4f3c070bf41f4675474398f0fe14b36021a3060c46cce87fb2dc",
+                "byteStart": 0,
+                "byteEnd": 11131,
+                "totalBytes": 11131,
+                "startLine": 1,
+                "endLine": 97,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0038-e070111f44b2.md",
+                "sourceSha256": "5538222e61681932515e71f4c47f5a16604f2c13b549644d9dc42286ac05055c",
+                "byteStart": 0,
+                "byteEnd": 16736,
+                "totalBytes": 16736,
+                "startLine": 1,
+                "endLine": 205,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0039-466a64e63448.md",
+                "sourceSha256": "7641b8925a284b55a6e69c86f28c7720baa5609991f4fdf679630e1e6516a69f",
+                "byteStart": 0,
+                "byteEnd": 5029,
+                "totalBytes": 5029,
+                "startLine": 1,
+                "endLine": 58,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0040-26bbf52975d3.md",
+                "sourceSha256": "cc483843f1277b2ba1f4a79af494a2f07d9aaa39a0f5951317dd150df8d9bf1b",
+                "byteStart": 0,
+                "byteEnd": 6825,
+                "totalBytes": 6825,
+                "startLine": 1,
+                "endLine": 15,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0041-6437231d4c14.md",
+                "sourceSha256": "d53c529f893176ff4c15d4ab1c35682c79ca147152a1b8a1ab499333177eeff8",
+                "byteStart": 0,
+                "byteEnd": 8126,
+                "totalBytes": 8126,
+                "startLine": 1,
+                "endLine": 176,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0042-1bfdd852578f.md",
+                "sourceSha256": "e314b0525be82b83f590357d066a84e0f9983e3fc8791bd0730784826cad4af6",
+                "byteStart": 0,
+                "byteEnd": 1665,
+                "totalBytes": 1665,
+                "startLine": 1,
+                "endLine": 20,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0043-001c98e9b10f.md",
+                "sourceSha256": "0bb3d1712107694209c74478aec6c0f89ae42a6ad7f071e5bc2146ef7ca02630",
+                "byteStart": 0,
+                "byteEnd": 4036,
+                "totalBytes": 4036,
+                "startLine": 1,
+                "endLine": 70,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0044-eb04ad566548.md",
+                "sourceSha256": "db5963476158fde85d2c7184d8100da96fe0ce7687c1439bd30b3328b0617198",
+                "byteStart": 0,
+                "byteEnd": 3747,
+                "totalBytes": 5043,
+                "startLine": 1,
+                "endLine": 51,
+                "startsMidLine": false,
+                "endsMidLine": true,
+                "sourceComplete": false
+              }
+            ]
+          },
+          {
+            "page": 3,
+            "toolOutputBytes": 79277,
+            "toolSeconds": 0.118,
+            "stdoutSha256": "65bf8696620f6766571163a902b07c073fb49061a7f7d07f4abda4558a3b8c65",
+            "pageSha256": "784c32af4907ebcf4fc4ef108dd1284b78f55cdaff13e8645b44d79694cd980f",
+            "hasMore": false,
+            "deliveryComplete": true,
+            "fragmentCount": 9,
+            "fragments": [
+              {
+                "path": "sessions/0044-eb04ad566548.md",
+                "sourceSha256": "db5963476158fde85d2c7184d8100da96fe0ce7687c1439bd30b3328b0617198",
+                "byteStart": 3747,
+                "byteEnd": 5043,
+                "totalBytes": 5043,
+                "startLine": 51,
+                "endLine": 64,
+                "startsMidLine": true,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0045-d08a4383acb0.md",
+                "sourceSha256": "1c4311e27151fd9ee9b0a21760ee433d561e7d4413734766931bf214a0aadccf",
+                "byteStart": 0,
+                "byteEnd": 9498,
+                "totalBytes": 9498,
+                "startLine": 1,
+                "endLine": 136,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0046-09c956375663.md",
+                "sourceSha256": "795cbf0d1a445aee6fe11229f5b180988c9a059cc3430cd6fb4db53770d15c6a",
+                "byteStart": 0,
+                "byteEnd": 132,
+                "totalBytes": 132,
+                "startLine": 1,
+                "endLine": 8,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0047-0e6a15efe02e.md",
+                "sourceSha256": "3693859447d7d5083c382467f56488fcd0d3cd2692ef8468a195d047d4d360c6",
+                "byteStart": 0,
+                "byteEnd": 10376,
+                "totalBytes": 10376,
+                "startLine": 1,
+                "endLine": 159,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0048-65063946a1f0.md",
+                "sourceSha256": "bd0d9ee9ed85bb5bd58b68d6f15b14d83bf051c34f8035f3b0a2cc931f056200",
+                "byteStart": 0,
+                "byteEnd": 18989,
+                "totalBytes": 18989,
+                "startLine": 1,
+                "endLine": 245,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0049-bf4bae59ff65.md",
+                "sourceSha256": "5bf75fddb6e6a48f0b9ddf842ad5abeff28bd56a4262aa45d511574126c7e115",
+                "byteStart": 0,
+                "byteEnd": 10137,
+                "totalBytes": 10137,
+                "startLine": 1,
+                "endLine": 116,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0050-85dd2d4c86c1.md",
+                "sourceSha256": "c71027982a9dd03d1324cd84c95e4d06e0145db1b0179199b970aa0f06d0c6e3",
+                "byteStart": 0,
+                "byteEnd": 417,
+                "totalBytes": 417,
+                "startLine": 1,
+                "endLine": 12,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0051-62c2f2b0f154.md",
+                "sourceSha256": "b0c73638e0c1da06eb7eeb21910a25c81390deff52607c8b2b783d7e4c120a1d",
+                "byteStart": 0,
+                "byteEnd": 13353,
+                "totalBytes": 13353,
+                "startLine": 1,
+                "endLine": 146,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              },
+              {
+                "path": "sessions/0052-817273274698.md",
+                "sourceSha256": "49cee491172f60aeb40112d5043ee73d22c8d2ce6d58d2ef2a4f4412662ef899",
+                "byteStart": 0,
+                "byteEnd": 11318,
+                "totalBytes": 11318,
+                "startLine": 1,
+                "endLine": 199,
+                "startsMidLine": false,
+                "endsMidLine": false,
+                "sourceComplete": true
+              }
+            ]
+          }
+        ],
+        "plannedMapCalls": 2,
+        "mappingComplete": true,
+        "unmappedSources": [],
+        "mappingCoverage": [
+          {
+            "batch": 0,
+            "path": "sessions/0001-37a5a2cfffcb.md",
+            "sourceSha256": "ce396411381bbbe305fb8674ea4ba6b21d9f1dc5bf0a3d677129fe4514e9115e",
+            "byteStart": 0,
+            "byteEnd": 10453,
+            "startLine": 1,
+            "endLine": 120,
+            "pageRefs": [
+              0
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0002-6f6a948ab9c0.md",
+            "sourceSha256": "ebd10c3f5984470b48ec88fc55cc57350f614e868fb8c806feb7d5b2cfd094bd",
+            "byteStart": 0,
+            "byteEnd": 17145,
+            "startLine": 1,
+            "endLine": 232,
+            "pageRefs": [
+              0
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0003-00cad4bf99ce.md",
+            "sourceSha256": "ee4f69acf8e7d5273cdea0b4849ee7728ab69dcd11619176d9b2b4762dd831e2",
+            "byteStart": 0,
+            "byteEnd": 4765,
+            "startLine": 1,
+            "endLine": 48,
+            "pageRefs": [
+              0
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0004-361b171214c6.md",
+            "sourceSha256": "756b39e42fbefc01fbcec7ca866cc38f5b5b2eb7a93b8a8ffa5762ee3e534e39",
+            "byteStart": 0,
+            "byteEnd": 9410,
+            "startLine": 1,
+            "endLine": 181,
+            "pageRefs": [
+              0
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0005-b2f18defe91b.md",
+            "sourceSha256": "1c91765c7c5b76809c62cc6c40a88d47aa1b526b66525644d4c5c27ee86cb520",
+            "byteStart": 0,
+            "byteEnd": 4934,
+            "startLine": 1,
+            "endLine": 68,
+            "pageRefs": [
+              0
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0006-5053c57c29fc.md",
+            "sourceSha256": "c992002b44ec1534d6d6d932d3a70c7fae7ddf895e589546d666a464a1b5b2b4",
+            "byteStart": 0,
+            "byteEnd": 11653,
+            "startLine": 1,
+            "endLine": 143,
+            "pageRefs": [
+              0
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0007-730ea6f80239.md",
+            "sourceSha256": "7138f30c61b81a59cf62c0a7b96a94561b10859f20ecca3cc29036c6ef1ecc79",
+            "byteStart": 0,
+            "byteEnd": 17822,
+            "startLine": 1,
+            "endLine": 284,
+            "pageRefs": [
+              0
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0008-6733bdd6f107.md",
+            "sourceSha256": "cc455d5d1a230c9329e66275266ffd64dc8087154f1aa9e757a51b51efd241e2",
+            "byteStart": 0,
+            "byteEnd": 12991,
+            "startLine": 1,
+            "endLine": 201,
+            "pageRefs": [
+              0
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0009-ac40d8037e42.md",
+            "sourceSha256": "323e5d84b17007ee590fc991a86d4cb44b74e91bb137bf1b401094e66621cafa",
+            "byteStart": 0,
+            "byteEnd": 8680,
+            "startLine": 1,
+            "endLine": 102,
+            "pageRefs": [
+              0
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0010-897d03f62884.md",
+            "sourceSha256": "03f8bacd6aaa91dbe3400057a33c180c6e5054f1580f7856e5af82cfd7572368",
+            "byteStart": 0,
+            "byteEnd": 6756,
+            "startLine": 1,
+            "endLine": 92,
+            "pageRefs": [
+              0
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0011-ea6d127d16d3.md",
+            "sourceSha256": "9d9c0cb86c310f2144daff23db5b2d0cc33b316a1e4cb85c48cc1571acec3ac2",
+            "byteStart": 0,
+            "byteEnd": 6465,
+            "startLine": 1,
+            "endLine": 70,
+            "pageRefs": [
+              0
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0012-61db214a6dd2.md",
+            "sourceSha256": "20bf01db56215b1420433fc5d796b3fa86e26c1f0f5f712a9d2dc4f6aa9dcbab",
+            "byteStart": 0,
+            "byteEnd": 9963,
+            "startLine": 1,
+            "endLine": 116,
+            "pageRefs": [
+              0
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0013-4da60f488cd4.md",
+            "sourceSha256": "6a84c914356edcb884b8f7aa03cea4bd46c40dd3d03677f9fc7689e886bfcad9",
+            "byteStart": 0,
+            "byteEnd": 15325,
+            "startLine": 1,
+            "endLine": 203,
+            "pageRefs": [
+              0
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0014-2ee06a6b258d.md",
+            "sourceSha256": "afd72bfb9053334171e03dbdf0e932ed2d838dd043f66d7d1907468831aa9cff",
+            "byteStart": 0,
+            "byteEnd": 15744,
+            "startLine": 1,
+            "endLine": 241,
+            "pageRefs": [
+              0,
+              1
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0015-b906b6c52cdc.md",
+            "sourceSha256": "621cefe92b1b3b644b2f4acde09294e092528605087468f55bce2905a05c3190",
+            "byteStart": 0,
+            "byteEnd": 7521,
+            "startLine": 1,
+            "endLine": 147,
+            "pageRefs": [
+              1
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0016-28c7c28a696c.md",
+            "sourceSha256": "200b716d8bb3e41c1c9c9cbba23b09167ec71258825e5327703dd1cc619357b0",
+            "byteStart": 0,
+            "byteEnd": 9245,
+            "startLine": 1,
+            "endLine": 111,
+            "pageRefs": [
+              1
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0017-529a93a6c02c.md",
+            "sourceSha256": "943a025337613ddea64d8a9d80add44a3f9c30137d45e875c3e7a4cb12612229",
+            "byteStart": 0,
+            "byteEnd": 10272,
+            "startLine": 1,
+            "endLine": 118,
+            "pageRefs": [
+              1
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0018-49866a73de31.md",
+            "sourceSha256": "319d659141df38b7ef8d9fe570542d44652be6b27e94400bd23d31fb739967b1",
+            "byteStart": 0,
+            "byteEnd": 8274,
+            "startLine": 1,
+            "endLine": 77,
+            "pageRefs": [
+              1
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0019-6db6226a1dfd.md",
+            "sourceSha256": "442e4c58177b4d393d8033619d60b166756345c4819b156acc56a93d6a333230",
+            "byteStart": 0,
+            "byteEnd": 13437,
+            "startLine": 1,
+            "endLine": 159,
+            "pageRefs": [
+              1
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0020-dc1afb7a6dc4.md",
+            "sourceSha256": "8b9539e43ad374f7c51e52d83342b86031081001d0d6111a79feeec9f50cb20d",
+            "byteStart": 0,
+            "byteEnd": 10324,
+            "startLine": 1,
+            "endLine": 122,
+            "pageRefs": [
+              1
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0021-a278fb55032f.md",
+            "sourceSha256": "f65b32fa314aacb70d8d532de5f18355a6dea51822821a7173394534c8f5356c",
+            "byteStart": 0,
+            "byteEnd": 15222,
+            "startLine": 1,
+            "endLine": 232,
+            "pageRefs": [
+              1
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0022-ca6d95c69c07.md",
+            "sourceSha256": "eece07687ca923b4e1cf732073ae564cb65dcf9a09c5f6197a51a3f377622e9d",
+            "byteStart": 0,
+            "byteEnd": 12638,
+            "startLine": 1,
+            "endLine": 154,
+            "pageRefs": [
+              1
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0023-77032979a859.md",
+            "sourceSha256": "ffd54ccb4b61cbad4f6beede91b817e713e59c4f5bffbb4d2212b4196be8d095",
+            "byteStart": 0,
+            "byteEnd": 22352,
+            "startLine": 1,
+            "endLine": 327,
+            "pageRefs": [
+              1
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0024-9a9a8f6ea0f4.md",
+            "sourceSha256": "54c54f29896e51892eea5c89a074c5805fe33519fdd33b9a88daed24c7f1dd6f",
+            "byteStart": 0,
+            "byteEnd": 16647,
+            "startLine": 1,
+            "endLine": 241,
+            "pageRefs": [
+              1
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 0,
+            "path": "sessions/0025-863b136acd67.md",
+            "sourceSha256": "b1c36cf7350aaa6c2947dd3fbbc8e122f4b1cf5b318de41a9de485cf0f6fcebe",
+            "byteStart": 0,
+            "byteEnd": 3732,
+            "startLine": 1,
+            "endLine": 59,
+            "pageRefs": [
+              1
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0025-863b136acd67.md",
+            "sourceSha256": "b1c36cf7350aaa6c2947dd3fbbc8e122f4b1cf5b318de41a9de485cf0f6fcebe",
+            "byteStart": 3732,
+            "byteEnd": 16108,
+            "startLine": 59,
+            "endLine": 206,
+            "pageRefs": [
+              1,
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0026-5098f0227e26.md",
+            "sourceSha256": "b58c9b26e76cd196f02672942a4a1ad104ab62aba6f3da4dcd91cbe9fb918bf3",
+            "byteStart": 0,
+            "byteEnd": 2165,
+            "startLine": 1,
+            "endLine": 26,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0027-a80bec8693d7.md",
+            "sourceSha256": "a857ce36f743759c782bf8943b185a403648d2008977dbe70eb795dbba215dc0",
+            "byteStart": 0,
+            "byteEnd": 4404,
+            "startLine": 1,
+            "endLine": 54,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0028-cc5d3814b9af.md",
+            "sourceSha256": "4b5ea09fe9b660cec600fe43774c4250aa6d2d5dc0fdaafba0c57a90c1ec0a85",
+            "byteStart": 0,
+            "byteEnd": 14285,
+            "startLine": 1,
+            "endLine": 147,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0029-56b047332b29.md",
+            "sourceSha256": "d1394aaa2033998c4f9efa8ee64c5d18fe179dae8c644d2e7c276a1f9c9714ba",
+            "byteStart": 0,
+            "byteEnd": 13303,
+            "startLine": 1,
+            "endLine": 175,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0030-3abef286a4a9.md",
+            "sourceSha256": "40c5957856c824e8bb1a78c05a2be2be2254ac082020a38431327e2afa13f7ce",
+            "byteStart": 0,
+            "byteEnd": 3719,
+            "startLine": 1,
+            "endLine": 58,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0031-38799ee73189.md",
+            "sourceSha256": "9545d1660f9676210510c48a0a0605b6846df2ed7446164ce0b7b00008fdfdf6",
+            "byteStart": 0,
+            "byteEnd": 10861,
+            "startLine": 1,
+            "endLine": 109,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0032-39ecaf77cdb7.md",
+            "sourceSha256": "ac48e6a227e6c85e24a0ccd9a11e14bd06b85a75e24ec14d4d2690c893fbc88d",
+            "byteStart": 0,
+            "byteEnd": 15848,
+            "startLine": 1,
+            "endLine": 167,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0033-7483f3d33de2.md",
+            "sourceSha256": "dd3a1b5f6432b5e4311cb4a868e8814d18d73ecc986c6c7f954695e947d57cf5",
+            "byteStart": 0,
+            "byteEnd": 2166,
+            "startLine": 1,
+            "endLine": 42,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0034-2e48efeb8ad1.md",
+            "sourceSha256": "08df89309a62050e3712afda1f657d78ae9a8a1d010e321422aa286bae404d52",
+            "byteStart": 0,
+            "byteEnd": 4192,
+            "startLine": 1,
+            "endLine": 52,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0035-dfff16a71d08.md",
+            "sourceSha256": "89452cfed2540967205ece07975fb445706719a59a7c46cd15ac48ee5bee0789",
+            "byteStart": 0,
+            "byteEnd": 6351,
+            "startLine": 1,
+            "endLine": 74,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0036-4d9f14184917.md",
+            "sourceSha256": "17c5b469b170d19e2805dc6f3422ffcab6b89e265fa80b1aa39f91b6cc4b5700",
+            "byteStart": 0,
+            "byteEnd": 1821,
+            "startLine": 1,
+            "endLine": 25,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0037-881fdd868746.md",
+            "sourceSha256": "5119a34aaa0f4f3c070bf41f4675474398f0fe14b36021a3060c46cce87fb2dc",
+            "byteStart": 0,
+            "byteEnd": 11131,
+            "startLine": 1,
+            "endLine": 97,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0038-e070111f44b2.md",
+            "sourceSha256": "5538222e61681932515e71f4c47f5a16604f2c13b549644d9dc42286ac05055c",
+            "byteStart": 0,
+            "byteEnd": 16736,
+            "startLine": 1,
+            "endLine": 205,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0039-466a64e63448.md",
+            "sourceSha256": "7641b8925a284b55a6e69c86f28c7720baa5609991f4fdf679630e1e6516a69f",
+            "byteStart": 0,
+            "byteEnd": 5029,
+            "startLine": 1,
+            "endLine": 58,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0040-26bbf52975d3.md",
+            "sourceSha256": "cc483843f1277b2ba1f4a79af494a2f07d9aaa39a0f5951317dd150df8d9bf1b",
+            "byteStart": 0,
+            "byteEnd": 6825,
+            "startLine": 1,
+            "endLine": 15,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0041-6437231d4c14.md",
+            "sourceSha256": "d53c529f893176ff4c15d4ab1c35682c79ca147152a1b8a1ab499333177eeff8",
+            "byteStart": 0,
+            "byteEnd": 8126,
+            "startLine": 1,
+            "endLine": 176,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0042-1bfdd852578f.md",
+            "sourceSha256": "e314b0525be82b83f590357d066a84e0f9983e3fc8791bd0730784826cad4af6",
+            "byteStart": 0,
+            "byteEnd": 1665,
+            "startLine": 1,
+            "endLine": 20,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0043-001c98e9b10f.md",
+            "sourceSha256": "0bb3d1712107694209c74478aec6c0f89ae42a6ad7f071e5bc2146ef7ca02630",
+            "byteStart": 0,
+            "byteEnd": 4036,
+            "startLine": 1,
+            "endLine": 70,
+            "pageRefs": [
+              2
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0044-eb04ad566548.md",
+            "sourceSha256": "db5963476158fde85d2c7184d8100da96fe0ce7687c1439bd30b3328b0617198",
+            "byteStart": 0,
+            "byteEnd": 5043,
+            "startLine": 1,
+            "endLine": 64,
+            "pageRefs": [
+              2,
+              3
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0045-d08a4383acb0.md",
+            "sourceSha256": "1c4311e27151fd9ee9b0a21760ee433d561e7d4413734766931bf214a0aadccf",
+            "byteStart": 0,
+            "byteEnd": 9498,
+            "startLine": 1,
+            "endLine": 136,
+            "pageRefs": [
+              3
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0046-09c956375663.md",
+            "sourceSha256": "795cbf0d1a445aee6fe11229f5b180988c9a059cc3430cd6fb4db53770d15c6a",
+            "byteStart": 0,
+            "byteEnd": 132,
+            "startLine": 1,
+            "endLine": 8,
+            "pageRefs": [
+              3
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0047-0e6a15efe02e.md",
+            "sourceSha256": "3693859447d7d5083c382467f56488fcd0d3cd2692ef8468a195d047d4d360c6",
+            "byteStart": 0,
+            "byteEnd": 10376,
+            "startLine": 1,
+            "endLine": 159,
+            "pageRefs": [
+              3
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0048-65063946a1f0.md",
+            "sourceSha256": "bd0d9ee9ed85bb5bd58b68d6f15b14d83bf051c34f8035f3b0a2cc931f056200",
+            "byteStart": 0,
+            "byteEnd": 18989,
+            "startLine": 1,
+            "endLine": 245,
+            "pageRefs": [
+              3
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0049-bf4bae59ff65.md",
+            "sourceSha256": "5bf75fddb6e6a48f0b9ddf842ad5abeff28bd56a4262aa45d511574126c7e115",
+            "byteStart": 0,
+            "byteEnd": 10137,
+            "startLine": 1,
+            "endLine": 116,
+            "pageRefs": [
+              3
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0050-85dd2d4c86c1.md",
+            "sourceSha256": "c71027982a9dd03d1324cd84c95e4d06e0145db1b0179199b970aa0f06d0c6e3",
+            "byteStart": 0,
+            "byteEnd": 417,
+            "startLine": 1,
+            "endLine": 12,
+            "pageRefs": [
+              3
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0051-62c2f2b0f154.md",
+            "sourceSha256": "b0c73638e0c1da06eb7eeb21910a25c81390deff52607c8b2b783d7e4c120a1d",
+            "byteStart": 0,
+            "byteEnd": 13353,
+            "startLine": 1,
+            "endLine": 146,
+            "pageRefs": [
+              3
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "path": "sessions/0052-817273274698.md",
+            "sourceSha256": "49cee491172f60aeb40112d5043ee73d22c8d2ce6d58d2ef2a4f4412662ef899",
+            "byteStart": 0,
+            "byteEnd": 11318,
+            "startLine": 1,
+            "endLine": 199,
+            "pageRefs": [
+              3
+            ],
+            "mapped": true
+          }
+        ],
+        "mapBatches": [
+          {
+            "batch": 0,
+            "promptBytes": 299885,
+            "fragmentCount": 25,
+            "ranges": [
+              {
+                "path": "sessions/0001-37a5a2cfffcb.md",
+                "sourceSha256": "ce396411381bbbe305fb8674ea4ba6b21d9f1dc5bf0a3d677129fe4514e9115e",
+                "byteStart": 0,
+                "byteEnd": 10453,
+                "startLine": 1,
+                "endLine": 120,
+                "pageRefs": [
+                  0
+                ]
+              },
+              {
+                "path": "sessions/0002-6f6a948ab9c0.md",
+                "sourceSha256": "ebd10c3f5984470b48ec88fc55cc57350f614e868fb8c806feb7d5b2cfd094bd",
+                "byteStart": 0,
+                "byteEnd": 17145,
+                "startLine": 1,
+                "endLine": 232,
+                "pageRefs": [
+                  0
+                ]
+              },
+              {
+                "path": "sessions/0003-00cad4bf99ce.md",
+                "sourceSha256": "ee4f69acf8e7d5273cdea0b4849ee7728ab69dcd11619176d9b2b4762dd831e2",
+                "byteStart": 0,
+                "byteEnd": 4765,
+                "startLine": 1,
+                "endLine": 48,
+                "pageRefs": [
+                  0
+                ]
+              },
+              {
+                "path": "sessions/0004-361b171214c6.md",
+                "sourceSha256": "756b39e42fbefc01fbcec7ca866cc38f5b5b2eb7a93b8a8ffa5762ee3e534e39",
+                "byteStart": 0,
+                "byteEnd": 9410,
+                "startLine": 1,
+                "endLine": 181,
+                "pageRefs": [
+                  0
+                ]
+              },
+              {
+                "path": "sessions/0005-b2f18defe91b.md",
+                "sourceSha256": "1c91765c7c5b76809c62cc6c40a88d47aa1b526b66525644d4c5c27ee86cb520",
+                "byteStart": 0,
+                "byteEnd": 4934,
+                "startLine": 1,
+                "endLine": 68,
+                "pageRefs": [
+                  0
+                ]
+              },
+              {
+                "path": "sessions/0006-5053c57c29fc.md",
+                "sourceSha256": "c992002b44ec1534d6d6d932d3a70c7fae7ddf895e589546d666a464a1b5b2b4",
+                "byteStart": 0,
+                "byteEnd": 11653,
+                "startLine": 1,
+                "endLine": 143,
+                "pageRefs": [
+                  0
+                ]
+              },
+              {
+                "path": "sessions/0007-730ea6f80239.md",
+                "sourceSha256": "7138f30c61b81a59cf62c0a7b96a94561b10859f20ecca3cc29036c6ef1ecc79",
+                "byteStart": 0,
+                "byteEnd": 17822,
+                "startLine": 1,
+                "endLine": 284,
+                "pageRefs": [
+                  0
+                ]
+              },
+              {
+                "path": "sessions/0008-6733bdd6f107.md",
+                "sourceSha256": "cc455d5d1a230c9329e66275266ffd64dc8087154f1aa9e757a51b51efd241e2",
+                "byteStart": 0,
+                "byteEnd": 12991,
+                "startLine": 1,
+                "endLine": 201,
+                "pageRefs": [
+                  0
+                ]
+              },
+              {
+                "path": "sessions/0009-ac40d8037e42.md",
+                "sourceSha256": "323e5d84b17007ee590fc991a86d4cb44b74e91bb137bf1b401094e66621cafa",
+                "byteStart": 0,
+                "byteEnd": 8680,
+                "startLine": 1,
+                "endLine": 102,
+                "pageRefs": [
+                  0
+                ]
+              },
+              {
+                "path": "sessions/0010-897d03f62884.md",
+                "sourceSha256": "03f8bacd6aaa91dbe3400057a33c180c6e5054f1580f7856e5af82cfd7572368",
+                "byteStart": 0,
+                "byteEnd": 6756,
+                "startLine": 1,
+                "endLine": 92,
+                "pageRefs": [
+                  0
+                ]
+              },
+              {
+                "path": "sessions/0011-ea6d127d16d3.md",
+                "sourceSha256": "9d9c0cb86c310f2144daff23db5b2d0cc33b316a1e4cb85c48cc1571acec3ac2",
+                "byteStart": 0,
+                "byteEnd": 6465,
+                "startLine": 1,
+                "endLine": 70,
+                "pageRefs": [
+                  0
+                ]
+              },
+              {
+                "path": "sessions/0012-61db214a6dd2.md",
+                "sourceSha256": "20bf01db56215b1420433fc5d796b3fa86e26c1f0f5f712a9d2dc4f6aa9dcbab",
+                "byteStart": 0,
+                "byteEnd": 9963,
+                "startLine": 1,
+                "endLine": 116,
+                "pageRefs": [
+                  0
+                ]
+              },
+              {
+                "path": "sessions/0013-4da60f488cd4.md",
+                "sourceSha256": "6a84c914356edcb884b8f7aa03cea4bd46c40dd3d03677f9fc7689e886bfcad9",
+                "byteStart": 0,
+                "byteEnd": 15325,
+                "startLine": 1,
+                "endLine": 203,
+                "pageRefs": [
+                  0
+                ]
+              },
+              {
+                "path": "sessions/0014-2ee06a6b258d.md",
+                "sourceSha256": "afd72bfb9053334171e03dbdf0e932ed2d838dd043f66d7d1907468831aa9cff",
+                "byteStart": 0,
+                "byteEnd": 15744,
+                "startLine": 1,
+                "endLine": 241,
+                "pageRefs": [
+                  0,
+                  1
+                ]
+              },
+              {
+                "path": "sessions/0015-b906b6c52cdc.md",
+                "sourceSha256": "621cefe92b1b3b644b2f4acde09294e092528605087468f55bce2905a05c3190",
+                "byteStart": 0,
+                "byteEnd": 7521,
+                "startLine": 1,
+                "endLine": 147,
+                "pageRefs": [
+                  1
+                ]
+              },
+              {
+                "path": "sessions/0016-28c7c28a696c.md",
+                "sourceSha256": "200b716d8bb3e41c1c9c9cbba23b09167ec71258825e5327703dd1cc619357b0",
+                "byteStart": 0,
+                "byteEnd": 9245,
+                "startLine": 1,
+                "endLine": 111,
+                "pageRefs": [
+                  1
+                ]
+              },
+              {
+                "path": "sessions/0017-529a93a6c02c.md",
+                "sourceSha256": "943a025337613ddea64d8a9d80add44a3f9c30137d45e875c3e7a4cb12612229",
+                "byteStart": 0,
+                "byteEnd": 10272,
+                "startLine": 1,
+                "endLine": 118,
+                "pageRefs": [
+                  1
+                ]
+              },
+              {
+                "path": "sessions/0018-49866a73de31.md",
+                "sourceSha256": "319d659141df38b7ef8d9fe570542d44652be6b27e94400bd23d31fb739967b1",
+                "byteStart": 0,
+                "byteEnd": 8274,
+                "startLine": 1,
+                "endLine": 77,
+                "pageRefs": [
+                  1
+                ]
+              },
+              {
+                "path": "sessions/0019-6db6226a1dfd.md",
+                "sourceSha256": "442e4c58177b4d393d8033619d60b166756345c4819b156acc56a93d6a333230",
+                "byteStart": 0,
+                "byteEnd": 13437,
+                "startLine": 1,
+                "endLine": 159,
+                "pageRefs": [
+                  1
+                ]
+              },
+              {
+                "path": "sessions/0020-dc1afb7a6dc4.md",
+                "sourceSha256": "8b9539e43ad374f7c51e52d83342b86031081001d0d6111a79feeec9f50cb20d",
+                "byteStart": 0,
+                "byteEnd": 10324,
+                "startLine": 1,
+                "endLine": 122,
+                "pageRefs": [
+                  1
+                ]
+              },
+              {
+                "path": "sessions/0021-a278fb55032f.md",
+                "sourceSha256": "f65b32fa314aacb70d8d532de5f18355a6dea51822821a7173394534c8f5356c",
+                "byteStart": 0,
+                "byteEnd": 15222,
+                "startLine": 1,
+                "endLine": 232,
+                "pageRefs": [
+                  1
+                ]
+              },
+              {
+                "path": "sessions/0022-ca6d95c69c07.md",
+                "sourceSha256": "eece07687ca923b4e1cf732073ae564cb65dcf9a09c5f6197a51a3f377622e9d",
+                "byteStart": 0,
+                "byteEnd": 12638,
+                "startLine": 1,
+                "endLine": 154,
+                "pageRefs": [
+                  1
+                ]
+              },
+              {
+                "path": "sessions/0023-77032979a859.md",
+                "sourceSha256": "ffd54ccb4b61cbad4f6beede91b817e713e59c4f5bffbb4d2212b4196be8d095",
+                "byteStart": 0,
+                "byteEnd": 22352,
+                "startLine": 1,
+                "endLine": 327,
+                "pageRefs": [
+                  1
+                ]
+              },
+              {
+                "path": "sessions/0024-9a9a8f6ea0f4.md",
+                "sourceSha256": "54c54f29896e51892eea5c89a074c5805fe33519fdd33b9a88daed24c7f1dd6f",
+                "byteStart": 0,
+                "byteEnd": 16647,
+                "startLine": 1,
+                "endLine": 241,
+                "pageRefs": [
+                  1
+                ]
+              },
+              {
+                "path": "sessions/0025-863b136acd67.md",
+                "sourceSha256": "b1c36cf7350aaa6c2947dd3fbbc8e122f4b1cf5b318de41a9de485cf0f6fcebe",
+                "byteStart": 0,
+                "byteEnd": 3732,
+                "startLine": 1,
+                "endLine": 59,
+                "pageRefs": [
+                  1
+                ]
+              }
+            ],
+            "mapped": true
+          },
+          {
+            "batch": 1,
+            "promptBytes": 241792,
+            "fragmentCount": 28,
+            "ranges": [
+              {
+                "path": "sessions/0025-863b136acd67.md",
+                "sourceSha256": "b1c36cf7350aaa6c2947dd3fbbc8e122f4b1cf5b318de41a9de485cf0f6fcebe",
+                "byteStart": 3732,
+                "byteEnd": 16108,
+                "startLine": 59,
+                "endLine": 206,
+                "pageRefs": [
+                  1,
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0026-5098f0227e26.md",
+                "sourceSha256": "b58c9b26e76cd196f02672942a4a1ad104ab62aba6f3da4dcd91cbe9fb918bf3",
+                "byteStart": 0,
+                "byteEnd": 2165,
+                "startLine": 1,
+                "endLine": 26,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0027-a80bec8693d7.md",
+                "sourceSha256": "a857ce36f743759c782bf8943b185a403648d2008977dbe70eb795dbba215dc0",
+                "byteStart": 0,
+                "byteEnd": 4404,
+                "startLine": 1,
+                "endLine": 54,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0028-cc5d3814b9af.md",
+                "sourceSha256": "4b5ea09fe9b660cec600fe43774c4250aa6d2d5dc0fdaafba0c57a90c1ec0a85",
+                "byteStart": 0,
+                "byteEnd": 14285,
+                "startLine": 1,
+                "endLine": 147,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0029-56b047332b29.md",
+                "sourceSha256": "d1394aaa2033998c4f9efa8ee64c5d18fe179dae8c644d2e7c276a1f9c9714ba",
+                "byteStart": 0,
+                "byteEnd": 13303,
+                "startLine": 1,
+                "endLine": 175,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0030-3abef286a4a9.md",
+                "sourceSha256": "40c5957856c824e8bb1a78c05a2be2be2254ac082020a38431327e2afa13f7ce",
+                "byteStart": 0,
+                "byteEnd": 3719,
+                "startLine": 1,
+                "endLine": 58,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0031-38799ee73189.md",
+                "sourceSha256": "9545d1660f9676210510c48a0a0605b6846df2ed7446164ce0b7b00008fdfdf6",
+                "byteStart": 0,
+                "byteEnd": 10861,
+                "startLine": 1,
+                "endLine": 109,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0032-39ecaf77cdb7.md",
+                "sourceSha256": "ac48e6a227e6c85e24a0ccd9a11e14bd06b85a75e24ec14d4d2690c893fbc88d",
+                "byteStart": 0,
+                "byteEnd": 15848,
+                "startLine": 1,
+                "endLine": 167,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0033-7483f3d33de2.md",
+                "sourceSha256": "dd3a1b5f6432b5e4311cb4a868e8814d18d73ecc986c6c7f954695e947d57cf5",
+                "byteStart": 0,
+                "byteEnd": 2166,
+                "startLine": 1,
+                "endLine": 42,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0034-2e48efeb8ad1.md",
+                "sourceSha256": "08df89309a62050e3712afda1f657d78ae9a8a1d010e321422aa286bae404d52",
+                "byteStart": 0,
+                "byteEnd": 4192,
+                "startLine": 1,
+                "endLine": 52,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0035-dfff16a71d08.md",
+                "sourceSha256": "89452cfed2540967205ece07975fb445706719a59a7c46cd15ac48ee5bee0789",
+                "byteStart": 0,
+                "byteEnd": 6351,
+                "startLine": 1,
+                "endLine": 74,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0036-4d9f14184917.md",
+                "sourceSha256": "17c5b469b170d19e2805dc6f3422ffcab6b89e265fa80b1aa39f91b6cc4b5700",
+                "byteStart": 0,
+                "byteEnd": 1821,
+                "startLine": 1,
+                "endLine": 25,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0037-881fdd868746.md",
+                "sourceSha256": "5119a34aaa0f4f3c070bf41f4675474398f0fe14b36021a3060c46cce87fb2dc",
+                "byteStart": 0,
+                "byteEnd": 11131,
+                "startLine": 1,
+                "endLine": 97,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0038-e070111f44b2.md",
+                "sourceSha256": "5538222e61681932515e71f4c47f5a16604f2c13b549644d9dc42286ac05055c",
+                "byteStart": 0,
+                "byteEnd": 16736,
+                "startLine": 1,
+                "endLine": 205,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0039-466a64e63448.md",
+                "sourceSha256": "7641b8925a284b55a6e69c86f28c7720baa5609991f4fdf679630e1e6516a69f",
+                "byteStart": 0,
+                "byteEnd": 5029,
+                "startLine": 1,
+                "endLine": 58,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0040-26bbf52975d3.md",
+                "sourceSha256": "cc483843f1277b2ba1f4a79af494a2f07d9aaa39a0f5951317dd150df8d9bf1b",
+                "byteStart": 0,
+                "byteEnd": 6825,
+                "startLine": 1,
+                "endLine": 15,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0041-6437231d4c14.md",
+                "sourceSha256": "d53c529f893176ff4c15d4ab1c35682c79ca147152a1b8a1ab499333177eeff8",
+                "byteStart": 0,
+                "byteEnd": 8126,
+                "startLine": 1,
+                "endLine": 176,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0042-1bfdd852578f.md",
+                "sourceSha256": "e314b0525be82b83f590357d066a84e0f9983e3fc8791bd0730784826cad4af6",
+                "byteStart": 0,
+                "byteEnd": 1665,
+                "startLine": 1,
+                "endLine": 20,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0043-001c98e9b10f.md",
+                "sourceSha256": "0bb3d1712107694209c74478aec6c0f89ae42a6ad7f071e5bc2146ef7ca02630",
+                "byteStart": 0,
+                "byteEnd": 4036,
+                "startLine": 1,
+                "endLine": 70,
+                "pageRefs": [
+                  2
+                ]
+              },
+              {
+                "path": "sessions/0044-eb04ad566548.md",
+                "sourceSha256": "db5963476158fde85d2c7184d8100da96fe0ce7687c1439bd30b3328b0617198",
+                "byteStart": 0,
+                "byteEnd": 5043,
+                "startLine": 1,
+                "endLine": 64,
+                "pageRefs": [
+                  2,
+                  3
+                ]
+              },
+              {
+                "path": "sessions/0045-d08a4383acb0.md",
+                "sourceSha256": "1c4311e27151fd9ee9b0a21760ee433d561e7d4413734766931bf214a0aadccf",
+                "byteStart": 0,
+                "byteEnd": 9498,
+                "startLine": 1,
+                "endLine": 136,
+                "pageRefs": [
+                  3
+                ]
+              },
+              {
+                "path": "sessions/0046-09c956375663.md",
+                "sourceSha256": "795cbf0d1a445aee6fe11229f5b180988c9a059cc3430cd6fb4db53770d15c6a",
+                "byteStart": 0,
+                "byteEnd": 132,
+                "startLine": 1,
+                "endLine": 8,
+                "pageRefs": [
+                  3
+                ]
+              },
+              {
+                "path": "sessions/0047-0e6a15efe02e.md",
+                "sourceSha256": "3693859447d7d5083c382467f56488fcd0d3cd2692ef8468a195d047d4d360c6",
+                "byteStart": 0,
+                "byteEnd": 10376,
+                "startLine": 1,
+                "endLine": 159,
+                "pageRefs": [
+                  3
+                ]
+              },
+              {
+                "path": "sessions/0048-65063946a1f0.md",
+                "sourceSha256": "bd0d9ee9ed85bb5bd58b68d6f15b14d83bf051c34f8035f3b0a2cc931f056200",
+                "byteStart": 0,
+                "byteEnd": 18989,
+                "startLine": 1,
+                "endLine": 245,
+                "pageRefs": [
+                  3
+                ]
+              },
+              {
+                "path": "sessions/0049-bf4bae59ff65.md",
+                "sourceSha256": "5bf75fddb6e6a48f0b9ddf842ad5abeff28bd56a4262aa45d511574126c7e115",
+                "byteStart": 0,
+                "byteEnd": 10137,
+                "startLine": 1,
+                "endLine": 116,
+                "pageRefs": [
+                  3
+                ]
+              },
+              {
+                "path": "sessions/0050-85dd2d4c86c1.md",
+                "sourceSha256": "c71027982a9dd03d1324cd84c95e4d06e0145db1b0179199b970aa0f06d0c6e3",
+                "byteStart": 0,
+                "byteEnd": 417,
+                "startLine": 1,
+                "endLine": 12,
+                "pageRefs": [
+                  3
+                ]
+              },
+              {
+                "path": "sessions/0051-62c2f2b0f154.md",
+                "sourceSha256": "b0c73638e0c1da06eb7eeb21910a25c81390deff52607c8b2b783d7e4c120a1d",
+                "byteStart": 0,
+                "byteEnd": 13353,
+                "startLine": 1,
+                "endLine": 146,
+                "pageRefs": [
+                  3
+                ]
+              },
+              {
+                "path": "sessions/0052-817273274698.md",
+                "sourceSha256": "49cee491172f60aeb40112d5043ee73d22c8d2ce6d58d2ef2a4f4412662ef899",
+                "byteStart": 0,
+                "byteEnd": 11318,
+                "startLine": 1,
+                "endLine": 199,
+                "pageRefs": [
+                  3
+                ]
+              }
+            ],
+            "mapped": true
+          }
+        ]
+      },
+      "callbacks": [
+        {
+          "promptBytes": 299885,
+          "promptSha256": "b15dd4fcd7eb46333201eee26c8e0d9c2101600bb1a9b162d676002131cbde65",
+          "stage": "curator-collection-map",
+          "fragments": [
+            {
+              "path": "sessions/0001-37a5a2cfffcb.md",
+              "sourceSha256": "ce396411381bbbe305fb8674ea4ba6b21d9f1dc5bf0a3d677129fe4514e9115e",
+              "byteStart": 0,
+              "byteEnd": 10453,
+              "startLine": 1,
+              "endLine": 120
+            },
+            {
+              "path": "sessions/0002-6f6a948ab9c0.md",
+              "sourceSha256": "ebd10c3f5984470b48ec88fc55cc57350f614e868fb8c806feb7d5b2cfd094bd",
+              "byteStart": 0,
+              "byteEnd": 17145,
+              "startLine": 1,
+              "endLine": 232
+            },
+            {
+              "path": "sessions/0003-00cad4bf99ce.md",
+              "sourceSha256": "ee4f69acf8e7d5273cdea0b4849ee7728ab69dcd11619176d9b2b4762dd831e2",
+              "byteStart": 0,
+              "byteEnd": 4765,
+              "startLine": 1,
+              "endLine": 48
+            },
+            {
+              "path": "sessions/0004-361b171214c6.md",
+              "sourceSha256": "756b39e42fbefc01fbcec7ca866cc38f5b5b2eb7a93b8a8ffa5762ee3e534e39",
+              "byteStart": 0,
+              "byteEnd": 9410,
+              "startLine": 1,
+              "endLine": 181
+            },
+            {
+              "path": "sessions/0005-b2f18defe91b.md",
+              "sourceSha256": "1c91765c7c5b76809c62cc6c40a88d47aa1b526b66525644d4c5c27ee86cb520",
+              "byteStart": 0,
+              "byteEnd": 4934,
+              "startLine": 1,
+              "endLine": 68
+            },
+            {
+              "path": "sessions/0006-5053c57c29fc.md",
+              "sourceSha256": "c992002b44ec1534d6d6d932d3a70c7fae7ddf895e589546d666a464a1b5b2b4",
+              "byteStart": 0,
+              "byteEnd": 11653,
+              "startLine": 1,
+              "endLine": 143
+            },
+            {
+              "path": "sessions/0007-730ea6f80239.md",
+              "sourceSha256": "7138f30c61b81a59cf62c0a7b96a94561b10859f20ecca3cc29036c6ef1ecc79",
+              "byteStart": 0,
+              "byteEnd": 17822,
+              "startLine": 1,
+              "endLine": 284
+            },
+            {
+              "path": "sessions/0008-6733bdd6f107.md",
+              "sourceSha256": "cc455d5d1a230c9329e66275266ffd64dc8087154f1aa9e757a51b51efd241e2",
+              "byteStart": 0,
+              "byteEnd": 12991,
+              "startLine": 1,
+              "endLine": 201
+            },
+            {
+              "path": "sessions/0009-ac40d8037e42.md",
+              "sourceSha256": "323e5d84b17007ee590fc991a86d4cb44b74e91bb137bf1b401094e66621cafa",
+              "byteStart": 0,
+              "byteEnd": 8680,
+              "startLine": 1,
+              "endLine": 102
+            },
+            {
+              "path": "sessions/0010-897d03f62884.md",
+              "sourceSha256": "03f8bacd6aaa91dbe3400057a33c180c6e5054f1580f7856e5af82cfd7572368",
+              "byteStart": 0,
+              "byteEnd": 6756,
+              "startLine": 1,
+              "endLine": 92
+            },
+            {
+              "path": "sessions/0011-ea6d127d16d3.md",
+              "sourceSha256": "9d9c0cb86c310f2144daff23db5b2d0cc33b316a1e4cb85c48cc1571acec3ac2",
+              "byteStart": 0,
+              "byteEnd": 6465,
+              "startLine": 1,
+              "endLine": 70
+            },
+            {
+              "path": "sessions/0012-61db214a6dd2.md",
+              "sourceSha256": "20bf01db56215b1420433fc5d796b3fa86e26c1f0f5f712a9d2dc4f6aa9dcbab",
+              "byteStart": 0,
+              "byteEnd": 9963,
+              "startLine": 1,
+              "endLine": 116
+            },
+            {
+              "path": "sessions/0013-4da60f488cd4.md",
+              "sourceSha256": "6a84c914356edcb884b8f7aa03cea4bd46c40dd3d03677f9fc7689e886bfcad9",
+              "byteStart": 0,
+              "byteEnd": 15325,
+              "startLine": 1,
+              "endLine": 203
+            },
+            {
+              "path": "sessions/0014-2ee06a6b258d.md",
+              "sourceSha256": "afd72bfb9053334171e03dbdf0e932ed2d838dd043f66d7d1907468831aa9cff",
+              "byteStart": 0,
+              "byteEnd": 15744,
+              "startLine": 1,
+              "endLine": 241
+            },
+            {
+              "path": "sessions/0015-b906b6c52cdc.md",
+              "sourceSha256": "621cefe92b1b3b644b2f4acde09294e092528605087468f55bce2905a05c3190",
+              "byteStart": 0,
+              "byteEnd": 7521,
+              "startLine": 1,
+              "endLine": 147
+            },
+            {
+              "path": "sessions/0016-28c7c28a696c.md",
+              "sourceSha256": "200b716d8bb3e41c1c9c9cbba23b09167ec71258825e5327703dd1cc619357b0",
+              "byteStart": 0,
+              "byteEnd": 9245,
+              "startLine": 1,
+              "endLine": 111
+            },
+            {
+              "path": "sessions/0017-529a93a6c02c.md",
+              "sourceSha256": "943a025337613ddea64d8a9d80add44a3f9c30137d45e875c3e7a4cb12612229",
+              "byteStart": 0,
+              "byteEnd": 10272,
+              "startLine": 1,
+              "endLine": 118
+            },
+            {
+              "path": "sessions/0018-49866a73de31.md",
+              "sourceSha256": "319d659141df38b7ef8d9fe570542d44652be6b27e94400bd23d31fb739967b1",
+              "byteStart": 0,
+              "byteEnd": 8274,
+              "startLine": 1,
+              "endLine": 77
+            },
+            {
+              "path": "sessions/0019-6db6226a1dfd.md",
+              "sourceSha256": "442e4c58177b4d393d8033619d60b166756345c4819b156acc56a93d6a333230",
+              "byteStart": 0,
+              "byteEnd": 13437,
+              "startLine": 1,
+              "endLine": 159
+            },
+            {
+              "path": "sessions/0020-dc1afb7a6dc4.md",
+              "sourceSha256": "8b9539e43ad374f7c51e52d83342b86031081001d0d6111a79feeec9f50cb20d",
+              "byteStart": 0,
+              "byteEnd": 10324,
+              "startLine": 1,
+              "endLine": 122
+            },
+            {
+              "path": "sessions/0021-a278fb55032f.md",
+              "sourceSha256": "f65b32fa314aacb70d8d532de5f18355a6dea51822821a7173394534c8f5356c",
+              "byteStart": 0,
+              "byteEnd": 15222,
+              "startLine": 1,
+              "endLine": 232
+            },
+            {
+              "path": "sessions/0022-ca6d95c69c07.md",
+              "sourceSha256": "eece07687ca923b4e1cf732073ae564cb65dcf9a09c5f6197a51a3f377622e9d",
+              "byteStart": 0,
+              "byteEnd": 12638,
+              "startLine": 1,
+              "endLine": 154
+            },
+            {
+              "path": "sessions/0023-77032979a859.md",
+              "sourceSha256": "ffd54ccb4b61cbad4f6beede91b817e713e59c4f5bffbb4d2212b4196be8d095",
+              "byteStart": 0,
+              "byteEnd": 22352,
+              "startLine": 1,
+              "endLine": 327
+            },
+            {
+              "path": "sessions/0024-9a9a8f6ea0f4.md",
+              "sourceSha256": "54c54f29896e51892eea5c89a074c5805fe33519fdd33b9a88daed24c7f1dd6f",
+              "byteStart": 0,
+              "byteEnd": 16647,
+              "startLine": 1,
+              "endLine": 241
+            },
+            {
+              "path": "sessions/0025-863b136acd67.md",
+              "sourceSha256": "b1c36cf7350aaa6c2947dd3fbbc8e122f4b1cf5b318de41a9de485cf0f6fcebe",
+              "byteStart": 0,
+              "byteEnd": 3732,
+              "startLine": 1,
+              "endLine": 59
+            }
+          ]
+        },
+        {
+          "promptBytes": 241792,
+          "promptSha256": "76b3ecbb9287874989d299c9f83b8694bb8e779b3000dd5b3d055928e6913d3c",
+          "stage": "curator-collection-map",
+          "fragments": [
+            {
+              "path": "sessions/0025-863b136acd67.md",
+              "sourceSha256": "b1c36cf7350aaa6c2947dd3fbbc8e122f4b1cf5b318de41a9de485cf0f6fcebe",
+              "byteStart": 3732,
+              "byteEnd": 16108,
+              "startLine": 59,
+              "endLine": 206
+            },
+            {
+              "path": "sessions/0026-5098f0227e26.md",
+              "sourceSha256": "b58c9b26e76cd196f02672942a4a1ad104ab62aba6f3da4dcd91cbe9fb918bf3",
+              "byteStart": 0,
+              "byteEnd": 2165,
+              "startLine": 1,
+              "endLine": 26
+            },
+            {
+              "path": "sessions/0027-a80bec8693d7.md",
+              "sourceSha256": "a857ce36f743759c782bf8943b185a403648d2008977dbe70eb795dbba215dc0",
+              "byteStart": 0,
+              "byteEnd": 4404,
+              "startLine": 1,
+              "endLine": 54
+            },
+            {
+              "path": "sessions/0028-cc5d3814b9af.md",
+              "sourceSha256": "4b5ea09fe9b660cec600fe43774c4250aa6d2d5dc0fdaafba0c57a90c1ec0a85",
+              "byteStart": 0,
+              "byteEnd": 14285,
+              "startLine": 1,
+              "endLine": 147
+            },
+            {
+              "path": "sessions/0029-56b047332b29.md",
+              "sourceSha256": "d1394aaa2033998c4f9efa8ee64c5d18fe179dae8c644d2e7c276a1f9c9714ba",
+              "byteStart": 0,
+              "byteEnd": 13303,
+              "startLine": 1,
+              "endLine": 175
+            },
+            {
+              "path": "sessions/0030-3abef286a4a9.md",
+              "sourceSha256": "40c5957856c824e8bb1a78c05a2be2be2254ac082020a38431327e2afa13f7ce",
+              "byteStart": 0,
+              "byteEnd": 3719,
+              "startLine": 1,
+              "endLine": 58
+            },
+            {
+              "path": "sessions/0031-38799ee73189.md",
+              "sourceSha256": "9545d1660f9676210510c48a0a0605b6846df2ed7446164ce0b7b00008fdfdf6",
+              "byteStart": 0,
+              "byteEnd": 10861,
+              "startLine": 1,
+              "endLine": 109
+            },
+            {
+              "path": "sessions/0032-39ecaf77cdb7.md",
+              "sourceSha256": "ac48e6a227e6c85e24a0ccd9a11e14bd06b85a75e24ec14d4d2690c893fbc88d",
+              "byteStart": 0,
+              "byteEnd": 15848,
+              "startLine": 1,
+              "endLine": 167
+            },
+            {
+              "path": "sessions/0033-7483f3d33de2.md",
+              "sourceSha256": "dd3a1b5f6432b5e4311cb4a868e8814d18d73ecc986c6c7f954695e947d57cf5",
+              "byteStart": 0,
+              "byteEnd": 2166,
+              "startLine": 1,
+              "endLine": 42
+            },
+            {
+              "path": "sessions/0034-2e48efeb8ad1.md",
+              "sourceSha256": "08df89309a62050e3712afda1f657d78ae9a8a1d010e321422aa286bae404d52",
+              "byteStart": 0,
+              "byteEnd": 4192,
+              "startLine": 1,
+              "endLine": 52
+            },
+            {
+              "path": "sessions/0035-dfff16a71d08.md",
+              "sourceSha256": "89452cfed2540967205ece07975fb445706719a59a7c46cd15ac48ee5bee0789",
+              "byteStart": 0,
+              "byteEnd": 6351,
+              "startLine": 1,
+              "endLine": 74
+            },
+            {
+              "path": "sessions/0036-4d9f14184917.md",
+              "sourceSha256": "17c5b469b170d19e2805dc6f3422ffcab6b89e265fa80b1aa39f91b6cc4b5700",
+              "byteStart": 0,
+              "byteEnd": 1821,
+              "startLine": 1,
+              "endLine": 25
+            },
+            {
+              "path": "sessions/0037-881fdd868746.md",
+              "sourceSha256": "5119a34aaa0f4f3c070bf41f4675474398f0fe14b36021a3060c46cce87fb2dc",
+              "byteStart": 0,
+              "byteEnd": 11131,
+              "startLine": 1,
+              "endLine": 97
+            },
+            {
+              "path": "sessions/0038-e070111f44b2.md",
+              "sourceSha256": "5538222e61681932515e71f4c47f5a16604f2c13b549644d9dc42286ac05055c",
+              "byteStart": 0,
+              "byteEnd": 16736,
+              "startLine": 1,
+              "endLine": 205
+            },
+            {
+              "path": "sessions/0039-466a64e63448.md",
+              "sourceSha256": "7641b8925a284b55a6e69c86f28c7720baa5609991f4fdf679630e1e6516a69f",
+              "byteStart": 0,
+              "byteEnd": 5029,
+              "startLine": 1,
+              "endLine": 58
+            },
+            {
+              "path": "sessions/0040-26bbf52975d3.md",
+              "sourceSha256": "cc483843f1277b2ba1f4a79af494a2f07d9aaa39a0f5951317dd150df8d9bf1b",
+              "byteStart": 0,
+              "byteEnd": 6825,
+              "startLine": 1,
+              "endLine": 15
+            },
+            {
+              "path": "sessions/0041-6437231d4c14.md",
+              "sourceSha256": "d53c529f893176ff4c15d4ab1c35682c79ca147152a1b8a1ab499333177eeff8",
+              "byteStart": 0,
+              "byteEnd": 8126,
+              "startLine": 1,
+              "endLine": 176
+            },
+            {
+              "path": "sessions/0042-1bfdd852578f.md",
+              "sourceSha256": "e314b0525be82b83f590357d066a84e0f9983e3fc8791bd0730784826cad4af6",
+              "byteStart": 0,
+              "byteEnd": 1665,
+              "startLine": 1,
+              "endLine": 20
+            },
+            {
+              "path": "sessions/0043-001c98e9b10f.md",
+              "sourceSha256": "0bb3d1712107694209c74478aec6c0f89ae42a6ad7f071e5bc2146ef7ca02630",
+              "byteStart": 0,
+              "byteEnd": 4036,
+              "startLine": 1,
+              "endLine": 70
+            },
+            {
+              "path": "sessions/0044-eb04ad566548.md",
+              "sourceSha256": "db5963476158fde85d2c7184d8100da96fe0ce7687c1439bd30b3328b0617198",
+              "byteStart": 0,
+              "byteEnd": 5043,
+              "startLine": 1,
+              "endLine": 64
+            },
+            {
+              "path": "sessions/0045-d08a4383acb0.md",
+              "sourceSha256": "1c4311e27151fd9ee9b0a21760ee433d561e7d4413734766931bf214a0aadccf",
+              "byteStart": 0,
+              "byteEnd": 9498,
+              "startLine": 1,
+              "endLine": 136
+            },
+            {
+              "path": "sessions/0046-09c956375663.md",
+              "sourceSha256": "795cbf0d1a445aee6fe11229f5b180988c9a059cc3430cd6fb4db53770d15c6a",
+              "byteStart": 0,
+              "byteEnd": 132,
+              "startLine": 1,
+              "endLine": 8
+            },
+            {
+              "path": "sessions/0047-0e6a15efe02e.md",
+              "sourceSha256": "3693859447d7d5083c382467f56488fcd0d3cd2692ef8468a195d047d4d360c6",
+              "byteStart": 0,
+              "byteEnd": 10376,
+              "startLine": 1,
+              "endLine": 159
+            },
+            {
+              "path": "sessions/0048-65063946a1f0.md",
+              "sourceSha256": "bd0d9ee9ed85bb5bd58b68d6f15b14d83bf051c34f8035f3b0a2cc931f056200",
+              "byteStart": 0,
+              "byteEnd": 18989,
+              "startLine": 1,
+              "endLine": 245
+            },
+            {
+              "path": "sessions/0049-bf4bae59ff65.md",
+              "sourceSha256": "5bf75fddb6e6a48f0b9ddf842ad5abeff28bd56a4262aa45d511574126c7e115",
+              "byteStart": 0,
+              "byteEnd": 10137,
+              "startLine": 1,
+              "endLine": 116
+            },
+            {
+              "path": "sessions/0050-85dd2d4c86c1.md",
+              "sourceSha256": "c71027982a9dd03d1324cd84c95e4d06e0145db1b0179199b970aa0f06d0c6e3",
+              "byteStart": 0,
+              "byteEnd": 417,
+              "startLine": 1,
+              "endLine": 12
+            },
+            {
+              "path": "sessions/0051-62c2f2b0f154.md",
+              "sourceSha256": "b0c73638e0c1da06eb7eeb21910a25c81390deff52607c8b2b783d7e4c120a1d",
+              "byteStart": 0,
+              "byteEnd": 13353,
+              "startLine": 1,
+              "endLine": 146
+            },
+            {
+              "path": "sessions/0052-817273274698.md",
+              "sourceSha256": "49cee491172f60aeb40112d5043ee73d22c8d2ce6d58d2ef2a4f4412662ef899",
+              "byteStart": 0,
+              "byteEnd": 11318,
+              "startLine": 1,
+              "endLine": 199
+            }
+          ]
+        }
+      ],
+      "coverage": [
+        {
+          "path": "sessions/0001-37a5a2cfffcb.md",
+          "mappedBytes": 10453,
+          "sourceBytes": 10453,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0002-6f6a948ab9c0.md",
+          "mappedBytes": 17145,
+          "sourceBytes": 17145,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0003-00cad4bf99ce.md",
+          "mappedBytes": 4765,
+          "sourceBytes": 4765,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0004-361b171214c6.md",
+          "mappedBytes": 9410,
+          "sourceBytes": 9410,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0005-b2f18defe91b.md",
+          "mappedBytes": 4934,
+          "sourceBytes": 4934,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0006-5053c57c29fc.md",
+          "mappedBytes": 11653,
+          "sourceBytes": 11653,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0007-730ea6f80239.md",
+          "mappedBytes": 17822,
+          "sourceBytes": 17822,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0008-6733bdd6f107.md",
+          "mappedBytes": 12991,
+          "sourceBytes": 12991,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0009-ac40d8037e42.md",
+          "mappedBytes": 8680,
+          "sourceBytes": 8680,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0010-897d03f62884.md",
+          "mappedBytes": 6756,
+          "sourceBytes": 6756,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0011-ea6d127d16d3.md",
+          "mappedBytes": 6465,
+          "sourceBytes": 6465,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0012-61db214a6dd2.md",
+          "mappedBytes": 9963,
+          "sourceBytes": 9963,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0013-4da60f488cd4.md",
+          "mappedBytes": 15325,
+          "sourceBytes": 15325,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0014-2ee06a6b258d.md",
+          "mappedBytes": 15744,
+          "sourceBytes": 15744,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0015-b906b6c52cdc.md",
+          "mappedBytes": 7521,
+          "sourceBytes": 7521,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0016-28c7c28a696c.md",
+          "mappedBytes": 9245,
+          "sourceBytes": 9245,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0017-529a93a6c02c.md",
+          "mappedBytes": 10272,
+          "sourceBytes": 10272,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0018-49866a73de31.md",
+          "mappedBytes": 8274,
+          "sourceBytes": 8274,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0019-6db6226a1dfd.md",
+          "mappedBytes": 13437,
+          "sourceBytes": 13437,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0020-dc1afb7a6dc4.md",
+          "mappedBytes": 10324,
+          "sourceBytes": 10324,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0021-a278fb55032f.md",
+          "mappedBytes": 15222,
+          "sourceBytes": 15222,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0022-ca6d95c69c07.md",
+          "mappedBytes": 12638,
+          "sourceBytes": 12638,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0023-77032979a859.md",
+          "mappedBytes": 22352,
+          "sourceBytes": 22352,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0024-9a9a8f6ea0f4.md",
+          "mappedBytes": 16647,
+          "sourceBytes": 16647,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0025-863b136acd67.md",
+          "mappedBytes": 16108,
+          "sourceBytes": 16108,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0026-5098f0227e26.md",
+          "mappedBytes": 2165,
+          "sourceBytes": 2165,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0027-a80bec8693d7.md",
+          "mappedBytes": 4404,
+          "sourceBytes": 4404,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0028-cc5d3814b9af.md",
+          "mappedBytes": 14285,
+          "sourceBytes": 14285,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0029-56b047332b29.md",
+          "mappedBytes": 13303,
+          "sourceBytes": 13303,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0030-3abef286a4a9.md",
+          "mappedBytes": 3719,
+          "sourceBytes": 3719,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0031-38799ee73189.md",
+          "mappedBytes": 10861,
+          "sourceBytes": 10861,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0032-39ecaf77cdb7.md",
+          "mappedBytes": 15848,
+          "sourceBytes": 15848,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0033-7483f3d33de2.md",
+          "mappedBytes": 2166,
+          "sourceBytes": 2166,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0034-2e48efeb8ad1.md",
+          "mappedBytes": 4192,
+          "sourceBytes": 4192,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0035-dfff16a71d08.md",
+          "mappedBytes": 6351,
+          "sourceBytes": 6351,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0036-4d9f14184917.md",
+          "mappedBytes": 1821,
+          "sourceBytes": 1821,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0037-881fdd868746.md",
+          "mappedBytes": 11131,
+          "sourceBytes": 11131,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0038-e070111f44b2.md",
+          "mappedBytes": 16736,
+          "sourceBytes": 16736,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0039-466a64e63448.md",
+          "mappedBytes": 5029,
+          "sourceBytes": 5029,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0040-26bbf52975d3.md",
+          "mappedBytes": 6825,
+          "sourceBytes": 6825,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0041-6437231d4c14.md",
+          "mappedBytes": 8126,
+          "sourceBytes": 8126,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0042-1bfdd852578f.md",
+          "mappedBytes": 1665,
+          "sourceBytes": 1665,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0043-001c98e9b10f.md",
+          "mappedBytes": 4036,
+          "sourceBytes": 4036,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0044-eb04ad566548.md",
+          "mappedBytes": 5043,
+          "sourceBytes": 5043,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0045-d08a4383acb0.md",
+          "mappedBytes": 9498,
+          "sourceBytes": 9498,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0046-09c956375663.md",
+          "mappedBytes": 132,
+          "sourceBytes": 132,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0047-0e6a15efe02e.md",
+          "mappedBytes": 10376,
+          "sourceBytes": 10376,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0048-65063946a1f0.md",
+          "mappedBytes": 18989,
+          "sourceBytes": 18989,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0049-bf4bae59ff65.md",
+          "mappedBytes": 10137,
+          "sourceBytes": 10137,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0050-85dd2d4c86c1.md",
+          "mappedBytes": 417,
+          "sourceBytes": 417,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0051-62c2f2b0f154.md",
+          "mappedBytes": 13353,
+          "sourceBytes": 13353,
+          "exactComplete": true
+        },
+        {
+          "path": "sessions/0052-817273274698.md",
+          "mappedBytes": 11318,
+          "sourceBytes": 11318,
+          "exactComplete": true
+        }
+      ],
+      "preflightSeconds": 0.883,
+      "transportGate": true,
+      "toolOutputBytes": 529280,
+      "toolSeconds": 0.611
+    }
+  ],
+  "limitations": [
+    "Empty span callbacks; no model inference or answer scoring",
+    "Mapped bytes do not prove semantic extraction completeness",
+    "No actual synthesis prompt or ledger/output budget validation",
+    "CLI timing excludes inference, billing and host context"
+  ]
+}

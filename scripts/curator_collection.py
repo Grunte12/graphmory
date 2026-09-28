@@ -69,16 +69,20 @@ def _map_prompt(source_index, fragments, question, prior_facts):
         'breaks. Facts and quotes are candidates: exact identity does not prove entailment. '
         'Do not answer the user question in this mapping step.'
     )
-    return (
+    prompt = (
         instruction
         + '\nDeclared source index (paths and original SHA-256 only):\n'
         + json.dumps(source_index, ensure_ascii=False, separators=(',', ':'))
         + '\nOriginal source page fragments (these are the only text to map now):\n'
         + json.dumps([_fragment_for_prompt(fragment) for fragment in fragments], ensure_ascii=False, separators=(',', ':'))
         + '\nUser question:\n' + question
-        + '\nPreviously validated candidate facts (identity verified, entailment unverified):\n'
-        + json.dumps(prior_facts, ensure_ascii=False, separators=(',', ':'))
     )
+    if prior_facts is not None:
+        prompt += (
+            '\nPreviously validated candidate facts (identity verified, entailment unverified):\n'
+            + json.dumps(prior_facts, ensure_ascii=False, separators=(',', ':'))
+        )
+    return prompt
 
 
 def _candidate_descriptor(candidate, reason):
@@ -106,17 +110,115 @@ def _candidate_shape(candidate):
 
 
 def _fragment_covers_lines(candidate, fragments_by_path):
-    fragment = fragments_by_path.get(candidate['path'])
-    if not fragment or fragment['sourceSha256'] != candidate['source_sha256']:
+    fragments = fragments_by_path.get(candidate['path'])
+    if isinstance(fragments, dict):
+        fragments = [fragments]
+    if not fragments:
         return False, 'span-not-in-current-page'
     start, end = candidate['start_line'], candidate['end_line']
-    if start < fragment['startLine'] or end > fragment['endLine']:
-        return False, 'span-outside-delivered-line-range'
-    if fragment['startsMidLine'] and start == fragment['startLine']:
-        return False, 'span-starts-in-partial-line'
-    if fragment['endsMidLine'] and end == fragment['endLine']:
-        return False, 'span-ends-in-partial-line'
-    return True, None
+    eligible = []
+    for fragment in fragments:
+        if fragment['sourceSha256'] != candidate['source_sha256']:
+            continue
+        if fragment['startsMidLine'] or fragment['endsMidLine']:
+            continue
+        eligible.append(fragment)
+    if not eligible:
+        return False, 'span-not-in-current-page'
+    eligible.sort(key=lambda fragment: (fragment['startLine'], fragment['byteStart']))
+    for index, first in enumerate(eligible):
+        if not first['startLine'] <= start <= first['endLine']:
+            continue
+        if end <= first['endLine']:
+            return True, None
+        last = first
+        for next_fragment in eligible[index + 1:]:
+            if (last['endLine'] != next_fragment['startLine']
+                or last['byteEnd'] != next_fragment['byteStart']):
+                break
+            last = next_fragment
+            if end <= last['endLine']:
+                return True, None
+    return False, 'span-outside-delivered-line-range'
+
+
+def _packed_map_batches(source_index, fragments, question, max_input_bytes):
+    """Pack complete source lines by exact serialized prompt byte size."""
+    batches = []
+    current = []
+    current_prompt = None
+    for fragment in fragments:
+        # Graphmory's line numbers split on LF only. Keep CR, U+2028, vertical
+        # tab, and other Unicode separators inside the original line.
+        pieces = fragment['text'].split('\n')
+        lines = [piece + '\n' for piece in pieces[:-1]]
+        if pieces[-1]:
+            lines.append(pieces[-1])
+        if not lines:
+            continue
+        byte_offsets = [0]
+        newline_counts = [0]
+        for line_text in lines:
+            byte_offsets.append(byte_offsets[-1] + len(line_text.encode('utf-8')))
+            newline_counts.append(newline_counts[-1] + line_text.count('\n'))
+
+        def candidate_for(end_index):
+            start_index = cursor
+            text = ''.join(lines[start_index:end_index])
+            start_line = fragment['startLine'] + newline_counts[start_index]
+            return dict(
+                fragment,
+                byteStart=fragment['byteStart'] + byte_offsets[start_index],
+                byteEnd=fragment['byteStart'] + byte_offsets[end_index],
+                startLine=start_line,
+                endLine=start_line + text.count('\n'),
+                startsMidLine=False,
+                endsMidLine=False,
+                sourceComplete=fragment['sourceComplete'] and end_index == len(lines),
+                text=text,
+            )
+
+        cursor = 0
+        while cursor < len(lines):
+            # Find the largest LF-boundary prefix that fits with the current
+            # prompt. Binary search keeps large histories near O(n log n).
+            low, high = cursor + 1, len(lines)
+            best = None
+            while low <= high:
+                middle = (low + high) // 2
+                line_fragment = candidate_for(middle)
+                proposed = [dict(row) for row in current]
+                if (proposed and proposed[-1]['path'] == line_fragment['path']
+                    and proposed[-1]['sourceSha256'] == line_fragment['sourceSha256']
+                    and proposed[-1]['byteEnd'] == line_fragment['byteStart']
+                    and proposed[-1]['endLine'] == line_fragment['startLine']):
+                    previous = proposed[-1]
+                    previous['byteEnd'] = line_fragment['byteEnd']
+                    previous['endLine'] = line_fragment['endLine']
+                    previous['text'] += line_fragment['text']
+                    previous['sourceComplete'] = line_fragment['sourceComplete']
+                else:
+                    proposed.append(line_fragment)
+                prompt = _map_prompt(source_index, proposed, question, None)
+                if len(prompt.encode('utf-8')) <= max_input_bytes:
+                    best = (middle, proposed, prompt)
+                    low = middle + 1
+                else:
+                    high = middle - 1
+            if best is None:
+                if current:
+                    batches.append((current, current_prompt))
+                    current, current_prompt = [], None
+                    continue
+                line_fragment = candidate_for(cursor + 1)
+                prompt = _map_prompt(source_index, [line_fragment], question, None)
+                if len(prompt.encode('utf-8')) > max_input_bytes:
+                    return None, prompt, line_fragment
+                best = (cursor + 1, [line_fragment], prompt)
+            cursor, current, current_prompt = best
+    if current:
+        batches.append((current, current_prompt))
+    return batches, None, None
 
 
 def _run_cli(command):
@@ -128,7 +230,7 @@ def _run_cli(command):
 
 def collect_explicit_sources(*, cli, vault, private_dir, source_hashes, scope_label,
                              question, max_page_bytes, max_pages, max_input_bytes, generate,
-                             max_map_calls=None):
+                             max_map_calls=None, pack_prompts=False):
     """Collect every explicit source, map pages, and record exact spans.
 
     ``generate(prompt, stage, schema)`` is the existing runner's model-call
@@ -153,6 +255,11 @@ def collect_explicit_sources(*, cli, vault, private_dir, source_hashes, scope_la
         'maxInputBytes': max_input_bytes,
         'pages': [],
         'mapCalls': 0,
+        'mappingComplete': False if pack_prompts else None,
+        'plannedMapCalls': None,
+        'mapBatches': [],
+        'mappedSourceCoverage': [],
+        'mappingCoverage': [],
         'candidateSpans': 0,
         'verifiedSpans': 0,
         'rejectedSpans': [],
@@ -165,6 +272,9 @@ def collect_explicit_sources(*, cli, vault, private_dir, source_hashes, scope_la
     cursors = {name: 0 for name in source_paths}
     line_carry = {}
     source_index = []
+    packed_fragments = []
+    delivered_ranges = []
+    planned_batches = None
 
     def incomplete(reason, detail=None):
         summary['incompleteReason'] = reason
@@ -186,6 +296,12 @@ def collect_explicit_sources(*, cli, vault, private_dir, source_hashes, scope_la
                 summary['ledgerEntries'] = len(current.get('ledger', []))
             except Exception:
                 pass
+        if pack_prompts:
+            mapped_batches = {row['batch'] for row in summary['mapBatches'] if row.get('mapped')}
+            summary['unmappedSources'] = sorted({
+                fragment['path'] for index, batch in enumerate(planned_batches or [])
+                if index not in mapped_batches for fragment in batch[0]
+            }) if planned_batches is not None else source_paths.copy()
         return {'complete': False, 'summary': summary, 'toolCalls': tool_calls, 'synthesisContext': None}
 
     if (not source_paths or max_pages < 1 or max_page_bytes < 256
@@ -270,6 +386,10 @@ def collect_explicit_sources(*, cli, vault, private_dir, source_hashes, scope_la
                 return incomplete('missing-fragment-completion-state')
             if fragment['sourceComplete'] != (end == fragment['totalBytes']):
                 return incomplete('fragment-completion-mismatch')
+            delivered_ranges.append({
+                'page': page_count - 1, 'path': path, 'sourceSha256': fragment['sourceSha256'],
+                'byteStart': start, 'byteEnd': end,
+            })
             carry = line_carry.pop(path, None)
             if bool(carry) != fragment['startsMidLine']:
                 return incomplete('partial-line-carry-mismatch')
@@ -289,80 +409,85 @@ def collect_explicit_sources(*, cli, vault, private_dir, source_hashes, scope_la
                               byteEnd=byte_start + len(full_lines.encode('utf-8')),
                               startLine=line_start, endLine=line_start + full_lines.count('\n'),
                               startsMidLine=False, endsMidLine=False, text=full_lines)
+                if pack_prompts:
+                    mapped['_collectionPage'] = page_count - 1
                 map_fragments.append(mapped)
                 fragments_by_path[path] = mapped
             cursors[path] = end
 
-        prior_facts = [
-            {'path': item['path'], 'startLine': item['startLine'], 'endLine': item['endLine'], 'fact': item['fact']}
-            for item in state.get('ledger', [])
-        ]
-        response_value = {'spans': []}
-        if map_fragments:
-            if max_map_calls is not None and summary['mapCalls'] >= max_map_calls:
-                return incomplete('collection-map-call-budget')
-            prompt = _map_prompt(source_index, map_fragments, question, prior_facts)
-            prompt_bytes = len(prompt.encode('utf-8'))
-            if prompt_bytes > max_input_bytes:
-                summary['attemptedPromptBytes'] = prompt_bytes
-                return incomplete('collection-map-input-byte-budget')
-            try:
-                response_value = generate(prompt, 'curator-collection-map', COLLECTION_MAP_SCHEMA)
-            except Exception as error:
-                summary['attemptedPromptBytes'] = prompt_bytes
-                return incomplete('collection-map-call-failed', type(error).__name__)
-            summary['mapCalls'] += 1
-        summary['candidateSpans'] += len(response_value.get('spans', [])) if isinstance(response_value, dict) and isinstance(response_value.get('spans'), list) else 0
-        if not isinstance(response_value, dict) or set(response_value) != {'spans'} or not isinstance(response_value['spans'], list):
-            return incomplete('invalid-collection-map-response')
-        for candidate in response_value['spans']:
-            if not _candidate_shape(candidate):
-                summary['rejectedSpans'].append(_candidate_descriptor(candidate, 'invalid-map-span-shape'))
-                continue
-            covered, reason = _fragment_covers_lines(candidate, fragments_by_path)
-            if not covered:
-                summary['rejectedSpans'].append(_candidate_descriptor(candidate, reason))
-                continue
-            pending.append(candidate)
-
-        complete_paths = {item['path'] for item in actual_sources[:state.get('index', 0)]}
-        ready = [item for item in pending if item['path'] in complete_paths]
-        for candidate in ready:
-            original_span = {
-                'path': candidate['path'], 'sourceSha256': candidate['source_sha256'],
-                'startLine': candidate['start_line'], 'endLine': candidate['end_line'],
-                'quote': candidate['quote'], 'fact': candidate['fact'],
-            }
-            command = base_command() + ['--record-span', json.dumps(original_span, ensure_ascii=False, separators=(',', ':'))]
-            try:
-                record_result, record_bytes, record_elapsed = _run_cli(command)
-            except subprocess.TimeoutExpired:
-                summary['unresolvedSpans'].append(_candidate_descriptor(candidate, 'span-record-command-timeout'))
-                return incomplete('collection-span-record-timeout')
-            tool_calls.append({
-                'kind': 'record-span', 'path': candidate['path'],
-                'toolOutputBytes': record_bytes, 'toolSeconds': round(record_elapsed, 3),
-                'stdoutSha256': _digest(record_result.stdout), 'failed': record_result.returncode != 0,
-            })
-            if record_result.returncode != 0:
-                error_text = record_result.stderr.decode('utf-8', errors='replace')
-                if 'Quote does not match original lines' in error_text or 'Invalid evidence span' in error_text:
-                    summary['rejectedSpans'].append(_candidate_descriptor(candidate, 'original-span-validation-failed'))
-                    pending.remove(candidate)
+        if pack_prompts:
+            packed_fragments.extend(map_fragments)
+        else:
+            prior_facts = [
+                {'path': item['path'], 'startLine': item['startLine'], 'endLine': item['endLine'], 'fact': item['fact']}
+                for item in state.get('ledger', [])
+            ]
+            response_value = {'spans': []}
+            if map_fragments:
+                if max_map_calls is not None and summary['mapCalls'] >= max_map_calls:
+                    return incomplete('collection-map-call-budget')
+                prompt = _map_prompt(source_index, map_fragments, question, prior_facts)
+                prompt_bytes = len(prompt.encode('utf-8'))
+                if prompt_bytes > max_input_bytes:
+                    summary['attemptedPromptBytes'] = prompt_bytes
+                    return incomplete('collection-map-input-byte-budget')
+                try:
+                    response_value = generate(prompt, 'curator-collection-map', COLLECTION_MAP_SCHEMA)
+                except Exception as error:
+                    summary['attemptedPromptBytes'] = prompt_bytes
+                    return incomplete('collection-map-call-failed', type(error).__name__)
+                summary['mapCalls'] += 1
+            summary['candidateSpans'] += len(response_value.get('spans', [])) if isinstance(response_value, dict) and isinstance(response_value.get('spans'), list) else 0
+            if not isinstance(response_value, dict) or set(response_value) != {'spans'} or not isinstance(response_value['spans'], list):
+                return incomplete('invalid-collection-map-response')
+            for candidate in response_value['spans']:
+                if not _candidate_shape(candidate):
+                    summary['rejectedSpans'].append(_candidate_descriptor(candidate, 'invalid-map-span-shape'))
                     continue
+                covered, reason = _fragment_covers_lines(candidate, fragments_by_path)
+                if not covered:
+                    summary['rejectedSpans'].append(_candidate_descriptor(candidate, reason))
+                    continue
+                pending.append(candidate)
+
+            complete_paths = {item['path'] for item in actual_sources[:state.get('index', 0)]}
+            ready = [item for item in pending if item['path'] in complete_paths]
+            for candidate in ready:
+                original_span = {
+                    'path': candidate['path'], 'sourceSha256': candidate['source_sha256'],
+                    'startLine': candidate['start_line'], 'endLine': candidate['end_line'],
+                    'quote': candidate['quote'], 'fact': candidate['fact'],
+                }
+                command = base_command() + ['--record-span', json.dumps(original_span, ensure_ascii=False, separators=(',', ':'))]
+                try:
+                    record_result, record_bytes, record_elapsed = _run_cli(command)
+                except subprocess.TimeoutExpired:
+                    summary['unresolvedSpans'].append(_candidate_descriptor(candidate, 'span-record-command-timeout'))
+                    return incomplete('collection-span-record-timeout')
+                tool_calls.append({
+                    'kind': 'record-span', 'path': candidate['path'],
+                    'toolOutputBytes': record_bytes, 'toolSeconds': round(record_elapsed, 3),
+                    'stdoutSha256': _digest(record_result.stdout), 'failed': record_result.returncode != 0,
+                })
+                if record_result.returncode != 0:
+                    error_text = record_result.stderr.decode('utf-8', errors='replace')
+                    if 'Quote does not match original lines' in error_text or 'Invalid evidence span' in error_text:
+                        summary['rejectedSpans'].append(_candidate_descriptor(candidate, 'original-span-validation-failed'))
+                        pending.remove(candidate)
+                        continue
+                    pending.remove(candidate)
+                    summary['unresolvedSpans'].append(_candidate_descriptor(candidate, 'span-record-command-failed'))
+                    return incomplete('collection-span-record-failed')
+                try:
+                    record_summary = json.loads(record_result.stdout)
+                    if not isinstance(record_summary, dict) or record_summary.get('ledgerEntries', 0) < 1:
+                        return incomplete('invalid-span-record-response')
+                except Exception:
+                    pending.remove(candidate)
+                    summary['unresolvedSpans'].append(_candidate_descriptor(candidate, 'invalid-span-record-response'))
+                    return incomplete('invalid-collection-record-response')
+                summary['verifiedSpans'] += 1
                 pending.remove(candidate)
-                summary['unresolvedSpans'].append(_candidate_descriptor(candidate, 'span-record-command-failed'))
-                return incomplete('collection-span-record-failed')
-            try:
-                record_summary = json.loads(record_result.stdout)
-                if not isinstance(record_summary, dict) or record_summary.get('ledgerEntries', 0) < 1:
-                    return incomplete('invalid-span-record-response')
-            except Exception:
-                pending.remove(candidate)
-                summary['unresolvedSpans'].append(_candidate_descriptor(candidate, 'invalid-span-record-response'))
-                return incomplete('invalid-collection-record-response')
-            summary['verifiedSpans'] += 1
-            pending.remove(candidate)
 
         page_row = {
             'page': page_count - 1,
@@ -394,6 +519,142 @@ def collect_explicit_sources(*, cli, vault, private_dir, source_hashes, scope_la
         return incomplete('collection-incomplete')
     if line_carry:
         return incomplete('unresolved-partial-line')
+    if pack_prompts:
+        for source in summary['sourceHashes']:
+            source_fragments = sorted(
+                (fragment for fragment in packed_fragments if fragment['path'] == source['path']),
+                key=lambda fragment: fragment['byteStart'],
+            )
+            cursor = 0
+            for fragment in source_fragments:
+                if (fragment['sourceSha256'] != source['sha256']
+                    or fragment['byteStart'] != cursor
+                    or fragment['byteEnd'] < fragment['byteStart']):
+                    return incomplete('collection-mapping-byte-coverage')
+                cursor = fragment['byteEnd']
+            if cursor != source['bytes']:
+                return incomplete('collection-mapping-byte-coverage')
+            summary['mappedSourceCoverage'].append({
+                'path': source['path'], 'sha256': source['sha256'], 'bytes': source['bytes'],
+                'mappedBytes': cursor, 'fragmentCount': len(source_fragments),
+                'complete': cursor == source['bytes'],
+            })
+
+        planned_batches, oversized_prompt, oversized_fragment = _packed_map_batches(
+            source_index, packed_fragments, question, max_input_bytes,
+        )
+        if planned_batches is None:
+            summary['attemptedPromptBytes'] = len(oversized_prompt.encode('utf-8'))
+            summary['oversizedLine'] = {
+                key: oversized_fragment[key] for key in (
+                    'path', 'sourceSha256', 'byteStart', 'byteEnd', 'startLine', 'endLine'
+                )
+            }
+            return incomplete('collection-map-input-byte-budget')
+        summary['plannedMapCalls'] = len(planned_batches)
+        for batch_index, (batch, prompt) in enumerate(planned_batches):
+            batch_ranges = []
+            for fragment in batch:
+                page_refs = sorted({
+                    row['page'] for row in delivered_ranges
+                    if row['path'] == fragment['path']
+                    and row['byteStart'] < fragment['byteEnd']
+                    and fragment['byteStart'] < row['byteEnd']
+                })
+                coverage_row = {
+                    'batch': batch_index, 'path': fragment['path'],
+                    'sourceSha256': fragment['sourceSha256'],
+                    'byteStart': fragment['byteStart'], 'byteEnd': fragment['byteEnd'],
+                    'startLine': fragment['startLine'], 'endLine': fragment['endLine'],
+                    'pageRefs': page_refs, 'mapped': False,
+                }
+                summary['mappingCoverage'].append(coverage_row)
+                batch_ranges.append({key: coverage_row[key] for key in (
+                    'path', 'sourceSha256', 'byteStart', 'byteEnd', 'startLine', 'endLine', 'pageRefs'
+                )})
+            summary['mapBatches'].append({
+                'batch': batch_index, 'promptBytes': len(prompt.encode('utf-8')),
+                'fragmentCount': len(batch), 'ranges': batch_ranges, 'mapped': False,
+            })
+        if max_map_calls is not None and summary['plannedMapCalls'] > max_map_calls:
+            return incomplete('collection-map-call-budget')
+
+        for batch_index, (batch, prompt) in enumerate(planned_batches):
+            prompt_bytes = len(prompt.encode('utf-8'))
+            rejected_before = len(summary['rejectedSpans'])
+            try:
+                summary['mapCalls'] += 1
+                response_value = generate(prompt, 'curator-collection-map', COLLECTION_MAP_SCHEMA)
+            except Exception as error:
+                summary['attemptedPromptBytes'] = prompt_bytes
+                return incomplete('collection-map-call-failed', type(error).__name__)
+            if (not isinstance(response_value, dict) or set(response_value) != {'spans'}
+                or not isinstance(response_value['spans'], list)):
+                return incomplete('invalid-collection-map-response')
+            summary['candidateSpans'] += len(response_value['spans'])
+            fragments_by_path = {}
+            for fragment in batch:
+                fragments_by_path.setdefault(fragment['path'], []).append(fragment)
+            for candidate in response_value['spans']:
+                if not _candidate_shape(candidate):
+                    summary['rejectedSpans'].append(_candidate_descriptor(candidate, 'invalid-map-span-shape'))
+                    continue
+                covered, reason = _fragment_covers_lines(candidate, fragments_by_path)
+                if not covered:
+                    summary['rejectedSpans'].append(_candidate_descriptor(candidate, reason))
+                    continue
+                pending.append(candidate)
+
+            for candidate in [item for item in pending if item['path'] in set(source_paths)]:
+                original_span = {
+                    'path': candidate['path'], 'sourceSha256': candidate['source_sha256'],
+                    'startLine': candidate['start_line'], 'endLine': candidate['end_line'],
+                    'quote': candidate['quote'], 'fact': candidate['fact'],
+                }
+                command = base_command() + ['--record-span', json.dumps(original_span, ensure_ascii=False, separators=(',', ':'))]
+                try:
+                    record_result, record_bytes, record_elapsed = _run_cli(command)
+                except subprocess.TimeoutExpired:
+                    summary['unresolvedSpans'].append(_candidate_descriptor(candidate, 'span-record-command-timeout'))
+                    return incomplete('collection-span-record-timeout')
+                tool_calls.append({
+                    'kind': 'record-span', 'path': candidate['path'],
+                    'toolOutputBytes': record_bytes, 'toolSeconds': round(record_elapsed, 3),
+                    'stdoutSha256': _digest(record_result.stdout), 'failed': record_result.returncode != 0,
+                })
+                if record_result.returncode != 0:
+                    error_text = record_result.stderr.decode('utf-8', errors='replace')
+                    if 'Quote does not match original lines' in error_text or 'Invalid evidence span' in error_text:
+                        summary['rejectedSpans'].append(_candidate_descriptor(candidate, 'original-span-validation-failed'))
+                        pending.remove(candidate)
+                        continue
+                    pending.remove(candidate)
+                    summary['unresolvedSpans'].append(_candidate_descriptor(candidate, 'span-record-command-failed'))
+                    return incomplete('collection-span-record-failed')
+                try:
+                    record_summary = json.loads(record_result.stdout)
+                    if not isinstance(record_summary, dict) or record_summary.get('ledgerEntries', 0) < 1:
+                        return incomplete('invalid-span-record-response')
+                except Exception:
+                    pending.remove(candidate)
+                    summary['unresolvedSpans'].append(_candidate_descriptor(candidate, 'invalid-span-record-response'))
+                    return incomplete('invalid-collection-record-response')
+                summary['verifiedSpans'] += 1
+                pending.remove(candidate)
+
+            if len(summary['rejectedSpans']) > rejected_before:
+                return incomplete('collection-map-rejected-spans')
+            summary['mapBatches'][batch_index]['mapped'] = True
+            for coverage_row in summary['mappingCoverage']:
+                if coverage_row['batch'] == batch_index:
+                    coverage_row['mapped'] = True
+            mapped_batch_ids = {row['batch'] for row in summary['mapBatches'] if row['mapped']}
+            summary['unmappedSources'] = sorted({
+                fragment['path'] for index, planned in enumerate(planned_batches)
+                if index not in mapped_batch_ids for fragment in planned[0]
+            })
+        summary['mappingComplete'] = True
+        summary['unmappedSources'] = []
     if pending:
         summary['unresolvedSpans'].extend(_candidate_descriptor(item, 'source-delivered-but-span-not-recorded') for item in pending)
         return incomplete('unresolved-candidate-spans')

@@ -25,7 +25,8 @@ class CollectionCliTest(unittest.TestCase):
         self.vault = self.root / 'vault'
         self.vault.mkdir()
 
-    def run_collection(self, texts, mapper, page_bytes=650, max_pages=12, max_map_calls=None):
+    def run_collection(self, texts, mapper, page_bytes=650, max_pages=12, max_map_calls=None,
+                       max_input_bytes=10000, pack_prompts=False):
         hashes = {}
         for name, body in texts.items():
             (self.vault / name).write_text(body)
@@ -35,9 +36,10 @@ class CollectionCliTest(unittest.TestCase):
             private_dir=self.root / 'state', source_hashes=hashes,
             scope_label='fixed-fixture', question='Which fact?',
             max_page_bytes=page_bytes, max_pages=max_pages,
-            max_input_bytes=10000,
+            max_input_bytes=max_input_bytes,
             generate=lambda prompt, stage, schema: mapper(prompt, hashes),
             max_map_calls=max_map_calls,
+            pack_prompts=pack_prompts,
         )
 
     def test_common_source_index_expands_read_allowlist_only_when_requested(self):
@@ -93,6 +95,122 @@ class CollectionCliTest(unittest.TestCase):
         self.assertEqual(result['summary']['incompleteReason'], 'collection-map-call-budget')
         self.assertEqual(result['summary']['mapCalls'], 2)
         self.assertIsNone(result['synthesisContext'])
+
+    def test_packed_prompts_preserve_unicode_json_and_map_source_ranges_once(self):
+        body = ''.join(
+            f'Row {number:03d}: π🙂 has "quotes" and \\ slashes; U+2028 is here\u2028too.\n'
+            for number in range(48)
+        )
+        prompts = []
+        result = self.run_collection(
+            {'unicode.md': body}, lambda prompt, _: (prompts.append(prompt) or {'spans': []}),
+            page_bytes=650, max_pages=40, max_input_bytes=2400, pack_prompts=True,
+        )
+        self.assertTrue(result['complete'], result['summary'].get('incompleteReason'))
+        self.assertGreater(len(result['summary']['pages']), 1)
+        self.assertGreater(len(prompts), 1)
+        self.assertEqual(result['summary']['plannedMapCalls'], len(prompts))
+        self.assertTrue(all(len(prompt.encode('utf-8')) <= 2400 for prompt in prompts))
+        self.assertTrue(all('Previously validated candidate facts' not in prompt for prompt in prompts))
+
+        displayed = []
+        for prompt in prompts:
+            marker = '\nOriginal source page fragments (these are the only text to map now):\n'
+            payload = prompt.split(marker, 1)[1].split('\nUser question:\n', 1)[0]
+            displayed.extend(json.loads(payload))
+        displayed.sort(key=lambda fragment: fragment['byteStart'])
+        self.assertEqual(''.join(fragment['text'] for fragment in displayed), body)
+        self.assertTrue(all(
+            fragment['endLine'] - fragment['startLine'] == fragment['text'].count('\n')
+            for fragment in displayed
+        ))
+        self.assertEqual(displayed[0]['byteStart'], 0)
+        self.assertEqual(displayed[-1]['byteEnd'], len(body.encode('utf-8')))
+        self.assertTrue(all(left['byteEnd'] == right['byteStart'] for left, right in zip(displayed, displayed[1:])))
+        coverage = result['summary']['mappingCoverage']
+        self.assertEqual(len(coverage), len(displayed))
+        self.assertTrue(all(row['mapped'] for row in coverage))
+        self.assertTrue(any(len(row['pageRefs']) > 1 for row in coverage))
+        self.assertEqual(result['summary']['mappedSourceCoverage'][0]['mappedBytes'], len(body.encode('utf-8')))
+
+    def test_packed_same_path_ranges_can_verify_exact_quotes(self):
+        lines = [f'Original event {number:02d} happened in year {2000 + number}.\n' for number in range(28)]
+        body = ''.join(lines)
+        hashes = {'facts.md': hashlib.sha256(body.encode()).hexdigest()}
+        seen = []
+
+        def mapper(prompt, _):
+            seen.append(prompt)
+            first = lines[0].rstrip('\n')
+            last = lines[-1].rstrip('\n')
+            return {'spans': [
+                {'path': 'facts.md', 'source_sha256': hashes['facts.md'], 'start_line': 1,
+                 'end_line': 1, 'quote': first, 'fact': 'First event in 2000.'},
+                {'path': 'facts.md', 'source_sha256': hashes['facts.md'], 'start_line': len(lines),
+                 'end_line': len(lines), 'quote': last, 'fact': 'Last event in 2027.'},
+            ]}
+
+        result = self.run_collection(
+            {'facts.md': body}, mapper, page_bytes=650, max_pages=40,
+            max_input_bytes=10000, pack_prompts=True,
+        )
+        self.assertTrue(result['complete'], result['summary'].get('incompleteReason'))
+        self.assertEqual(len(seen), 1)
+        self.assertEqual(result['summary']['verifiedSpans'], 2)
+        self.assertEqual(result['summary']['ledgerEntries'], 2)
+        self.assertEqual({row['path'] for row in result['synthesisContext']['verifiedSpans']}, {'facts.md'})
+        self.assertGreater(len(result['summary']['pages']), 1)
+        self.assertTrue(any(len(row['pageRefs']) > 1 for row in result['summary']['mappingCoverage']))
+
+    def test_packed_oversized_whole_line_fails_before_any_model_call(self):
+        body = 'Oversized line: ' + ('界🙂' * 1400)
+        calls = []
+        result = self.run_collection(
+            {'large.md': body}, lambda *args: (calls.append(args) or {'spans': []}),
+            page_bytes=650, max_pages=100, max_input_bytes=1400, pack_prompts=True,
+        )
+        self.assertFalse(result['complete'])
+        self.assertEqual(result['summary']['incompleteReason'], 'collection-map-input-byte-budget')
+        self.assertEqual(calls, [])
+        self.assertEqual(result['summary']['mapCalls'], 0)
+        self.assertTrue(result['summary']['deliveryComplete'])
+        self.assertFalse(result['summary']['mappingComplete'])
+        self.assertEqual(result['summary']['unreadSources'], [])
+        self.assertEqual(result['summary']['unmappedSources'], ['large.md'])
+
+    def test_packed_map_call_budget_is_preflighted_before_any_model_call(self):
+        body = ''.join(f'Fact row {number:04d} is separately recorded.\n' for number in range(160))
+        calls = []
+        result = self.run_collection(
+            {'many.md': body}, lambda *args: (calls.append(args) or {'spans': []}),
+            page_bytes=650, max_pages=100, max_input_bytes=1500,
+            max_map_calls=2, pack_prompts=True,
+        )
+        self.assertFalse(result['complete'])
+        self.assertEqual(result['summary']['incompleteReason'], 'collection-map-call-budget')
+        self.assertGreater(result['summary']['plannedMapCalls'], 2)
+        self.assertEqual(calls, [])
+        self.assertEqual(result['summary']['mapCalls'], 0)
+        self.assertTrue(result['summary']['deliveryComplete'])
+        self.assertFalse(result['summary']['mappingComplete'])
+        self.assertEqual(result['summary']['unmappedSources'], ['many.md'])
+
+    def test_packed_rejected_quote_cannot_reach_synthesis_context(self):
+        body = 'The source says the date is 9 October.\n'
+        def mapper(_, hashes):
+            return {'spans': [{'path': 'fact.md', 'source_sha256': hashes['fact.md'],
+                               'start_line': 1, 'end_line': 1, 'quote': 'The date is 10 October.',
+                               'fact': 'The date is 10 October.'}]}
+        result = self.run_collection(
+            {'fact.md': body}, mapper, page_bytes=650, max_pages=8,
+            max_input_bytes=10000, pack_prompts=True,
+        )
+        self.assertFalse(result['complete'])
+        self.assertEqual(result['summary']['incompleteReason'], 'collection-map-rejected-spans')
+        self.assertFalse(result['summary']['mappingComplete'])
+        self.assertIsNone(result['synthesisContext'])
+        self.assertEqual(result['summary']['verifiedSpans'], 0)
+        self.assertTrue(result['summary']['rejectedSpans'])
 
     def test_runner_budget_stops_before_model_or_lead(self):
         body = 'A verifiable fixture fact.\n'
@@ -170,6 +288,7 @@ else:
         env = dict(os.environ, PATH=str(bin_dir) + os.pathsep + os.environ['PATH'],
                    TEST_SOURCE_SHA=digest, PYTHONDONTWRITEBYTECODE='1')
         for name, flags in [('control', []), ('collection', ['--collection-ledger']),
+                            ('packed-collection', ['--collection-ledger', '--collection-pack-prompts']),
                             ('ranked', ['--ranked-originals']),
                             ('basic', ['--basic-config', str(config)])]:
             with self.subTest(name=name):
@@ -185,9 +304,13 @@ else:
                 self.assertEqual(report['answer'], '9 October')
                 self.assertEqual(report['citations'], ['fact.md'])
                 self.assertEqual(report['sourceReads'][0]['path'], 'fact.md')
-                if name == 'collection':
+                if name in ('collection', 'packed-collection'):
                     self.assertEqual(report['collection']['ledgerEntries'], 1)
                     self.assertEqual(report['collection']['verifiedSpans'], 1)
+                if name == 'packed-collection':
+                    self.assertTrue(report['collectionPackPrompts'])
+                    self.assertTrue(report['collection']['mappingComplete'])
+                    self.assertEqual(report['collection']['plannedMapCalls'], 1)
                 if name == 'ranked':
                     self.assertEqual(report['rankedOriginalsDelivery']['selectedCount'], 1)
                     self.assertEqual(report['sourceReads'][0]['transport'], 'ranked-originals')

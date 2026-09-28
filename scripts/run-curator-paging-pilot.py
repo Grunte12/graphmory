@@ -31,6 +31,7 @@ parser.add_argument('--compact-prefetch', action='store_true', help='Omit previe
 parser.add_argument('--basic-config', help='Isolated Basic Memory 0.23.2 hybrid index configuration')
 parser.add_argument('--source-index', action='store_true', help='Offer the same original path/hash scope and original reads to every arm')
 parser.add_argument('--collection-ledger', action='store_true', help='Experimental full-scope original collection before Curator synthesis')
+parser.add_argument('--collection-pack-prompts', action='store_true', help='Pack line-safe original collection fragments into exact byte-bounded map prompts')
 parser.add_argument('--ranked-originals', action='store_true', help='Experimental byte-bounded original prefetch in current retrieval rank order')
 args = parser.parse_args()
 lead_model = args.lead_model or args.model
@@ -46,6 +47,8 @@ if args.collection_ledger and (not args.source_index or args.basic_config or arg
     raise RuntimeError('Collection requires shared source-index and Graphmory without prefetch')
 if args.collection_ledger and args.max_rounds < 2:
     raise RuntimeError('Collection requires at least two Curator calls: map and synthesis')
+if args.collection_pack_prompts and not args.collection_ledger:
+    raise RuntimeError('Collection prompt packing requires --collection-ledger')
 if args.ranked_originals and (not args.source_index or args.basic_config or args.prefetch_wide_originals
                               or args.collection_ledger or args.mode != 'auto'):
     raise RuntimeError('Ranked originals require Graphmory auto, shared source-index, and no other prefetch')
@@ -101,7 +104,8 @@ report = {'protocol': 'curator-paging-development-v4-tool-error-feedback', 'id':
           'temporalDecision': args.temporal_decision,
           'evidenceState': args.evidence_state, 'evidenceStateSnapshots': [],
           'prefetchWideOriginals': args.prefetch_wide_originals, 'compactPrefetch': args.compact_prefetch, 'prefetch': None,
-          'sourceIndex': args.source_index, 'collectionLedger': args.collection_ledger, 'collection': None,
+          'sourceIndex': args.source_index, 'collectionLedger': args.collection_ledger,
+          'collectionPackPrompts': args.collection_pack_prompts, 'collection': None,
           'rankedOriginals': args.ranked_originals, 'rankedOriginalsDelivery': None,
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
           'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [], 'sourceToolCalls': [], 'sourceRequests': [], 'sourceRequestErrors': [],
@@ -277,6 +281,7 @@ try:
             max_page_bytes=page_budget, max_pages=page_limit,
             max_input_bytes=args.max_input_bytes, generate=generate,
             max_map_calls=args.max_rounds - 1,
+            pack_prompts=args.collection_pack_prompts,
         )
         report['collection'] = collected['summary']
         report['sourceToolCalls'].extend(collected['toolCalls'])
