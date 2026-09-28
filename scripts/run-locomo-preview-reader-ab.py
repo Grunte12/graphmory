@@ -14,7 +14,7 @@ prepared = pathlib.Path(args.prepared).resolve()
 out = pathlib.Path(args.out).resolve()
 root = pathlib.Path(__file__).resolve().parents[1]
 manifest = json.loads((prepared / 'manifest.json').read_text())
-if manifest['protocol'] != 'locomo-preview-reader-development-ab-v1':
+if manifest['protocol'] not in ('locomo-preview-reader-development-ab-v1', 'locomo-idempotent-targeted-development-v1'):
     raise RuntimeError('Unknown protocol')
 if out.exists():
     raise RuntimeError('Preserve existing runs')

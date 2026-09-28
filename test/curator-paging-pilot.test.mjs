@@ -6,7 +6,7 @@ import path from 'node:path'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 
-const runner = new URL('../scripts/run-curator-paging-pilot.py', import.meta.url).pathname
+const runner = process.env.READER_PILOT_RUNNER || new URL('../scripts/run-curator-paging-pilot.py', import.meta.url).pathname
 function runFixture(mode, extraArgs = []) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'graphmory-paging-harness-'))
   const vault = path.join(dir, 'vault'), bin = path.join(dir, 'bin')
@@ -14,17 +14,34 @@ function runFixture(mode, extraArgs = []) {
   const markdown = '# Fixture\n## Fact\nThe fixture owner is Ada.'
   const sha256 = createHash('sha256').update(markdown).digest('hex')
   fs.writeFileSync(path.join(vault, 'note.md'), markdown)
-  fs.writeFileSync(path.join(dir, 'input.json'), JSON.stringify([{ id: 'fixture:0', question: 'Who owns the fixture?', vault, sources: { 'note.md': sha256 } }]))
-  const fake = `#!${process.execPath}\nconst fs=require('node:fs');process.stdin.resume();process.stdin.on('end',()=>{
+  const sourceHashes = { 'note.md': sha256 }
+  if (mode === 'mixed-repeat') {
+    const second = '# Fixture details\nThe fixture launched in March.'
+    fs.writeFileSync(path.join(vault, 'details.md'), second)
+    sourceHashes['details.md'] = createHash('sha256').update(second).digest('hex')
+  }
+  fs.writeFileSync(path.join(dir, 'input.json'), JSON.stringify([{ id: 'fixture:0', question: 'Who owns the fixture?', vault, sources: sourceHashes }]))
+  const fake = `#!${process.execPath}\nconst fs=require('node:fs');let prompt='';process.stdin.on('data',chunk=>prompt+=chunk);process.stdin.resume();process.stdin.on('end',()=>{
     const schema=JSON.parse(fs.readFileSync(process.argv[process.argv.indexOf('--output-schema')+1]));
     const counter=process.env.PAGING_TEST_COUNTER;const count=fs.existsSync(counter)?Number(fs.readFileSync(counter)):0;
     fs.writeFileSync(counter,String(count+1));
     const resumed=process.argv.includes('resume');
     if(process.env.PAGING_TEST_MODE==='persistent' && count===1 && !resumed)process.exit(9);
     console.log(JSON.stringify({type:'thread.started',thread_id:process.env.PAGING_TEST_MODE==='changed-session'&&count===1?'wrong-session':'fixture-session'}));
-    const response=schema.properties.answer?{answer:'Ada owns the fixture (note.md)'}:
+    let response=schema.properties.answer?{answer:'Ada owns the fixture (note.md)'}:
       count===0?{read_paths:[process.env.PAGING_TEST_MODE==='unseen'?'hidden-gold.md':'note.md'],next_page:process.env.PAGING_TEST_MODE==='exhausted-next',brief:''}:
       {read_paths:[],next_page:false,brief:'Ada owns the fixture (note.md)'};
+    const repeatModes=['repeat','mixed-repeat','batch-duplicate','repeat-forever','compact-repeat','repeat-unseen','repeat-next'];
+    if(!schema.properties.answer && repeatModes.includes(process.env.PAGING_TEST_MODE)) {
+      if(count===0 && process.env.PAGING_TEST_MODE==='batch-duplicate')response.read_paths=['note.md','note.md'];
+      if(count===1 || (count>0 && process.env.PAGING_TEST_MODE==='repeat-forever'))response={read_paths:process.env.PAGING_TEST_MODE==='mixed-repeat'?['note.md','details.md']:['note.md'],next_page:false,brief:''};
+      if(count===1 && process.env.PAGING_TEST_MODE==='repeat-unseen')response.read_paths=['note.md','hidden-gold.md'];
+      if(count===1 && process.env.PAGING_TEST_MODE==='repeat-next')response.next_page=true;
+      if(count===2 && ['repeat','mixed-repeat','compact-repeat','repeat-next'].includes(process.env.PAGING_TEST_MODE)) {
+        if(!prompt.includes('Requested originals already supplied') || !prompt.includes('Ada'))process.exit(8);
+        if(process.env.PAGING_TEST_MODE==='repeat-next' && !prompt.includes('No more pages'))process.exit(8);
+      }
+    }
     const citeBrief={extensionless:'Ada owns the fixture [[note]].',prefix:'Ada owns the fixture (note.md.bak)',suffix:'Ada owns the fixture (other-note.md)',differentExtension:'Ada owns the fixture (note.pdf)',punctuation:'Ada owns the fixture: note.md.'};
     if(response.brief && citeBrief[process.env.PAGING_TEST_MODE])response.brief=citeBrief[process.env.PAGING_TEST_MODE];
     if(schema.properties.citations)response.citations=[process.env.PAGING_TEST_MODE==='bad-citation'?'unread.md':'note.md'];
@@ -32,7 +49,7 @@ function runFixture(mode, extraArgs = []) {
     console.log(JSON.stringify({type:'turn.completed',usage:{input_tokens:10,output_tokens:3}}));
   });\n`
   fs.writeFileSync(path.join(bin, 'codex'), fake, { mode: 0o700 })
-  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), '--model', 'gpt-5.6-luna', '--lead-model', 'gpt-5.6-sol', ...extraArgs, ...(['persistent', 'changed-session'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : []), ...(['citation', 'bad-citation'].includes(mode) ? ['--structured-citations'] : [])], {
+  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), '--model', 'gpt-5.6-luna', '--lead-model', 'gpt-5.6-sol', ...extraArgs, ...(['persistent', 'changed-session', 'compact-repeat'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : []), ...(['citation', 'bad-citation'].includes(mode) ? ['--structured-citations'] : [])], {
     encoding: 'utf8', timeout: 10000,
     env: { ...process.env, PATH: bin + path.delimiter + process.env.PATH, PAGING_TEST_MODE: mode, PAGING_TEST_COUNTER: path.join(dir, 'counter') },
   })
@@ -58,7 +75,7 @@ test('curator mediation rejects unseen source requests and never reaches lead', 
   assert.equal(report.modelCalls.length, 1)
   assert.equal(report.sourceReads.length, 0)
   assert.equal(report.answer, null)
-  assert.match(report.stopReason, /Invalid, unseen or repeated/)
+  assert.match(report.stopReason, /Invalid.*unseen/)
 })
 test('requesting another page after exhaustion gets explicit feedback and can still finish', () => {
   const { child, report } = runFixture('exhausted-next')
@@ -113,4 +130,37 @@ test('citation identity accepts Markdown extension omission and punctuation but 
     assert.notEqual(invalid.child.status, 0, mode)
     assert.match(invalid.report.stopReason, /citation provenance/)
   }
+})
+
+test('repeated originals are reused with feedback while mixed new originals are read once', () => {
+  for (const mode of ['repeat', 'mixed-repeat', 'compact-repeat', 'repeat-next']) {
+    const { child, report } = runFixture(mode)
+    assert.equal(child.status, 0, child.stderr)
+    assert.equal(report.runComplete, true)
+    assert.equal(report.modelCalls.length, 4)
+    assert.deepEqual(report.sourceRequests[1].reused, ['note.md'])
+    assert.deepEqual(report.sourceRequests[1].new, mode === 'mixed-repeat' ? ['details.md'] : [])
+    assert.deepEqual(report.sourceReads.map(row => row.path), mode === 'mixed-repeat' ? ['note.md', 'details.md'] : ['note.md'])
+  }
+})
+test('duplicate paths within a request are read once and endless repeats hit the declared round budget', () => {
+  const batch = runFixture('batch-duplicate')
+  assert.equal(batch.child.status, 0, batch.child.stderr)
+  assert.equal(batch.report.sourceReads.length, 1)
+  assert.deepEqual(batch.report.sourceRequests[0].requested, ['note.md', 'note.md'])
+  const endless = runFixture('repeat-forever', ['--max-rounds', '3'])
+  assert.notEqual(endless.child.status, 0)
+  assert.equal(endless.report.stopReason, 'round-budget')
+  assert.equal(endless.report.modelCalls.length, 3)
+  assert.equal(endless.report.sourceReads.length, 1)
+  assert.equal(endless.report.answer, null)
+})
+
+test('an unseen path mixed with an already-read path still stops before another source read', () => {
+  const { child, report } = runFixture('repeat-unseen')
+  assert.notEqual(child.status, 0)
+  assert.equal(report.stopReason, 'Invalid or unseen source request')
+  assert.equal(report.sourceReads.length, 1)
+  assert.equal(report.modelCalls.length, 2)
+  assert.equal(report.answer, null)
 })

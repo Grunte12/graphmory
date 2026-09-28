@@ -66,7 +66,7 @@ for index, trial in enumerate(manifest['executionOrder']):
                      answer=report['answer'] if report else None, brief=report['brief'] if report else None,
                      citations=report.get('citations') if report else None,
                      citationProvenanceValid=report.get('citationProvenanceValid') if report else None,
-                     sourceReads=report['sourceReads'] if report else [], pages=report['pages'] if report else [],
+                     sourceReads=report['sourceReads'] if report else [], sourceRequests=report.get('sourceRequests', []) if report else [], pages=report['pages'] if report else [],
                      modelCalls=calls, usage=usage, elapsedSeconds=report['elapsedSeconds'] if report else None,
                      goldNotesRead=len(paths.intersection(gold)), goldNotes=len(gold),
                      completeGoldNoteReads=bool(gold) and set(gold).issubset(paths), category=by_id[trial['id']]['category']))
@@ -84,23 +84,29 @@ for arm in ('current', 'coverage'):
     for row in selected:
         row['rawQaF1'] = scores[row['id']]
         row['operationalAdjustedQaF1'] = row['rawQaF1'] if row['complete'] else 0.0
-summary = {}
-for arm in ('current', 'coverage'):
-    selected = [row for row in rows if row['arm'] == arm]
+def aggregate(selected):
     finished = [row for row in selected if row['complete']]
-    summary[arm] = {'planned': len(selected), 'attempted': sum(row['attempted'] for row in selected),
-                    'operationallyComplete': len(finished), 'meanRawQaF1AllPlanned': statistics.mean(row['rawQaF1'] for row in selected),
-                    'meanOperationalAdjustedQaF1AllPlanned': statistics.mean(row['operationalAdjustedQaF1'] for row in selected),
-                    'meanRawQaF1CompletedOnly': statistics.mean(row['rawQaF1'] for row in finished) if finished else None,
-                    'medianCompletedSeconds': statistics.median(row['elapsedSeconds'] for row in finished) if finished else None,
-                    'allAttemptInputTokens': sum(row['usage']['input_tokens'] for row in selected),
-                    'allAttemptCachedInputTokens': sum(row['usage']['cached_input_tokens'] for row in selected)}
-paired = []
-for case_id in manifest['selectedIds']:
-    pair = {row['arm']: row for row in rows if row['id'] == case_id}
-    a, b = pair['current'], pair['coverage']
-    paired.append({'id': case_id, 'category': a['category'], 'bothComplete': a['complete'] and b['complete'],
-                   'rawQaF1DeltaCoverageMinusCurrent': b['rawQaF1'] - a['rawQaF1']})
+    return {'planned': len(selected), 'attempted': sum(row['attempted'] for row in selected),
+            'operationallyComplete': len(finished), 'meanRawQaF1AllPlanned': statistics.mean(row['rawQaF1'] for row in selected),
+            'meanOperationalAdjustedQaF1AllPlanned': statistics.mean(row['operationalAdjustedQaF1'] for row in selected),
+            'meanRawQaF1CompletedOnly': statistics.mean(row['rawQaF1'] for row in finished) if finished else None,
+            'medianCompletedSeconds': statistics.median(row['elapsedSeconds'] for row in finished) if finished else None,
+            'allAttemptInputTokens': sum(row['usage']['input_tokens'] for row in selected),
+            'allAttemptCachedInputTokens': sum(row['usage']['cached_input_tokens'] for row in selected)}
+
+summary, paired = {}, []
+if manifest['protocol'] == 'locomo-idempotent-targeted-development-v1':
+    # Different questions/arms are targeted retries, never a paired A/B comparison.
+    summary['targeted'] = aggregate(rows)
+elif manifest['protocol'] == 'locomo-preview-reader-development-ab-v1':
+    summary = {arm: aggregate([row for row in rows if row['arm'] == arm]) for arm in ('current', 'coverage')}
+    for case_id in manifest['selectedIds']:
+        pair = {row['arm']: row for row in rows if row['id'] == case_id}
+        a, b = pair['current'], pair['coverage']
+        paired.append({'id': case_id, 'category': a['category'], 'bothComplete': a['complete'] and b['complete'],
+                       'rawQaF1DeltaCoverageMinusCurrent': b['rawQaF1'] - a['rawQaF1']})
+else:
+    raise RuntimeError('Unknown analysis protocol')
 result = {'protocol': manifest['protocol'], 'manifestSha256': ledger['manifestSha256'],
           'summary': summary, 'paired': paired, 'rows': rows, 'independentSemanticReview': 'not performed',
           'limitations': manifest['limitations'] + ['Gold-note reads do not establish semantic support or complete answers',

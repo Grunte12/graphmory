@@ -44,13 +44,13 @@ workspace = out / 'reader-workspace'
 workspace.mkdir()
 root = pathlib.Path(__file__).resolve().parents[1]
 cli = root / 'scripts/brain-sync.mjs'
-report = {'protocol': 'curator-paging-development-v2-boolean-continuation', 'id': case['id'], 'question': case['question'],
+report = {'protocol': 'curator-paging-development-v3-idempotent-reads', 'id': case['id'], 'question': case['question'],
           'model': args.model, 'leadModel': lead_model, 'mode': args.mode, 'maxRounds': args.max_rounds, 'maxInputBytes': args.max_input_bytes,
           'persistentCurator': args.persistent_curator, 'compactFollowup': args.compact_followup,
           'structuredCitations': args.structured_citations,
           'coveragePreviews': args.coverage_previews,
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
-          'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [],
+          'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [], 'sourceRequests': [],
           'brief': None, 'answer': None, 'runComplete': False, 'stopReason': None,
           'limitations': ['One exposed development case; no quality acceptance or latency tail claim',
                           'No-tool boundary is checked in trace, not a proven filesystem isolation guarantee',
@@ -68,6 +68,13 @@ def brief_mentions_source(brief, name):
     stem = name[:-3] if name.endswith('.md') else name
     token = re.escape(stem) + (r'(?:\.md)?' if name.endswith('.md') else '')
     return re.search(r'(?<![\w/\\.-])' + token + r'(?![\w/\\-]|\.\w)', brief) is not None
+
+
+def classify_source_requests(requested, available, read):
+    if any(not isinstance(name, str) or name not in available for name in requested):
+        raise RuntimeError('Invalid or unseen source request')
+    unique = list(dict.fromkeys(requested))
+    return unique, [name for name in unique if name not in read], [name for name in unique if name in read]
 
 
 def command_json(command):
@@ -173,20 +180,21 @@ try:
             prompt = ('Continue the same Curator task using your previous context. '
                       'Use the same read_paths/next_page/brief contract. '
                       'New original sources since your last turn: ' + json.dumps(new_originals)
+                      + '\nOriginal paths already supplied: ' + json.dumps(sorted(read))
                       + ('\nNew retrieval page: ' + json.dumps(page) if new_page else '')
                       + ('\nProtocol feedback: ' + feedback if feedback else ''))
         else:
             prompt = (instruction + '\nQuestion: ' + case['question']
                       + '\nAvailable paths from previous pages: ' + json.dumps(sorted(available - {row['path'] for row in page['results']}))
                       + '\nCurrent retrieval page: ' + json.dumps(page)
+                      + '\nOriginal paths already supplied: ' + json.dumps(sorted(read))
                       + '\nOriginal sources already read: ' + json.dumps(originals)
                       + ('\nProtocol feedback: ' + feedback if feedback else ''))
         response = generate(prompt, 'curator', schema)
         if set(response) != {'read_paths', 'next_page', 'brief'} or not isinstance(response['read_paths'], list) or not isinstance(response['brief'], str) or not isinstance(response['next_page'], bool):
             raise RuntimeError('Invalid curator response')
         requested, next_page = response['read_paths'], response['next_page']
-        if any(not isinstance(name, str) or name not in available or name in read for name in requested) or len(set(requested)) != len(requested):
-            raise RuntimeError('Invalid, unseen or repeated source request')
+        unique_requested, unread, reused = classify_source_requests(requested, available, read)
         if not requested and not next_page:
             if not response['brief'].strip():
                 raise RuntimeError('Empty final brief')
@@ -194,19 +202,23 @@ try:
             break
         if response['brief']:
             raise RuntimeError('Brief returned while evidence request pending')
-        new_originals = []
-        if requested:
-            sources = command_json(['node', str(cli), 'read-notes', '--vault', str(vault), '--paths', json.dumps(requested)])
-            if set(row['path'] for row in sources['sources']) != set(requested):
+        report['sourceRequests'].append({'turn': turn, 'requested': requested, 'new': unread, 'reused': reused})
+        if unread:
+            sources = command_json(['node', str(cli), 'read-notes', '--vault', str(vault), '--paths', json.dumps(unread)])
+            if set(row['path'] for row in sources['sources']) != set(unread):
                 raise RuntimeError('Source delivery mismatch')
             for row in sources['sources']:
                 if row['sha256'] != case['sources'][row['path']] or hashlib.sha256(row['markdown'].encode()).hexdigest() != row['sha256']:
                     raise RuntimeError('Original source mutated/hash mismatch')
             report['sourceReads'] += [{'path': row['path'], 'sha256': row['sha256'], 'bytes': row['bytes']} for row in sources['sources']]
-            read.update(requested)
+            read.update(unread)
             originals.extend(sources['sources'])
-            new_originals = sources['sources']
-        feedback = None
+        original_by_path = {row['path']: row for row in originals}
+        # Full follow-ups already include every original once; compact resumed
+        # follow-ups redeliver requested cached originals without disk rereads.
+        new_originals = [original_by_path[name] for name in unique_requested]
+        feedback_parts = (['Requested originals already supplied: ' + json.dumps(reused)
+                           + '. Use those originals or report what is missing.'] if reused else [])
         new_page = False
         if next_page:
             if page['hasMore'] and isinstance(page['nextOffset'], int) and not isinstance(page['nextOffset'], bool):
@@ -216,7 +228,8 @@ try:
             elif page['hasMore']:
                 raise RuntimeError('Invalid CLI continuation contract')
             else:
-                feedback = 'No more pages; hasMore=false. Use already supplied evidence or report what is missing.'
+                feedback_parts.append('No more pages; hasMore=false. Use already supplied evidence or report what is missing.')
+        feedback = ' '.join(feedback_parts) or None
         save()
     if report['brief'] is None:
         raise RuntimeError('round-budget')
