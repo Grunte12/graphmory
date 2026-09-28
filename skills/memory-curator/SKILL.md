@@ -36,14 +36,14 @@ For questions about implementation, runtime behavior, or provider configuration,
 
 ## Consolidation
 
-1. Require a complete Memory Patch.
-2. Verify that provenance supports the claim.
-3. Find the strongest existing canonical note.
-4. Merge or create without expanding the patch's meaning.
-5. Preserve provenance and connect the note to a project map.
-6. Return `APPLIED`, `TENSION`, or `BLOCKED`.
+1. Require a complete lead-authored Memory Patch, including claim, rationale, scope, provenance, confidence, type, and lifecycle. Read `references/protocol.md` for the required fields and outcomes.
+2. Open the cited original evidence and current target notes. Verify that the evidence supports the claim; a ranked candidate or link is not evidence by itself.
+3. Find the strongest existing canonical note. In curator mode, apply the supported patch with the host's normal Edit/Write tools, preserving its meaning, source IDs, and prior evidence. Keep historical notes; mark a replacement as `superseded` and link it to the active replacement when the patch explicitly establishes that lifecycle transition.
+4. Preserve disagreement. If the patch does not resolve a conflict with active memory, return `TENSION` rather than silently overwriting either position. If provenance or scope is missing, return `BLOCKED` with the smallest missing item.
+5. After a write, run `graphmory graph-audit --vault "<vault>" --json` and `graphmory lifecycle-audit --vault "<vault>" --json`. Repair supported link/lifecycle metadata issues without changing claim meaning; report remaining findings.
+6. Return `APPLIED`, `TENSION`, or `BLOCKED` with the affected paths and provenance status.
 
-In hosted Jev or local decision mode, the lead may run `graphmory curate-plan --vault "<path>" --input "<bundle.json>" --agent` after authoring a Memory Patch. The bundle contains `patch`, `sources` with IDs and short evidence excerpts, and optionally up to three `candidate_paths`. Read the returned advice and affected notes before any write. `curate-plan` never edits the vault; `review` is not approval to apply a patch. A local reranker cannot perform this classification.
+`curate-plan` is for hosted Jev or local decision mode only. In those workflows, the lead may run `graphmory curate-plan --vault "<path>" --input "<bundle.json>" --agent` after authoring a Memory Patch. The bundle contains `patch`, `sources` with IDs and short evidence excerpts, and optionally up to three `candidate_paths`. Read the returned advice and affected notes before any write. `curate-plan` never edits the vault; `review` is not approval to apply a patch. Do not call it in the default curator workflow, where the named host sub-agent applies a verified patch with its file-editing tools. A local reranker cannot perform this classification.
 
 ## Authority
 

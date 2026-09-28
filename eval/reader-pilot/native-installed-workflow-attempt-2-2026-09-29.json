@@ -1,0 +1,78 @@
+{
+  "date": "2026-09-29",
+  "kind": "native-installed-workflow-functional-smoke",
+  "attempt": 2,
+  "synthetic": true,
+  "comparisonClaim": false,
+  "leadModel": "gpt-5.6-sol",
+  "curator": {
+    "role": "graphmory_curator",
+    "model": "gpt-5.6-luna",
+    "reasoningEffort": "low",
+    "parentBindingVerified": true,
+    "childTraceSha256": "24e2e71bbc496bf15cbf4eca126b01b278097e6c67cf46efb23a3bfea476bdee"
+  },
+  "childTaskComplete": true,
+  "curatorActions": {
+    "checks": {
+      "skillRead": true,
+      "protocolRead": true,
+      "recallExploreInvoked": true,
+      "recallManagedInvoked": true,
+      "curatePlanInvoked": true,
+      "graphAuditInvoked": true,
+      "lifecycleAuditInvoked": true,
+      "hostPatchInvoked": true
+    },
+    "patchResults": [
+      {
+        "success": true
+      },
+      {
+        "success": true
+      },
+      {
+        "success": true
+      }
+    ]
+  },
+  "postconditions": {
+    "allOriginalPathsPreserved": true,
+    "immutableEvidenceHashPreserved": true,
+    "oldPolicyExplicitlySuperseded": true,
+    "currentNoteHasOriginalProvenance": true,
+    "currentRecallIncludesCurrentOwner": true,
+    "currentRecallExcludesSupersededOwner": true
+  },
+  "sourceManifestSha256": "c1b079a1e31c7bb026ab00b44b07ba9bdcb842ef27ae504e836313c2b8098b6b",
+  "graph": {
+    "activeNotes": 5,
+    "edges": 7,
+    "issues": 0,
+    "isolatedNotes": [
+      "Evidence/Approval.md"
+    ]
+  },
+  "lifecycle": {
+    "critical": 0,
+    "high": 0,
+    "medium": 2,
+    "finding": "active-note-has-stale-language",
+    "paths": [
+      "Evidence/Approval.md",
+      "Projects/Cedar/Display.md"
+    ]
+  },
+  "limitations": [
+    "One synthetic Codex workflow; not general host or quality validation.",
+    "CLI role binding verified using exact parent-child runtime metadata; raw identifiers omitted.",
+    "Curator read linked original notes; measured retrieval output does not establish two-hop engine traversal.",
+    "curate-plan rejected normal curator workflow; host patch tools subsequently applied verified changes.",
+    "Normal config, project trust and dispatch wording changed together; individual causal effect unknown.",
+    "Follow-up installer/skill guidance has not yet received a second live generation."
+  ],
+  "packageSha256": "25e6068b3e2fd0f270eb18a386e291523878aedba26dcfe4c516a6ec23d73b68",
+  "installedRoleSha256": "c12608771f1ffd3e89627cbdcd2ec9de7d01be8333ef26f2f3f145b5134c43d2",
+  "traceSha256": "80a5e441022eb709933a91bfcdfd08b098e5548ab96de546230940fe9c3755e2",
+  "nativeExitCode": 0
+}

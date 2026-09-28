@@ -39,6 +39,15 @@ test("all explicit package file entries exist", () => {
   }
 })
 
+test("package ships the manual native-host curator workflow smoke guide", () => {
+  const entry = "docs/guides/curator-workflow-smoke.md"
+  assert.equal(pkg.files.includes(entry), true)
+  const guide = fs.readFileSync(path.join(root, entry), "utf8")
+  assert.match(guide, /native child run for `graphmory_curator`/)
+  assert.match(guide, /graphmory recall-explore/)
+  assert.match(guide, /graphmory lifecycle-audit/)
+})
+
 test("package allowlist excludes private runtime artifacts", () => {
   const normalized = pkg.files.map((entry) => entry.replaceAll("\\", "/"))
   assert.equal(normalized.some((entry) => entry.startsWith(".opencode")), false)

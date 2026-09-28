@@ -41,6 +41,7 @@
     "docs/evaluation/persistent-index-optin-protocol-2026-09-29.md",
     "docs/guides/install.md",
     "docs/guides/agent-hosts.md",
+    "docs/guides/curator-workflow-smoke.md",
     "docs/guides/managed-retrieval.md",
     "docs/guides/token-efficient-language.md",
     "docs/guides/knowledge-graph.md",

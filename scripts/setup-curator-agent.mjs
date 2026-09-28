@@ -41,7 +41,8 @@ try {
     "You are Graphmory's dedicated memory curator. Read and follow the installed memory-curator skill before working.",
     "The lead agent owns new claims and sends a bounded task, vault path, and evidence IDs. Never invent meaning or expand beyond that task.",
     "For recall, use graphmory recall-managed --agent with --vault and --query. It returns pages of candidate paths. For an explicit prior-state question, add --include-superseded and compare original dates and scope; omit the flag for current-state questions. Inspect relevant Markdown sections; if evidence is incomplete and hasMore is true, request the nextOffset page. Continue until evidence is sufficient or candidates are exhausted, then return a compact Brain Brief with exact paths and uncertainty. Do not edit during recall.",
-    "For consolidation, require a complete lead-authored Memory Patch, verify provenance and current target notes, then deduplicate, link, and validate. Never store secrets or raw transcripts. Do not move or rewrite unrelated notes.",
+    "For consolidation, require a complete lead-authored Memory Patch, read its original evidence and current target notes, and apply it with the host's normal file-editing tools without expanding its meaning. Preserve prior evidence and superseded notes; mark lifecycle and links explicitly. In curator mode, do not call curate-plan: it is for hosted Jev/local decision workflows and returns advice only.",
+    "After applying a patch, run graphmory graph-audit --vault <vault> --json and graphmory lifecycle-audit --vault <vault> --json. Repair bounded link/lifecycle metadata issues when supported; otherwise report the exact finding. Never store secrets or raw transcripts, and do not move or rewrite unrelated notes.",
     "Return APPLIED with changed paths, TENSION with conflicting paths, or BLOCKED with the smallest missing decision. Keep responses short.",
     "If the vault is unavailable or Graphmory CLI is missing, report BLOCKED. Do not scan arbitrary folders or silently install software.",
   ].join("\n")
@@ -59,10 +60,13 @@ try {
   }
   const action = fs.existsSync(agentPath) ? (fs.readFileSync(agentPath, "utf8") === content ? "unchanged" : "conflict") : "create"
   const skillAction = fs.existsSync(skillDir) ? (sameTree(skillSource, skillDir) ? "unchanged" : "conflict") : "create"
+  const verificationReminder = host === "codex" && scope === "project"
+    ? "Open this project as trusted in Codex, start a fresh session, and verify a native graphmory_curator child run."
+    : `Start a fresh ${host} session if needed and verify the named curator runs as a child.`
   console.log(JSON.stringify({ host, scope, model, agentPath, action, skillDir, skillAction, mode: apply ? "apply" : "preview" }, null, 2))
   if (action === "conflict") throw new Error("Existing agent differs. Review it manually; installer will not overwrite it")
   if (apply && skillAction === "unchanged" && action === "unchanged") {
-    console.log("Agent and skill already installed.")
+    console.log(`Agent and skill already installed. ${verificationReminder}`)
     process.exit(0)
   }
   if (skillAction === "conflict") throw new Error("Existing skill differs. Review it manually; installer will not overwrite it")
@@ -78,7 +82,7 @@ try {
     fs.mkdirSync(path.dirname(agentPath), { recursive: true })
     fs.writeFileSync(agentPath, content, { flag: "wx", mode: 0o600 })
   }
-  console.log("Installed. Restart the host if it does not discover a newly created agents directory.")
+  console.log(`Installed. ${verificationReminder}`)
 } catch (error) {
   console.error(error.message)
   process.exitCode = 1

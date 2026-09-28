@@ -25,3 +25,10 @@ Finish the [installed native-host workflow smoke](../evaluation/native-workflow-
 ## Host diagnosis sources
 
 The [official Codex subagent docs](https://developers.openai.com/codex/multi-agent/) document standalone `.codex/agents/*.toml` definitions with `name`, `description` and `developer_instructions`; the installed file follows that format. The [configuration reference](https://developers.openai.com/codex/config-reference/) discusses trusted project configuration. The first native attempt had no observed dispatch tool call, so neither unavailable custom roles nor a registration defect has been proved. Next verify named-role dispatch in a trusted project and retain the first incomplete outcome; do not invent extra registration as a fix.
+
+
+## Additional repository check: maintained knowledge pages
+
+The [current README](https://github.com/vectorize-io/hindsight#mental-models--knowledge-pages) documents mental models as stored answers to standing questions, refreshed when supporting memory changes. Knowledge pages expose this as wiki-like documents that can be projected to ordinary Markdown. This suggests a lightweight Graphmory adaptation: the existing project index can link to a Curator-maintained project brief with source links and revalidation conditions. Reading an existing brief avoids repeated synthesis only while its sources remain current; actual latency/token savings require a later comparison. Do not introduce a second authoritative store or automatically replace original evidence.
+
+The same [README recall description](https://github.com/vectorize-io/hindsight#recall) still combines BM25, semantic, graph and temporal paths, then fusion/reranking. It does not establish that keyword search should be removed. Its server/storage architecture and benchmark claims are separate from this design reference. No Hindsight installation, direct comparison or superiority claim was made.
