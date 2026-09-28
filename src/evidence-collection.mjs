@@ -79,7 +79,12 @@ export function collectEvidencePage(state, { maxBytes = 16000 } = {}) {
   while (index < originals.length) {
     const item = state.sources[index], data = originals[index], start = offset
     const make = end => ({ path: item.path, sourceSha256: item.sha256, byteStart: start,
-      byteEnd: end, totalBytes: data.length, text: data.subarray(start, end).toString('utf8'), sourceComplete: end === data.length })
+      byteEnd: end, totalBytes: data.length,
+      startLine: data.subarray(0, start).toString('utf8').split('\n').length,
+      endLine: data.subarray(0, end).toString('utf8').split('\n').length,
+      startsMidLine: start > 0 && data[start - 1] !== 10,
+      endsMidLine: end < data.length && end > 0 && data[end - 1] !== 10,
+      text: data.subarray(start, end).toString('utf8'), sourceComplete: end === data.length })
     const fits = end => { fragments.push(make(end)); const fits = bytes(response()) <= maxBytes; fragments.pop(); return fits }
     let low = start, high = data.length
     while (low < high) {

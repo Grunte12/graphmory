@@ -26,6 +26,11 @@ test('all originals survive multi-page UTF-8 transport within exact JSON byte bu
     assert.ok(Buffer.byteLength(JSON.stringify(page)) <= 750)
     assert.equal(page.semanticCompleteness, 'unverified')
     for (const fragment of page.fragments) {
+      const original = Buffer.from(files[fragment.path])
+      assert.equal(fragment.startLine, original.subarray(0, fragment.byteStart).toString('utf8').split('\n').length)
+      assert.equal(fragment.endLine, original.subarray(0, fragment.byteEnd).toString('utf8').split('\n').length)
+      assert.equal(fragment.startsMidLine, fragment.byteStart > 0 && original[fragment.byteStart - 1] !== 10)
+      assert.equal(fragment.endsMidLine, fragment.byteEnd < original.length && fragment.byteEnd > 0 && original[fragment.byteEnd - 1] !== 10)
       assert.equal(fragment.byteStart, Buffer.byteLength(delivered.get(fragment.path) ?? ''))
       delivered.set(fragment.path, (delivered.get(fragment.path) ?? '') + fragment.text)
       assert.ok(!fragment.text.includes('\uFFFD'))
