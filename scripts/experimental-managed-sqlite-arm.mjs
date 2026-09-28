@@ -3,7 +3,6 @@
 import { managedRecall } from '../src/decision-recall.mjs'
 import { DEFAULT_RUNTIME_CONFIG } from '../src/runtime-config.mjs'
 import { rank } from '../src/retrieval.mjs'
-import { rankEligibleSqlite } from './experimental-sqlite-eligible-ranker.mjs'
 
 const args = process.argv.slice(2)
 const option = name => args.includes(name) ? args[args.indexOf(name) + 1] : undefined
@@ -16,6 +15,8 @@ const config = structuredClone(DEFAULT_RUNTIME_CONFIG)
 config.retrievalProfile = 'mixed-notes'
 const db = option('--db')
 if (arm === 'sqlite' && !db) throw new Error('Missing --db')
+const rankEligibleSqlite = arm === 'sqlite'
+  ? (await import('./experimental-sqlite-eligible-ranker.mjs')).rankEligibleSqlite : null
 const rankImpl = arm === 'sqlite'
   ? (documents, query, method) => method === 'bm25f-focused-sections'
     ? rankEligibleSqlite(db, documents, query) : rank(documents, query, method)
