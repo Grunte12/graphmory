@@ -1,0 +1,13 @@
+{
+  "protocol": "category-5-unused-answer-binding-audit-v1",
+  "sourceSha256": "8e3be5d57ff2ff9ec5cd05939592f468c5f3f1fd95d13e431932bdf6bf0fd6fd",
+  "rawPredictionsChanged": false,
+  "frozenSourceLabelsChanged": false,
+  "category5BindingsCompared": [
+    "empty string",
+    "UNUSED_SENTINEL_REFERENCE_FOR_CATEGORY_FIVE"
+  ],
+  "scoreArtifactsByteIdentical": true,
+  "scoreArtifactSha256": "2270b13ca1b23b65e7516248324b7b9a7ef6282404442d3f17f81446757c4819",
+  "frozenRuntimeHashesMatch": true
+}

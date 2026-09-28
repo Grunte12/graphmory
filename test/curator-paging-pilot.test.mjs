@@ -51,6 +51,11 @@ function runFixture(mode, extraArgs = []) {
       }
     }
     const mode=process.env.PAGING_TEST_MODE;
+    if(!schema.properties.answer && mode==='evidence-state') {
+      const state=JSON.parse(prompt.split('\\nEvidence state: ')[1]);
+      if(state.semanticCompleteness!=='not_assessed' || state.candidatesObserved!==1 ||
+         state.originalsDelivered!==(count===0?0:1) || state.observedWithoutOriginal!==(count===0?1:0))process.exit(8);
+    }
     if(!schema.properties.answer && ['recover-unseen','unseen-forever'].includes(mode)) {
       if(count===0 || mode==='unseen-forever')response={read_paths:['hidden-gold.md'],next_page:true,brief:''};
       else if(count===1) {
@@ -179,6 +184,27 @@ test('coverage-preview option is passed through actual CLI and recorded', () => 
   assert.equal(child.status, 0, child.stderr)
   assert.equal(report.coveragePreviews, true)
   assert.equal(report.runComplete, true)
+})
+
+test('evidence-state counts actual delivery before and after verified CLI reads without claiming completeness', () => {
+  const { child, report } = runFixture('evidence-state', ['--evidence-state'])
+  assert.equal(child.status, 0, child.stderr)
+  assert.equal(report.evidenceState, true)
+  assert.deepEqual(report.evidenceStateSnapshots.map(row => row.originalsDelivered), [0, 1])
+  assert.deepEqual(report.evidenceStateSnapshots.map(row => row.observedWithoutOriginal), [1, 0])
+  assert.ok(report.evidenceStateSnapshots.every(row => row.semanticCompleteness === 'not_assessed'))
+  assert.deepEqual(report.sourceReads.map(row => row.path), ['note.md'])
+})
+
+test('evidence-state retains earlier-page gaps through rejected guesses and actual pagination', () => {
+  const { child, report } = runFixture('future-page', ['--evidence-state', '--mode', 'auto', '--max-rounds', '5'])
+  assert.equal(child.status, 0, child.stderr)
+  assert.deepEqual(report.evidenceStateSnapshots.map(row => row.candidatesObserved), [10, 10, 20, 20])
+  assert.deepEqual(report.evidenceStateSnapshots.map(row => row.originalsDelivered), [0, 0, 0, 1])
+  assert.deepEqual(report.evidenceStateSnapshots.map(row => row.earlierPageWithoutOriginal), [0, 0, 10, 10])
+  assert.ok(report.evidenceStateSnapshots.every(row => row.moreCandidatesAvailable === true))
+  assert.equal(report.sourceRequestErrors.length, 1)
+  assert.deepEqual(report.sourceReads.map(row => row.path), ['next-10.md'])
 })
 
 test('citation identity accepts Markdown extension omission and punctuation but rejects path substrings', () => {

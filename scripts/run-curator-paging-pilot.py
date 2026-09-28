@@ -8,6 +8,7 @@ import re
 import subprocess
 import time
 import os
+from curator_evidence_state import evidence_state
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input', required=True)
@@ -23,6 +24,7 @@ parser.add_argument('--compact-followup', action='store_true')
 parser.add_argument('--structured-citations', action='store_true')
 parser.add_argument('--coverage-previews', action='store_true')
 parser.add_argument('--temporal-decision', action='store_true', help='Experimental conflict-resolution instruction for recall only')
+parser.add_argument('--evidence-state', action='store_true', help='Experimental mechanical coverage counters; no semantic quality verdict')
 parser.add_argument('--basic-config', help='Isolated Basic Memory 0.23.2 hybrid index configuration')
 args = parser.parse_args()
 lead_model = args.lead_model or args.model
@@ -77,6 +79,7 @@ report = {'protocol': 'curator-paging-development-v4-tool-error-feedback', 'id':
           'structuredCitations': args.structured_citations,
           'coveragePreviews': args.coverage_previews,
           'temporalDecision': args.temporal_decision,
+          'evidenceState': args.evidence_state, 'evidenceStateSnapshots': [],
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
           'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [], 'sourceToolCalls': [], 'sourceRequests': [], 'sourceRequestErrors': [],
           'brief': None, 'answer': None, 'runComplete': False, 'stopReason': None,
@@ -221,6 +224,11 @@ if args.temporal_decision:
                     'For a current-state question, use the latest applicable user statement; for a previous-state question, '
                     'return the earlier state requested. Do not let a later assistant suggestion override a user statement. '
                     'Cite the relevant source paths; if ordering or scope is unclear, say so instead of guessing.')
+if args.evidence_state:
+    instruction += (' Evidence state reports mechanical delivery, not relevance or completeness. '
+                    'For counts or exhaustive lists, distinguish a supported total from a partial count. '
+                    'Check applicable evidence beyond your first match before declaring a total; use pagination or original reads when needed. '
+                    'Do not read unrelated notes just to clear counters. If coverage is insufficient, state that limitation.')
 save()
 start = time.monotonic()
 try:
@@ -246,6 +254,10 @@ try:
                       + '\nOriginal paths already supplied: ' + json.dumps(sorted(read))
                       + '\nOriginal sources already read: ' + json.dumps(originals)
                       + ('\nProtocol feedback: ' + feedback if feedback else ''))
+        if args.evidence_state:
+            state = evidence_state(available, read, page)
+            report['evidenceStateSnapshots'].append({'turn': turn, **state})
+            prompt += '\nEvidence state: ' + json.dumps(state)
         response = generate(prompt, 'curator', schema)
         if set(response) != {'read_paths', 'next_page', 'brief'} or not isinstance(response['read_paths'], list) or not isinstance(response['brief'], str) or not isinstance(response['next_page'], bool):
             raise RuntimeError('Invalid curator response')
