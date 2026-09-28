@@ -1,0 +1,751 @@
+[
+  {
+    "attempt": "graphmory-ranked-native-live-2026-09-29-v1",
+    "ledger": {
+      "protocol": "ranked-original-three-arm-development-v1",
+      "manifestSha256": "ed531c6575a922708602f0495f174edfa3101942c987f61ac54bea6482923c93",
+      "attempts": [
+        {
+          "id": "gpt4_d84a3211",
+          "arm": "graph",
+          "status": "failed",
+          "exitCode": 1,
+          "elapsedSeconds": 8.028,
+          "report": "trial-0/report.json",
+          "stopReason": "Host failed or used prohibited tools; preserve traces",
+          "modelCalls": 1
+        },
+        {
+          "id": "gpt4_d84a3211",
+          "arm": "ranked",
+          "status": "unattempted",
+          "stopReason": "prior-trial-failed"
+        },
+        {
+          "id": "gpt4_d84a3211",
+          "arm": "basic",
+          "status": "unattempted",
+          "stopReason": "prior-trial-failed"
+        },
+        {
+          "id": "67e0d0f2",
+          "arm": "basic",
+          "status": "unattempted",
+          "stopReason": "prior-trial-failed"
+        },
+        {
+          "id": "67e0d0f2",
+          "arm": "ranked",
+          "status": "unattempted",
+          "stopReason": "prior-trial-failed"
+        },
+        {
+          "id": "67e0d0f2",
+          "arm": "graph",
+          "status": "unattempted",
+          "stopReason": "prior-trial-failed"
+        }
+      ],
+      "stopped": "Host failed or used prohibited tools; preserve traces"
+    },
+    "firstSlotReport": {
+      "protocol": "curator-paging-development-v4-tool-error-feedback",
+      "id": "gpt4_d84a3211",
+      "question": "How much total money have I spent on bike-related expenses since the start of the year?",
+      "retrieval": "graphmory-managed",
+      "model": "gpt-6-luna",
+      "leadModel": "gpt-6-sol",
+      "maxRounds": 3,
+      "maxInputBytes": 300000,
+      "sourceIndex": true,
+      "rankedOriginals": false,
+      "runnerSha256": "5e6e5a0a11b9a37b5efd78194c7b8cb53656690ea75d75069316f89d48a85a85",
+      "inputSha256": "0b8222dc5e937b95be699e5b72feece5df51c0a2a325ef4aeeb347681f5869b4",
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": 31,
+          "hasMore": true,
+          "paths": [
+            "sessions/0006-39d3f3413dc7.md",
+            "sessions/0010-580f5bd2cb0c.md",
+            "sessions/0011-f5bd24294642.md",
+            "sessions/0047-6601ce2cf6cd.md",
+            "sessions/0001-ec4076230cd7.md",
+            "sessions/0005-0df516ea86f1.md",
+            "sessions/0042-80119a9c1f37.md",
+            "sessions/0021-b12b6cb7decb.md",
+            "sessions/0041-a516dc2b0d8d.md",
+            "sessions/0013-4d272a834f6f.md",
+            "sessions/0014-ec20feaa6d74.md",
+            "sessions/0025-735acef21ccf.md",
+            "sessions/0032-7f7121fa67b3.md",
+            "sessions/0048-22df6bedc185.md",
+            "sessions/0044-930e6a571605.md",
+            "sessions/0004-f92a2756e336.md",
+            "sessions/0020-c216102f658a.md",
+            "sessions/0022-3f9acd8206f9.md",
+            "sessions/0039-cebe6551f995.md",
+            "sessions/0036-1fc94ca2078a.md",
+            "sessions/0017-fb089b3bf551.md",
+            "sessions/0007-601cf78d64e9.md",
+            "sessions/0023-bf9367eae572.md",
+            "sessions/0002-ca51496b3b66.md",
+            "sessions/0012-859904c63843.md",
+            "sessions/0038-b0224f2bc2fa.md",
+            "sessions/0031-020d43846bd7.md",
+            "sessions/0030-e08684c70c17.md",
+            "sessions/0034-f54cb5d1390c.md",
+            "sessions/0037-821b1d86de68.md",
+            "sessions/0015-269d5f846280.md"
+          ],
+          "toolSeconds": 0.19,
+          "toolOutputBytes": 30212,
+          "pageSha256": "a457f3b79d07a02f58b59f2add63bb140fc347aa16a932efa914d6903d53ce27"
+        }
+      ],
+      "sourceReads": [],
+      "sourceToolCalls": [],
+      "sourceRequests": [],
+      "sourceRequestErrors": [],
+      "brief": null,
+      "answer": null,
+      "runComplete": false,
+      "stopReason": "Host failed or used prohibited tools; preserve traces",
+      "elapsedSeconds": 7.956,
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 7.764,
+          "promptBytes": 38284,
+          "promptSha256": "f4aa89ad48ef1800d36a20d3a401b74c8d6e7c5ab8128da23be2a11e85c956b2",
+          "usage": null,
+          "failed": true,
+          "failureKind": "unsupported-model",
+          "sessionIdentityFailed": false
+        }
+      ],
+      "modelWarningsCount": [
+        2
+      ],
+      "usageTotals": {
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "reasoning_output_tokens": null
+      },
+      "grossReadSourceBytes": 0,
+      "rawReportSha256": "b084b5e21181703f9823727a34b3250cdad525903053e1dcedcdc2b44b1cf776"
+    }
+  },
+  {
+    "attempt": "graphmory-ranked-native-compatible-2026-09-29-v1",
+    "ledger": {
+      "protocol": "ranked-original-three-arm-development-v1",
+      "manifestSha256": "41ce95c2390c5d2f0eebf058c958657bf8826c7e11475fed718c883fceab287a",
+      "attempts": [
+        {
+          "id": "gpt4_d84a3211",
+          "arm": "graph",
+          "status": "failed",
+          "exitCode": 1,
+          "elapsedSeconds": 31.871,
+          "report": "trial-0/report.json",
+          "stopReason": "input-byte-budget",
+          "modelCalls": 2
+        },
+        {
+          "id": "gpt4_d84a3211",
+          "arm": "ranked",
+          "status": "unattempted",
+          "stopReason": "prior-trial-failed"
+        },
+        {
+          "id": "gpt4_d84a3211",
+          "arm": "basic",
+          "status": "unattempted",
+          "stopReason": "prior-trial-failed"
+        },
+        {
+          "id": "67e0d0f2",
+          "arm": "basic",
+          "status": "unattempted",
+          "stopReason": "prior-trial-failed"
+        },
+        {
+          "id": "67e0d0f2",
+          "arm": "ranked",
+          "status": "unattempted",
+          "stopReason": "prior-trial-failed"
+        },
+        {
+          "id": "67e0d0f2",
+          "arm": "graph",
+          "status": "unattempted",
+          "stopReason": "prior-trial-failed"
+        }
+      ],
+      "stopped": "input-byte-budget"
+    },
+    "firstSlotReport": {
+      "protocol": "curator-paging-development-v4-tool-error-feedback",
+      "id": "gpt4_d84a3211",
+      "question": "How much total money have I spent on bike-related expenses since the start of the year?",
+      "retrieval": "graphmory-managed",
+      "model": "gpt-5.6-luna",
+      "leadModel": "gpt-5.6-sol",
+      "maxRounds": 3,
+      "maxInputBytes": 300000,
+      "sourceIndex": true,
+      "rankedOriginals": false,
+      "runnerSha256": "5e6e5a0a11b9a37b5efd78194c7b8cb53656690ea75d75069316f89d48a85a85",
+      "inputSha256": "0b8222dc5e937b95be699e5b72feece5df51c0a2a325ef4aeeb347681f5869b4",
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": 31,
+          "hasMore": true,
+          "paths": [
+            "sessions/0006-39d3f3413dc7.md",
+            "sessions/0010-580f5bd2cb0c.md",
+            "sessions/0011-f5bd24294642.md",
+            "sessions/0047-6601ce2cf6cd.md",
+            "sessions/0001-ec4076230cd7.md",
+            "sessions/0005-0df516ea86f1.md",
+            "sessions/0042-80119a9c1f37.md",
+            "sessions/0021-b12b6cb7decb.md",
+            "sessions/0041-a516dc2b0d8d.md",
+            "sessions/0013-4d272a834f6f.md",
+            "sessions/0014-ec20feaa6d74.md",
+            "sessions/0025-735acef21ccf.md",
+            "sessions/0032-7f7121fa67b3.md",
+            "sessions/0048-22df6bedc185.md",
+            "sessions/0044-930e6a571605.md",
+            "sessions/0004-f92a2756e336.md",
+            "sessions/0020-c216102f658a.md",
+            "sessions/0022-3f9acd8206f9.md",
+            "sessions/0039-cebe6551f995.md",
+            "sessions/0036-1fc94ca2078a.md",
+            "sessions/0017-fb089b3bf551.md",
+            "sessions/0007-601cf78d64e9.md",
+            "sessions/0023-bf9367eae572.md",
+            "sessions/0002-ca51496b3b66.md",
+            "sessions/0012-859904c63843.md",
+            "sessions/0038-b0224f2bc2fa.md",
+            "sessions/0031-020d43846bd7.md",
+            "sessions/0030-e08684c70c17.md",
+            "sessions/0034-f54cb5d1390c.md",
+            "sessions/0037-821b1d86de68.md",
+            "sessions/0015-269d5f846280.md"
+          ],
+          "toolSeconds": 0.236,
+          "toolOutputBytes": 30212,
+          "pageSha256": "a457f3b79d07a02f58b59f2add63bb140fc347aa16a932efa914d6903d53ce27"
+        },
+        {
+          "offset": 31,
+          "nextOffset": null,
+          "hasMore": false,
+          "paths": [
+            "sessions/0027-941b063fa32b.md",
+            "sessions/0043-a7815f3dc7b0.md",
+            "sessions/0003-baeb17106142.md",
+            "sessions/0019-aa17cb1b0f69.md",
+            "sessions/0026-e27586f4da4d.md",
+            "sessions/0008-2543c107407d.md",
+            "sessions/0024-27e184e5b229.md",
+            "sessions/0029-1967d34e25aa.md",
+            "sessions/0009-0136cd9119f1.md",
+            "sessions/0046-a3e3b9ea9521.md",
+            "sessions/0018-3d2bf4776cdc.md",
+            "sessions/0033-cb9a3f9c9838.md",
+            "sessions/0028-232f3cdf8494.md",
+            "sessions/0016-daa37fe82eab.md",
+            "sessions/0045-0282dc922739.md",
+            "sessions/0040-a26c4d7d94dd.md",
+            "sessions/0035-9ad4c895917a.md"
+          ],
+          "toolSeconds": 0.188,
+          "toolOutputBytes": 12090,
+          "pageSha256": "83a76dcbf75b109b801052850961ad3c56755ed5c3df0d3369c8ae9c9b079637"
+        }
+      ],
+      "sourceReads": [
+        {
+          "path": "sessions/0003-baeb17106142.md",
+          "sha256": "7b4edff6b6817d0dda3f199dbc5382fa773e29bdac9b6e375d78d0ff3d778ebf",
+          "bytes": 11237
+        },
+        {
+          "path": "sessions/0008-2543c107407d.md",
+          "sha256": "b6f4c5d59d3d5324ce4cf89afbd4b4e2ce588db4482b10846da3a7367b75ee18",
+          "bytes": 13162
+        },
+        {
+          "path": "sessions/0009-0136cd9119f1.md",
+          "sha256": "c10ce08d7e52cec6ff7515fda48aa45961327b52fe1e3197ded023b1b2db5f6e",
+          "bytes": 7519
+        },
+        {
+          "path": "sessions/0010-580f5bd2cb0c.md",
+          "sha256": "5f23b884a7aa7af01c80dc62e96222c8d1abcd6843482b3525a0e437882e821c",
+          "bytes": 16817
+        },
+        {
+          "path": "sessions/0011-f5bd24294642.md",
+          "sha256": "8ea5c5e097b6ad3ce0906ca0bd3aaa0f81c369658da3783790eb002bfbe5af7b",
+          "bytes": 11990
+        },
+        {
+          "path": "sessions/0016-daa37fe82eab.md",
+          "sha256": "897934235fb15714b53837756ee9e8859306c90a6faa12647a4cdd684f5cce8d",
+          "bytes": 10872
+        },
+        {
+          "path": "sessions/0018-3d2bf4776cdc.md",
+          "sha256": "372e2dc78591138fb41cfd97f84161c25f82536a36fb749de4716908d2f77b42",
+          "bytes": 3758
+        },
+        {
+          "path": "sessions/0019-aa17cb1b0f69.md",
+          "sha256": "4f77ecfcf9072c1291e186846542a1c4bccc2ab9b9b9a7f2e5b2ca229e74ec1e",
+          "bytes": 9775
+        },
+        {
+          "path": "sessions/0024-27e184e5b229.md",
+          "sha256": "527149c12209ae206cb3082aded57f0b741e9886be3e9b47ca4dbe1985697c65",
+          "bytes": 660
+        },
+        {
+          "path": "sessions/0026-e27586f4da4d.md",
+          "sha256": "f9b87f39f64ad773c5502970a11ec9ae7363e41db7aa291ddfd5ccba14f628c6",
+          "bytes": 12294
+        },
+        {
+          "path": "sessions/0027-941b063fa32b.md",
+          "sha256": "4c5a1b24068ca619a7258378c0ebf35b41304a29c9fcc9e7766a2fb4687c0489",
+          "bytes": 1744
+        },
+        {
+          "path": "sessions/0028-232f3cdf8494.md",
+          "sha256": "b9c7f18dc3deffdba423849c88445bc9f5ac20fff1c7039cc6d0c7f826b0d3e5",
+          "bytes": 4096
+        },
+        {
+          "path": "sessions/0029-1967d34e25aa.md",
+          "sha256": "80e667920559c8ad472420a8ae806a632ce71a910304cb3349f3663987ebb55a",
+          "bytes": 7031
+        },
+        {
+          "path": "sessions/0033-cb9a3f9c9838.md",
+          "sha256": "f6654d59780d54475a77173fcf7ef6f7afd7a1e1ba725e14f22f516b319ca2fc",
+          "bytes": 18014
+        },
+        {
+          "path": "sessions/0035-9ad4c895917a.md",
+          "sha256": "d7aac699aeb1956f3834ae21e9589137f3ef42e1814852144ffa8a58a7b197df",
+          "bytes": 3763
+        },
+        {
+          "path": "sessions/0040-a26c4d7d94dd.md",
+          "sha256": "5433b1012ff5b77b66d6df1c603891778cdbd5211c4036c0250995cfa572ec76",
+          "bytes": 4589
+        },
+        {
+          "path": "sessions/0043-a7815f3dc7b0.md",
+          "sha256": "26a87882a52a8e88e24cc0949078d471425e84ba8567e545129036c5fb384f07",
+          "bytes": 5593
+        },
+        {
+          "path": "sessions/0045-0282dc922739.md",
+          "sha256": "d33aed784ae9c92120458c29b8c0efd095607f5b6ed6af0474f3b0daac5050ee",
+          "bytes": 2029
+        },
+        {
+          "path": "sessions/0046-a3e3b9ea9521.md",
+          "sha256": "1befe808ce970e725ca5ae674914f69dc0da3444ea7df0572798cdae54df720a",
+          "bytes": 6201
+        },
+        {
+          "path": "sessions/0047-6601ce2cf6cd.md",
+          "sha256": "9776ce00b8bc37ced7acea6b324677e41489e528f12879b205182bd9c0e7599e",
+          "bytes": 12644
+        },
+        {
+          "path": "sessions/0001-ec4076230cd7.md",
+          "sha256": "ee663b816d06e81a635ed4e423b7afd5e70739c81b68855e4eae9aa669069126",
+          "bytes": 11549
+        },
+        {
+          "path": "sessions/0002-ca51496b3b66.md",
+          "sha256": "891e90016472c9bb6e373407bc2e0872564372af2c5638655a2a68c30d3cb47c",
+          "bytes": 6849
+        },
+        {
+          "path": "sessions/0004-f92a2756e336.md",
+          "sha256": "97f18c2adaa107f8a099bd0b64bfa9f3f355e35f25b991c592906d7f08a842c6",
+          "bytes": 8263
+        },
+        {
+          "path": "sessions/0005-0df516ea86f1.md",
+          "sha256": "95d92c93c0ddc78ace174863b7a266612948b30cddb27cb53c6bc44e43198d58",
+          "bytes": 12810
+        },
+        {
+          "path": "sessions/0006-39d3f3413dc7.md",
+          "sha256": "c37b17cb9bf4122c5f61ca394da72e88a62b7fb9a0862bb721fc26865977e844",
+          "bytes": 12308
+        },
+        {
+          "path": "sessions/0007-601cf78d64e9.md",
+          "sha256": "2590875d1fdb89e287d1e10271bfe48b6e07df5a28bffa06f3ba7ed063cd2d22",
+          "bytes": 14787
+        },
+        {
+          "path": "sessions/0012-859904c63843.md",
+          "sha256": "d934844d316de1fdf05514ba6ff23f2a86c6db6b872ba8f20a1b7f5a1c1c2092",
+          "bytes": 16804
+        },
+        {
+          "path": "sessions/0013-4d272a834f6f.md",
+          "sha256": "67dc133d607da118161d570fa2217395bcafb786d70e120b7ddc9badb2c518b7",
+          "bytes": 6292
+        },
+        {
+          "path": "sessions/0014-ec20feaa6d74.md",
+          "sha256": "498256aea292f3bfceb3fe313f7d9829be3ec5bd5ec7febdc6e29d97a0d9ee45",
+          "bytes": 5551
+        },
+        {
+          "path": "sessions/0015-269d5f846280.md",
+          "sha256": "0828ebacf475eca5be70d40ded8d87d40ba50b70e83495c3b87c2cd4b920572d",
+          "bytes": 5198
+        },
+        {
+          "path": "sessions/0017-fb089b3bf551.md",
+          "sha256": "6e4b7fded9c9fe52bed031b5c40cede99bb7567a6dd8351604cb82e8020cbd76",
+          "bytes": 7532
+        },
+        {
+          "path": "sessions/0020-c216102f658a.md",
+          "sha256": "21ecad065299513bef224e914ff7354478e9f9a91658d11e40b3b5563b26a99e",
+          "bytes": 18571
+        },
+        {
+          "path": "sessions/0021-b12b6cb7decb.md",
+          "sha256": "f8da409d36a5a300f3a1f0f6c1f3d1860482bdd5e36da533f3f4c443c84fcc02",
+          "bytes": 11774
+        },
+        {
+          "path": "sessions/0022-3f9acd8206f9.md",
+          "sha256": "53d36e78f607b1db8e6af4fb021237665cf109b3ed919f0eb445ab4dc41d4850",
+          "bytes": 8244
+        },
+        {
+          "path": "sessions/0023-bf9367eae572.md",
+          "sha256": "e5b2f8c9f983a83dee0582f636a50bb35090811f6b031fb2fb4e75c53015e51f",
+          "bytes": 12705
+        },
+        {
+          "path": "sessions/0025-735acef21ccf.md",
+          "sha256": "81da43ff4faa094ae6fa5dd96c4a8dbfa90488c05557faf52447129505d4dc7d",
+          "bytes": 14835
+        },
+        {
+          "path": "sessions/0030-e08684c70c17.md",
+          "sha256": "acf43388755fb6e017ca9600c1dc6fff852e7359430cb123621799bdb460a821",
+          "bytes": 9263
+        },
+        {
+          "path": "sessions/0031-020d43846bd7.md",
+          "sha256": "341af6ced0dfad3b3d0f07605837a642c4b7931c123cc2f01b3406df6abd724f",
+          "bytes": 9546
+        },
+        {
+          "path": "sessions/0032-7f7121fa67b3.md",
+          "sha256": "86b259e9098b377a53a239dbc6e8d165eb0946ec391196c310858f22846a2d69",
+          "bytes": 12455
+        },
+        {
+          "path": "sessions/0034-f54cb5d1390c.md",
+          "sha256": "c866d1fbe5c438a0dfc57a51f8ef56b665a045f1301b404adb5ce53b167af780",
+          "bytes": 20465
+        },
+        {
+          "path": "sessions/0036-1fc94ca2078a.md",
+          "sha256": "38c6bf0c2c41334d96f30d9ef7aabca33a6dd315bab90eb3ea4c2f3ef8929c15",
+          "bytes": 20440
+        },
+        {
+          "path": "sessions/0037-821b1d86de68.md",
+          "sha256": "8226b100c2e7adfb9d31aeedd52d4c6957bfb6d31397e98ff9eeb04c3de640da",
+          "bytes": 17298
+        },
+        {
+          "path": "sessions/0038-b0224f2bc2fa.md",
+          "sha256": "305ead347b017f658a7620528c89e510fb4eb5a89510e6aa819c2b71483799e9",
+          "bytes": 5177
+        },
+        {
+          "path": "sessions/0039-cebe6551f995.md",
+          "sha256": "161048caeb2312abfaf2698d23394bb93245f02cd31c8012812ed287be98c78b",
+          "bytes": 15483
+        },
+        {
+          "path": "sessions/0041-a516dc2b0d8d.md",
+          "sha256": "e9a5ad88131f355ef80976d99b95e8454d6eee25ebd442399b4f5e324856278c",
+          "bytes": 14183
+        },
+        {
+          "path": "sessions/0042-80119a9c1f37.md",
+          "sha256": "b075ef7f4e08c16e776b33a0a543f9b3904d0950e747ce737b2b27623ef95455",
+          "bytes": 9666
+        },
+        {
+          "path": "sessions/0044-930e6a571605.md",
+          "sha256": "e9580c867ba73afc1ecbc34853d306b4524b7cda0b1d90d5f58477b1a9d1c851",
+          "bytes": 17773
+        },
+        {
+          "path": "sessions/0048-22df6bedc185.md",
+          "sha256": "0df80ca23ddc8e140de7522cb8f3bd334e87fe202bc9bec5e5ace400da1fe21b",
+          "bytes": 10905
+        }
+      ],
+      "sourceToolCalls": [
+        {
+          "paths": [
+            "sessions/0003-baeb17106142.md",
+            "sessions/0008-2543c107407d.md",
+            "sessions/0009-0136cd9119f1.md",
+            "sessions/0010-580f5bd2cb0c.md",
+            "sessions/0011-f5bd24294642.md",
+            "sessions/0016-daa37fe82eab.md",
+            "sessions/0018-3d2bf4776cdc.md",
+            "sessions/0019-aa17cb1b0f69.md",
+            "sessions/0024-27e184e5b229.md",
+            "sessions/0026-e27586f4da4d.md",
+            "sessions/0027-941b063fa32b.md",
+            "sessions/0028-232f3cdf8494.md",
+            "sessions/0029-1967d34e25aa.md",
+            "sessions/0033-cb9a3f9c9838.md",
+            "sessions/0035-9ad4c895917a.md",
+            "sessions/0040-a26c4d7d94dd.md",
+            "sessions/0043-a7815f3dc7b0.md",
+            "sessions/0045-0282dc922739.md",
+            "sessions/0046-a3e3b9ea9521.md",
+            "sessions/0047-6601ce2cf6cd.md"
+          ],
+          "toolOutputBytes": 169034,
+          "toolSeconds": 0.083
+        },
+        {
+          "paths": [
+            "sessions/0001-ec4076230cd7.md",
+            "sessions/0002-ca51496b3b66.md",
+            "sessions/0004-f92a2756e336.md",
+            "sessions/0005-0df516ea86f1.md",
+            "sessions/0006-39d3f3413dc7.md",
+            "sessions/0007-601cf78d64e9.md",
+            "sessions/0012-859904c63843.md",
+            "sessions/0013-4d272a834f6f.md",
+            "sessions/0014-ec20feaa6d74.md",
+            "sessions/0015-269d5f846280.md",
+            "sessions/0017-fb089b3bf551.md",
+            "sessions/0020-c216102f658a.md",
+            "sessions/0021-b12b6cb7decb.md",
+            "sessions/0022-3f9acd8206f9.md",
+            "sessions/0023-bf9367eae572.md",
+            "sessions/0025-735acef21ccf.md",
+            "sessions/0030-e08684c70c17.md",
+            "sessions/0031-020d43846bd7.md",
+            "sessions/0032-7f7121fa67b3.md",
+            "sessions/0034-f54cb5d1390c.md",
+            "sessions/0036-1fc94ca2078a.md",
+            "sessions/0037-821b1d86de68.md",
+            "sessions/0038-b0224f2bc2fa.md",
+            "sessions/0039-cebe6551f995.md",
+            "sessions/0041-a516dc2b0d8d.md",
+            "sessions/0042-80119a9c1f37.md",
+            "sessions/0044-930e6a571605.md",
+            "sessions/0048-22df6bedc185.md"
+          ],
+          "toolOutputBytes": 346229,
+          "toolSeconds": 0.093
+        }
+      ],
+      "sourceRequests": [
+        {
+          "turn": 0,
+          "requested": [
+            "sessions/0003-baeb17106142.md",
+            "sessions/0008-2543c107407d.md",
+            "sessions/0009-0136cd9119f1.md",
+            "sessions/0010-580f5bd2cb0c.md",
+            "sessions/0011-f5bd24294642.md",
+            "sessions/0016-daa37fe82eab.md",
+            "sessions/0018-3d2bf4776cdc.md",
+            "sessions/0019-aa17cb1b0f69.md",
+            "sessions/0024-27e184e5b229.md",
+            "sessions/0026-e27586f4da4d.md",
+            "sessions/0027-941b063fa32b.md",
+            "sessions/0028-232f3cdf8494.md",
+            "sessions/0029-1967d34e25aa.md",
+            "sessions/0033-cb9a3f9c9838.md",
+            "sessions/0035-9ad4c895917a.md",
+            "sessions/0040-a26c4d7d94dd.md",
+            "sessions/0043-a7815f3dc7b0.md",
+            "sessions/0045-0282dc922739.md",
+            "sessions/0046-a3e3b9ea9521.md",
+            "sessions/0047-6601ce2cf6cd.md"
+          ],
+          "new": [
+            "sessions/0003-baeb17106142.md",
+            "sessions/0008-2543c107407d.md",
+            "sessions/0009-0136cd9119f1.md",
+            "sessions/0010-580f5bd2cb0c.md",
+            "sessions/0011-f5bd24294642.md",
+            "sessions/0016-daa37fe82eab.md",
+            "sessions/0018-3d2bf4776cdc.md",
+            "sessions/0019-aa17cb1b0f69.md",
+            "sessions/0024-27e184e5b229.md",
+            "sessions/0026-e27586f4da4d.md",
+            "sessions/0027-941b063fa32b.md",
+            "sessions/0028-232f3cdf8494.md",
+            "sessions/0029-1967d34e25aa.md",
+            "sessions/0033-cb9a3f9c9838.md",
+            "sessions/0035-9ad4c895917a.md",
+            "sessions/0040-a26c4d7d94dd.md",
+            "sessions/0043-a7815f3dc7b0.md",
+            "sessions/0045-0282dc922739.md",
+            "sessions/0046-a3e3b9ea9521.md",
+            "sessions/0047-6601ce2cf6cd.md"
+          ],
+          "reused": []
+        },
+        {
+          "turn": 1,
+          "requested": [
+            "sessions/0001-ec4076230cd7.md",
+            "sessions/0002-ca51496b3b66.md",
+            "sessions/0004-f92a2756e336.md",
+            "sessions/0005-0df516ea86f1.md",
+            "sessions/0006-39d3f3413dc7.md",
+            "sessions/0007-601cf78d64e9.md",
+            "sessions/0012-859904c63843.md",
+            "sessions/0013-4d272a834f6f.md",
+            "sessions/0014-ec20feaa6d74.md",
+            "sessions/0015-269d5f846280.md",
+            "sessions/0017-fb089b3bf551.md",
+            "sessions/0020-c216102f658a.md",
+            "sessions/0021-b12b6cb7decb.md",
+            "sessions/0022-3f9acd8206f9.md",
+            "sessions/0023-bf9367eae572.md",
+            "sessions/0025-735acef21ccf.md",
+            "sessions/0030-e08684c70c17.md",
+            "sessions/0031-020d43846bd7.md",
+            "sessions/0032-7f7121fa67b3.md",
+            "sessions/0034-f54cb5d1390c.md",
+            "sessions/0036-1fc94ca2078a.md",
+            "sessions/0037-821b1d86de68.md",
+            "sessions/0038-b0224f2bc2fa.md",
+            "sessions/0039-cebe6551f995.md",
+            "sessions/0041-a516dc2b0d8d.md",
+            "sessions/0042-80119a9c1f37.md",
+            "sessions/0044-930e6a571605.md",
+            "sessions/0048-22df6bedc185.md"
+          ],
+          "new": [
+            "sessions/0001-ec4076230cd7.md",
+            "sessions/0002-ca51496b3b66.md",
+            "sessions/0004-f92a2756e336.md",
+            "sessions/0005-0df516ea86f1.md",
+            "sessions/0006-39d3f3413dc7.md",
+            "sessions/0007-601cf78d64e9.md",
+            "sessions/0012-859904c63843.md",
+            "sessions/0013-4d272a834f6f.md",
+            "sessions/0014-ec20feaa6d74.md",
+            "sessions/0015-269d5f846280.md",
+            "sessions/0017-fb089b3bf551.md",
+            "sessions/0020-c216102f658a.md",
+            "sessions/0021-b12b6cb7decb.md",
+            "sessions/0022-3f9acd8206f9.md",
+            "sessions/0023-bf9367eae572.md",
+            "sessions/0025-735acef21ccf.md",
+            "sessions/0030-e08684c70c17.md",
+            "sessions/0031-020d43846bd7.md",
+            "sessions/0032-7f7121fa67b3.md",
+            "sessions/0034-f54cb5d1390c.md",
+            "sessions/0036-1fc94ca2078a.md",
+            "sessions/0037-821b1d86de68.md",
+            "sessions/0038-b0224f2bc2fa.md",
+            "sessions/0039-cebe6551f995.md",
+            "sessions/0041-a516dc2b0d8d.md",
+            "sessions/0042-80119a9c1f37.md",
+            "sessions/0044-930e6a571605.md",
+            "sessions/0048-22df6bedc185.md"
+          ],
+          "reused": []
+        }
+      ],
+      "sourceRequestErrors": [],
+      "brief": null,
+      "answer": null,
+      "runComplete": false,
+      "stopReason": "input-byte-budget",
+      "elapsedSeconds": 31.8,
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 14.727,
+          "promptBytes": 38284,
+          "promptSha256": "f4aa89ad48ef1800d36a20d3a401b74c8d6e7c5ab8128da23be2a11e85c956b2",
+          "usage": {
+            "input_tokens": 25940,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 439,
+            "reasoning_output_tokens": 138
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 16.466,
+          "promptBytes": 190474,
+          "promptSha256": "5351f28eef4bbca3500e53754f749420d8ccece81d26b4d06a1efde638c748f0",
+          "usage": {
+            "input_tokens": 58831,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 524,
+            "reasoning_output_tokens": 117
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false
+        }
+      ],
+      "modelWarningsCount": [
+        1,
+        1
+      ],
+      "usageTotals": {
+        "input_tokens": 84771,
+        "cached_input_tokens": 0,
+        "output_tokens": 963,
+        "reasoning_output_tokens": 255
+      },
+      "grossReadSourceBytes": 500514,
+      "rawReportSha256": "9086ee5a3889b2098c85f8d0b66ad50b0ab7e478dcee64fd645340e90a8b41e1"
+    }
+  }
+]

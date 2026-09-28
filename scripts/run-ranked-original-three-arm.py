@@ -24,6 +24,7 @@ ORDER = [
     ('gpt4_d84a3211', 'basic'), ('67e0d0f2', 'basic'),
     ('67e0d0f2', 'ranked'), ('67e0d0f2', 'graph'),
 ]
+RECOVERABLE_RESOURCE_STOPS = frozenset({'input-byte-budget', 'round-budget'})
 
 
 def digest(file):
@@ -91,14 +92,59 @@ def verify(manifest):
     return {item['id']: item for item in cases}
 
 
+def recoverable_resource_failure(report, exit_code, timed_out, case_id, arm, entry, settings, manifest):
+    """Recognize only explicit, completed-host resource stops for this frozen slot."""
+    if timed_out or not isinstance(exit_code, int) or isinstance(exit_code, bool) or exit_code == 0:
+        return False
+    if not isinstance(report, dict) or report.get('runComplete') is not False:
+        return False
+    if report.get('stopReason') not in RECOVERABLE_RESOURCE_STOPS:
+        return False
+    if (report.get('id') != case_id
+        or report.get('runnerSha256') != manifest.get('codeHashes', {}).get('scripts/run-curator-paging-pilot.py')
+        or report.get('inputSha256') != entry.get('readerSha256')
+        or report.get('model') != settings.get('curator')
+        or report.get('leadModel') != settings.get('lead')
+        or report.get('mode') != 'auto'
+        or report.get('maxRounds') != settings.get('maxRounds')
+        or report.get('maxInputBytes') != settings.get('maxInputBytes')
+        or report.get('structuredCitations') is not True
+        or report.get('sourceIndex') is not True
+        or report.get('rankedOriginals') is not (arm == 'ranked')
+        or report.get('retrieval') != ('basic-memory-hybrid' if arm == 'basic' else 'graphmory-managed')):
+        return False
+    if report.get('sourceRequestErrors') != []:
+        return False
+    if 'citationProvenanceValid' in report or 'citations' in report:
+        return False
+    calls = report.get('modelCalls')
+    if not isinstance(calls, list) or not calls:
+        return False
+    for call in calls:
+        if (not isinstance(call, dict) or call.get('failed') is not False
+            or call.get('failureKind') is not None or call.get('sessionIdentityFailed') is not False):
+            return False
+        stage = call.get('stage')
+        expected_model = settings.get('curator') if stage == 'curator' else settings.get('lead') if stage == 'lead' else None
+        if expected_model is None or call.get('model') != expected_model:
+            return False
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--manifest', required=True)
     parser.add_argument('--out', required=True)
+    parser.add_argument('--continue-resource-failures', action='store_true')
     args = parser.parse_args()
     manifest_path = pathlib.Path(args.manifest).resolve()
     manifest_bytes = manifest_path.read_bytes()
     manifest = json.loads(manifest_bytes)
+    if ('continueResourceFailures' in manifest
+        and type(manifest['continueResourceFailures']) is not bool):
+        raise RuntimeError('Invalid continueResourceFailures manifest authorization')
+    if args.continue_resource_failures and manifest.get('continueResourceFailures') is not True:
+        raise RuntimeError('Manifest does not authorize continuing after resource failures')
     cases = verify(manifest)
     out = pathlib.Path(args.out).resolve()
     if out.exists():
@@ -107,6 +153,9 @@ def main():
     ledger = {
         'protocol': PROTOCOL, 'manifestSha256': hashlib.sha256(manifest_bytes).hexdigest(),
         'attempts': [dict(item, status='planned') for item in manifest['order']],
+        'continueResourceFailures': args.continue_resource_failures,
+        'continuedAfterResourceFailures': [],
+        'continuationRevalidations': 0,
         'stopped': None,
     }
 
@@ -117,6 +166,24 @@ def main():
     settings = manifest['configuration']
     failed = False
     for index, (case_id, arm) in enumerate(ORDER):
+        if args.continue_resource_failures and index > 0:
+            try:
+                current_manifest_bytes = manifest_path.read_bytes()
+                if current_manifest_bytes != manifest_bytes:
+                    raise RuntimeError('Frozen manifest changed before next trial')
+                cases = verify(json.loads(current_manifest_bytes))
+                ledger['continuationRevalidations'] += 1
+                save()
+            except Exception as error:
+                failed = True
+                ledger['stopped'] = 'pre-continuation-integrity-reverification-failed'
+                ledger['reverificationError'] = str(error)
+                for remaining in ledger['attempts'][index:]:
+                    remaining.update(status='unattempted', stopReason='integrity-reverification-failed')
+                save()
+                print(json.dumps({'trial': index, 'id': case_id, 'arm': arm,
+                                  'status': 'unattempted', 'stopReason': ledger['stopped']}), flush=True)
+                break
         entry = cases[case_id]
         trial = out / ('trial-' + str(index))
         command = [sys.executable, str(ROOT / 'scripts/run-curator-paging-pilot.py'),
@@ -153,6 +220,13 @@ def main():
                           'status': row['status'], 'stopReason': row['stopReason']}), flush=True)
         if row['status'] != 'complete':
             failed = True
+            if (args.continue_resource_failures
+                and recoverable_resource_failure(report, exit_code, timed_out, case_id, arm,
+                                                 entry, settings, manifest)):
+                ledger['continuedAfterResourceFailures'].append({
+                    'trial': index, 'id': case_id, 'arm': arm, 'stopReason': row['stopReason']})
+                save()
+                continue
             ledger['stopped'] = row['stopReason']
             for remaining in ledger['attempts'][index + 1:]:
                 remaining.update(status='unattempted', stopReason='prior-trial-failed')

@@ -1,0 +1,101 @@
+{
+  "protocol": "ranked-original-three-arm-development-v1",
+  "manifestSha256": "03840377127cb40c0d581d79474c24952d0c91c1481bef0c40a15ccf0169e765",
+  "attempts": [
+    {
+      "id": "gpt4_d84a3211",
+      "arm": "graph",
+      "status": "failed",
+      "exitCode": 1,
+      "elapsedSeconds": 42.063,
+      "report": "trial-0/report.json",
+      "stopReason": "round-budget",
+      "modelCalls": 3
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "arm": "ranked",
+      "status": "failed",
+      "exitCode": 1,
+      "elapsedSeconds": 28.996,
+      "report": "trial-1/report.json",
+      "stopReason": "input-byte-budget",
+      "modelCalls": 2
+    },
+    {
+      "id": "gpt4_d84a3211",
+      "arm": "basic",
+      "status": "failed",
+      "exitCode": 1,
+      "elapsedSeconds": 46.549,
+      "report": "trial-2/report.json",
+      "stopReason": "round-budget",
+      "modelCalls": 3
+    },
+    {
+      "id": "67e0d0f2",
+      "arm": "basic",
+      "status": "complete",
+      "exitCode": 0,
+      "elapsedSeconds": 44.796,
+      "report": "trial-3/report.json",
+      "stopReason": "curator-finalized",
+      "modelCalls": 4
+    },
+    {
+      "id": "67e0d0f2",
+      "arm": "ranked",
+      "status": "failed",
+      "exitCode": 1,
+      "elapsedSeconds": 29.058,
+      "report": "trial-4/report.json",
+      "stopReason": "input-byte-budget",
+      "modelCalls": 2
+    },
+    {
+      "id": "67e0d0f2",
+      "arm": "graph",
+      "status": "failed",
+      "exitCode": 1,
+      "elapsedSeconds": 40.63,
+      "report": "trial-5/report.json",
+      "stopReason": "round-budget",
+      "modelCalls": 3
+    }
+  ],
+  "continueResourceFailures": true,
+  "continuedAfterResourceFailures": [
+    {
+      "trial": 0,
+      "id": "gpt4_d84a3211",
+      "arm": "graph",
+      "stopReason": "round-budget"
+    },
+    {
+      "trial": 1,
+      "id": "gpt4_d84a3211",
+      "arm": "ranked",
+      "stopReason": "input-byte-budget"
+    },
+    {
+      "trial": 2,
+      "id": "gpt4_d84a3211",
+      "arm": "basic",
+      "stopReason": "round-budget"
+    },
+    {
+      "trial": 4,
+      "id": "67e0d0f2",
+      "arm": "ranked",
+      "stopReason": "input-byte-budget"
+    },
+    {
+      "trial": 5,
+      "id": "67e0d0f2",
+      "arm": "graph",
+      "stopReason": "round-budget"
+    }
+  ],
+  "continuationRevalidations": 5,
+  "stopped": null
+}
