@@ -67,7 +67,7 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs config [show] [--config <path>] [--json]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--offset N] [--auto|--bundle] [--matched-previews with --auto] [--bundle-budget BYTES] [--evidence-preview] [--semantic-expansion] [--agent|--json] (curator: adaptive or byte-budgeted evidence; decision: 3 results)\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--offset N] [--auto|--bundle] [--matched-previews|--coverage-previews with --auto] [--bundle-budget BYTES] [--evidence-preview] [--semantic-expansion] [--agent|--json] (curator: adaptive or byte-budgeted evidence; decision: 3 results)\n`)
   out.write(`  node scripts/brain-sync.mjs recall-explore --vault <path> --query <text> [--scope <path>] [--k 3] [--agent|--json] (experimental)\n`)
   out.write(`  node scripts/brain-sync.mjs curate-plan --vault <path> --input <bundle.json> [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
@@ -832,6 +832,7 @@ async function recallManaged() {
   if (flag("--bundle-budget") && !flag("--bundle")) throw new Error("--bundle-budget requires --bundle")
   if (flag("--auto") && flag("--bundle")) throw new Error("Choose --auto or --bundle")
   if (flag("--matched-previews") && !flag("--auto")) throw new Error("--matched-previews requires --auto")
+  if (flag("--coverage-previews") && !flag("--auto")) throw new Error("--coverage-previews requires --auto")
   const report = await managedRecall(requireVault(), requiredOption("--query"), config, {
     k: Number.parseInt(option("--k", config.workflow === "curator" ? "10" : "3"), 10),
     offset: Number(option("--offset", "0")),
@@ -841,6 +842,7 @@ async function recallManaged() {
     bundleBytes: flag("--bundle") ? Number(option("--bundle-budget", "32000")) : 0,
     adaptiveBundle: flag("--auto"),
     matchedPreviews: flag("--matched-previews"),
+    coveragePreviews: flag("--coverage-previews"),
   })
   if (flag("--agent")) console.log(JSON.stringify(report.evidencePacket || {
     workflow: report.workflow,

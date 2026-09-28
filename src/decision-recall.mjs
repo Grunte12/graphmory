@@ -13,6 +13,7 @@ export async function managedRecall(vault, query, config, {
   bundleBytes = 0,
   adaptiveBundle = false,
   matchedPreviews = false,
+  coveragePreviews = false,
   semanticRecallImpl = recallVaultSemantic,
   fetchImpl = fetch,
 } = {}) {
@@ -21,6 +22,8 @@ export async function managedRecall(vault, query, config, {
   if (!Number.isInteger(bundleBytes) || (bundleBytes !== 0 && (bundleBytes < 2000 || bundleBytes > 65536))) throw new Error("bundleBytes must be 0 or 2000–65536")
   if (bundleBytes && adaptiveBundle) throw new Error("Choose bundleBytes or adaptiveBundle")
   if (matchedPreviews && !adaptiveBundle) throw new Error("matchedPreviews requires adaptiveBundle")
+  if (coveragePreviews && !adaptiveBundle) throw new Error("coveragePreviews requires adaptiveBundle")
+  if (coveragePreviews && matchedPreviews) throw new Error("Choose coveragePreviews or matchedPreviews")
   if (bundleBytes && config.workflow !== "curator") throw new Error("Evidence bundles are supported only in curator mode")
   if (adaptiveBundle && config.workflow !== "curator") throw new Error("Adaptive bundles are supported only in curator mode")
   if (config.workflow !== "curator" && offset !== 0) throw new Error("offset is supported only in curator mode")
@@ -39,7 +42,9 @@ export async function managedRecall(vault, query, config, {
     for (const { path, title, score, status } of page.results) {
       if (adaptiveMode === "focused" && results.length >= 10) break
       const document = documentsByPath?.get(path)
-      const preview = document ? curatorEvidencePreview(document, query, { matchedOnly: matchedPreviews && adaptiveMode === "wide" }) : []
+      const preview = document ? curatorEvidencePreview(document, query, {
+        matchedOnly: matchedPreviews && adaptiveMode === "wide", coverageMode: coveragePreviews,
+      }) : []
       const incompletePreview = preview.length > 0 && (preview.some(item => item.truncated)
         || preview.length < splitMarkdownSections(document).length)
       const result = { path, title, score, status,
@@ -135,9 +140,23 @@ export function chooseAdaptiveMode(query, firstResults) {
 
 const PREVIEW_STOPWORDS = new Set(["what", "when", "where", "which", "who", "whom", "whose", "how", "does", "did", "have", "has", "had", "with", "from", "that", "this", "there", "were", "been", "your", "mine", "about", "into", "the", "and", "for", "are", "was"])
 
-export function curatorEvidencePreview(document, query, { matchedOnly = false } = {}) {
+export function curatorEvidencePreview(document, query, { matchedOnly = false, coverageMode = false } = {}) {
   const normalize = (term) => term.endsWith("ed") ? [term, term.slice(0, -2), term.slice(0, -1)] : [term]
   const contentTerms = tokenize(query).filter((term) => term.length >= 3 && !PREVIEW_STOPWORDS.has(term))
+  if (coverageMode) {
+    const terms = new Set(contentTerms.filter(term => term !== "all"))
+    const sections = splitMarkdownSections(document).filter(section => section.title.includes(" > "))
+    if (!sections.length) return curatorEvidencePreview(document, query)
+    return sections.map((section, index) => {
+      const body = new Set(section.fields?.body ?? tokenize(section.markdown))
+      const heading = new Set(tokenize(section.title.split(" > ").at(-1)))
+      const bodyMatches = [...terms].filter(term => body.has(term)).length
+      const headingMatches = [...terms].filter(term => heading.has(term)).length
+      return { section, index, score: bodyMatches * 2 + headingMatches }
+    }).sort((a, b) => b.score - a.score || a.index - b.index).slice(0, 3)
+      .map(({ section }) => ({ heading: section.title, text: section.markdown.slice(0, 350),
+        ...(section.markdown.length > 350 ? { truncated: true } : {}) }))
+  }
   const useMatchedOnly = matchedOnly && !/[\u0E00-\u0E7F]/u.test(query) && contentTerms.length > 0
   const terms = new Set((useMatchedOnly ? contentTerms : tokenize(query)).flatMap(normalize))
   const sections = splitMarkdownSections(document)

@@ -52,7 +52,9 @@ test("preview states preserve complete ranking through byte-budget pagination", 
     }
     const baseline = await collect({})
     const treatment = await collect({ adaptiveBundle: true, matchedPreviews: true })
+    const coverage = await collect({ adaptiveBundle: true, coveragePreviews: true })
     assert.deepEqual(treatment.paths, baseline.paths)
+    assert.deepEqual(coverage.paths, baseline.paths)
     assert.equal(new Set(treatment.paths).size, 80)
     assert.ok(treatment.pages > 1)
   } finally { fs.rmSync(vault, { recursive: true, force: true }) }

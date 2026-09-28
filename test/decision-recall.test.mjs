@@ -3,6 +3,7 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import test from "node:test"
+import { spawnSync } from "node:child_process"
 import { chooseAdaptiveMode, curatorEvidencePreview, managedRecall } from "../src/decision-recall.mjs"
 import { loadVaultDocuments, recallVaultLoop } from "../src/memory-recall.mjs"
 import { DEFAULT_RUNTIME_CONFIG, loadRuntimeConfig, saveRuntimeConfig, validateRuntimeConfig, retrievalMethods } from "../src/runtime-config.mjs"
@@ -144,6 +145,29 @@ test("matched previews omit weak text without dropping ranked paths or changing 
     assert.equal(matched.results.find((item) => item.path === "adjacent.md").evidencePreview, undefined)
     assert.match(matched.results.find((item) => item.path === "answer.md").evidencePreview[0].text, /stand mixer/u)
     await assert.rejects(managedRecall(vault, query, DEFAULT_RUNTIME_CONFIG, { matchedPreviews: true }), /requires adaptiveBundle/u)
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
+})
+
+test("optional coverage previews surface matching speaker turns without changing candidates", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-coverage-preview-"))
+  try {
+    fs.writeFileSync(path.join(vault, "conversation.md"), "# Conversation\nTimestamp: Tuesday\n## Nate (D1:1)\nHow is Joanna?\n## Joanna (D1:2)\nI am allergic to reptiles.\n## Nate (D1:3)\nThat sounds difficult.\n## Joanna (D1:4)\nI also avoid animals with fur.")
+    fs.writeFileSync(path.join(vault, "ordinary.md"), "# Ordinary project note\n## Decision\nJoanna approved the release.")
+    const query = "What is Joanna allergic to?"
+    const baseline = await managedRecall(vault, query, DEFAULT_RUNTIME_CONFIG, { adaptiveBundle: true })
+    const coverage = await managedRecall(vault, query, DEFAULT_RUNTIME_CONFIG, { adaptiveBundle: true, coveragePreviews: true })
+    assert.deepEqual(coverage.results.map(item => item.path), baseline.results.map(item => item.path))
+    assert.equal(coverage.nextOffset, baseline.nextOffset)
+    const turns = coverage.results.find(item => item.path === "conversation.md").evidencePreview
+    assert.ok(turns.some(turn => turn.heading.includes("Joanna (D1:2)")))
+    assert.ok(turns.every(turn => !turn.text.includes("Timestamp:")))
+    assert.ok(coverage.results.find(item => item.path === "ordinary.md").evidencePreview.length > 0)
+    const cli = spawnSync(process.execPath, ["scripts/brain-sync.mjs", "recall-managed", "--vault", vault,
+      "--query", query, "--auto", "--coverage-previews", "--agent"], { encoding: "utf8" })
+    assert.equal(cli.status, 0, cli.stderr)
+    assert.deepEqual(JSON.parse(cli.stdout).results.map(item => item.path), baseline.results.map(item => item.path))
+    await assert.rejects(managedRecall(vault, query, DEFAULT_RUNTIME_CONFIG, { coveragePreviews: true }), /requires adaptiveBundle/u)
+    await assert.rejects(managedRecall(vault, query, DEFAULT_RUNTIME_CONFIG, { adaptiveBundle: true, matchedPreviews: true, coveragePreviews: true }), /Choose coveragePreviews or matchedPreviews/u)
   } finally { fs.rmSync(vault, { recursive: true, force: true }) }
 })
 

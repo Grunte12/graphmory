@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 
 const runner = new URL('../scripts/run-curator-paging-pilot.py', import.meta.url).pathname
-function runFixture(mode) {
+function runFixture(mode, extraArgs = []) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'graphmory-paging-harness-'))
   const vault = path.join(dir, 'vault'), bin = path.join(dir, 'bin')
   fs.mkdirSync(vault); fs.mkdirSync(bin)
@@ -30,7 +30,7 @@ function runFixture(mode) {
     console.log(JSON.stringify({type:'turn.completed',usage:{input_tokens:10,output_tokens:3}}));
   });\n`
   fs.writeFileSync(path.join(bin, 'codex'), fake, { mode: 0o700 })
-  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), '--model', 'gpt-5.6-luna', '--lead-model', 'gpt-5.6-sol', ...(['persistent', 'changed-session'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : []), ...(['citation', 'bad-citation'].includes(mode) ? ['--structured-citations'] : [])], {
+  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), '--model', 'gpt-5.6-luna', '--lead-model', 'gpt-5.6-sol', ...extraArgs, ...(['persistent', 'changed-session'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : []), ...(['citation', 'bad-citation'].includes(mode) ? ['--structured-citations'] : [])], {
     encoding: 'utf8', timeout: 10000,
     env: { ...process.env, PATH: bin + path.delimiter + process.env.PATH, PAGING_TEST_MODE: mode, PAGING_TEST_COUNTER: path.join(dir, 'counter') },
   })
@@ -92,4 +92,10 @@ test('structured citations accept verified brief source and reject unread proven
   assert.notEqual(invalid.child.status, 0)
   assert.equal(invalid.report.runComplete, false)
   assert.match(invalid.report.stopReason, /citation provenance/)
+})
+test('coverage-preview option is passed through actual CLI and recorded', () => {
+  const { child, report } = runFixture('valid', ['--coverage-previews', '--mode', 'auto'])
+  assert.equal(child.status, 0, child.stderr)
+  assert.equal(report.coveragePreviews, true)
+  assert.equal(report.runComplete, true)
 })

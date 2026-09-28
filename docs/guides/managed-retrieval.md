@@ -72,3 +72,9 @@ for the question; output is not truncated or summarized. An unsafe or missing
 path fails the entire request. Hashes identify originals and do not validate
 the meaning of a claim. A host's existing batched file-read tool is also fine;
 this command is useful when separate source envelopes are needed.
+
+### Experimental section coverage previews
+
+In curator mode, `recall-managed --auto --coverage-previews --agent` selects up to three nested sections by query overlap in body and heading, skipping the root metadata section. It changes preview selection only; read originals when evidence is incomplete and continue pagination using `nextOffset`. Notes without nested sections keep the existing preview. This option cannot be combined with `--matched-previews`.
+
+It is opt-in: [development experiments](../evaluation/locomo-coverage-preview-2026-09-28.md) show improved average evidence visibility with some regressions and an incomplete live answer. It is not a semantic search replacement or a guarantee of completeness.

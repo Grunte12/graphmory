@@ -19,6 +19,7 @@ parser.add_argument('--max-input-bytes', type=int, default=300000)
 parser.add_argument('--persistent-curator', action='store_true')
 parser.add_argument('--compact-followup', action='store_true')
 parser.add_argument('--structured-citations', action='store_true')
+parser.add_argument('--coverage-previews', action='store_true')
 args = parser.parse_args()
 lead_model = args.lead_model or args.model
 if not 1 <= args.max_rounds <= 10 or args.max_input_bytes < 1000:
@@ -46,6 +47,7 @@ report = {'protocol': 'curator-paging-development-v2-boolean-continuation', 'id'
           'model': args.model, 'leadModel': lead_model, 'mode': args.mode, 'maxRounds': args.max_rounds, 'maxInputBytes': args.max_input_bytes,
           'persistentCurator': args.persistent_curator, 'compactFollowup': args.compact_followup,
           'structuredCitations': args.structured_citations,
+          'coveragePreviews': args.coverage_previews,
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
           'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [],
           'brief': None, 'answer': None, 'runComplete': False, 'stopReason': None,
@@ -68,7 +70,8 @@ def command_json(command):
 
 def retrieval(offset):
     page = command_json(['node', str(cli), 'recall-managed', '--vault', str(vault), '--query', case['question'],
-                         '--agent', '--offset', str(offset), '--' + args.mode])
+                         '--agent', '--offset', str(offset), '--' + args.mode] +
+                        (['--coverage-previews'] if args.coverage_previews else []))
     if page.get('offset') != offset or not isinstance(page.get('results'), list):
         raise RuntimeError('Invalid retrieval page')
     report['pages'].append({'offset': offset, 'nextOffset': page['nextOffset'], 'hasMore': page['hasMore'],
