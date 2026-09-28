@@ -166,7 +166,13 @@ if (mode === 'build') {
   const { db, metadata } = openDb(dbFile)
   const result = rankIndex(db, metadata, query)
   db.close()
-  printQueryResult(result)
+  const pageRequested = args.includes('--offset') || args.includes('--k')
+  if (pageRequested && (!args.includes('--offset') || !args.includes('--k'))) throw new Error('Supply both --offset and --k')
+  const offset = pageRequested ? Number(required('--offset')) : 0
+  const k = pageRequested ? Number(required('--k')) : result.length
+  if (!Number.isInteger(offset) || offset < 0 || !Number.isInteger(k) || (pageRequested && k < 1))
+    throw new Error('Invalid page')
+  printQueryResult(pageRequested ? result.slice(offset, offset + k) : result)
 } else if (mode === 'baseline-query') {
   const prepared = path.resolve(required('--prepared'))
   const limit = Number(required('--limit'))
