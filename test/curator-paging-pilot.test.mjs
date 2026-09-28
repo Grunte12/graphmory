@@ -20,6 +20,14 @@ function runFixture(mode, extraArgs = []) {
     fs.writeFileSync(path.join(vault, 'details.md'), second)
     sourceHashes['details.md'] = createHash('sha256').update(second).digest('hex')
   }
+  if (mode === 'future-page') {
+    for (let i = 0; i < 20; i++) {
+      const name = 'next-' + String(i).padStart(2, '0') + '.md'
+      const nextMarkdown = markdown.replace('# Fixture\n', '# Fixture nextitem' + String(i).padStart(2, '0') + '\n')
+      fs.writeFileSync(path.join(vault, name), nextMarkdown)
+      sourceHashes[name] = createHash('sha256').update(nextMarkdown).digest('hex')
+    }
+  }
   fs.writeFileSync(path.join(dir, 'input.json'), JSON.stringify([{ id: 'fixture:0', question: 'Who owns the fixture?', vault, sources: sourceHashes }]))
   const fake = `#!${process.execPath}\nconst fs=require('node:fs');let prompt='';process.stdin.on('data',chunk=>prompt+=chunk);process.stdin.resume();process.stdin.on('end',()=>{
     const schema=JSON.parse(fs.readFileSync(process.argv[process.argv.indexOf('--output-schema')+1]));
@@ -29,7 +37,7 @@ function runFixture(mode, extraArgs = []) {
     if(process.env.PAGING_TEST_MODE==='persistent' && count===1 && !resumed)process.exit(9);
     console.log(JSON.stringify({type:'thread.started',thread_id:process.env.PAGING_TEST_MODE==='changed-session'&&count===1?'wrong-session':'fixture-session'}));
     let response=schema.properties.answer?{answer:'Ada owns the fixture (note.md)'}:
-      count===0?{read_paths:[process.env.PAGING_TEST_MODE==='unseen'?'hidden-gold.md':'note.md'],next_page:process.env.PAGING_TEST_MODE==='exhausted-next',brief:''}:
+      count===0?{read_paths:[process.env.PAGING_TEST_MODE==='unsafe'?'../outside.md':'note.md'],next_page:process.env.PAGING_TEST_MODE==='exhausted-next',brief:''}:
       {read_paths:[],next_page:false,brief:'Ada owns the fixture (note.md)'};
     const repeatModes=['repeat','mixed-repeat','batch-duplicate','repeat-forever','compact-repeat','repeat-unseen','repeat-next'];
     if(!schema.properties.answer && repeatModes.includes(process.env.PAGING_TEST_MODE)) {
@@ -42,9 +50,29 @@ function runFixture(mode, extraArgs = []) {
         if(process.env.PAGING_TEST_MODE==='repeat-next' && !prompt.includes('No more pages'))process.exit(8);
       }
     }
+    const mode=process.env.PAGING_TEST_MODE;
+    if(!schema.properties.answer && ['recover-unseen','unseen-forever'].includes(mode)) {
+      if(count===0 || mode==='unseen-forever')response={read_paths:['hidden-gold.md'],next_page:true,brief:''};
+      else if(count===1) {
+        if(!prompt.includes('UNSEEN_SOURCE_PATH') || !prompt.includes('no originals or next page were read') || !prompt.includes('No more pages'))process.exit(8);
+        response={read_paths:['note.md'],next_page:false,brief:''};
+      }
+    }
+    if(!schema.properties.answer && mode==='repeat-unseen' && count===2 && !prompt.includes('UNSEEN_SOURCE_PATH'))process.exit(8);
+    if(!schema.properties.answer && mode==='future-page') {
+      if(count===0)response={read_paths:['next-10.md'],next_page:true,brief:''};
+      else if(count===1) {
+        if(!prompt.includes('UNSEEN_SOURCE_PATH') || !prompt.includes('Request next_page=true'))process.exit(8);
+        response={read_paths:[],next_page:true,brief:''};
+      } else if(count===2) {
+        if(!prompt.includes('"offset": 10'))process.exit(8);
+        response={read_paths:['next-10.md'],next_page:false,brief:''};
+      } else response={read_paths:[],next_page:false,brief:'Ada owns the fixture (next-10.md)'};
+    }
     const citeBrief={extensionless:'Ada owns the fixture [[note]].',prefix:'Ada owns the fixture (note.md.bak)',suffix:'Ada owns the fixture (other-note.md)',differentExtension:'Ada owns the fixture (note.pdf)',punctuation:'Ada owns the fixture: note.md.'};
     if(response.brief && citeBrief[process.env.PAGING_TEST_MODE])response.brief=citeBrief[process.env.PAGING_TEST_MODE];
     if(schema.properties.citations)response.citations=[process.env.PAGING_TEST_MODE==='bad-citation'?'unread.md':'note.md'];
+    if(schema.properties.answer && mode==='future-page') {response.answer='Ada owns the fixture (next-10.md)';if(schema.properties.citations)response.citations=['next-10.md'];}
     console.log(JSON.stringify({type:'item.completed',item:{type:'agent_message',text:JSON.stringify(response)}}));
     console.log(JSON.stringify({type:'turn.completed',usage:{input_tokens:10,output_tokens:3}}));
   });\n`
@@ -55,6 +83,10 @@ function runFixture(mode, extraArgs = []) {
   })
   const report = JSON.parse(fs.readFileSync(path.join(dir, 'run', 'report.json')))
   assert.equal(fs.readFileSync(path.join(vault, 'note.md'), 'utf8'), markdown)
+  if (process.env.READER_FIXTURE_REPORT_DIR) {
+    fs.mkdirSync(process.env.READER_FIXTURE_REPORT_DIR, { recursive: true })
+    fs.writeFileSync(path.join(process.env.READER_FIXTURE_REPORT_DIR, mode + '.json'), JSON.stringify(report, null, 2) + '\n', { flag: 'wx' })
+  }
   fs.rmSync(dir, { recursive: true, force: true })
   return { child, report }
 }
@@ -68,14 +100,14 @@ test('curator mediation delivers verified original through actual CLI and gives 
   assert.equal(report.answer, 'Ada owns the fixture (note.md)')
   assert.equal(report.stopReason, 'curator-finalized')
 })
-test('curator mediation rejects unseen source requests and never reaches lead', () => {
-  const { child, report } = runFixture('unseen')
+test('curator mediation rejects unsafe source paths and never reaches lead', () => {
+  const { child, report } = runFixture('unsafe')
   assert.notEqual(child.status, 0)
   assert.equal(report.runComplete, false)
   assert.equal(report.modelCalls.length, 1)
   assert.equal(report.sourceReads.length, 0)
   assert.equal(report.answer, null)
-  assert.match(report.stopReason, /Invalid.*unseen/)
+  assert.match(report.stopReason, /Invalid.*unsafe/)
 })
 test('requesting another page after exhaustion gets explicit feedback and can still finish', () => {
   const { child, report } = runFixture('exhausted-next')
@@ -156,11 +188,35 @@ test('duplicate paths within a request are read once and endless repeats hit the
   assert.equal(endless.report.answer, null)
 })
 
-test('an unseen path mixed with an already-read path still stops before another source read', () => {
-  const { child, report } = runFixture('repeat-unseen')
-  assert.notEqual(child.status, 0)
-  assert.equal(report.stopReason, 'Invalid or unseen source request')
-  assert.equal(report.sourceReads.length, 1)
-  assert.equal(report.modelCalls.length, 2)
-  assert.equal(report.answer, null)
+test('unseen paths return explicit feedback and can recover without unauthorized reads', () => {
+  const recovered = runFixture('recover-unseen')
+  assert.equal(recovered.child.status, 0, recovered.child.stderr)
+  assert.equal(recovered.report.runComplete, true)
+  assert.equal(recovered.report.modelCalls.length, 4)
+  assert.equal(recovered.report.pages.length, 1)
+  assert.deepEqual(recovered.report.sourceReads.map(row => row.path), ['note.md'])
+  assert.deepEqual(recovered.report.sourceRequestErrors[0].unseen, ['hidden-gold.md'])
+  const mixed = runFixture('repeat-unseen')
+  assert.equal(mixed.child.status, 0, mixed.child.stderr)
+  assert.equal(mixed.report.sourceReads.length, 1)
+  assert.equal(mixed.report.sourceRequests.length, 1)
+  assert.deepEqual(mixed.report.sourceRequestErrors[0].rejectedRequest, ['note.md', 'hidden-gold.md'])
+  const endless = runFixture('unseen-forever', ['--max-rounds', '3'])
+  assert.notEqual(endless.child.status, 0)
+  assert.equal(endless.report.stopReason, 'round-budget')
+  assert.equal(endless.report.sourceRequestErrors.length, 3)
+  assert.equal(endless.report.sourceReads.length, 0)
+  assert.equal(endless.report.answer, null)
+})
+
+test('future-page request recovers by observing the real next page before reading its original', () => {
+  const { child, report } = runFixture('future-page', ['--mode', 'auto', '--max-rounds', '5', '--structured-citations'])
+  assert.equal(child.status, 0, child.stderr + JSON.stringify({ pages: report.pages, errors: report.sourceRequestErrors }))
+  assert.equal(report.runComplete, true)
+  assert.deepEqual(report.pages.map(page => page.offset), [0, 10])
+  assert.equal(report.sourceRequestErrors.length, 1)
+  assert.equal(report.sourceRequestErrors[0].nextPageRequested, true)
+  assert.deepEqual(report.sourceReads.map(source => source.path), ['next-10.md'])
+  assert.deepEqual(report.citations, ['next-10.md'])
+  assert.equal(report.modelCalls.length, 5)
 })

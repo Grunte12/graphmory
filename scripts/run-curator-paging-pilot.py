@@ -44,13 +44,13 @@ workspace = out / 'reader-workspace'
 workspace.mkdir()
 root = pathlib.Path(__file__).resolve().parents[1]
 cli = root / 'scripts/brain-sync.mjs'
-report = {'protocol': 'curator-paging-development-v3-idempotent-reads', 'id': case['id'], 'question': case['question'],
+report = {'protocol': 'curator-paging-development-v4-tool-error-feedback', 'id': case['id'], 'question': case['question'],
           'model': args.model, 'leadModel': lead_model, 'mode': args.mode, 'maxRounds': args.max_rounds, 'maxInputBytes': args.max_input_bytes,
           'persistentCurator': args.persistent_curator, 'compactFollowup': args.compact_followup,
           'structuredCitations': args.structured_citations,
           'coveragePreviews': args.coverage_previews,
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
-          'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [], 'sourceRequests': [],
+          'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [], 'sourceRequests': [], 'sourceRequestErrors': [],
           'brief': None, 'answer': None, 'runComplete': False, 'stopReason': None,
           'limitations': ['One exposed development case; no quality acceptance or latency tail claim',
                           'No-tool boundary is checked in trace, not a proven filesystem isolation guarantee',
@@ -194,7 +194,27 @@ try:
         if set(response) != {'read_paths', 'next_page', 'brief'} or not isinstance(response['read_paths'], list) or not isinstance(response['brief'], str) or not isinstance(response['next_page'], bool):
             raise RuntimeError('Invalid curator response')
         requested, next_page = response['read_paths'], response['next_page']
-        unique_requested, unread, reused = classify_source_requests(requested, available, read)
+        try:
+            unique_requested, unread, reused = classify_source_requests(requested, available, read)
+        except RuntimeError:
+            # Refuse the entire request before touching any file or page. A safe
+            # relative name not yet observed is a recoverable tool error; unsafe
+            # or malformed paths remain terminal boundary violations.
+            if any(not isinstance(name, str) or pathlib.PurePosixPath(name).is_absolute()
+                   or '\\' in name or '\x00' in name or '..' in name.split('/') for name in requested):
+                raise RuntimeError('Invalid or unsafe source request')
+            unseen = [name for name in dict.fromkeys(requested) if name not in available]
+            report['sourceRequestErrors'].append({'turn': turn, 'code': 'UNSEEN_SOURCE_PATH',
+                'unseen': unseen, 'rejectedRequest': requested, 'nextPageRequested': next_page})
+            feedback = ('UNSEEN_SOURCE_PATH: no originals or next page were read for the rejected request. '
+                        'Unseen paths: ' + json.dumps(unseen)
+                        + ('. Request next_page=true with empty read_paths first to observe more candidates, '
+                           'or choose paths already supplied.' if page['hasMore'] else
+                           '. No more pages; choose supplied paths or report what is missing.')
+                        + ' Do not guess filenames.')
+            new_originals, new_page = [], False
+            save()
+            continue
         if not requested and not next_page:
             if not response['brief'].strip():
                 raise RuntimeError('Empty final brief')

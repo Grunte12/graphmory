@@ -66,7 +66,8 @@ for index, trial in enumerate(manifest['executionOrder']):
                      answer=report['answer'] if report else None, brief=report['brief'] if report else None,
                      citations=report.get('citations') if report else None,
                      citationProvenanceValid=report.get('citationProvenanceValid') if report else None,
-                     sourceReads=report['sourceReads'] if report else [], sourceRequests=report.get('sourceRequests', []) if report else [], pages=report['pages'] if report else [],
+                     sourceReads=report['sourceReads'] if report else [], sourceRequests=report.get('sourceRequests', []) if report else [],
+                     sourceRequestErrors=report.get('sourceRequestErrors', []) if report else [], pages=report['pages'] if report else [],
                      modelCalls=calls, usage=usage, elapsedSeconds=report['elapsedSeconds'] if report else None,
                      goldNotesRead=len(paths.intersection(gold)), goldNotes=len(gold),
                      completeGoldNoteReads=bool(gold) and set(gold).issubset(paths), category=by_id[trial['id']]['category']))
