@@ -1,0 +1,131 @@
+{
+  "protocol": "locomo-count-label-audit-v1",
+  "caseId": "conv-42:49",
+  "manifestSha256": "b0b9e6055a9841a7ce4dad398455f1ee97c670099d36bb9604da880809e621dd",
+  "status": "valid",
+  "reviewedSessions": [
+    "session_1.md", "session_2.md", "session_3.md", "session_4.md", "session_5.md",
+    "session_6.md", "session_7.md", "session_8.md", "session_9.md", "session_10.md",
+    "session_11.md", "session_12.md", "session_13.md", "session_14.md", "session_15.md",
+    "session_16.md", "session_17.md", "session_18.md", "session_19.md", "session_20.md",
+    "session_21.md", "session_22.md", "session_23.md", "session_24.md", "session_25.md",
+    "session_26.md", "session_27.md", "session_28.md", "session_29.md"
+  ],
+  "referenceCount": 2,
+  "upstreamAnswer": "Twice",
+  "countedEvents": [
+    {
+      "eventId": "rejection-1",
+      "turnId": "D14:1",
+      "description": "Joanna reports receiving a rejection letter from a major company after finishing her screenplay.",
+      "rationale": "Completed, explicitly stated rejection of her screenplay. D14:5 elaborates that the company sent a generic rejection letter, so that is the same event and not an additional rejection."
+    },
+    {
+      "eventId": "rejection-2",
+      "turnId": "D24:12",
+      "description": "Joanna reports another recent rejection from a production company.",
+      "rationale": "A completed event explicitly described as 'another rejection,' distinct from D14:1. D24:13 asks whether this is the submission sent to a film contest, and D24:14 confirms; this connects it to the screenplay submission discussed in D16:1, rather than adding a separate event."
+    }
+  ],
+  "candidateEvents": [
+    {
+      "turnId": "D27:12",
+      "description": "Joanna says she submitted several more scripts the prior week and assumes a few will be rejected.",
+      "rationale": "Future/potential rejections only; she does not report that any of these scripts have actually been rejected. Excluded from the count."
+    }
+  ],
+  "excludedMentions": [
+    {
+      "turnId": "D2:7",
+      "description": "Joanna plans to submit her first screenplay to film festivals and hopes producers/directors will review it.",
+      "rationale": "Submission plan and hope, with no rejection reported."
+    },
+    {
+      "turnId": "D3:1",
+      "description": "Joanna is waiting to hear back about a festival submission.",
+      "rationale": "Pending outcome, not a completed rejection."
+    },
+    {
+      "turnId": "D4:10",
+      "description": "Joanna starts another screenplay while waiting to hear how the first one did.",
+      "rationale": "No rejection reported."
+    },
+    {
+      "turnId": "D5:1",
+      "description": "Joanna has finished a second script and feels anxious about what comes next.",
+      "rationale": "No rejection reported."
+    },
+    {
+      "turnId": "D13:18",
+      "description": "Joanna recalls the tough times finishing her screenplay.",
+      "rationale": "A general retrospective on the process, not another rejection event."
+    },
+    {
+      "turnId": "D16:1",
+      "description": "Joanna says she submitted a recent screenplay to a film contest.",
+      "rationale": "Submission only; the result is not stated here. Later D24:12 reports one rejection, counted as rejection-2."
+    },
+    {
+      "turnId": "D24:13-D24:14",
+      "description": "Nate asks whether the recent rejection is the film-contest submission, and Joanna confirms.",
+      "rationale": "Clarifies the identity of rejection-2; repeated reference to that event rather than a third rejection."
+    },
+    {
+      "turnId": "D25:2-D25:4",
+      "description": "Joanna says a contributed script appeared on the big screen for the third time.",
+      "rationale": "A success/publication event, unrelated to rejection count."
+    },
+    {
+      "turnId": "D26:1-D26:3",
+      "description": "Joanna describes successful meetings with movie producers.",
+      "rationale": "Positive producer meetings, no rejection reported."
+    },
+    {
+      "turnId": "D27:13",
+      "description": "Nate hopes at least one of Joanna's recently submitted scripts makes it to the screen.",
+      "rationale": "Speculation about future outcomes, not a rejection event."
+    },
+    {
+      "turnId": "D28:8-D28:9",
+      "description": "Joanna says producers liked her pitched script.",
+      "rationale": "Positive response, no rejection reported."
+    },
+    {
+      "turnId": "D29:1-D29:5",
+      "description": "Joanna is filming her road-trip script and an actor praises it.",
+      "rationale": "Production and positive feedback, no rejection reported."
+    }
+  ],
+  "sessionAudit": [
+    {"session": "session_1.md", "finding": "No screenplay rejection mentioned."},
+    {"session": "session_2.md", "finding": "First screenplay completed; submission is planned and Joanna hopes for positive feedback, but no rejection is reported."},
+    {"session": "session_3.md", "finding": "First screenplay remains pending with festival; no outcome or rejection."},
+    {"session": "session_4.md", "finding": "Joanna is waiting to hear about first screenplay and starts another; no rejection reported."},
+    {"session": "session_5.md", "finding": "Second script completed; no rejection reported."},
+    {"session": "session_6.md", "finding": "Audition and writing advice only; no script rejection."},
+    {"session": "session_7.md", "finding": "Writing progress and hopes for good news; no rejection reported."},
+    {"session": "session_8.md", "finding": "Recipes and hiking; no rejection reported."},
+    {"session": "session_9.md", "finding": "Writers-group project and acting history; no rejection reported."},
+    {"session": "session_10.md", "finding": "Cooking and gaming; no rejection reported."},
+    {"session": "session_11.md", "finding": "Hiking and inspiration; no rejection reported."},
+    {"session": "session_12.md", "finding": "Third screenplay completed; no rejection reported."},
+    {"session": "session_13.md", "finding": "General retrospective to tough times finishing a screenplay; no distinct rejection mentioned."},
+    {"session": "session_14.md", "finding": "Counted rejection-1: explicit rejection letter from a major company; D14:5 is elaboration of the same event."},
+    {"session": "session_15.md", "finding": "Screenplay contribution appears on the big screen; no rejection reported."},
+    {"session": "session_16.md", "finding": "Recent screenplay submitted to a film contest; outcome not yet reported."},
+    {"session": "session_17.md", "finding": "Prior movie did well; new book/script plans; no rejection reported."},
+    {"session": "session_18.md", "finding": "Writing and dessert discussion; no rejection reported."},
+    {"session": "session_19.md", "finding": "Writers group gives Joanna great feedback on a book; no rejection reported."},
+    {"session": "session_20.md", "finding": "Gaming setback and recipes; no rejection reported."},
+    {"session": "session_21.md", "finding": "Laptop data loss and recipes; no rejection reported."},
+    {"session": "session_22.md", "finding": "Book completed and other activities; no rejection reported."},
+    {"session": "session_23.md", "finding": "Games and movies; no rejection reported."},
+    {"session": "session_24.md", "finding": "Counted rejection-2: Joanna reports another recent production-company rejection; D24:13-D24:14 clarify it is the film-contest submission, repeating the same event."},
+    {"session": "session_25.md", "finding": "Third time a contributed script appears on the big screen; a success, not rejection."},
+    {"session": "session_26.md", "finding": "Producer meetings went well and were validating; no rejection reported."},
+    {"session": "session_27.md", "finding": "Joanna expects a few of several recent submissions may be rejected; this is prospective speculation, so no actual event to count."},
+    {"session": "session_28.md", "finding": "Producers liked a pitched script; positive response, no rejection reported."},
+    {"session": "session_29.md", "finding": "Joanna is filming her script and reports an actor praised it; no rejection reported."}
+  ],
+  "rationale": "Read all 29 sessions in chronological order (629 turns). I find exactly two distinct actual script rejection events: the major-company rejection letter at D14:1 (clarified at D14:5), and the 'another rejection' from a production company at D24:12 (confirmed at D24:14 as the film-contest submission discussed at D16:1). Repeated references and clarifications are grouped with their respective events. D27:12-D27:13 describes only anticipated rejections from recently submitted scripts and is not counted. No additional actual rejection or unresolved ambiguity changes the count; the reference count of 2 and upstream answer 'Twice' are supported."
+}

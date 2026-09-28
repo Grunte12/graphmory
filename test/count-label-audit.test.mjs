@@ -1,5 +1,10 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { spawnSync } from 'node:child_process'
+import { digest } from '../scripts/lib/locomo.mjs'
 import { AUDIT_PROTOCOL, referenceCount, validateCountLabelReview } from '../scripts/lib/count-label-audit.mjs'
 
 const manifest = { protocol: AUDIT_PROTOCOL, caseId: 'conv-1:2', referenceCount: 2,
@@ -39,4 +44,28 @@ test('clear undercount is invalid even before remaining sessions are reviewed', 
   assert.equal(result.eligibleForStrictCountEval, false)
   assert.equal(result.countedEvents, 3)
   assert.throws(() => validateCountLabelReview(manifest, { ...review, status: 'invalid' }), /undercount/)
+})
+
+test('CLI audit refuses changed source bytes and a review bound to another manifest', () => {
+  const folder = fs.mkdtempSync(path.join(os.tmpdir(), 'graphmory-label-integrity-'))
+  try {
+    const markdown = '# Memory\n## Ada (D1:1)\nFirst visit.\n'
+    const localManifest = { ...manifest, referenceCount: 1,
+      sessions: [{ path: 'session_1.md', sha256: digest(markdown), turnIds: ['D1:1'] }] }
+    const bytes = JSON.stringify(localManifest)
+    fs.writeFileSync(path.join(folder, 'manifest.json'), bytes)
+    fs.writeFileSync(path.join(folder, 'session_1.md'), markdown)
+    const localReview = { ...review, manifestSha256: digest(bytes), events: [events[0]], reviewedSessions: ['session_1.md'] }
+    const reviewPath = path.join(folder, 'review.json')
+    fs.writeFileSync(reviewPath, JSON.stringify(localReview))
+    const run = () => spawnSync(process.execPath, ['scripts/validate-count-label-audit.mjs',
+      '--packet', folder, '--review', reviewPath], { encoding: 'utf8' })
+    assert.equal(run().status, 0)
+    fs.writeFileSync(path.join(folder, 'session_1.md'), markdown + 'Second visit.\n')
+    assert.notEqual(run().status, 0)
+    assert.match(run().stderr, /Source session changed/)
+    fs.writeFileSync(path.join(folder, 'session_1.md'), markdown)
+    fs.writeFileSync(reviewPath, JSON.stringify({ ...localReview, manifestSha256: 'wrong' }))
+    assert.match(run().stderr, /another manifest/)
+  } finally { fs.rmSync(folder, { recursive: true, force: true }) }
 })
