@@ -2,7 +2,8 @@ import { retrievalMethods } from "./runtime-config.mjs"
 import { createHash } from "node:crypto"
 import { loadVaultDocuments, recallVaultLoop } from "./memory-recall.mjs"
 import { rankSemanticVectorLane, recallVaultSemantic } from "./semantic-recall.mjs"
-import { isAnswerCandidate, splitMarkdownSections, tokenize } from "./retrieval.mjs"
+import { isAnswerCandidate, splitMarkdownSections, tokenize, rank } from "./retrieval.mjs"
+import { persistentIndexLocation, supportsNativeSqlite } from "./index-capability.mjs"
 import { readSourceNotes } from "./source-read.mjs"
 
 export async function managedRecall(vault, query, config, {
@@ -23,6 +24,8 @@ export async function managedRecall(vault, query, config, {
   semanticRecallImpl = recallVaultSemantic,
   precomputedRankedLanes = [],
   rankImpl,
+  indexCache = "",
+  onIndexFallback,
   fetchImpl = fetch,
 } = {}) {
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be 1–10")
@@ -38,8 +41,34 @@ export async function managedRecall(vault, query, config, {
   if (bundleBytes && config.workflow !== "curator") throw new Error("Evidence bundles are supported only in curator mode")
   if (adaptiveBundle && config.workflow !== "curator") throw new Error("Adaptive bundles are supported only in curator mode")
   if (config.workflow !== "curator" && offset !== 0) throw new Error("offset is supported only in curator mode")
+  if (indexCache && config.workflow !== "curator") throw new Error("Index cache is supported only in curator mode")
+  if (indexCache && rankImpl) throw new Error("Choose indexCache or rankImpl")
   const limit = config.decision.maxCandidates
   const vaultDocuments = loadVaultDocuments(vault, { scope })
+  let effectiveRankImpl = rankImpl
+  if (indexCache) {
+    // Resolve and reject an in-vault cache even when this Node version cannot load SQLite.
+    persistentIndexLocation(vault, scope, indexCache)
+    let fallbackReported = false
+    const fallback = (code) => {
+      if (fallbackReported) return
+      fallbackReported = true
+      onIndexFallback?.(code)
+    }
+    if (!supportsNativeSqlite()) fallback("NODE_SQLITE_UNAVAILABLE")
+    else {
+      try {
+        const { createPersistentRanker } = await import("./persistent-postings.mjs")
+        const cachedRank = createPersistentRanker(vault, scope, indexCache, vaultDocuments)
+        let disabled = false
+        effectiveRankImpl = (documents, search, method) => {
+          if (disabled || method !== "bm25f-focused-sections") return rank(documents, search, method)
+          try { return cachedRank(documents, search, method) }
+          catch { disabled = true; fallback("INDEX_QUERY_FAILED"); return rank(documents, search, method) }
+        }
+      } catch { fallback("INDEX_UNAVAILABLE") }
+    }
+  }
   const methods = retrievalMethods(config.retrievalProfile)
   if (config.workflow === "curator") {
     const semanticLane = semanticExpansion
@@ -50,7 +79,7 @@ export async function managedRecall(vault, query, config, {
     const page = recallVaultLoop(vault, query, { k: bundleBytes || adaptiveBundle ? Math.max(1, vaultDocuments.length) : k, offset, scope,
       perMethodLimit: vaultDocuments.length, shortlistLimit: limit, documents: vaultDocuments, methods, includeSuperseded,
       precomputedRankedLanes: semanticLane ? [...precomputedRankedLanes, semanticLane] : precomputedRankedLanes,
-      rankImpl,
+      rankImpl: effectiveRankImpl,
       allowLargePage: Boolean(bundleBytes || adaptiveBundle) })
     const adaptiveMode = adaptiveBundle ? chooseAdaptiveMode(query, page.results.slice(0, 10)) : null
     const effectiveBundleBytes = bundleBytes || (adaptiveMode === "wide" ? 32000 : 0)

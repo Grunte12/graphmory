@@ -69,6 +69,18 @@ not a lightweight default. See the [frozen integration protocol](../evaluation/c
 
 ## Experimental link navigation
 
+### Optional persistent sparse index
+
+On Node 24 or newer, Curator recall can reuse focused-section BM25F postings:
+
+```sh
+graphmory recall-managed --vault /path/to/vault --query "deployment policy" --index-cache /path/to/private-cache --agent
+```
+
+Choose a dedicated cache directory outside the vault. First use builds a private SQLite file; later calls compare current Markdown hashes and transactionally update changed notes. Cached scoring keeps the existing eligible candidates, scores, links and output shape. No model, vector database or additional package is needed. Default recall remains unchanged. The cache contains vault-derived terms and paths; keep it private and delete the designated cache directory when no longer needed.
+
+Node 20, a busy cache or a cache error uses ordinary recall and emits at most one `INDEX_FALLBACK` line to stderr. An in-vault cache path is rejected. This experimental option is currently for Curator mode only. The [product screen](../evaluation/persistent-index-optin-report-2026-09-29.md) found a 30.7% median reduction on the exposed 5,000-note SciFact slice with exact results, but a slower p95 on a small vault. First use costs several seconds on the large slice. It does not improve retrieval relevance or establish answer quality; use it when repeated searches on a large vault justify building the index.
+
 The normal `recall` and `recall-loop` commands keep `canonical_memory: false` navigation notes in the ranked corpus but omit them from the answer results. Managed recall inherits this rule, including when optional semantic expansion proposes extra candidates. Use `--include-navigation` with the ordinary recall commands when intentionally inspecting a MOC or derived index. This preserves source-note slots in the returned candidate list without deleting the index or its links.
 
 For a question that explicitly asks about related notes, papers, or a route through a shared index/MOC, `graphmory recall-explore --vault /path/to/vault --query "Which other papers are linked to this design?" --agent` tries a bounded link and backlink expansion after local sparse retrieval. It does not call a model, create embeddings, or write to the vault. The compact response lists candidate paths and marks them `unverified`; the lead agent must read the notes before answering. Ordinary questions keep the sparse ranking. This is an opt-in experiment, not a replacement for `recall-managed`. See the [design](../design/adaptive-retrieval-loop.md) and [pilot results](../evaluation/adaptive-graph-pilot-2026-09-24.md).

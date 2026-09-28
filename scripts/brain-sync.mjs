@@ -70,7 +70,7 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs config [show] [--config <path>] [--json]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--offset N] [--auto|--bundle] [--matched-previews|--coverage-previews with --auto] [--bundle-budget BYTES] [--evidence-preview] [--include-superseded] [--semantic-expansion] [--model-cache <path>] [--agent|--json] (curator: adaptive or byte-budgeted evidence; decision: 3 results)\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--offset N] [--auto|--bundle] [--matched-previews|--coverage-previews with --auto] [--bundle-budget BYTES] [--evidence-preview] [--include-superseded] [--semantic-expansion] [--model-cache <path>] [--index-cache <directory>] [--agent|--json] (curator: adaptive or byte-budgeted evidence; decision: 3 results)\n`)
   out.write(`  node scripts/brain-sync.mjs recall-explore --vault <path> --query <text> [--scope <path>] [--k 3] [--agent|--json] (experimental)\n`)
   out.write(`  node scripts/brain-sync.mjs curate-plan --vault <path> --input <bundle.json> [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
@@ -832,6 +832,9 @@ async function configureRuntime() {
 
 async function recallManaged() {
   const config = loadRuntimeConfig(runtimeConfigPath(option("--config")))
+  if (flag("--index-cache") && (!option("--index-cache") || option("--index-cache").startsWith("--"))) {
+    throw new Error("--index-cache requires a directory outside the vault")
+  }
   if (flag("--bundle-budget") && !flag("--bundle")) throw new Error("--bundle-budget requires --bundle")
   if (flag("--auto") && flag("--bundle")) throw new Error("Choose --auto or --bundle")
   if (flag("--matched-previews") && !flag("--auto")) throw new Error("--matched-previews requires --auto")
@@ -842,6 +845,8 @@ async function recallManaged() {
     scope: option("--scope", ""),
     semanticExpansion: flag("--semantic-expansion"),
     modelCache: option("--model-cache", ""),
+    indexCache: option("--index-cache", ""),
+    onIndexFallback: (code) => process.stderr.write(`INDEX_FALLBACK ${code}\n`),
     evidencePreview: flag("--evidence-preview"),
     bundleBytes: flag("--bundle") ? Number(option("--bundle-budget", "32000")) : 0,
     adaptiveBundle: flag("--auto"),

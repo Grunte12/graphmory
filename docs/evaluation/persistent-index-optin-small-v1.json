@@ -1,0 +1,83 @@
+{
+  "protocol": "persistent-index-optin-product-screen-v1",
+  "complete": true,
+  "corpus": "Read-only local vault; ten generic unlabeled queries",
+  "node": "v24.18.0",
+  "exact": 10,
+  "count": 10,
+  "baselineMs": [
+    91.45483300000001,
+    89.61474999999996,
+    93.10429099999999,
+    87.46879200000001,
+    93.54233299999987,
+    96.54529200000002,
+    94.65975000000003,
+    99.41208299999994,
+    95.57987500000013,
+    92.59870799999999
+  ],
+  "indexedMs": [
+    91.22800000000001,
+    83.36637499999995,
+    86.06370800000002,
+    81.44079199999999,
+    92.34545900000012,
+    90.07262500000002,
+    83.97741600000018,
+    87.64479200000005,
+    113.46466600000008,
+    89.76074999999992
+  ],
+  "baselineBytes": [
+    994,
+    977,
+    424,
+    177,
+    606,
+    1056,
+    177,
+    1009,
+    416,
+    973
+  ],
+  "indexedBytes": [
+    994,
+    977,
+    424,
+    177,
+    606,
+    1056,
+    177,
+    1009,
+    416,
+    973
+  ],
+  "firstCallMs": 146.26720799999998,
+  "dbBytes": 229376,
+  "codeHashes": {
+    "src/persistent-postings.mjs": "c5976cedf9070aacbf291e80b792df266377664865e8161b45968e6ada50472a",
+    "src/index-capability.mjs": "7f20f972715cee7008dc8bb6df3685cd2841d9e977cfde3eef7b9fab8afbd055",
+    "src/decision-recall.mjs": "a252028434be2cf324f08b948b99828420f4c8fcecfa1a2df890355ad4bc054f",
+    "src/retrieval.mjs": "f58817caaccbefd2e93716387ad82d63e0caf8880f792796607d8b938e6c18d4",
+    "src/memory-recall.mjs": "65484bf268c83c96acaad7c6f12abb0504dd033fd09e253632a0a57c1b9ea903",
+    "scripts/brain-sync.mjs": "d89630242319b61f7fbf9f519e5c7977ae150c0d360a09567ffaee4d510230b1",
+    "scripts/eval-persistent-index-optin.mjs": "6b0ea004bbec875f6f7ca447fa1bf8a9998ec65036bf53624e62f4d8b5d2063b"
+  },
+  "sourceSetSha256": "229d0850a93cbaf1babaa765f6f91de593141facceee212adbfe09e6112e5920",
+  "p50": {
+    "baseline": 93.32331199999993,
+    "index": 88.70277099999998
+  },
+  "p95": {
+    "baseline": 99.41208299999994,
+    "index": 113.46466600000008
+  },
+  "bytesExact": true,
+  "gates": {
+    "exact": true,
+    "p50Improvement": false,
+    "p95NoWorse": false,
+    "bytesNoWorse": true
+  }
+}
