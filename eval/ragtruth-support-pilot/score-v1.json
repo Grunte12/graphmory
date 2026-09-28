@@ -1,0 +1,131 @@
+{
+  "protocol": "ragtruth-source-support-pilot-v1",
+  "cases": 24,
+  "uniqueSourceGroups": 24,
+  "exactSourceSupportAgreement": 0.6666666666666666,
+  "accuracy": 0.6666666666666666,
+  "confusion": {
+    "yes": {
+      "yes": 4,
+      "no": 8,
+      "unclear": 0
+    },
+    "no": {
+      "yes": 0,
+      "no": 12,
+      "unclear": 0
+    }
+  },
+  "positivePrecision": 1,
+  "positiveRecall": 0.3333333333333333,
+  "positiveF1": 0.5,
+  "falseAcceptances": 0,
+  "falseAcceptanceRate": 0,
+  "unclear": 0,
+  "byTask": {
+    "QA": {
+      "cases": 8,
+      "exactAgreement": 5,
+      "falseAcceptances": 0,
+      "confusion": {
+        "yes": {
+          "yes": 1,
+          "no": 3,
+          "unclear": 0
+        },
+        "no": {
+          "yes": 0,
+          "no": 4,
+          "unclear": 0
+        }
+      }
+    },
+    "Summary": {
+      "cases": 8,
+      "exactAgreement": 5,
+      "falseAcceptances": 0,
+      "confusion": {
+        "yes": {
+          "yes": 1,
+          "no": 3,
+          "unclear": 0
+        },
+        "no": {
+          "yes": 0,
+          "no": 4,
+          "unclear": 0
+        }
+      }
+    },
+    "Data2txt": {
+      "cases": 8,
+      "exactAgreement": 6,
+      "falseAcceptances": 0,
+      "confusion": {
+        "yes": {
+          "yes": 2,
+          "no": 2,
+          "unclear": 0
+        },
+        "no": {
+          "yes": 0,
+          "no": 4,
+          "unclear": 0
+        }
+      }
+    }
+  },
+  "passesPilotGate": false,
+  "falseAcceptanceDenominator": 12,
+  "disagreements": [
+    {
+      "blindId": "e84a033c9a9a",
+      "taskType": "QA",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no"
+    },
+    {
+      "blindId": "962ad3b83bc6",
+      "taskType": "QA",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no"
+    },
+    {
+      "blindId": "eda3dcee2f47",
+      "taskType": "QA",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no"
+    },
+    {
+      "blindId": "8492cea31ab3",
+      "taskType": "Summary",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no"
+    },
+    {
+      "blindId": "3367b6997cd4",
+      "taskType": "Summary",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no"
+    },
+    {
+      "blindId": "8d88e1dd3e2d",
+      "taskType": "Summary",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no"
+    },
+    {
+      "blindId": "bb8bf40aa123",
+      "taskType": "Data2txt",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no"
+    },
+    {
+      "blindId": "935e0ea6ae24",
+      "taskType": "Data2txt",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no"
+    }
+  ],
+  "limitation": "Agreement with response-level human hallucination spans only; span annotations may be incomplete and do not certify completeness, citation coverage, or exhaustive factual support."
+}

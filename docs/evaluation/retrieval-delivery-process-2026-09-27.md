@@ -120,3 +120,23 @@ add mandatory action/safety gates, full expected-incident accounting and
 invalid-run reporting. The same stored outputs now score A8/11,B7/11,C7/11;
 this changes evaluation validity, not underlying model behavior. Standard
 benchmark answer correctness and calibrated semantic judging remain unmeasured.
+
+## External human-reference judge calibration
+
+[Synthetic rubric v2](judge-calibration-v2-2026-09-28.md) passed 24/24 easy
+source-support controls; it did not certify general reliability. The next
+[RAGTruth pilot](ragtruth-support-pilot-results-2026-09-28.md), frozen after an
+[independent schema audit](ragtruth-schema-audit-2026-09-28.md), agreed with
+human-derived span labels on only 16/24 responses. It accepted zero of twelve
+annotated-unsupported responses, but rejected eight of twelve no-span responses.
+The predeclared agreement gate failed. Keep that failure and the reference
+limitations; do not use this judge alone to award final competitor wins.
+
+[A native ripgrep helper](native-file-baseline-implementation-2026-09-28.md)
+now supports deterministic complete pagination, original byte hashes and native
+timing/output accounting. Synthetic regressions pass; no live native-file
+comparison was run in this step. The report discloses an accidental development
+Markdown search. The optional calibration manifest guard and external-dataset
+adapter add reproducibility checks without altering Graphmory runtime defaults,
+official QA scores or sealed histories. Full repository verification passed
+324 tests, example validation and existing deterministic evals.
