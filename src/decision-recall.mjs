@@ -21,6 +21,7 @@ export async function managedRecall(vault, query, config, {
   modelCache = "",
   semanticLaneImpl = rankSemanticVectorLane,
   semanticRecallImpl = recallVaultSemantic,
+  precomputedRankedLanes = [],
   fetchImpl = fetch,
 } = {}) {
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be 1–10")
@@ -47,7 +48,7 @@ export async function managedRecall(vault, query, config, {
       : null
     const page = recallVaultLoop(vault, query, { k: bundleBytes || adaptiveBundle ? Math.max(1, vaultDocuments.length) : k, offset, scope,
       perMethodLimit: vaultDocuments.length, shortlistLimit: limit, documents: vaultDocuments, methods, includeSuperseded,
-      precomputedRankedLanes: semanticLane ? [semanticLane] : [],
+      precomputedRankedLanes: semanticLane ? [...precomputedRankedLanes, semanticLane] : precomputedRankedLanes,
       allowLargePage: Boolean(bundleBytes || adaptiveBundle) })
     const adaptiveMode = adaptiveBundle ? chooseAdaptiveMode(query, page.results.slice(0, 10)) : null
     const effectiveBundleBytes = bundleBytes || (adaptiveMode === "wide" ? 32000 : 0)
