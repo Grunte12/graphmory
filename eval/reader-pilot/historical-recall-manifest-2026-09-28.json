@@ -1,0 +1,25 @@
+{
+  "protocol": "synthetic-historical-lifecycle-delivery-v1",
+  "frozenBeforeExperiment": true,
+  "baselineCommit": "be5593f",
+  "runnerSha256": "56bda4dc26a362f98aeb60dd4c1df327a8520d4695386c14c639e1752d3fd902",
+  "runtimeHashes": {
+    "src/retrieval.mjs": "28f656a4bef7806d9a2a7690c2c31b7ad0732b894e05946e186286e05a4bc6c1",
+    "src/memory-recall.mjs": "0fb19fa1c3c268b2cbd38b73ac8733ea6ff852a27d558c4fc3678de0f39593cd",
+    "src/decision-recall.mjs": "89169fdbd15793427ad2e1891d286d522cb5ee840cecd105302dfe37677421fc",
+    "scripts/brain-sync.mjs": "e75ed971310c63db8cc2b184b22a9a1fcd1e4492a6bf1b3e06dc28b57db519fc"
+  },
+  "cases": "Three synthetic layouts (atomic, conversation, nested) crossed with global and Cedar-scoped lookup; current and prior questions for each.",
+  "arms": ["existing", "explicit-history"],
+  "intervention": "The evaluator adds --include-superseded only for prior-state questions. Current-state calls remain identical.",
+  "plannedTrials": 24,
+  "gates": {
+    "explicitHistoryPriorReachable": "6/6",
+    "currentPathParity": "Identical ranked paths and statuses between arms for all six current questions",
+    "boundaryFailures": 0,
+    "immutableSources": "all 24 trials",
+    "accounting": "all 24 planned trials present exactly once"
+  },
+  "nonClaims": ["Not official LoCoMo or LongMemEval", "No autonomous flag selection or answer-quality result", "No competitor superiority", "Single-pass timing cannot establish latency/cost improvement"],
+  "holdout": "No benchmark holdout or private vault is used."
+}

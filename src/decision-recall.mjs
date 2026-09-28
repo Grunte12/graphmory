@@ -14,6 +14,7 @@ export async function managedRecall(vault, query, config, {
   adaptiveBundle = false,
   matchedPreviews = false,
   coveragePreviews = false,
+  includeSuperseded = false,
   semanticRecallImpl = recallVaultSemantic,
   fetchImpl = fetch,
 } = {}) {
@@ -24,6 +25,7 @@ export async function managedRecall(vault, query, config, {
   if (matchedPreviews && !adaptiveBundle) throw new Error("matchedPreviews requires adaptiveBundle")
   if (coveragePreviews && !adaptiveBundle) throw new Error("coveragePreviews requires adaptiveBundle")
   if (coveragePreviews && matchedPreviews) throw new Error("Choose coveragePreviews or matchedPreviews")
+  if (includeSuperseded && config.workflow !== "curator") throw new Error("Historical retrieval is supported only in curator mode")
   if (bundleBytes && config.workflow !== "curator") throw new Error("Evidence bundles are supported only in curator mode")
   if (adaptiveBundle && config.workflow !== "curator") throw new Error("Adaptive bundles are supported only in curator mode")
   if (config.workflow !== "curator" && offset !== 0) throw new Error("offset is supported only in curator mode")
@@ -32,7 +34,7 @@ export async function managedRecall(vault, query, config, {
   const methods = retrievalMethods(config.retrievalProfile)
   if (config.workflow === "curator") {
     const page = recallVaultLoop(vault, query, { k: bundleBytes || adaptiveBundle ? Math.max(1, vaultDocuments.length) : k, offset, scope,
-      perMethodLimit: vaultDocuments.length, shortlistLimit: limit, documents: vaultDocuments, methods,
+      perMethodLimit: vaultDocuments.length, shortlistLimit: limit, documents: vaultDocuments, methods, includeSuperseded,
       allowLargePage: Boolean(bundleBytes || adaptiveBundle) })
     const adaptiveMode = adaptiveBundle ? chooseAdaptiveMode(query, page.results.slice(0, 10)) : null
     const effectiveBundleBytes = bundleBytes || (adaptiveMode === "wide" ? 32000 : 0)
@@ -60,6 +62,7 @@ export async function managedRecall(vault, query, config, {
     const hasMore = bundleBytes || adaptiveBundle ? offset + results.length < page.totalCandidates : page.hasMore
     return {
       query, workflow: "curator", curator: config.curator,
+      ...(includeSuperseded ? { historicalCandidatesIncluded: true } : {}),
       confidence: page.confidence, retrievalConfidence: page.confidence, needsExpansion: page.needsExpansion, scanLimitReached: page.scanLimitReached,
       offset: page.offset, totalCandidates: page.totalCandidates, hasMore, nextOffset: hasMore ? offset + results.length : null,
       ...(effectiveBundleBytes ? { bundleBytes: effectiveBundleBytes, bundleUsedBytes } : {}),

@@ -85,6 +85,7 @@ export function recallVaultLoop(vault, query, {
   k = 3,
   offset = 0,
   includeNoncanonical = false,
+  includeSuperseded = false,
   includeNavigation = false,
   includeRawPaths = false,
   maxFiles = 5000,
@@ -100,7 +101,7 @@ export function recallVaultLoop(vault, query, {
   if (!Number.isInteger(offset) || offset < 0) throw new Error("offset must be a non-negative integer")
   const documents = suppliedDocuments ?? loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
   const lanes = methods.map((method) => {
-    const retrieval = governedRank(documents, query, method, { includeNoncanonical, answerCandidatesOnly: !includeNavigation })
+    const retrieval = governedRank(documents, query, method, { includeNoncanonical, includeSuperseded, answerCandidatesOnly: !includeNavigation })
     let laneResults = retrieval.results
     if (rerank) {
       laneResults = sectionFocusRerank(laneResults, query, documents)

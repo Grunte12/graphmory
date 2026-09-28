@@ -67,7 +67,7 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs config [show] [--config <path>] [--json]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--offset N] [--auto|--bundle] [--matched-previews|--coverage-previews with --auto] [--bundle-budget BYTES] [--evidence-preview] [--semantic-expansion] [--agent|--json] (curator: adaptive or byte-budgeted evidence; decision: 3 results)\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--offset N] [--auto|--bundle] [--matched-previews|--coverage-previews with --auto] [--bundle-budget BYTES] [--evidence-preview] [--include-superseded] [--semantic-expansion] [--agent|--json] (curator: adaptive or byte-budgeted evidence; decision: 3 results)\n`)
   out.write(`  node scripts/brain-sync.mjs recall-explore --vault <path> --query <text> [--scope <path>] [--k 3] [--agent|--json] (experimental)\n`)
   out.write(`  node scripts/brain-sync.mjs curate-plan --vault <path> --input <bundle.json> [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
@@ -843,6 +843,7 @@ async function recallManaged() {
     adaptiveBundle: flag("--auto"),
     matchedPreviews: flag("--matched-previews"),
     coveragePreviews: flag("--coverage-previews"),
+    includeSuperseded: flag("--include-superseded"),
   })
   if (flag("--agent")) console.log(JSON.stringify(report.evidencePacket || {
     workflow: report.workflow,
@@ -852,6 +853,7 @@ async function recallManaged() {
     ...(report.workflow === "curator" ? { offset: report.offset, totalCandidates: report.totalCandidates, hasMore: report.hasMore, nextOffset: report.nextOffset } : {}),
     ...(report.bundleBytes ? { bundleBytes: report.bundleBytes, bundleUsedBytes: report.bundleUsedBytes } : {}),
     ...(report.adaptiveMode ? { adaptiveMode: report.adaptiveMode } : {}),
+    ...(report.historicalCandidatesIncluded ? { historicalCandidatesIncluded: true } : {}),
     results: report.results.map(({ path, relevance, status, evidencePreview, sourceReadRequired, previewOmitted }) => ({ path, ...(relevance === undefined ? {} : { relevance }), status,
       ...(evidencePreview ? { evidencePreview } : {}),
       ...(sourceReadRequired ? { sourceReadRequired: true } : {}),

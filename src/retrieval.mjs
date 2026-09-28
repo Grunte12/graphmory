@@ -81,9 +81,9 @@ function cleanScalar(value) {
 
 const EXCLUDED_LIFECYCLES = new Set(["raw", "stale", "superseded", "archived", "deprecated"])
 
-export function isRetrievable(document, { includeNoncanonical = false } = {}) {
+export function isRetrievable(document, { includeNoncanonical = false, includeSuperseded = false } = {}) {
   const status = String(document.metadata?.status ?? document.metadata?.lifecycle ?? "current").toLowerCase()
-  if (!includeNoncanonical && EXCLUDED_LIFECYCLES.has(status)) return false
+  if (!includeNoncanonical && EXCLUDED_LIFECYCLES.has(status) && !(includeSuperseded && status === "superseded")) return false
   return true
 }
 
@@ -126,6 +126,7 @@ export function governedRank(documents, query, method, options = {}) {
 
 function eligibleDocuments(documents, options) {
   if (options.includeNoncanonical) return documents
+  if (options.includeSuperseded) return documents.filter((document) => isRetrievable(document, options))
   const cached = ELIGIBLE_CACHE.get(documents)
   if (cached) return cached
   const eligible = documents.filter((document) => isRetrievable(document, options))
