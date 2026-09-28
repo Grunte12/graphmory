@@ -1,0 +1,14 @@
+# Full-scope collection scale preflight
+
+This is a deterministic transport and prompt-size experiment, **not** a live-model quality or cost benchmark. It uses the two already exposed LongMemEval-S multi-session candidate histories documented in [the label preflight](longmemeval-multisession-label-preflight-2026-09-28.md). Dataset SHA-256: `d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442`. Original Markdown stayed in private temporary directories. The model callback returned an empty span list, so there is no answer or extraction-quality claim.
+
+The existing runner's common `--max-input-bytes 300000` setting derives a 150,000-byte response-page budget. Its default `--max-rounds 3` reserves one Curator synthesis call, leaving at most **two map calls**. The collector was run twice per case: first with enough map calls to measure all-page transport, then with the actual two-call cap. No prompt tuning or question substitution occurred between those executions.
+
+| Exposed case | Original notes / total bytes | Complete transport | Map prompt bytes, gross | Current-cap outcome |
+| --- | ---: | ---: | ---: | --- |
+| `gpt4_d84a3211` | 48 / 500,514 | 4 pages, 4 map callbacks | 547,602 | `collection-map-call-budget` after 2 map calls; 40/48 sources delivered |
+| `67e0d0f2` | 52 / 506,072 | 4 pages, 4 map callbacks | 556,390 | `collection-map-call-budget` after 2 map calls; 43/52 sources delivered |
+
+The largest individual map prompts were 156,483 and 156,811 UTF-8 bytes. Aggregate CLI output was 522,250 and 529,280 bytes; measured CLI time was 0.230 and 0.221 seconds. These are **tool transport figures**. They exclude model inference, Curator synthesis, Lead, Basic Memory indexing, and all subscription/API charges. Bytes are not tokens and cannot justify a dollar estimate. Temporary state was removed after each run.
+
+**Decision:** the full-history map-every-original treatment cannot enter the matched answer comparison with its present call ceiling. Raising that ceiling until these cases pass would change the predeclared cost contract and likely make the treatment expensive; it is not a harmless bug fix. Keep this path opt-in and unpromoted. A new, preregistered development design should first measure query-directed candidate discovery and complete original reads, with a visible fallback/escalation when evidence remains insufficient. Its stopping rule must not pretend that top-k exhaustion means all semantically related notes were found. The existing primary-source [IRCoT and GraphRAG review](../research/next-architecture-evidence-2026-09-28.md) motivates iterative or staged retrieval, but its published gains do not transfer automatically to these Markdown histories. Benchmark that distinct design against the same original-access comparators and report full workflow quality, latency and tokens before any promotion.
