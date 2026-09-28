@@ -26,6 +26,7 @@ parser.add_argument('--coverage-previews', action='store_true')
 parser.add_argument('--temporal-decision', action='store_true', help='Experimental conflict-resolution instruction for recall only')
 parser.add_argument('--evidence-state', action='store_true', help='Experimental mechanical coverage counters; no semantic quality verdict')
 parser.add_argument('--prefetch-wide-originals', action='store_true', help='Experimental full-source batching for complete wide Graphmory pages')
+parser.add_argument('--compact-prefetch', action='store_true', help='Omit previews when a complete original prefetch is attached')
 parser.add_argument('--basic-config', help='Isolated Basic Memory 0.23.2 hybrid index configuration')
 args = parser.parse_args()
 lead_model = args.lead_model or args.model
@@ -35,6 +36,8 @@ if args.compact_followup and not args.persistent_curator:
     raise RuntimeError('Compact follow-up requires persistent Curator context')
 if args.prefetch_wide_originals and (args.mode != 'auto' or args.basic_config):
     raise RuntimeError('Original prefetch requires Graphmory auto mode')
+if args.compact_prefetch and not args.prefetch_wide_originals:
+    raise RuntimeError('Compact prefetch requires original prefetch')
 data = pathlib.Path(args.input).resolve()
 case = json.loads(data.read_text())[args.case_index]
 if set(case) != {'id', 'question', 'vault', 'sources'}:
@@ -83,7 +86,7 @@ report = {'protocol': 'curator-paging-development-v4-tool-error-feedback', 'id':
           'coveragePreviews': args.coverage_previews,
           'temporalDecision': args.temporal_decision,
           'evidenceState': args.evidence_state, 'evidenceStateSnapshots': [],
-          'prefetchWideOriginals': args.prefetch_wide_originals, 'prefetch': None,
+          'prefetchWideOriginals': args.prefetch_wide_originals, 'compactPrefetch': args.compact_prefetch, 'prefetch': None,
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
           'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [], 'sourceToolCalls': [], 'sourceRequests': [], 'sourceRequestErrors': [],
           'brief': None, 'answer': None, 'runComplete': False, 'stopReason': None,
@@ -145,7 +148,8 @@ def retrieval(offset):
         page, output_bytes, tool_seconds = command_json(['node', str(cli), 'recall-managed', '--vault', str(vault), '--query', case['question'],
                                                          '--agent', '--offset', str(offset), '--' + args.mode] +
                                                         (['--coverage-previews'] if args.coverage_previews else []) +
-                                                        (['--prefetch-wide-originals'] if args.prefetch_wide_originals else []))
+                                                        (['--prefetch-wide-originals'] if args.prefetch_wide_originals else []) +
+                                                        (['--compact-prefetch'] if args.compact_prefetch else []))
     if page.get('offset') != offset or not isinstance(page.get('results'), list):
         raise RuntimeError('Invalid retrieval page')
     report['pages'].append({'offset': offset, 'nextOffset': page['nextOffset'], 'hasMore': page['hasMore'],

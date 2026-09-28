@@ -57,6 +57,7 @@ function usage(exitCode = 0) {
   out.write(`Usage:\n`)
   out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --paths '<JSON array of relative Markdown paths>' (full sources, compact JSON)\n`)
   out.write(`  recall-managed --auto --prefetch-wide-originals (experimental: attach full originals only on a complete wide first page)\n`)
+  out.write(`  recall-managed --auto --prefetch-wide-originals --compact-prefetch (experimental: omit previews duplicated by full originals)\n`)
   out.write(`  node scripts/brain-sync.mjs adoption-plan --vault <path> [--out <file>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs bootstrap --vault <path> --repo <owner/repo> [--create-remote]\n`)
   out.write(`  node scripts/brain-sync.mjs detect --vault <path> [--json]\n`)
@@ -846,6 +847,7 @@ async function recallManaged() {
     coveragePreviews: flag("--coverage-previews"),
     includeSuperseded: flag("--include-superseded"),
     prefetchWideOriginals: flag("--prefetch-wide-originals"),
+    compactPrefetch: flag("--compact-prefetch"),
   })
   if (flag("--agent")) console.log(JSON.stringify(report.evidencePacket || {
     workflow: report.workflow,

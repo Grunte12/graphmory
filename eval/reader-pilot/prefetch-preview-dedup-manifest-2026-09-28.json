@@ -1,0 +1,33 @@
+{
+  "protocol": "prefetch-preview-dedup-development-v1",
+  "baselineCommit": "5912d51",
+  "datasetSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "development": [
+    "conv-43",
+    "conv-42",
+    "conv-30",
+    "conv-48",
+    "conv-26",
+    "conv-47",
+    "conv-50"
+  ],
+  "holdoutNotRendered": [
+    "conv-41",
+    "conv-44",
+    "conv-49"
+  ],
+  "expectedQuestions": 1439,
+  "expectedReady": 30,
+  "sourceHashes": {
+    "scripts/eval-prefetch-preview-dedup.mjs": "740f664e1db21f65e652548b8ad7ad509991459f061e4239ddcc749d75c34d41",
+    "scripts/lib/locomo.mjs": "b5138a78a26663238e0b619b4d24d057819a4eb8a6cec45472e3b64aee536d2a",
+    "src/decision-recall.mjs": "47f94b1fb5704be32ac2633ec7387d915192f9edeb197d9faa52a86602d4af0e",
+    "src/memory-recall.mjs": "0fb19fa1c3c268b2cbd38b73ac8733ea6ff852a27d558c4fc3678de0f39593cd",
+    "src/retrieval.mjs": "28f656a4bef7806d9a2a7690c2c31b7ad0732b894e05946e186286e05a4bc6c1",
+    "src/source-read.mjs": "79e5bd5e93191f2c30a8127d300d74f64b8c893ec0321362efb3046791ba1ed6",
+    "src/runtime-config.mjs": "f6374cccc3aeca805f662195aba8c9873319a8bcb0f9a3bae47037d817907006",
+    "scripts/brain-sync.mjs": "180a60d558813a2662a1edc61f0304cfe708dfa2019932821ab3d3a2bb0f5cfb"
+  },
+  "primaryAcceptance": "No source/path/pagination/skip loss; median actual --agent CLI byte reduction >= 10%; live paired quality required before default promotion",
+  "reproducibilityCorrection": "CLI now receives explicit pinned DEFAULT_RUNTIME_CONFIG; selection, variants, source assertions and acceptance unchanged after initial screen"
+}

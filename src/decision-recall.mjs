@@ -17,6 +17,7 @@ export async function managedRecall(vault, query, config, {
   coveragePreviews = false,
   includeSuperseded = false,
   prefetchWideOriginals = false,
+  compactPrefetch = false,
   semanticRecallImpl = recallVaultSemantic,
   fetchImpl = fetch,
 } = {}) {
@@ -28,6 +29,7 @@ export async function managedRecall(vault, query, config, {
   if (coveragePreviews && !adaptiveBundle) throw new Error("coveragePreviews requires adaptiveBundle")
   if (coveragePreviews && matchedPreviews) throw new Error("Choose coveragePreviews or matchedPreviews")
   if (prefetchWideOriginals && (!adaptiveBundle || config.workflow !== "curator")) throw new Error("Original prefetch requires curator adaptiveBundle")
+  if (compactPrefetch && !prefetchWideOriginals) throw new Error("Compact prefetch requires original prefetch")
   if (includeSuperseded && config.workflow !== "curator") throw new Error("Historical retrieval is supported only in curator mode")
   if (bundleBytes && config.workflow !== "curator") throw new Error("Evidence bundles are supported only in curator mode")
   if (adaptiveBundle && config.workflow !== "curator") throw new Error("Adaptive bundles are supported only in curator mode")
@@ -77,6 +79,10 @@ export async function managedRecall(vault, query, config, {
         if (originalSources.some(source => source.markdown !== documentsByPath.get(source.path)?.markdown)) throw new Error("Source changed during recall prefetch")
       }
     }
+    const returnedResults = compactPrefetch && prefetch?.status === "ready"
+      ? results.map(({ evidencePreview, sourceReadRequired, previewOmitted, ...result }) => result)
+      : results
+    if (compactPrefetch && prefetch?.status === "ready") prefetch = { ...prefetch, presentation: "originals-only" }
     return {
       query, workflow: "curator", curator: config.curator,
       ...(includeSuperseded ? { historicalCandidatesIncluded: true } : {}),
@@ -86,7 +92,7 @@ export async function managedRecall(vault, query, config, {
       ...(adaptiveMode ? { adaptiveMode } : {}),
       ...(prefetch ? { prefetch } : {}),
       ...(originalSources ? { originalSources } : {}),
-      results,
+      results: returnedResults,
       nextSteps: page.nextSteps.slice(0, 2),
     }
   }

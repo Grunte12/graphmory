@@ -23,6 +23,13 @@ test('prefetch keeps complete canonical scoped originals and CLI parity; default
     assert.equal(eager.prefetch.status, 'ready')
     assert.deepEqual(eager.results, normal.results)
     assert.deepEqual(eager.originalSources, readSourceNotes(vault, ['project/one.md']).sources)
+    const compact = await managedRecall(vault, 'List all memory evidence', DEFAULT_RUNTIME_CONFIG,
+      { ...options, prefetchWideOriginals: true, compactPrefetch: true })
+    assert.equal(compact.prefetch.presentation, 'originals-only')
+    assert.deepEqual(compact.originalSources, eager.originalSources)
+    assert.deepEqual(compact.results.map(row => row.path), eager.results.map(row => row.path))
+    assert.ok(eager.results.some(row => row.evidencePreview))
+    assert.ok(compact.results.every(row => !('evidencePreview' in row) && !('sourceReadRequired' in row)))
     const cli = spawnSync(process.execPath, ['scripts/brain-sync.mjs', 'recall-managed', '--vault', vault,
       '--query', 'List all memory evidence', '--scope', 'project', '--auto', '--agent', '--prefetch-wide-originals'], { encoding: 'utf8' })
     assert.equal(cli.status, 0, cli.stderr)
@@ -30,6 +37,11 @@ test('prefetch keeps complete canonical scoped originals and CLI parity; default
     const narrow = await managedRecall(vault, 'Who owns the engine?', DEFAULT_RUNTIME_CONFIG, { ...options, prefetchWideOriginals: true })
     assert.equal(narrow.prefetch.status, 'skipped')
     assert.equal(narrow.originalSources, undefined)
+    const compactNarrow = await managedRecall(vault, 'Who owns the engine?', DEFAULT_RUNTIME_CONFIG,
+      { ...options, prefetchWideOriginals: true, compactPrefetch: true })
+    assert.deepEqual(compactNarrow, narrow)
+    await assert.rejects(managedRecall(vault, 'memory', DEFAULT_RUNTIME_CONFIG,
+      { adaptiveBundle: true, compactPrefetch: true }), /requires original prefetch/)
     await assert.rejects(managedRecall(vault, 'memory', DEFAULT_RUNTIME_CONFIG, { prefetchWideOriginals: true }), /requires curator adaptiveBundle/)
     await assert.rejects(managedRecall(vault, 'memory', { ...DEFAULT_RUNTIME_CONFIG, workflow: 'local-rerank' }, { adaptiveBundle: true, prefetchWideOriginals: true }), /requires curator adaptiveBundle/)
   } finally { fs.rmSync(vault, { recursive: true, force: true }) }

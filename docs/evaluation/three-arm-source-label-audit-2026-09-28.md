@@ -1,0 +1,11 @@
+# Source and reference audit for the three-arm development cases
+
+This audit reads the pinned LoCoMo source conversations, reference answers and evidence-turn IDs behind the [three-arm comparison](prefetch-three-arm-2026-09-28.md). Corpus SHA-256: `79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4`. It does not change the upstream labels or their official QA scores. A single blind reviewer separately checked the nine generated answers; the observations below are an author audit of reference validity, not independent adjudication.
+
+| Case | Reference/evidence check | Consequence for evaluation |
+| --- | --- | --- |
+| `conv-26:40` | Reference is `2`; annotated D6:16 and D10:8 are dated beach mentions. D10:8 calls the visit “recent,” so the text does not prove whether it is a separate outing from D6:16. | Two is plausible, but strict number-of-distinct-trips scoring is ambiguous. A model that qualifies the count should not automatically be marked factually wrong. |
+| `conv-47:8` | Reference `Three dogs` is supported by annotated D1:12, D1:14 and D5:1 together. Unannotated D31:13 also **explicitly states** there are three dogs. | The reference count is sound, but the gold-path list is not exhaustive. A system can answer with valid source support without reading every annotated path; gold-path recall is an opportunity metric, not an answer-support verdict. |
+| `conv-50:18` | Reference is `two times`, with annotated D6:5 and D9:1. D6:5 says Calvin is waiting for insurance; D9:1 says he is dealing with insurance after a car accident. D9:3 explicitly mentions paperwork for the car accident. The flood-related D6:5 does not explicitly say paperwork occurred. | Two insurance episodes are evidenced; two **paperwork** episodes are not explicit. The question/reference wording is source-ambiguous. Do not treat a one-explicit-instance answer as a proven failure. |
+
+These three cases were already exposed development data and form no acceptance holdout. They remain in the frozen official-score file for transparent reproduction, while strict semantic comparisons should report the uncertainty above separately. Future selection must source-audit labels and alternative supporting passages before freezing a supported-complete primary set; annotator path recall alone cannot decide correctness.
