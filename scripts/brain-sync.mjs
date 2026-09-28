@@ -56,6 +56,7 @@ function usage(exitCode = 0) {
   out.write(`Graphmory brain sync\n\n`)
   out.write(`Usage:\n`)
   out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --paths '<JSON array of relative Markdown paths>' (full sources, compact JSON)\n`)
+  out.write(`  recall-managed --auto --prefetch-wide-originals (experimental: attach full originals only on a complete wide first page)\n`)
   out.write(`  node scripts/brain-sync.mjs adoption-plan --vault <path> [--out <file>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs bootstrap --vault <path> --repo <owner/repo> [--create-remote]\n`)
   out.write(`  node scripts/brain-sync.mjs detect --vault <path> [--json]\n`)
@@ -844,6 +845,7 @@ async function recallManaged() {
     matchedPreviews: flag("--matched-previews"),
     coveragePreviews: flag("--coverage-previews"),
     includeSuperseded: flag("--include-superseded"),
+    prefetchWideOriginals: flag("--prefetch-wide-originals"),
   })
   if (flag("--agent")) console.log(JSON.stringify(report.evidencePacket || {
     workflow: report.workflow,
@@ -854,6 +856,8 @@ async function recallManaged() {
     ...(report.bundleBytes ? { bundleBytes: report.bundleBytes, bundleUsedBytes: report.bundleUsedBytes } : {}),
     ...(report.adaptiveMode ? { adaptiveMode: report.adaptiveMode } : {}),
     ...(report.historicalCandidatesIncluded ? { historicalCandidatesIncluded: true } : {}),
+    ...(report.prefetch ? { prefetch: report.prefetch } : {}),
+    ...(report.originalSources ? { originalSources: report.originalSources } : {}),
     results: report.results.map(({ path, relevance, status, evidencePreview, sourceReadRequired, previewOmitted }) => ({ path, ...(relevance === undefined ? {} : { relevance }), status,
       ...(evidencePreview ? { evidencePreview } : {}),
       ...(sourceReadRequired ? { sourceReadRequired: true } : {}),

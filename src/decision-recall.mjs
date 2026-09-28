@@ -3,6 +3,7 @@ import { createHash } from "node:crypto"
 import { loadVaultDocuments, recallVaultLoop } from "./memory-recall.mjs"
 import { recallVaultSemantic } from "./semantic-recall.mjs"
 import { isAnswerCandidate, splitMarkdownSections, tokenize } from "./retrieval.mjs"
+import { readSourceNotes } from "./source-read.mjs"
 
 export async function managedRecall(vault, query, config, {
   k = config.workflow === "curator" ? 10 : 3,
@@ -15,6 +16,7 @@ export async function managedRecall(vault, query, config, {
   matchedPreviews = false,
   coveragePreviews = false,
   includeSuperseded = false,
+  prefetchWideOriginals = false,
   semanticRecallImpl = recallVaultSemantic,
   fetchImpl = fetch,
 } = {}) {
@@ -25,6 +27,7 @@ export async function managedRecall(vault, query, config, {
   if (matchedPreviews && !adaptiveBundle) throw new Error("matchedPreviews requires adaptiveBundle")
   if (coveragePreviews && !adaptiveBundle) throw new Error("coveragePreviews requires adaptiveBundle")
   if (coveragePreviews && matchedPreviews) throw new Error("Choose coveragePreviews or matchedPreviews")
+  if (prefetchWideOriginals && (!adaptiveBundle || config.workflow !== "curator")) throw new Error("Original prefetch requires curator adaptiveBundle")
   if (includeSuperseded && config.workflow !== "curator") throw new Error("Historical retrieval is supported only in curator mode")
   if (bundleBytes && config.workflow !== "curator") throw new Error("Evidence bundles are supported only in curator mode")
   if (adaptiveBundle && config.workflow !== "curator") throw new Error("Adaptive bundles are supported only in curator mode")
@@ -60,6 +63,20 @@ export async function managedRecall(vault, query, config, {
       bundleUsedBytes += bytes
     }
     const hasMore = bundleBytes || adaptiveBundle ? offset + results.length < page.totalCandidates : page.hasMore
+    let prefetch = null, originalSources = null
+    if (prefetchWideOriginals) {
+      // This bounds eager transport only. Oversized originals remain available
+      // through normal reads; never shorten them or drop retrieval candidates.
+      const originalBytes = results.reduce((sum, result) => sum + Buffer.byteLength(documentsByPath.get(result.path)?.markdown ?? ""), 0)
+      const reason = adaptiveMode !== "wide" ? "focused-query" : offset !== 0 ? "continuation-page"
+        : hasMore ? "more-candidates" : page.scanLimitReached ? "scan-limit" : !results.length ? "empty-pool"
+        : originalBytes > 256000 ? "original-byte-budget" : null
+      prefetch = reason ? { status: "skipped", reason } : { status: "ready", coverage: "current-complete-candidate-page", semanticCompleteness: "not_assessed" }
+      if (!reason) {
+        originalSources = readSourceNotes(vault, results.map(result => result.path)).sources
+        if (originalSources.some(source => source.markdown !== documentsByPath.get(source.path)?.markdown)) throw new Error("Source changed during recall prefetch")
+      }
+    }
     return {
       query, workflow: "curator", curator: config.curator,
       ...(includeSuperseded ? { historicalCandidatesIncluded: true } : {}),
@@ -67,6 +84,8 @@ export async function managedRecall(vault, query, config, {
       offset: page.offset, totalCandidates: page.totalCandidates, hasMore, nextOffset: hasMore ? offset + results.length : null,
       ...(effectiveBundleBytes ? { bundleBytes: effectiveBundleBytes, bundleUsedBytes } : {}),
       ...(adaptiveMode ? { adaptiveMode } : {}),
+      ...(prefetch ? { prefetch } : {}),
+      ...(originalSources ? { originalSources } : {}),
       results,
       nextSteps: page.nextSteps.slice(0, 2),
     }

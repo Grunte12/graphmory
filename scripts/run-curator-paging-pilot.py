@@ -25,6 +25,7 @@ parser.add_argument('--structured-citations', action='store_true')
 parser.add_argument('--coverage-previews', action='store_true')
 parser.add_argument('--temporal-decision', action='store_true', help='Experimental conflict-resolution instruction for recall only')
 parser.add_argument('--evidence-state', action='store_true', help='Experimental mechanical coverage counters; no semantic quality verdict')
+parser.add_argument('--prefetch-wide-originals', action='store_true', help='Experimental full-source batching for complete wide Graphmory pages')
 parser.add_argument('--basic-config', help='Isolated Basic Memory 0.23.2 hybrid index configuration')
 args = parser.parse_args()
 lead_model = args.lead_model or args.model
@@ -32,6 +33,8 @@ if not 1 <= args.max_rounds <= 10 or args.max_input_bytes < 1000:
     raise RuntimeError('Invalid economic/protocol budget')
 if args.compact_followup and not args.persistent_curator:
     raise RuntimeError('Compact follow-up requires persistent Curator context')
+if args.prefetch_wide_originals and (args.mode != 'auto' or args.basic_config):
+    raise RuntimeError('Original prefetch requires Graphmory auto mode')
 data = pathlib.Path(args.input).resolve()
 case = json.loads(data.read_text())[args.case_index]
 if set(case) != {'id', 'question', 'vault', 'sources'}:
@@ -80,6 +83,7 @@ report = {'protocol': 'curator-paging-development-v4-tool-error-feedback', 'id':
           'coveragePreviews': args.coverage_previews,
           'temporalDecision': args.temporal_decision,
           'evidenceState': args.evidence_state, 'evidenceStateSnapshots': [],
+          'prefetchWideOriginals': args.prefetch_wide_originals, 'prefetch': None,
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
           'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [], 'sourceToolCalls': [], 'sourceRequests': [], 'sourceRequestErrors': [],
           'brief': None, 'answer': None, 'runComplete': False, 'stopReason': None,
@@ -140,7 +144,8 @@ def retrieval(offset):
     else:
         page, output_bytes, tool_seconds = command_json(['node', str(cli), 'recall-managed', '--vault', str(vault), '--query', case['question'],
                                                          '--agent', '--offset', str(offset), '--' + args.mode] +
-                                                        (['--coverage-previews'] if args.coverage_previews else []))
+                                                        (['--coverage-previews'] if args.coverage_previews else []) +
+                                                        (['--prefetch-wide-originals'] if args.prefetch_wide_originals else []))
     if page.get('offset') != offset or not isinstance(page.get('results'), list):
         raise RuntimeError('Invalid retrieval page')
     report['pages'].append({'offset': offset, 'nextOffset': page['nextOffset'], 'hasMore': page['hasMore'],
@@ -236,6 +241,19 @@ try:
     available = set(row['path'] for row in page['results'])
     read = set()
     originals = []
+    if args.prefetch_wide_originals:
+        report['prefetch'] = page.get('prefetch')
+        prefetched = page.pop('originalSources', [])
+        if prefetched:
+            if page.get('prefetch', {}).get('status') != 'ready' or page['hasMore'] or set(row['path'] for row in prefetched) != available or len(prefetched) != len(available):
+                raise RuntimeError('Invalid prefetch delivery')
+            for row in prefetched:
+                if row['sha256'] != case['sources'].get(row['path']) or hashlib.sha256(row['markdown'].encode()).hexdigest() != row['sha256']:
+                    raise RuntimeError('Prefetched original mutated/hash mismatch')
+            originals.extend(prefetched)
+            read.update(available)
+            report['sourceReads'] += [{key: row[key] for key in ('path', 'sha256', 'bytes')} | {'transport': 'recall-prefetch'} for row in prefetched]
+            save()
     feedback = None
     for turn in range(args.max_rounds):
         # Only the current page and verified original reads are supplied. Older previews

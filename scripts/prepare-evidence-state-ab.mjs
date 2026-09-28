@@ -8,6 +8,8 @@ import { digest, prepareConversation } from './lib/locomo.mjs'
 const args = process.argv.slice(2)
 const option = name => args.includes(name) ? args[args.indexOf(name) + 1] : undefined
 const input = option('--input'), out = option('--out')
+const prefetchExperiment = args.includes('--prefetch-ab')
+const treatmentKey = prefetchExperiment ? 'prefetchWideOriginals' : 'evidenceState'
 if (!input || !out || fs.existsSync(out)) throw new Error('Need pinned input and new output directory')
 const root = fileURLToPath(new URL('../', import.meta.url))
 const bytes = fs.readFileSync(input)
@@ -42,18 +44,19 @@ const sourceFiles = ['scripts/prepare-evidence-state-ab.mjs', 'scripts/run-evide
   'scripts/run-curator-paging-pilot.py', 'scripts/curator_evidence_state.py', 'scripts/lib/locomo.mjs',
   'scripts/brain-sync.mjs', 'src/retrieval.mjs', 'src/memory-recall.mjs', 'src/decision-recall.mjs', 'src/source-read.mjs']
 const manifest = {
-  protocol: 'curator-mechanical-evidence-state-development-ab-v1', frozenBeforeGeneration: true,
+  protocol: prefetchExperiment ? 'curator-wide-original-prefetch-development-ab-v1' : 'curator-mechanical-evidence-state-development-ab-v1', frozenBeforeGeneration: true,
   datasetSha256, selectedIds: ids, readerInputSha256: digest(payload), labelsSha256: digest(gold), originals,
   sourceHashes: Object.fromEntries(sourceFiles.map(name => [name, digest(fs.readFileSync(path.join(root, name)))])),
   configuration: { curator: 'gpt-5.6-luna', lead: 'gpt-5.6-sol', reasoning: 'low', mode: 'auto',
     maxRounds: 10, maxInputBytes: 300000, structuredCitations: true, persistentCurator: false, compactFollowup: false },
-  executionOrder: ids.flatMap((id, caseIndex) => (caseIndex % 2 ? [true, false] : [false, true]).map(evidenceState => ({ id, caseIndex, evidenceState }))),
+  executionOrder: ids.flatMap((id, caseIndex) => (caseIndex % 2 ? [true, false] : [false, true]).map(enabled => ({ id, caseIndex, [treatmentKey]: enabled }))),
   primaryDiagnostic: 'Complete source-supported enumeration with no factual or abstention regression; author review is not independent acceptance',
-  promotion: 'No production promotion from three exposed single-generation pairs; reject evidence-state as demonstrated improvement if count remains incomplete or either control regresses',
+  promotion: prefetchExperiment ? 'Pilot only: require all gold originals/support retained and no control regression before a larger independent trial; target fewer broad model calls and at least 20% paired broad latency or input reduction. No default promotion from three exposed single-generation pairs.' : 'No production promotion from three exposed single-generation pairs; reject evidence-state as demonstrated improvement if count remains incomplete or either control regresses',
+  onlyIntendedDifference: prefetchExperiment ? 'Full immutable original sources delivered before first Curator generation only on complete wide initial Graphmory pages; original content, ranking, model instructions, cache policy and economic budgets unchanged.' : 'Mechanical coverage counters plus explanation',
   metrics: ['raw pinned QA F1', 'completion including failures', 'gold originals read', 'answer/brief/citation audit', 'coverage snapshots', 'gross/cached/noncached tokens', 'whole workflow wall time', 'model calls', 'source tool bytes'],
   failures: 'No replacement, preserve failed calls and remaining unattempted slots on host limit',
   limitations: ['Exposed development histories, not holdout', 'One generation per arm; cache states uncontrolled',
-    'Native Graphmory only in this intervention; no competitor superiority', 'Added counters plus explanation tested together, not causal isolation', 'No calibrated independent semantic support judgment'],
+    'Native Graphmory only in this intervention; no competitor superiority', prefetchExperiment ? 'Full-source batching changes tool output and delivery timing together' : 'Added counters plus explanation tested together, not causal isolation', 'No calibrated independent semantic support judgment'],
 }
 fs.writeFileSync(path.join(out, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n')
 console.log(JSON.stringify({ ids, labelsSeparate: true, holdoutRendered: false }))

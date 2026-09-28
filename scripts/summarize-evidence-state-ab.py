@@ -22,6 +22,10 @@ if len(attempts) < len(m['executionOrder']) and not ledger['stopped']: raise Run
 if len({row['index'] for row in attempts}) != len(attempts): raise RuntimeError('Duplicate attempt')
 if [row['index'] for row in attempts] != list(range(len(attempts))) or len(attempts) > len(m['executionOrder']):
     raise RuntimeError('Unknown or unordered attempt')
+treatment_keys = {'curator-mechanical-evidence-state-development-ab-v1': 'evidenceState',
+                  'curator-wide-original-prefetch-development-ab-v1': 'prefetchWideOriginals'}
+if m['protocol'] not in treatment_keys: raise RuntimeError('Unknown protocol')
+treatment_key = treatment_keys[m['protocol']]
 gold_bytes = (prepared / 'labels.json').read_bytes()
 if hashlib.sha256(gold_bytes).hexdigest() != m['labelsSha256']: raise RuntimeError('Label drift')
 gold = json.loads(gold_bytes)
@@ -36,8 +40,12 @@ for index, trial in enumerate(m['executionOrder']):
             file = (runs / attempt['report']).resolve()
             if not file.is_relative_to(runs): raise RuntimeError('Unsafe report path')
             report = json.loads(file.read_text())
-            if report['id'] != trial['id'] or report['evidenceState'] != trial['evidenceState']:
+            if report['id'] != trial['id'] or report[treatment_key] != trial[treatment_key]:
                 raise RuntimeError('Report identity/treatment drift')
+            if report.get('evidenceState', False) != (trial[treatment_key] if treatment_key == 'evidenceState' else False):
+                raise RuntimeError('Unexpected coverage intervention')
+            if report.get('prefetchWideOriginals', False) != (trial[treatment_key] if treatment_key == 'prefetchWideOriginals' else False):
+                raise RuntimeError('Unexpected prefetch intervention')
             if report['inputSha256'] != m['readerInputSha256'] or report['runnerSha256'] != m['sourceHashes']['scripts/run-curator-paging-pilot.py']:
                 raise RuntimeError('Frozen input/runtime drift')
             c = m['configuration']
@@ -57,6 +65,7 @@ for index, trial in enumerate(m['executionOrder']):
         citations=report.get('citations') if report else None, citationIdentityValid=report.get('citationProvenanceValid') if report else None,
         pages=report['pages'] if report else [], sourceReads=reads, modelCalls=calls,
         evidenceStateSnapshots=report['evidenceStateSnapshots'] if report else [],
+        prefetch=report.get('prefetch') if report else None,
         goldNotesRead=len({r['path'] for r in reads}.intersection(label['goldPaths'])), goldNotes=len(label['goldPaths']),
         observedUsage=usage, usageFullyObserved=bool(calls) and all(call.get('usage') is not None for call in calls),
         elapsedSeconds=report.get('elapsedSeconds') if report else None)
@@ -86,4 +95,4 @@ result = {'protocol': m['protocol'], 'manifestSha256': ledger['manifestSha256'],
     'rows': rows, 'scorerLabelBindings': label_bindings,
     'independentSemanticReview': 'not performed', 'limitations': m['limitations']}
 (out/'summary.json').write_text(json.dumps(result, indent=2)+'\n')
-print(json.dumps([{k:r[k] for k in ['id','evidenceState','complete','answer','goldNotesRead','elapsedSeconds','rawQaF1']} for r in rows], indent=2))
+print(json.dumps([{k:r[k] for k in ['id',treatment_key,'complete','answer','goldNotesRead','elapsedSeconds','rawQaF1']} for r in rows], indent=2))

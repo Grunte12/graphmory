@@ -66,6 +66,21 @@ not judgments that the evidence supports an answer. An unmarked preview still
 does not establish that other notes or evidence are unnecessary; inspect
 originals when completeness is uncertain.
 
+### Experimental full-source batching
+
+`recall-managed --auto --agent --prefetch-wide-originals` can attach
+`originalSources` (full Markdown, exact path and SHA-256) on a complete wide
+first candidate page. Curator can use those originals immediately; a preview's
+`sourceReadRequired` flag does not require rereading an already supplied original.
+Attached originals do not establish relevance or semantic completeness.
+
+`prefetch.status: skipped` preserves normal selective reads for focused queries,
+continuation pages, more candidates, scan limits, or over 256,000 raw original
+bytes. This budget limits eager transport only: no original is shortened and
+no candidate is removed. Use normal reads/pagination when skipped. Source
+changes during snapshot delivery are errors. This is opt-in experimental
+behavior; default adapters are unchanged. See the [A/B report](../evaluation/prefetch-ab-2026-09-28.md).
+
 ### Read selected originals together
 
 ```sh

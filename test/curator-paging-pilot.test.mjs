@@ -28,7 +28,7 @@ function runFixture(mode, extraArgs = []) {
       sourceHashes[name] = createHash('sha256').update(nextMarkdown).digest('hex')
     }
   }
-  fs.writeFileSync(path.join(dir, 'input.json'), JSON.stringify([{ id: 'fixture:0', question: 'Who owns the fixture?', vault, sources: sourceHashes }]))
+  fs.writeFileSync(path.join(dir, 'input.json'), JSON.stringify([{ id: 'fixture:0', question: mode === 'prefetch' ? 'List all fixture owners' : 'Who owns the fixture?', vault, sources: sourceHashes }]))
   const fake = `#!${process.execPath}\nconst fs=require('node:fs');let prompt='';process.stdin.on('data',chunk=>prompt+=chunk);process.stdin.resume();process.stdin.on('end',()=>{
     const schema=JSON.parse(fs.readFileSync(process.argv[process.argv.indexOf('--output-schema')+1]));
     const counter=process.env.PAGING_TEST_COUNTER;const count=fs.existsSync(counter)?Number(fs.readFileSync(counter)):0;
@@ -51,6 +51,10 @@ function runFixture(mode, extraArgs = []) {
       }
     }
     const mode=process.env.PAGING_TEST_MODE;
+    if(!schema.properties.answer && mode==='prefetch') {
+      if(count!==0 || !prompt.includes('Original paths already supplied: ["note.md"]') || !prompt.includes('Ada'))process.exit(8);
+      response={read_paths:[],next_page:false,brief:'Ada owns the fixture (note.md)'};
+    }
     if(!schema.properties.answer && mode==='evidence-state') {
       const state=JSON.parse(prompt.split('\\nEvidence state: ')[1]);
       if(state.semanticCompleteness!=='not_assessed' || state.candidatesObserved!==1 ||
@@ -184,6 +188,17 @@ test('coverage-preview option is passed through actual CLI and recorded', () => 
   assert.equal(child.status, 0, child.stderr)
   assert.equal(report.coveragePreviews, true)
   assert.equal(report.runComplete, true)
+})
+
+test('full-source prefetch delivers verified originals before Curator and can remove the selection round', () => {
+  const { child, report } = runFixture('prefetch', ['--mode', 'auto', '--prefetch-wide-originals', '--structured-citations'])
+  assert.equal(child.status, 0, child.stderr)
+  assert.equal(report.prefetch.status, 'ready')
+  assert.equal(report.prefetch.semanticCompleteness, 'not_assessed')
+  assert.deepEqual(report.sourceReads.map(row => [row.path, row.transport]), [['note.md', 'recall-prefetch']])
+  assert.equal(report.sourceToolCalls.length, 0)
+  assert.equal(report.modelCalls.length, 2)
+  assert.deepEqual(report.citations, ['note.md'])
 })
 
 test('evidence-state counts actual delivery before and after verified CLI reads without claiming completeness', () => {

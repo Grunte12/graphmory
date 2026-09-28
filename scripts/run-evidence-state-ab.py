@@ -14,8 +14,11 @@ prepared, out = pathlib.Path(a.prepared).resolve(), pathlib.Path(a.out).resolve(
 root = pathlib.Path(__file__).resolve().parents[1]
 manifest_bytes = (prepared / 'manifest.json').read_bytes()
 m = json.loads(manifest_bytes)
-if m['protocol'] != 'curator-mechanical-evidence-state-development-ab-v1' or out.exists():
+protocols = {'curator-mechanical-evidence-state-development-ab-v1': ('evidenceState', '--evidence-state'),
+             'curator-wide-original-prefetch-development-ab-v1': ('prefetchWideOriginals', '--prefetch-wide-originals')}
+if m['protocol'] not in protocols or out.exists():
     raise RuntimeError('Unknown protocol or existing output')
+treatment_key, treatment_flag = protocols[m['protocol']]
 for name, expected in m['sourceHashes'].items():
     if hashlib.sha256((root / name).read_bytes()).hexdigest() != expected:
         raise RuntimeError('Frozen source drift')
@@ -33,7 +36,7 @@ for index, trial in enumerate(m['executionOrder']):
     command = ['python3', str(root / 'scripts/run-curator-paging-pilot.py'), '--input', str(reader), '--out', str(target),
         '--case-index', str(trial['caseIndex']), '--model', c['curator'], '--lead-model', c['lead'], '--mode', c['mode'],
         '--max-rounds', str(c['maxRounds']), '--max-input-bytes', str(c['maxInputBytes']), '--structured-citations']
-    if trial['evidenceState']: command.append('--evidence-state')
+    if trial[treatment_key]: command.append(treatment_flag)
     child = subprocess.run(command, capture_output=True, text=True)
     (out / (str(index) + '.log')).write_text(child.stdout + '\n' + child.stderr)
     file = target / 'report.json'
