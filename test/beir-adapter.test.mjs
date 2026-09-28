@@ -53,6 +53,16 @@ with zipfile.ZipFile(sys.argv[1],'w') as z:
     assert.deepEqual(ledger.planned, ['q-1'])
     assert.deepEqual(ledger.attempted, [])
     assert.match(ledger.stopReason, /OPTIONAL_DEPENDENCY_MISSING/)
+    const timingOut = path.join(dir, 'cache-miss.json')
+    const timing = spawnSync(process.execPath, ['scripts/benchmark-semantic-cache.mjs',
+      '--prepared', out, '--model-cache', path.join(dir, 'empty-cache'),
+      '--out', timingOut, '--mode', 'cache', '--count', '2'], { encoding: 'utf8' })
+    assert.notEqual(timing.status, 0)
+    const timingLedger = JSON.parse(fs.readFileSync(timingOut))
+    assert.equal(timingLedger.complete, false)
+    assert.equal(timingLedger.plannedCalls, 2)
+    assert.deepEqual(timingLedger.rows, [])
+    assert.match(timingLedger.stopReason, /Unexpected embedding/)
     fs.appendFileSync(path.join(out, 'vault/docs/doc-1.md'), 'Mutation')
     const corrupt = spawnSync(process.execPath, ['scripts/export-beir-lexical-runs.mjs', '--prepared', out, '--out', path.join(dir, 'corrupt')], { encoding: 'utf8' })
     assert.notEqual(corrupt.status, 0)

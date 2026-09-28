@@ -1,0 +1,63 @@
+{
+  "percentileMethod": "NumPy linear p95; first call excluded from warm stats",
+  "stats": {
+    "baselineCache": {
+      "calls": 9,
+      "firstMs": 107.122209,
+      "p50Ms": 80.56074999999998,
+      "p95Ms": 81.7982334499999,
+      "maxRSSKiB": 700496,
+      "finalRSSBytes": 717307904
+    },
+    "treatmentCache": {
+      "calls": 9,
+      "firstMs": 155.61695800000007,
+      "p50Ms": 15.488749999999868,
+      "p95Ms": 21.441131150000032,
+      "maxRSSKiB": 663376,
+      "finalRSSBytes": 679297024
+    },
+    "baselineBefore": {
+      "calls": 30,
+      "firstMs": 1009.647875,
+      "p50Ms": 781.9881249999999,
+      "p95Ms": 842.6735163999997,
+      "maxRSSKiB": 2052880,
+      "finalRSSBytes": 1851932672
+    },
+    "treatment": {
+      "calls": 30,
+      "firstMs": 1154.574125,
+      "p50Ms": 774.515042,
+      "p95Ms": 879.4402333999992,
+      "maxRSSKiB": 3321296,
+      "finalRSSBytes": 2977726464
+    },
+    "baselineAfter": {
+      "calls": 30,
+      "firstMs": 1007.0089169999999,
+      "p50Ms": 830.6936249999999,
+      "p95Ms": 939.6778664000004,
+      "maxRSSKiB": 2141632,
+      "finalRSSBytes": 1981906944
+    }
+  },
+  "exactResultEquality30": true,
+  "cacheMedianReduction": 0.8077382596363629,
+  "apiMedianReductionVsBefore": 0.009556517242509055,
+  "apiMedianReductionVsAfter": 0.06762852309116962,
+  "cacheGatePass": true,
+  "apiMedianGatePass": false,
+  "apiP95GatePass": true,
+  "full300TreatmentRun": "not run; stop after failed speed gate",
+  "artifactSha256": {
+    "graphmory-semantic-cache-baseline-micro-v2.json": "51689a1eba94e0cd0f6ff5c69cfc0943c6e60724424001a10ebe2227864ae55b",
+    "graphmory-semantic-cache-treatment-micro-v1.json": "9d0da3b7471880c8f47fb5d013e7121bdf4db825cc854d6c851d329ba3afd333",
+    "graphmory-semantic-cache-baseline-before-api-v2.json": "b513e0e7ace42eea0afd9a88655eb5bc6c63b369cffc70414f196c255dae0ffd",
+    "graphmory-semantic-cache-treatment-api-v1.json": "d63d9a5bc33f287334f753eb54ce13f45019c3084c3bfdd47547fe152696dfbc",
+    "graphmory-semantic-cache-baseline-after-api-v1.json": "263c99df49c25487b3b1a9ff475bcf19565ffe9dac3a8f7447c978f64c2e11ec"
+  },
+  "baseCommit": "7ac2917",
+  "decision": "reject runtime patch: failed predeclared overall API median gate; observed peak RSS worse",
+  "rejectedPatchSha256": "6f3185f4b44f5ceb11adf9c44902848d8b9caea9091fe1bf9a5ec53cb153c74b"
+}

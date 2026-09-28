@@ -1,0 +1,189 @@
+--- a/src/semantic-recall.mjs
++++ b/src/semantic-recall.mjs
+@@ -10,0 +11 @@
++let PARSED_VECTOR_CACHE = null
+@@ -118,7 +119 @@
+-  let prior = {}
+-  try {
+-    const parsed = JSON.parse(fs.readFileSync(file, "utf8"))
+-    if (parsed.version === 1 && parsed.model === model && parsed.maxDocumentCharacters === maxDocumentCharacters) prior = parsed.vectors ?? {}
+-  } catch (error) {
+-    if (error.code !== "ENOENT" && !(error instanceof SyntaxError)) throw error
+-  }
++  const prior = readPriorVectors(file, model, maxDocumentCharacters)
+@@ -132 +127,3 @@
+-      vectors[document.id] = cached
++      // The old disk-only cache returned fresh arrays on each call. Keep the
++      // process cache private from callers that mutate the exported Map.
++      vectors[document.id] = { digest: cached.digest, vector: cached.vector.slice() }
+@@ -143,3 +140,10 @@
+-    fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 })
+-    writeJsonAtomic(file, { version: 1, model, maxDocumentCharacters, vectors })
+-    fs.chmodSync(file, 0o600)
++    PARSED_VECTOR_CACHE = null
++    try {
++      fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 })
++      writeJsonAtomic(file, { version: 1, model, maxDocumentCharacters, vectors })
++      fs.chmodSync(file, 0o600)
++    } finally {
++      // Never retain generated or possibly partially written state. The next
++      // call will parse the completed on-disk file under a stable stat pair.
++      PARSED_VECTOR_CACHE = null
++    }
+@@ -147,0 +152,52 @@
++}
++
++function readPriorVectors(file, model, maxDocumentCharacters) {
++  const absoluteFile = path.resolve(file)
++  for (let attempt = 0; attempt < 2; attempt += 1) {
++    let before
++    try {
++      before = fs.statSync(absoluteFile, { bigint: true })
++    } catch (error) {
++      PARSED_VECTOR_CACHE = null
++      if (error.code === "ENOENT") return {}
++      throw error
++    }
++    const beforeSignature = vectorFileSignature(before)
++    if (PARSED_VECTOR_CACHE?.file === absoluteFile && PARSED_VECTOR_CACHE.signature === beforeSignature) {
++      return PARSED_VECTOR_CACHE.vectors
++    }
++    PARSED_VECTOR_CACHE = null
++
++    let parsed
++    try {
++      parsed = JSON.parse(fs.readFileSync(absoluteFile, "utf8"))
++    } catch (error) {
++      PARSED_VECTOR_CACHE = null
++      if (error.code === "ENOENT" || error instanceof SyntaxError) return {}
++      throw error
++    }
++
++    let after
++    try {
++      after = fs.statSync(absoluteFile, { bigint: true })
++    } catch (error) {
++      PARSED_VECTOR_CACHE = null
++      if (error.code === "ENOENT") return {}
++      throw error
++    }
++    const afterSignature = vectorFileSignature(after)
++    if (beforeSignature !== afterSignature) continue
++
++    const vectors = parsed.version === 1 && parsed.model === model && parsed.maxDocumentCharacters === maxDocumentCharacters
++      ? parsed.vectors ?? {}
++      : {}
++    PARSED_VECTOR_CACHE = { file: absoluteFile, signature: afterSignature, vectors }
++    return vectors
++  }
++
++  PARSED_VECTOR_CACHE = null
++  return {}
++}
++
++function vectorFileSignature(stat) {
++  return [stat.dev, stat.ino, stat.size, stat.mtimeNs, stat.ctimeNs].map(String).join(":")
+--- a/test/semantic-recall.test.mjs
++++ b/test/semantic-recall.test.mjs
+@@ -7,0 +8,7 @@
++
++function onlyVectorCacheFile(directory) {
++  const folder = path.join(directory, "graphmory-vectors")
++  const files = fs.readdirSync(folder)
++  assert.equal(files.length, 1)
++  return path.join(folder, files[0])
++}
+@@ -39,0 +47,5 @@
++    const expectedVector = second.get("a.md").slice()
++    second.get("a.md")[0] = -1
++    const third = await cachedDocumentVectors(first, embed, options)
++    assert.equal(embedded, 2)
++    assert.deepEqual(third.get("a.md"), expectedVector)
+@@ -42,3 +54,2 @@
+-    const files = fs.readdirSync(path.join(directory, "graphmory-vectors"))
+-    assert.equal(files.length, 1)
+-    if (process.platform !== "win32") assert.equal(fs.statSync(path.join(directory, "graphmory-vectors", files[0])).mode & 0o777, 0o600)
++    const file = onlyVectorCacheFile(directory)
++    if (process.platform !== "win32") assert.equal(fs.statSync(file).mode & 0o777, 0o600)
+@@ -46,0 +58,81 @@
++
++test("the parsed vector cache observes external atomic replacement", async () => {
++  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-semantic-replace-"))
++  try {
++    let embedded = 0
++    const embed = async (texts) => {
++      embedded += texts.length
++      return { tolist: () => texts.map((text) => [text.length, 1]) }
++    }
++    const options = { vault: directory, model: "test-model", modelCache: directory, maxDocumentCharacters: 100 }
++    const documents = [parseMarkdown("a.md", "# A\n\noriginal")]
++    await cachedDocumentVectors(documents, embed, options)
++    await cachedDocumentVectors(documents, embed, options)
++    assert.equal(embedded, 1)
++
++    const file = onlyVectorCacheFile(directory)
++    const cached = JSON.parse(fs.readFileSync(file, "utf8"))
++    cached.vectors["a.md"].vector = [77, 1]
++    const replacement = `${file}.replacement`
++    fs.writeFileSync(replacement, JSON.stringify(cached))
++    fs.renameSync(replacement, file)
++
++    const result = await cachedDocumentVectors(documents, embed, options)
++    assert.equal(embedded, 1)
++    assert.deepEqual(result.get("a.md"), [77, 1])
++  } finally { fs.rmSync(directory, { recursive: true, force: true }) }
++})
++
++test("deletion and malformed replacement invalidate parsed vectors", async () => {
++  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-semantic-invalid-"))
++  try {
++    let embedded = 0
++    const embed = async (texts) => {
++      embedded += texts.length
++      return { tolist: () => texts.map((text) => [text.length, 1]) }
++    }
++    const options = { vault: directory, model: "test-model", modelCache: directory, maxDocumentCharacters: 100 }
++    const documents = [parseMarkdown("a.md", "# A\n\noriginal")]
++    await cachedDocumentVectors(documents, embed, options)
++    const initial = await cachedDocumentVectors(documents, embed, options)
++    const expectedVector = initial.get("a.md").slice()
++    assert.equal(embedded, 1)
++
++    let file = onlyVectorCacheFile(directory)
++    fs.unlinkSync(file)
++    let result = await cachedDocumentVectors(documents, embed, options)
++    assert.equal(embedded, 2)
++    assert.deepEqual(result.get("a.md"), expectedVector)
++
++    file = onlyVectorCacheFile(directory)
++    await cachedDocumentVectors(documents, embed, options)
++    fs.writeFileSync(file, "{")
++    result = await cachedDocumentVectors(documents, embed, options)
++    assert.equal(embedded, 3)
++    assert.deepEqual(result.get("a.md"), expectedVector)
++  } finally { fs.rmSync(directory, { recursive: true, force: true }) }
++})
++
++test("scope and model keep disk vector caches separate", async () => {
++  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-semantic-keys-"))
++  try {
++    let embedded = 0
++    const embed = async (texts) => {
++      embedded += texts.length
++      return { tolist: () => texts.map(() => [embedded, 1]) }
++    }
++    const document = [parseMarkdown("a.md", "# A\n\noriginal")]
++    const options = [
++      { vault: directory, scope: "alpha", model: "model-one", modelCache: directory },
++      { vault: directory, scope: "beta", model: "model-one", modelCache: directory },
++      { vault: directory, scope: "beta", model: "model-two", modelCache: directory },
++    ]
++
++    for (const option of options) {
++      await cachedDocumentVectors(document, embed, option)
++      await cachedDocumentVectors(document, embed, option)
++    }
++    assert.equal(embedded, 3)
++    assert.equal(fs.readdirSync(path.join(directory, "graphmory-vectors")).length, 3)
++  } finally { fs.rmSync(directory, { recursive: true, force: true }) }
++})
