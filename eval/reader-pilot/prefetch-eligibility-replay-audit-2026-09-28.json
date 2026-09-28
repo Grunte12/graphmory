@@ -1,0 +1,11 @@
+{
+  "protocol": "prefetch-development-eligibility-replay-audit-v1",
+  "resultSha256": "5313a121bc5ddd5f4e5e2d4768a2a4d0619887b7cff245432c50bf10c0f45dfc",
+  "byteIdenticalReplay": true,
+  "questions": 1439,
+  "ready": 30,
+  "rankAndPageParity": true,
+  "exactReadyOriginalParity": true,
+  "holdoutRendered": false,
+  "modelCalls": 0
+}
