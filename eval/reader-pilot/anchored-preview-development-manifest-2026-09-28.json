@@ -1,0 +1,21 @@
+{
+  "protocol": "locomo-anchored-preview-development-v1",
+  "frozenBeforeRun": true,
+  "datasetSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "rankingSha256": "2cff1b047b6daed6ab7cf5f2d43714bc26b5db7b5f3eff40128791813fd9dc18",
+  "runtimeSha256": "def78f97a4331e2167128bd904314a95fcf41ccb3f40e9a4e5ec6d733c1f9dba",
+  "evaluatorSha256": "b65e16cb60f12ec06e9e2e52125602781ae860d9f42f6baf74df831eb2581744",
+  "split": "Seven exposed development conversations only; three sealed holdout conversations remain unopened.",
+  "population": "Answerable questions with resolvable gold references; category 5 excluded, as in the existing preview diagnostic.",
+  "comparison": ["current", "coverage-opt-in", "anchored-positive-3"],
+  "exploratory": ["anchored-always-3"],
+  "candidate": "If the first nested section is absent from the coverage preview, reserve a slot for it only when its body overlaps a non-stopword query token; retain the top two coverage sections. Three sections maximum per note.",
+  "primaryMetric": "Count of development questions whose complete set of gold dialog turn IDs appears in top-ten preview headings before pagination.",
+  "promotionGates": {
+    "completeGoldTurnsAt10Minimum": 614,
+    "pairedRegressionsAgainstCurrentMaximum": 15,
+    "medianPreviewBytesAtMostFractionOfCoverageOptIn": 1.1,
+    "noRegressionInAnyDevelopmentConversation": true
+  },
+  "interpretation": "These are project development screens, not literature thresholds. Passing would permit a separate actual-paged and live-reader trial, not a product default or quality claim. Heading visibility is not answer correctness."
+}

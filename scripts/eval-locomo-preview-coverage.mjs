@@ -29,7 +29,19 @@ function candidatePreview(doc, query, limit, speakerBoost) {
     .map(({ section }) => ({ heading: section.title, text: section.markdown.slice(0, 350),
       ...(section.markdown.length > 350 ? { truncated: true } : {}) }))
 }
-const modes = ['current', 'no-anchor-3', 'speaker-3', 'speaker-5', 'coverage-opt-in']
+function anchoredCoveragePreview(doc, query, positiveOnly) {
+  const coverage = curatorEvidencePreview(doc, query, { coverageMode: true })
+  const first = splitMarkdownSections(doc).find(section => section.title.includes(' > '))
+  if (!first || coverage.some(item => item.heading === first.title)) return coverage
+  if (positiveOnly) {
+    const terms = new Set(tokenize(query).filter(term => term.length >= 3 && !stop.has(term)))
+    const body = new Set(first.fields?.body ?? tokenize(first.markdown))
+    if (![...terms].some(term => body.has(term))) return coverage
+  }
+  return [{ heading: first.title, text: first.markdown.slice(0, 350),
+    ...(first.markdown.length > 350 ? { truncated: true } : {}) }, ...coverage.slice(0, 2)]
+}
+const modes = ['current', 'no-anchor-3', 'speaker-3', 'speaker-5', 'coverage-opt-in', 'anchored-always-3', 'anchored-positive-3']
 const rows = []
 for (const item of JSON.parse(bytes)) {
   if (!dev.has(item.sample_id)) continue
@@ -47,6 +59,8 @@ for (const item of JSON.parse(bytes)) {
         if (!doc) throw new Error(`Missing frozen path: ${p}`)
         return mode === 'current' ? curatorEvidencePreview(doc, question.query)
           : mode === 'coverage-opt-in' ? curatorEvidencePreview(doc, question.query, { coverageMode: true })
+          : mode === 'anchored-always-3' ? anchoredCoveragePreview(doc, question.query, false)
+          : mode === 'anchored-positive-3' ? anchoredCoveragePreview(doc, question.query, true)
           : candidatePreview(doc, question.query, mode === 'speaker-5' ? 5 : 3, mode !== 'no-anchor-3')
       })
       const seen = new Set(previews.flat().flatMap(part => goldTurns.filter(id => part.heading.includes(`(${id})`))))
