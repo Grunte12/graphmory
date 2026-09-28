@@ -9,6 +9,7 @@ import subprocess
 import time
 import os
 from curator_evidence_state import evidence_state
+from curator_collection import collect_explicit_sources, source_paths_for_mediator
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input', required=True)
@@ -28,6 +29,8 @@ parser.add_argument('--evidence-state', action='store_true', help='Experimental 
 parser.add_argument('--prefetch-wide-originals', action='store_true', help='Experimental full-source batching for complete wide Graphmory pages')
 parser.add_argument('--compact-prefetch', action='store_true', help='Omit previews when a complete original prefetch is attached')
 parser.add_argument('--basic-config', help='Isolated Basic Memory 0.23.2 hybrid index configuration')
+parser.add_argument('--source-index', action='store_true', help='Offer the same original path/hash scope and original reads to every arm')
+parser.add_argument('--collection-ledger', action='store_true', help='Experimental full-scope original collection before Curator synthesis')
 args = parser.parse_args()
 lead_model = args.lead_model or args.model
 if not 1 <= args.max_rounds <= 10 or args.max_input_bytes < 1000:
@@ -38,6 +41,10 @@ if args.prefetch_wide_originals and (args.mode != 'auto' or args.basic_config):
     raise RuntimeError('Original prefetch requires Graphmory auto mode')
 if args.compact_prefetch and not args.prefetch_wide_originals:
     raise RuntimeError('Compact prefetch requires original prefetch')
+if args.collection_ledger and (not args.source_index or args.basic_config or args.prefetch_wide_originals):
+    raise RuntimeError('Collection requires shared source-index and Graphmory without prefetch')
+if args.collection_ledger and args.max_rounds < 2:
+    raise RuntimeError('Collection requires at least two Curator calls: map and synthesis')
 data = pathlib.Path(args.input).resolve()
 case = json.loads(data.read_text())[args.case_index]
 if set(case) != {'id', 'question', 'vault', 'sources'}:
@@ -87,6 +94,7 @@ report = {'protocol': 'curator-paging-development-v4-tool-error-feedback', 'id':
           'temporalDecision': args.temporal_decision,
           'evidenceState': args.evidence_state, 'evidenceStateSnapshots': [],
           'prefetchWideOriginals': args.prefetch_wide_originals, 'compactPrefetch': args.compact_prefetch, 'prefetch': None,
+          'sourceIndex': args.source_index, 'collectionLedger': args.collection_ledger, 'collection': None,
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
           'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [], 'sourceToolCalls': [], 'sourceRequests': [], 'sourceRequestErrors': [],
           'brief': None, 'answer': None, 'runComplete': False, 'stopReason': None,
@@ -228,6 +236,9 @@ instruction = ('Act as the memory curator. Use only supplied evidence; never use
                'and return a concise source-cited brief. If hasMore=false, next_page must be false. '
                'sourceReadRequired means displayed previews omit content; previewOmitted does not mean irrelevant. '
                'Preserve speaker, scope, negation and time. Do not guess missing facts. Report uncertainty or incomplete coverage honestly.')
+if args.source_index:
+    instruction = instruction.replace('Only request paths on supplied pages. ',
+        'You may request any path in the declared original source index. ')
 if args.temporal_decision:
     instruction += (' When the same user gives different values for one property, compare the source dates and scope. '
                     'For a current-state question, use the latest applicable user statement; for a previous-state question, '
@@ -241,10 +252,48 @@ if args.evidence_state:
 save()
 start = time.monotonic()
 try:
-    page = retrieval(0)
-    available = set(row['path'] for row in page['results'])
+    source_index = [{'path': name, 'sha256': case['sources'][name]} for name in sorted(case['sources'])] if args.source_index else None
+    page = None if args.collection_ledger else retrieval(0)
+    available = set(case['sources']) if args.source_index else set(row['path'] for row in page['results'])
     read = set()
     originals = []
+    if args.collection_ledger:
+        # The common input ceiling determines transport size before any model result.
+        page_budget = max(256, args.max_input_bytes // 2)
+        total_source_bytes = sum((vault / name).stat().st_size for name in case['sources'])
+        page_limit = max(2, (total_source_bytes + page_budget - 1) // page_budget + len(case['sources']) + 2)
+        collected = collect_explicit_sources(
+            cli=cli, vault=vault, private_dir=out / 'collection-private',
+            source_hashes=case['sources'], scope_label=case['id'], question=case['question'],
+            max_page_bytes=page_budget, max_pages=page_limit,
+            max_input_bytes=args.max_input_bytes, generate=generate,
+            max_map_calls=args.max_rounds - 1,
+        )
+        report['collection'] = collected['summary']
+        report['sourceToolCalls'].extend(collected['toolCalls'])
+        save()
+        if not collected['complete']:
+            raise RuntimeError('collection-incomplete: ' + collected['summary'].get('incompleteReason', 'unknown'))
+        read = set(case['sources'])
+        report['sourceReads'] = [
+            {'path': item['path'], 'sha256': item['sha256'], 'bytes': item['bytes'], 'transport': 'collection-pages'}
+            for item in collected['summary']['sourceHashes']
+        ]
+        brief_schema = {'type': 'object', 'properties': {'brief': {'type': 'string'}},
+                        'required': ['brief'], 'additionalProperties': False}
+        brief_response = generate(
+            'Act as the memory curator. Use only the exact original evidence spans in the ledger. '
+            'Each span is text-identity verified, but the candidate fact is not semantically verified. '
+            'Reconcile distinct events and conflicts; if evidence is missing or ambiguous, say so. '
+            'For exhaustive claims, delivery of all scoped sources alone does not prove extraction completeness. '
+            'Return a concise, source-cited brief with exact original paths. Do not use tools or files.\n'
+            'Declared source index: ' + json.dumps(source_index, separators=(',', ':')) + '\n'
+            'Evidence ledger: ' + json.dumps(collected['synthesisContext'], separators=(',', ':')) + '\n'
+            'Question: ' + case['question'], 'curator', brief_schema)
+        if set(brief_response) != {'brief'} or not isinstance(brief_response['brief'], str) or not brief_response['brief'].strip():
+            raise RuntimeError('Invalid collection brief')
+        report['brief'] = brief_response['brief']
+        save()
     if args.prefetch_wide_originals:
         report['prefetch'] = page.get('prefetch')
         prefetched = page.pop('originalSources', [])
@@ -259,7 +308,7 @@ try:
             report['sourceReads'] += [{key: row[key] for key in ('path', 'sha256', 'bytes')} | {'transport': 'recall-prefetch'} for row in prefetched]
             save()
     feedback = None
-    for turn in range(args.max_rounds):
+    for turn in range(0 if args.collection_ledger else args.max_rounds):
         # Only the current page and verified original reads are supplied. Older previews
         # remain discoverable by path but cannot be mistaken for the current continuation.
         if turn and args.compact_followup:
@@ -270,7 +319,9 @@ try:
                       + ('\nNew retrieval page: ' + json.dumps(page) if new_page else '')
                       + ('\nProtocol feedback: ' + feedback if feedback else ''))
         else:
-            prompt = (instruction + '\nQuestion: ' + case['question']
+            prompt = (instruction
+                      + ('\nDeclared original source index (paths and hashes): ' + json.dumps(source_index) if source_index else '')
+                      + '\nQuestion: ' + case['question']
                       + '\nAvailable paths from previous pages: ' + json.dumps(sorted(available - {row['path'] for row in page['results']}))
                       + '\nCurrent retrieval page: ' + json.dumps(page)
                       + '\nOriginal paths already supplied: ' + json.dumps(sorted(read))
@@ -285,7 +336,7 @@ try:
             raise RuntimeError('Invalid curator response')
         requested, next_page = response['read_paths'], response['next_page']
         try:
-            unique_requested, unread, reused = classify_source_requests(requested, available, read)
+            unique_requested, unread, reused = classify_source_requests(requested, source_paths_for_mediator(case['sources'], available, args.source_index), read)
         except RuntimeError:
             # Refuse the entire request before touching any file or page. A safe
             # relative name not yet observed is a recoverable tool error; unsafe
@@ -314,7 +365,7 @@ try:
             raise RuntimeError('Brief returned while evidence request pending')
         report['sourceRequests'].append({'turn': turn, 'requested': requested, 'new': unread, 'reused': reused})
         if unread:
-            if basic:
+            if basic and not args.source_index:
                 native_sources = []
                 for name in unread:
                     native, output_bytes, tool_seconds = native_json(['tool', 'read-note', name, '--project', basic['project'], '--local', '--json'])
