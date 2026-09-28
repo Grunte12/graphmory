@@ -22,6 +22,7 @@ parser.add_argument('--persistent-curator', action='store_true')
 parser.add_argument('--compact-followup', action='store_true')
 parser.add_argument('--structured-citations', action='store_true')
 parser.add_argument('--coverage-previews', action='store_true')
+parser.add_argument('--temporal-decision', action='store_true', help='Experimental conflict-resolution instruction for recall only')
 parser.add_argument('--basic-config', help='Isolated Basic Memory 0.23.2 hybrid index configuration')
 args = parser.parse_args()
 lead_model = args.lead_model or args.model
@@ -75,6 +76,7 @@ report = {'protocol': 'curator-paging-development-v4-tool-error-feedback', 'id':
           'persistentCurator': args.persistent_curator, 'compactFollowup': args.compact_followup,
           'structuredCitations': args.structured_citations,
           'coveragePreviews': args.coverage_previews,
+          'temporalDecision': args.temporal_decision,
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
           'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [], 'sourceToolCalls': [], 'sourceRequests': [], 'sourceRequestErrors': [],
           'brief': None, 'answer': None, 'runComplete': False, 'stopReason': None,
@@ -214,6 +216,11 @@ instruction = ('Act as the memory curator. Use only supplied evidence; never use
                'and return a concise source-cited brief. If hasMore=false, next_page must be false. '
                'sourceReadRequired means displayed previews omit content; previewOmitted does not mean irrelevant. '
                'Preserve speaker, scope, negation and time. Do not guess missing facts. Report uncertainty or incomplete coverage honestly.')
+if args.temporal_decision:
+    instruction += (' When the same user gives different values for one property, compare the source dates and scope. '
+                    'For a current-state question, use the latest applicable user statement; for a previous-state question, '
+                    'return the earlier state requested. Do not let a later assistant suggestion override a user statement. '
+                    'Cite the relevant source paths; if ordering or scope is unclear, say so instead of guessing.')
 save()
 start = time.monotonic()
 try:

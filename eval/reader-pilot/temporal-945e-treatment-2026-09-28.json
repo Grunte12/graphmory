@@ -1,0 +1,188 @@
+{
+  "protocol": "curator-paging-development-v4-tool-error-feedback",
+  "id": "945e3d21",
+  "question": "How often do I attend yoga classes to help with my anxiety?",
+  "retrieval": "graphmory-managed",
+  "indexedSourceHashes": null,
+  "model": "gpt-5.6-luna",
+  "leadModel": "gpt-5.6-luna",
+  "mode": "auto",
+  "maxRounds": 4,
+  "maxInputBytes": 300000,
+  "persistentCurator": false,
+  "compactFollowup": false,
+  "structuredCitations": true,
+  "coveragePreviews": false,
+  "temporalDecision": true,
+  "runnerSha256": "8ed33591626f34f341bacd9caea93e7ada81b72a8f9729d80ddca131a59402be",
+  "inputSha256": "6bdf978429176b164fa31ac41a8192b39cafbe5e29522ed75d2f2deef73171d2",
+  "modelCalls": [
+    {
+      "stage": "curator",
+      "model": "gpt-5.6-luna",
+      "sessionResumed": false,
+      "elapsedSeconds": 7.274,
+      "promptBytes": 32315,
+      "promptSha256": "43f01fdcda5e834cb6cf450ac8f4b6d1dff187bc874f204c08145cf17977cd2e",
+      "usage": {
+        "input_tokens": 22879,
+        "cached_input_tokens": 14080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 112,
+        "reasoning_output_tokens": 47
+      },
+      "failed": false,
+      "failureKind": null,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "curator",
+      "model": "gpt-5.6-luna",
+      "sessionResumed": false,
+      "elapsedSeconds": 8.509,
+      "promptBytes": 71247,
+      "promptSha256": "ee0a93ca796ad13e426a62b04e011d4373c32c030887821e8871a4b4df2957dd",
+      "usage": {
+        "input_tokens": 31981,
+        "cached_input_tokens": 8960,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 170,
+        "reasoning_output_tokens": 86
+      },
+      "failed": false,
+      "failureKind": null,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "lead",
+      "model": "gpt-5.6-luna",
+      "sessionResumed": false,
+      "elapsedSeconds": 5.351,
+      "promptBytes": 753,
+      "promptSha256": "0d9ff6472b9cb4a2028f3776113d74b217bdb07df80dcc6e8e9eb7b0c6b63a6a",
+      "usage": {
+        "input_tokens": 15479,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 57,
+        "reasoning_output_tokens": 0
+      },
+      "failed": false,
+      "failureKind": null,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "offset": 0,
+      "nextOffset": 31,
+      "hasMore": true,
+      "paths": [
+        "sessions/0022-8a6092bbc216.md",
+        "sessions/0034-6a6264b69338.md",
+        "sessions/0040-b37f3bc93697.md",
+        "sessions/0004-8fded2794ce3.md",
+        "sessions/0042-304c070bebbd.md",
+        "sessions/0037-e73bd038a332.md",
+        "sessions/0030-2107c987d64a.md",
+        "sessions/0041-1d05ffd6ab92.md",
+        "sessions/0012-00c67a320c77.md",
+        "sessions/0028-2496d5a6881d.md",
+        "sessions/0039-e8eeabe189f6.md",
+        "sessions/0044-c15ce6319679.md",
+        "sessions/0011-132f6198407b.md",
+        "sessions/0048-6dc076cee841.md",
+        "sessions/0029-3b68b9e75416.md",
+        "sessions/0025-39dd75c0dde3.md",
+        "sessions/0016-ba460f77f5c9.md",
+        "sessions/0031-ae416787617e.md",
+        "sessions/0003-3f223e604784.md",
+        "sessions/0046-b5ae6229c51e.md",
+        "sessions/0043-a3a9b3f98a65.md",
+        "sessions/0045-8bac41b8a664.md",
+        "sessions/0015-3c6884c95fe4.md",
+        "sessions/0036-1af7dc38899a.md",
+        "sessions/0026-cebb4e5faba3.md",
+        "sessions/0038-84b14fe3ea4c.md",
+        "sessions/0021-f207568ca9a5.md",
+        "sessions/0019-772025769710.md",
+        "sessions/0032-e2c4f2d152f8.md",
+        "sessions/0020-ed6f6f20632d.md",
+        "sessions/0017-b03585af0435.md"
+      ],
+      "toolSeconds": 0.108,
+      "toolOutputBytes": 30329,
+      "pageSha256": "4acd8474ce5b5e966ab895aac127327a007cd03fb8305f8f988c58e6905109b9"
+    }
+  ],
+  "sourceReads": [
+    {
+      "path": "sessions/0022-8a6092bbc216.md",
+      "sha256": "735947b67f1c3fa9002958f68387076f27d2b20b3b1f64815444169a3625856f",
+      "bytes": 11890
+    },
+    {
+      "path": "sessions/0004-8fded2794ce3.md",
+      "sha256": "63a98359fe99f8a30d67f7d589aa7a72ce67056ae79fed417c86e675bb003533",
+      "bytes": 16641
+    },
+    {
+      "path": "sessions/0037-e73bd038a332.md",
+      "sha256": "c476abe1344f59f9a33bc80b838480e1f39fa078dc249f962f3ef738be9d202e",
+      "bytes": 9084
+    }
+  ],
+  "sourceToolCalls": [
+    {
+      "paths": [
+        "sessions/0022-8a6092bbc216.md",
+        "sessions/0004-8fded2794ce3.md",
+        "sessions/0037-e73bd038a332.md"
+      ],
+      "toolOutputBytes": 38813,
+      "toolSeconds": 0.052
+    }
+  ],
+  "sourceRequests": [
+    {
+      "turn": 0,
+      "requested": [
+        "sessions/0022-8a6092bbc216.md",
+        "sessions/0004-8fded2794ce3.md",
+        "sessions/0037-e73bd038a332.md"
+      ],
+      "new": [
+        "sessions/0022-8a6092bbc216.md",
+        "sessions/0004-8fded2794ce3.md",
+        "sessions/0037-e73bd038a332.md"
+      ],
+      "reused": []
+    }
+  ],
+  "sourceRequestErrors": [],
+  "brief": "You attend yoga classes three times a week; you said yoga helps you feel more focused and clear-headed, and it helps you feel grounded when anxious. [sessions/0022-8a6092bbc216.md] [sessions/0004-8fded2794ce3.md]",
+  "answer": "You attend yoga classes three times a week to help with anxiety.",
+  "runComplete": true,
+  "stopReason": "curator-finalized",
+  "limitations": [
+    "One exposed development case; no quality acceptance or latency tail claim",
+    "No-tool boundary is checked in trace, not a proven filesystem isolation guarantee",
+    "No official answer scorer or independent calibrated semantic judge",
+    "Subscription bill allocation unknown; native token categories retained"
+  ],
+  "citations": [
+    "sessions/0022-8a6092bbc216.md",
+    "sessions/0004-8fded2794ce3.md"
+  ],
+  "citationProvenanceValid": true,
+  "elapsedSeconds": 21.301
+}
