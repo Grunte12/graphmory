@@ -1,0 +1,100 @@
+{
+  "protocol": "native-curator-session-development-ab-v1",
+  "frozenBeforeGeneration": true,
+  "baselineCommit": "c3bee45",
+  "datasetSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "id": "conv-42:62",
+  "inputSha256": "f4b5e2b2c1dbd3eec971cbe8bab01b68190a7e747174ba7da90e545db83c4c36",
+  "labelsSha256": "b33437d032cc51bdeb6f3e95079cb20320b1417957ebb654ef74a44c14715ab7",
+  "sourceHashes": {
+    "scripts/run-curator-paging-pilot.py": "8ed33591626f34f341bacd9caea93e7ada81b72a8f9729d80ddca131a59402be",
+    "scripts/prepare-basic-memory-live-index.py": "4bf57b2f21478bcfe0262bc23c6fbaf88699b608068abf0be1a4b189125f05c1",
+    "scripts/brain-sync.mjs": "e75ed971310c63db8cc2b184b22a9a1fcd1e4492a6bf1b3e06dc28b57db519fc",
+    "src/decision-recall.mjs": "89169fdbd15793427ad2e1891d286d522cb5ee840cecd105302dfe37677421fc",
+    "src/memory-recall.mjs": "0fb19fa1c3c268b2cbd38b73ac8733ea6ff852a27d558c4fc3678de0f39593cd",
+    "src/retrieval.mjs": "28f656a4bef7806d9a2a7690c2c31b7ad0732b894e05946e186286e05a4bc6c1",
+    "src/source-read.mjs": "79e5bd5e93191f2c30a8127d300d74f64b8c893ec0321362efb3046791ba1ed6",
+    "scripts/run-native-session-ab.py": "ed4e45cf8a1a9797e4b9c6a9852fab36fec9ba15876252c149e686a107c1fe22"
+  },
+  "originalHashes": {
+    "session_1.md": "4c71689216f404d8dd242a494bef3f295e86b48447d0d8330b000eeae64ecd78",
+    "session_2.md": "a98a35e1f4cd01969898331c5c531ac2e2e6825a59a6b4b8b1b4625bf1a47187",
+    "session_3.md": "e6cd107043130b05b562aab18a2bac3c1568adedc2ea5a17f6927a2a9d52358e",
+    "session_4.md": "536994d76c5742b300a0c69741d3b2f426e7ba69235270d9a4fd0b70a0f02ff4",
+    "session_5.md": "fb66a762829f436f4024193814d14f97fea477ac0aa06526205d4ec991ed7acc",
+    "session_6.md": "4aab19d1fd42dd117a97ab6b082346023b37015ed5f2a5469775679d0f33b84f",
+    "session_7.md": "8050608ae644b46c242905e898e53bf4b7dfd6485ad300172a1e7c48f22824f5",
+    "session_8.md": "80ede5a7deabefb02cddfe0749bf16d724ad99b4807c53820b858b926d5d343a",
+    "session_9.md": "e149a149fa9182f1a9258977ef2f1cdc12c2089b57aaf445c50d9a5d36ba1e63",
+    "session_10.md": "482cecc40a018b1087dd58f3790e220d6f2247e4b24cf45d3dab1f79df75c85e",
+    "session_11.md": "c9f668d7201726d455d065906081bf10ea7d6d18350e324f661c2e9c9016734b",
+    "session_12.md": "7df2fbbb5231ef63164400e9243006939db24da665b9db2447e707179fd24128",
+    "session_13.md": "9c66086a8dcec0ec8b020554c4dcc3f4a43f5401689954232ccfc778eb38f0f8",
+    "session_14.md": "e1538c0f9057fa9b1031fc38f534c9cf2485701d808ce0bf411c580907fbbe0c",
+    "session_15.md": "89f3cc9e8782158cc6dac2315109bb96d0ebb3fd5610944821e9527ea351efbc",
+    "session_16.md": "df015d37568449c19d32630b6a167116d93db829af36f42aba037e3f3c294cae",
+    "session_17.md": "d8dd9bf8ffa915d32d5bdf884ae0c3823d909a88006ed757dcd7476868a67b64",
+    "session_18.md": "b5b85e7bcd454b8cccc28726265fdbf9f229b1954d108ff9cc77901d54749c6f",
+    "session_19.md": "0d48a58ab55a728818116abd6a751c6e1b11fcc094c9ac93f62e9088add6a31f",
+    "session_20.md": "fdd949896b47d34a69583f48c76ec4579e59f2e9120548d5ad59e031a68f8745",
+    "session_21.md": "2c41e924485b8240d69a33be419a73e73c9dd8b590759a4c84eb86c5b3d910ec",
+    "session_22.md": "2b8e47508b2f5f8833c01757dbafd36e8654beb2e8a715e2b4509474324639e9",
+    "session_23.md": "0d1ce9ad5dff354785cf3beb8c26495f531c10536a63915f6a10e329cc65a200",
+    "session_24.md": "727523ebc393df46d5a340930843ac19db8a589abbd738a14aece7c344f1abd8",
+    "session_25.md": "c7b25bd7c6cdc8de0ae6b03f177604efdaff35525461303a946fd87df3e54384",
+    "session_26.md": "433129934a4a40a16f8c230cf2669e1d4bcd88272c7e0e8eb2e1a9b232dbff5e",
+    "session_27.md": "afb3b49f4220f018f736a728541d7c58699bf854535a1a76bab892f278d5180a",
+    "session_28.md": "3a5d55fe22ea0a72b0dd8e02c0a79c9c96aa266709b466aa0324a1c1190abdcc",
+    "session_29.md": "6ebe91bb38de8cdf990677bbb80652334e92561ca0a15ebc2db1af563a305f18"
+  },
+  "questionSha256": "634795e052ea4bcf956a80257fe60163fbc39c31ee9576b1d217a006089e827a",
+  "configuration": {
+    "curator": "gpt-5.6-luna",
+    "lead": "gpt-5.6-sol",
+    "reasoning": "low",
+    "mode": "auto",
+    "maxRounds": 10,
+    "maxInputBytes": 300000,
+    "structuredCitations": true,
+    "compactFollowup": false
+  },
+  "executionOrder": [
+    {
+      "tool": "basic",
+      "persistent": false
+    },
+    {
+      "tool": "basic",
+      "persistent": true
+    },
+    {
+      "tool": "graphmory",
+      "persistent": true
+    },
+    {
+      "tool": "graphmory",
+      "persistent": false
+    }
+  ],
+  "plannedTrials": 4,
+  "onlyIntendedDifference": "Per tool, persistence of Curator host session; same full follow-up rendering, models, source/index, query, prompts and budgets. Fresh Lead in all arms.",
+  "metrics": [
+    "all-attempt completion",
+    "raw pinned QA score",
+    "answer and source-support author review",
+    "actual resumed thread identity",
+    "gold-original reads",
+    "citations",
+    "native host usage/cache",
+    "whole workflow wall time",
+    "native tool output bytes"
+  ],
+  "failures": "No replacement or retry; retain all planned trials and missing outputs explicitly.",
+  "limitations": [
+    "One exposed case, four single-generation cells; not powered inference or independent holdout",
+    "Session persistence changes context availability and cache opportunity together; cache cannot be reset",
+    "Full follow-ups retained to avoid confounding persistence with compaction",
+    "Native source normalization and outputs differ between tools",
+    "No independently calibrated semantic support judgment"
+  ]
+}
