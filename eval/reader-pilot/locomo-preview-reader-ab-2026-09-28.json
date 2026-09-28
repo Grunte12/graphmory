@@ -1,0 +1,2217 @@
+{
+  "protocol": "locomo-preview-reader-development-ab-v1",
+  "manifestSha256": "80ae4b678687d90f445f19ab1968c775e70e1b94a79ee9f1a9a0f2899f92bfc8",
+  "summary": {
+    "current": {
+      "planned": 5,
+      "attempted": 5,
+      "operationallyComplete": 3,
+      "meanRawQaF1AllPlanned": 0.02608695652173913,
+      "meanOperationalAdjustedQaF1AllPlanned": 0.02608695652173913,
+      "meanRawQaF1CompletedOnly": 0.043478260869565216,
+      "medianCompletedSeconds": 41.028,
+      "allAttemptInputTokens": 431872,
+      "allAttemptCachedInputTokens": 147712
+    },
+    "coverage": {
+      "planned": 5,
+      "attempted": 5,
+      "operationallyComplete": 3,
+      "meanRawQaF1AllPlanned": 0.03595890410958904,
+      "meanOperationalAdjustedQaF1AllPlanned": 0.03595890410958904,
+      "meanRawQaF1CompletedOnly": 0.059931506849315065,
+      "medianCompletedSeconds": 49.728,
+      "allAttemptInputTokens": 518030,
+      "allAttemptCachedInputTokens": 180992
+    }
+  },
+  "paired": [
+    {
+      "id": "conv-42:19",
+      "category": 1,
+      "bothComplete": false,
+      "rawQaF1DeltaCoverageMinusCurrent": 0.0
+    },
+    {
+      "id": "conv-47:52",
+      "category": 2,
+      "bothComplete": false,
+      "rawQaF1DeltaCoverageMinusCurrent": 0.125
+    },
+    {
+      "id": "conv-48:36",
+      "category": 3,
+      "bothComplete": false,
+      "rawQaF1DeltaCoverageMinusCurrent": 0.0
+    },
+    {
+      "id": "conv-26:142",
+      "category": 4,
+      "bothComplete": true,
+      "rawQaF1DeltaCoverageMinusCurrent": -0.07564026206075045
+    },
+    {
+      "id": "conv-30:84",
+      "category": 5,
+      "bothComplete": true,
+      "rawQaF1DeltaCoverageMinusCurrent": 0.0
+    }
+  ],
+  "rows": [
+    {
+      "id": "conv-42:19",
+      "caseIndex": 0,
+      "arm": "current",
+      "attemptIndex": 0,
+      "attempted": true,
+      "complete": false,
+      "stopReason": "Invalid lead citation provenance",
+      "answer": "2 times.",
+      "brief": "2 times. Joanna said she found an awesome hiking trail in session_8 (D8:4) and found more amazing trails in session_11 (D11:3). Session_14 only describes plans to check out a new trail, not that she had found it.",
+      "citations": [
+        "session_8.md",
+        "session_11.md"
+      ],
+      "citationProvenanceValid": null,
+      "sourceReads": [
+        {
+          "path": "session_8.md",
+          "sha256": "80ede5a7deabefb02cddfe0749bf16d724ad99b4807c53820b858b926d5d343a",
+          "bytes": 3047
+        },
+        {
+          "path": "session_11.md",
+          "sha256": "c9f668d7201726d455d065906081bf10ea7d6d18350e324f661c2e9c9016734b",
+          "bytes": 2450
+        },
+        {
+          "path": "session_14.md",
+          "sha256": "e1538c0f9057fa9b1031fc38f534c9cf2485701d808ce0bf411c580907fbbe0c",
+          "bytes": 3173
+        }
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": null,
+          "hasMore": false,
+          "paths": [
+            "session_11.md",
+            "session_8.md",
+            "session_14.md",
+            "session_12.md",
+            "session_26.md",
+            "session_6.md",
+            "session_1.md",
+            "session_23.md",
+            "session_27.md",
+            "session_7.md",
+            "session_13.md",
+            "session_2.md",
+            "session_5.md",
+            "session_17.md",
+            "session_3.md",
+            "session_20.md",
+            "session_10.md",
+            "session_19.md",
+            "session_28.md",
+            "session_18.md",
+            "session_16.md",
+            "session_9.md",
+            "session_25.md",
+            "session_15.md",
+            "session_21.md",
+            "session_4.md",
+            "session_22.md",
+            "session_24.md",
+            "session_29.md"
+          ],
+          "pageSha256": "8db21a0fb9bf40422954806eb172c654949f2dbac22568c0599a1afa4272f2dc"
+        }
+      ],
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 9.869,
+          "promptBytes": 22495,
+          "promptSha256": "1b5dcdd28676041dc8635e5bd1785828f35789482d92953abf7f8ce4b211afd3",
+          "usage": {
+            "input_tokens": 21089,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 70,
+            "reasoning_output_tokens": 29
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 11.878,
+          "promptBytes": 31823,
+          "promptSha256": "aa040ac5451169d49d8cc77f0137cf10e329a428b6fc9d3191ceae030bc6c14c",
+          "usage": {
+            "input_tokens": 23702,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 206,
+            "reasoning_output_tokens": 125
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "lead",
+          "model": "gpt-5.6-sol",
+          "sessionResumed": false,
+          "elapsedSeconds": 8.375,
+          "promptBytes": 695,
+          "promptSha256": "52276e9bb9a2819365ed890b63ab07d82a2de810d377c208b3d3ce9e61b0a23f",
+          "usage": {
+            "input_tokens": 16916,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 30,
+            "reasoning_output_tokens": 0
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 61707,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 306,
+        "reasoning_output_tokens": 154
+      },
+      "elapsedSeconds": 30.543,
+      "goldNotesRead": 2,
+      "goldNotes": 2,
+      "completeGoldNoteReads": true,
+      "category": 1,
+      "rawQaF1": 0.0,
+      "operationalAdjustedQaF1": 0.0
+    },
+    {
+      "id": "conv-42:19",
+      "caseIndex": 0,
+      "arm": "coverage",
+      "attemptIndex": 1,
+      "attempted": true,
+      "complete": false,
+      "stopReason": "Invalid lead citation provenance",
+      "answer": "2 times.",
+      "brief": "Joanna has found new hiking trails 2 times: an awesome trail in session_8 (D8:4) and more amazing trails in session_11 (D11:3).",
+      "citations": [
+        "session_8.md",
+        "session_11.md"
+      ],
+      "citationProvenanceValid": null,
+      "sourceReads": [
+        {
+          "path": "session_8.md",
+          "sha256": "80ede5a7deabefb02cddfe0749bf16d724ad99b4807c53820b858b926d5d343a",
+          "bytes": 3047
+        },
+        {
+          "path": "session_11.md",
+          "sha256": "c9f668d7201726d455d065906081bf10ea7d6d18350e324f661c2e9c9016734b",
+          "bytes": 2450
+        },
+        {
+          "path": "session_14.md",
+          "sha256": "e1538c0f9057fa9b1031fc38f534c9cf2485701d808ce0bf411c580907fbbe0c",
+          "bytes": 3173
+        }
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": null,
+          "hasMore": false,
+          "paths": [
+            "session_11.md",
+            "session_8.md",
+            "session_14.md",
+            "session_12.md",
+            "session_26.md",
+            "session_6.md",
+            "session_1.md",
+            "session_23.md",
+            "session_27.md",
+            "session_7.md",
+            "session_13.md",
+            "session_2.md",
+            "session_5.md",
+            "session_17.md",
+            "session_3.md",
+            "session_20.md",
+            "session_10.md",
+            "session_19.md",
+            "session_28.md",
+            "session_18.md",
+            "session_16.md",
+            "session_9.md",
+            "session_25.md",
+            "session_15.md",
+            "session_21.md",
+            "session_4.md",
+            "session_22.md",
+            "session_24.md",
+            "session_29.md"
+          ],
+          "pageSha256": "d108d2e1319cb3895cf8a8f9399606b38c6fbcc1962fc4e16dbaac52dfecd72a"
+        }
+      ],
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 9.767,
+          "promptBytes": 26210,
+          "promptSha256": "52f59a32757d4b7cada811f9034aaa929f38a219d499e606fabbe15e905ed6d5",
+          "usage": {
+            "input_tokens": 21763,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 158,
+            "reasoning_output_tokens": 117
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 10.714,
+          "promptBytes": 35538,
+          "promptSha256": "58cf1a55020a6e5dc94bafd7af1c09271a763e8d56656ddbb5da7ea5aedcd6b3",
+          "usage": {
+            "input_tokens": 24396,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 158,
+            "reasoning_output_tokens": 95
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "lead",
+          "model": "gpt-5.6-sol",
+          "sessionResumed": false,
+          "elapsedSeconds": 7.497,
+          "promptBytes": 610,
+          "promptSha256": "c5d79cca48d5811f5fe5eab8adb36477ee189b8d09f31afd71c3baeb0ba274d6",
+          "usage": {
+            "input_tokens": 16878,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 30,
+            "reasoning_output_tokens": 0
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 63037,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 346,
+        "reasoning_output_tokens": 212
+      },
+      "elapsedSeconds": 28.168,
+      "goldNotesRead": 2,
+      "goldNotes": 2,
+      "completeGoldNoteReads": true,
+      "category": 1,
+      "rawQaF1": 0.0,
+      "operationalAdjustedQaF1": 0.0
+    },
+    {
+      "id": "conv-47:52",
+      "caseIndex": 1,
+      "arm": "coverage",
+      "attemptIndex": 2,
+      "attempted": true,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "John likely started around June\u2013July 2022, but the exact date is not stated.",
+      "brief": "John said on 20 September 2022 that he had been working on the 2D adventure game \u201cfor the past few months,\u201d so he likely started around June\u2013July 2022; the exact start date is not stated. [session_25.md]",
+      "citations": [
+        "session_25.md"
+      ],
+      "citationProvenanceValid": true,
+      "sourceReads": [
+        {
+          "path": "session_25.md",
+          "sha256": "055f251ed49486dd182b9b46caac5435e2dcbbc06ee369f28c8e3f678496c335",
+          "bytes": 4275
+        },
+        {
+          "path": "session_13.md",
+          "sha256": "26ef64f0ab94b344af8f9aea559de632aae6e148c5cc1a69c4bf9f6fa53390ef",
+          "bytes": 2521
+        },
+        {
+          "path": "session_7.md",
+          "sha256": "ab959a26fcd5942422f02867320b0806692dea7aed2ee92762d9edd6df6d4338",
+          "bytes": 3007
+        },
+        {
+          "path": "session_4.md",
+          "sha256": "e1de21b0cb574cb7935ce0d373cfaa49db2f3f551640233be8e7dc07397f119e",
+          "bytes": 3710
+        },
+        {
+          "path": "session_20.md",
+          "sha256": "136115415cd0302c01bb13f206851f7f92a090bc00e4d361ce8e0a50d21db281",
+          "bytes": 4499
+        },
+        {
+          "path": "session_6.md",
+          "sha256": "53180c5e5d5937d281fd8164a6080f76681391b5ded4578d7b88eaf331c76064",
+          "bytes": 3654
+        },
+        {
+          "path": "session_23.md",
+          "sha256": "00ba1dd534a1e31a8ec72f61e87472551fe42bc351960261f89c2f4d0a81b9e3",
+          "bytes": 3162
+        },
+        {
+          "path": "session_28.md",
+          "sha256": "29909b9bccd01bcb3ba39e6b2a76d3e02be91cce328a8d584b5bc49137124a2e",
+          "bytes": 4904
+        }
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": 10,
+          "hasMore": true,
+          "paths": [
+            "session_25.md",
+            "session_21.md",
+            "session_13.md",
+            "session_1.md",
+            "session_7.md",
+            "session_4.md",
+            "session_20.md",
+            "session_6.md",
+            "session_23.md",
+            "session_28.md"
+          ],
+          "pageSha256": "c8d3e0866e2daeb23fe668dbdea701d379cfbc55e9e4cfd9da659ac6e4ec4a17"
+        },
+        {
+          "offset": 10,
+          "nextOffset": 20,
+          "hasMore": true,
+          "paths": [
+            "session_8.md",
+            "session_30.md",
+            "session_14.md",
+            "session_26.md",
+            "session_2.md",
+            "session_9.md",
+            "session_22.md",
+            "session_3.md",
+            "session_12.md",
+            "session_31.md"
+          ],
+          "pageSha256": "f3c6bac4d3a6d7042f2ae44e9a6a8bba8ac001275d86d8ac8b4077a98eb7aaec"
+        }
+      ],
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 8.19,
+          "promptBytes": 10207,
+          "promptSha256": "14c885344949421cead367d3dc0a0219bac7345187efab76386dcc3c1ad674a5",
+          "usage": {
+            "input_tokens": 17803,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 54,
+            "reasoning_output_tokens": 23
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 9.472,
+          "promptBytes": 14719,
+          "promptSha256": "e15d926837804db00c9ede41b1833d906c86bde1e0e471f03df57de14c3c151e",
+          "usage": {
+            "input_tokens": 18991,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 142,
+            "reasoning_output_tokens": 81
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 10.673,
+          "promptBytes": 41767,
+          "promptSha256": "4875ea9aaee00b6af7bc296d412f6926040a6497de567f8f03a9f9d79845ccde",
+          "usage": {
+            "input_tokens": 26300,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 207,
+            "reasoning_output_tokens": 181
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 8.269,
+          "promptBytes": 42475,
+          "promptSha256": "e1a1bf634af96bc2825d4b1598fede347b5047c966c0d57186ee8599257696b4",
+          "usage": {
+            "input_tokens": 26429,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 129,
+            "reasoning_output_tokens": 50
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "lead",
+          "model": "gpt-5.6-sol",
+          "sessionResumed": false,
+          "elapsedSeconds": 6.923,
+          "promptBytes": 785,
+          "promptSha256": "321c600a0d78a466257669e3dcc7a009f436c2ed051ffe6ee3988795bd831404",
+          "usage": {
+            "input_tokens": 16929,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 41,
+            "reasoning_output_tokens": 0
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 106452,
+        "cached_input_tokens": 28160,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 573,
+        "reasoning_output_tokens": 335
+      },
+      "elapsedSeconds": 43.908,
+      "goldNotesRead": 1,
+      "goldNotes": 1,
+      "completeGoldNoteReads": true,
+      "category": 2,
+      "rawQaF1": 0.125,
+      "operationalAdjustedQaF1": 0.125
+    },
+    {
+      "id": "conv-47:52",
+      "caseIndex": 1,
+      "arm": "current",
+      "attemptIndex": 3,
+      "attempted": true,
+      "complete": false,
+      "stopReason": "Invalid, unseen or repeated source request",
+      "answer": null,
+      "brief": null,
+      "citations": null,
+      "citationProvenanceValid": null,
+      "sourceReads": [
+        {
+          "path": "session_25.md",
+          "sha256": "055f251ed49486dd182b9b46caac5435e2dcbbc06ee369f28c8e3f678496c335",
+          "bytes": 4275
+        },
+        {
+          "path": "session_13.md",
+          "sha256": "26ef64f0ab94b344af8f9aea559de632aae6e148c5cc1a69c4bf9f6fa53390ef",
+          "bytes": 2521
+        },
+        {
+          "path": "session_20.md",
+          "sha256": "136115415cd0302c01bb13f206851f7f92a090bc00e4d361ce8e0a50d21db281",
+          "bytes": 4499
+        },
+        {
+          "path": "session_23.md",
+          "sha256": "00ba1dd534a1e31a8ec72f61e87472551fe42bc351960261f89c2f4d0a81b9e3",
+          "bytes": 3162
+        },
+        {
+          "path": "session_28.md",
+          "sha256": "29909b9bccd01bcb3ba39e6b2a76d3e02be91cce328a8d584b5bc49137124a2e",
+          "bytes": 4904
+        },
+        {
+          "path": "session_21.md",
+          "sha256": "cd66801e5452e33112d8caafec956025b1a49b172d59ab45de97f54b289c17bc",
+          "bytes": 2516
+        },
+        {
+          "path": "session_7.md",
+          "sha256": "ab959a26fcd5942422f02867320b0806692dea7aed2ee92762d9edd6df6d4338",
+          "bytes": 3007
+        },
+        {
+          "path": "session_4.md",
+          "sha256": "e1de21b0cb574cb7935ce0d373cfaa49db2f3f551640233be8e7dc07397f119e",
+          "bytes": 3710
+        },
+        {
+          "path": "session_6.md",
+          "sha256": "53180c5e5d5937d281fd8164a6080f76681391b5ded4578d7b88eaf331c76064",
+          "bytes": 3654
+        },
+        {
+          "path": "session_1.md",
+          "sha256": "57c5dd2be77e30362fc135a8241df7b446c7dc44bbb003141808b8843b0c59ac",
+          "bytes": 5409
+        }
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": 10,
+          "hasMore": true,
+          "paths": [
+            "session_25.md",
+            "session_21.md",
+            "session_13.md",
+            "session_1.md",
+            "session_7.md",
+            "session_4.md",
+            "session_20.md",
+            "session_6.md",
+            "session_23.md",
+            "session_28.md"
+          ],
+          "pageSha256": "371df61b81a38d7de0fb1c5fd0068e792dd3ae43314e1e3b2b9b9244bc818dc2"
+        }
+      ],
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 8.05,
+          "promptBytes": 9281,
+          "promptSha256": "32f541191a44f4a33813d837726cd7c2a2308628da60ce6d6534e0b32f181f8f",
+          "usage": {
+            "input_tokens": 17622,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 64,
+            "reasoning_output_tokens": 33
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 9.395,
+          "promptBytes": 13793,
+          "promptSha256": "ec4bd41c598dfa24e510bfea1d8a9aa8e940c9d0b770191a0ae84f7f47d82245",
+          "usage": {
+            "input_tokens": 18810,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 106,
+            "reasoning_output_tokens": 65
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 14.075,
+          "promptBytes": 24631,
+          "promptSha256": "cc1ebd17d7a6f8ed73acc251eef2629d65c514ea667c2697b09d5568b8f620d6",
+          "usage": {
+            "input_tokens": 21726,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 194,
+            "reasoning_output_tokens": 138
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 15.312,
+          "promptBytes": 49251,
+          "promptSha256": "3d0c97d3582fc63868d2aa9c485c4827f20fd880d777507f5b598097a6dd3a93",
+          "usage": {
+            "input_tokens": 28425,
+            "cached_input_tokens": 17152,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 254,
+            "reasoning_output_tokens": 183
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 86583,
+        "cached_input_tokens": 31232,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 618,
+        "reasoning_output_tokens": 419
+      },
+      "elapsedSeconds": 47.159,
+      "goldNotesRead": 1,
+      "goldNotes": 1,
+      "completeGoldNoteReads": true,
+      "category": 2,
+      "rawQaF1": 0.0,
+      "operationalAdjustedQaF1": 0.0
+    },
+    {
+      "id": "conv-48:36",
+      "caseIndex": 2,
+      "arm": "current",
+      "attemptIndex": 4,
+      "attempted": true,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "Jolene\u2019s exact age is not stated.",
+      "brief": "Jolene\u2019s exact age is not stated in the supplied notes. The evidence only indicates she is an engineering student and says she was 10 when her parents gave her a video game console (session_24, D24:6\u20138).",
+      "citations": [],
+      "citationProvenanceValid": true,
+      "sourceReads": [
+        {
+          "path": "session_12.md",
+          "sha256": "ef7e956c1c41f9a6e5df981ddfed3c56cbfe4c9c3956c56de48d3734550fb7fc",
+          "bytes": 2357
+        },
+        {
+          "path": "session_11.md",
+          "sha256": "fee0c1b14040e77d2fcfba9efe844828665bdd6535abae640cebf9d780113110",
+          "bytes": 2370
+        },
+        {
+          "path": "session_8.md",
+          "sha256": "3d9fd806dbb78e268d6780a3277cecd7382ca0960c449201b59f3e8b7f6cd132",
+          "bytes": 3019
+        },
+        {
+          "path": "session_9.md",
+          "sha256": "a2eedf2682336d224a3b1a3a456e647a0c7c08906b0381405c9ab75f45dfedc7",
+          "bytes": 2216
+        },
+        {
+          "path": "session_3.md",
+          "sha256": "41fd5aeab59e2e2650ca4db8b3dec0cb2a5907c850cd4534a08db0484cd7f723",
+          "bytes": 1831
+        },
+        {
+          "path": "session_16.md",
+          "sha256": "f14c94b5bb4729eb555e1801521e6d141cae0c7c2f709755d335c99b90ca57ad",
+          "bytes": 2980
+        },
+        {
+          "path": "session_10.md",
+          "sha256": "bcd1dc981e973c56269c483df07bcff66eea93049596fe423135a57d998e336a",
+          "bytes": 3484
+        },
+        {
+          "path": "session_17.md",
+          "sha256": "95b6bed8cd4e66fdd9e9d7ddd702c4a47196a44ab535e98db239b499617a8a33",
+          "bytes": 1995
+        },
+        {
+          "path": "session_14.md",
+          "sha256": "fab002347eae2cc3ba8e9df7b96e730f8ba469e116c2daf3f43a998a929dcd81",
+          "bytes": 2854
+        },
+        {
+          "path": "session_5.md",
+          "sha256": "e6829ca3741f94f034d0cf7e4eedd08b8974c3a98e02dfe0345e73008285aae6",
+          "bytes": 2389
+        },
+        {
+          "path": "session_1.md",
+          "sha256": "ccc476a882b8fdf5b26a1b32ef1721da956d0f521ff628f2c51e11a637503b2b",
+          "bytes": 2272
+        },
+        {
+          "path": "session_2.md",
+          "sha256": "d458107b4e89ad0ada24a487e64bbe48fa5a094d7e2932556f84333d71066fa8",
+          "bytes": 4027
+        },
+        {
+          "path": "session_22.md",
+          "sha256": "65182ab94b8828bbfac858f6777efaf96a14fefe994eeba999592d01173c9bb7",
+          "bytes": 5612
+        },
+        {
+          "path": "session_23.md",
+          "sha256": "c84ab94768b37cf123a174d7c252e048f335dba5800414e314881eb98f56b6d5",
+          "bytes": 4352
+        },
+        {
+          "path": "session_24.md",
+          "sha256": "b67aece417f2994af273236523af844c251fca0c70ab431bfe95887b4b5e565d",
+          "bytes": 2652
+        },
+        {
+          "path": "session_28.md",
+          "sha256": "8d1bc85e97e38e8305be10fe6e37201c0912514b723f28234630556de198bbaa",
+          "bytes": 4206
+        },
+        {
+          "path": "session_29.md",
+          "sha256": "7bfe5da4e9fb0432900a8d9068c3aed5ed3c7bee51ccc9d9e1793128ec0656ca",
+          "bytes": 4826
+        },
+        {
+          "path": "session_4.md",
+          "sha256": "ee89c04ed4c42de319732ffc06f103e8c958fb1a45e654b7102c68383dbe583f",
+          "bytes": 6905
+        },
+        {
+          "path": "session_6.md",
+          "sha256": "f3c3e2089196c36a5c88557f6f8ba90f038d2ac59c038c351f2d9691037d1ad8",
+          "bytes": 2046
+        },
+        {
+          "path": "session_7.md",
+          "sha256": "4d97db3eba8a4c10f02fe0724a1cdd55a9b72b760081afa2286dba67c1168a2b",
+          "bytes": 3532
+        }
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": 10,
+          "hasMore": true,
+          "paths": [
+            "session_22.md",
+            "session_2.md",
+            "session_29.md",
+            "session_23.md",
+            "session_28.md",
+            "session_1.md",
+            "session_24.md",
+            "session_4.md",
+            "session_7.md",
+            "session_6.md"
+          ],
+          "pageSha256": "87d7b496b2901351d93622db7b26f4335726dc9077f64d14ed7fca217ae58acb"
+        },
+        {
+          "offset": 10,
+          "nextOffset": 20,
+          "hasMore": true,
+          "paths": [
+            "session_12.md",
+            "session_11.md",
+            "session_8.md",
+            "session_9.md",
+            "session_3.md",
+            "session_16.md",
+            "session_10.md",
+            "session_17.md",
+            "session_14.md",
+            "session_5.md"
+          ],
+          "pageSha256": "e7ec708ff43c98040e75885bae1cc69602d74cfa1a5c3cfe47a96dab10ad3af6"
+        },
+        {
+          "offset": 20,
+          "nextOffset": null,
+          "hasMore": false,
+          "paths": [
+            "session_15.md",
+            "session_13.md",
+            "session_20.md",
+            "session_18.md",
+            "session_19.md",
+            "session_21.md",
+            "session_30.md",
+            "session_27.md",
+            "session_26.md",
+            "session_25.md"
+          ],
+          "pageSha256": "f0d67d4fa9268ccd80b49d30eac5dc17b455adcbda3fda042c6ecb5eca462708"
+        }
+      ],
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 10.658,
+          "promptBytes": 8116,
+          "promptSha256": "5ab66071fc643d15f872a802a5ba20aa1b1af60d31ed4d9179259999d1062a22",
+          "usage": {
+            "input_tokens": 17369,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 126,
+            "reasoning_output_tokens": 100
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 10.158,
+          "promptBytes": 8696,
+          "promptSha256": "0052753a40861426027c7f4ab7bcac0f02147d95f345bb6e12c23e19bd58914e",
+          "usage": {
+            "input_tokens": 17535,
+            "cached_input_tokens": 8960,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 161,
+            "reasoning_output_tokens": 85
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 12.633,
+          "promptBytes": 36279,
+          "promptSha256": "733fe23891e7a1ba731ac609f51ec4e1b12632bf19543f4aaa9111428e4e9d75",
+          "usage": {
+            "input_tokens": 25240,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 288,
+            "reasoning_output_tokens": 212
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 9.074,
+          "promptBytes": 79073,
+          "promptSha256": "aa4ca6d3efe529de22763273d41a1fde6098cd09c092ec4e3b023a3755ae2c28",
+          "usage": {
+            "input_tokens": 36845,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 127,
+            "reasoning_output_tokens": 52
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "lead",
+          "model": "gpt-5.6-sol",
+          "sessionResumed": false,
+          "elapsedSeconds": 11.456,
+          "promptBytes": 939,
+          "promptSha256": "c590f62814dee9a4f631b175cb1495cc4d85186012629e5f455ebb84444160cb",
+          "usage": {
+            "input_tokens": 16986,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 27,
+            "reasoning_output_tokens": 0
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 113975,
+        "cached_input_tokens": 51200,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 729,
+        "reasoning_output_tokens": 449
+      },
+      "elapsedSeconds": 54.457,
+      "goldNotesRead": 3,
+      "goldNotes": 7,
+      "completeGoldNoteReads": false,
+      "category": 3,
+      "rawQaF1": 0.0,
+      "operationalAdjustedQaF1": 0.0
+    },
+    {
+      "id": "conv-48:36",
+      "caseIndex": 2,
+      "arm": "coverage",
+      "attemptIndex": 5,
+      "attempted": true,
+      "complete": false,
+      "stopReason": "Invalid, unseen or repeated source request",
+      "answer": null,
+      "brief": null,
+      "citations": null,
+      "citationProvenanceValid": null,
+      "sourceReads": [
+        {
+          "path": "session_22.md",
+          "sha256": "65182ab94b8828bbfac858f6777efaf96a14fefe994eeba999592d01173c9bb7",
+          "bytes": 5612
+        },
+        {
+          "path": "session_2.md",
+          "sha256": "d458107b4e89ad0ada24a487e64bbe48fa5a094d7e2932556f84333d71066fa8",
+          "bytes": 4027
+        },
+        {
+          "path": "session_29.md",
+          "sha256": "7bfe5da4e9fb0432900a8d9068c3aed5ed3c7bee51ccc9d9e1793128ec0656ca",
+          "bytes": 4826
+        },
+        {
+          "path": "session_23.md",
+          "sha256": "c84ab94768b37cf123a174d7c252e048f335dba5800414e314881eb98f56b6d5",
+          "bytes": 4352
+        },
+        {
+          "path": "session_28.md",
+          "sha256": "8d1bc85e97e38e8305be10fe6e37201c0912514b723f28234630556de198bbaa",
+          "bytes": 4206
+        },
+        {
+          "path": "session_1.md",
+          "sha256": "ccc476a882b8fdf5b26a1b32ef1721da956d0f521ff628f2c51e11a637503b2b",
+          "bytes": 2272
+        },
+        {
+          "path": "session_24.md",
+          "sha256": "b67aece417f2994af273236523af844c251fca0c70ab431bfe95887b4b5e565d",
+          "bytes": 2652
+        },
+        {
+          "path": "session_4.md",
+          "sha256": "ee89c04ed4c42de319732ffc06f103e8c958fb1a45e654b7102c68383dbe583f",
+          "bytes": 6905
+        },
+        {
+          "path": "session_7.md",
+          "sha256": "4d97db3eba8a4c10f02fe0724a1cdd55a9b72b760081afa2286dba67c1168a2b",
+          "bytes": 3532
+        },
+        {
+          "path": "session_6.md",
+          "sha256": "f3c3e2089196c36a5c88557f6f8ba90f038d2ac59c038c351f2d9691037d1ad8",
+          "bytes": 2046
+        },
+        {
+          "path": "session_12.md",
+          "sha256": "ef7e956c1c41f9a6e5df981ddfed3c56cbfe4c9c3956c56de48d3734550fb7fc",
+          "bytes": 2357
+        },
+        {
+          "path": "session_11.md",
+          "sha256": "fee0c1b14040e77d2fcfba9efe844828665bdd6535abae640cebf9d780113110",
+          "bytes": 2370
+        },
+        {
+          "path": "session_8.md",
+          "sha256": "3d9fd806dbb78e268d6780a3277cecd7382ca0960c449201b59f3e8b7f6cd132",
+          "bytes": 3019
+        },
+        {
+          "path": "session_9.md",
+          "sha256": "a2eedf2682336d224a3b1a3a456e647a0c7c08906b0381405c9ab75f45dfedc7",
+          "bytes": 2216
+        },
+        {
+          "path": "session_3.md",
+          "sha256": "41fd5aeab59e2e2650ca4db8b3dec0cb2a5907c850cd4534a08db0484cd7f723",
+          "bytes": 1831
+        },
+        {
+          "path": "session_16.md",
+          "sha256": "f14c94b5bb4729eb555e1801521e6d141cae0c7c2f709755d335c99b90ca57ad",
+          "bytes": 2980
+        },
+        {
+          "path": "session_10.md",
+          "sha256": "bcd1dc981e973c56269c483df07bcff66eea93049596fe423135a57d998e336a",
+          "bytes": 3484
+        },
+        {
+          "path": "session_17.md",
+          "sha256": "95b6bed8cd4e66fdd9e9d7ddd702c4a47196a44ab535e98db239b499617a8a33",
+          "bytes": 1995
+        },
+        {
+          "path": "session_14.md",
+          "sha256": "fab002347eae2cc3ba8e9df7b96e730f8ba469e116c2daf3f43a998a929dcd81",
+          "bytes": 2854
+        },
+        {
+          "path": "session_5.md",
+          "sha256": "e6829ca3741f94f034d0cf7e4eedd08b8974c3a98e02dfe0345e73008285aae6",
+          "bytes": 2389
+        }
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": 10,
+          "hasMore": true,
+          "paths": [
+            "session_22.md",
+            "session_2.md",
+            "session_29.md",
+            "session_23.md",
+            "session_28.md",
+            "session_1.md",
+            "session_24.md",
+            "session_4.md",
+            "session_7.md",
+            "session_6.md"
+          ],
+          "pageSha256": "e48bb9bb20de42ce4dfae57c49ed29b924aa7df8efc45f3f3f8f4d53b8237ab9"
+        },
+        {
+          "offset": 10,
+          "nextOffset": 20,
+          "hasMore": true,
+          "paths": [
+            "session_12.md",
+            "session_11.md",
+            "session_8.md",
+            "session_9.md",
+            "session_3.md",
+            "session_16.md",
+            "session_10.md",
+            "session_17.md",
+            "session_14.md",
+            "session_5.md"
+          ],
+          "pageSha256": "d50815b92f6364b1190950ad0c464d342294276a2cc1466b5cd183d1e75b5a63"
+        }
+      ],
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 10.232,
+          "promptBytes": 9998,
+          "promptSha256": "7a91e47a3da12cf2d30ba3288216ed8ec1bd6733df65ce259efb5ca97cdf6bd5",
+          "usage": {
+            "input_tokens": 17766,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 134,
+            "reasoning_output_tokens": 58
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 13.344,
+          "promptBytes": 52829,
+          "promptSha256": "c9507e97afab02e265aa473696954423d556f134a7716ac706980c19c6d85c03",
+          "usage": {
+            "input_tokens": 29377,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 133,
+            "reasoning_output_tokens": 107
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 8.995,
+          "promptBytes": 52829,
+          "promptSha256": "0c95a4d294d7445e4e9ae4bb3c7894d757b9a953a5b9a8421efae3ea13ac56d6",
+          "usage": {
+            "input_tokens": 29402,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 126,
+            "reasoning_output_tokens": 50
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 8.552,
+          "promptBytes": 80414,
+          "promptSha256": "1d00393b558fd9eba3e61eb051a7c9f05393a2596a95b9797568223414d2af35",
+          "usage": {
+            "input_tokens": 37108,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 105,
+            "reasoning_output_tokens": 29
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 113653,
+        "cached_input_tokens": 56320,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 498,
+        "reasoning_output_tokens": 244
+      },
+      "elapsedSeconds": 41.5,
+      "goldNotesRead": 3,
+      "goldNotes": 7,
+      "completeGoldNoteReads": false,
+      "category": 3,
+      "rawQaF1": 0.0,
+      "operationalAdjustedQaF1": 0.0
+    },
+    {
+      "id": "conv-26:142",
+      "caseIndex": 3,
+      "arm": "coverage",
+      "attemptIndex": 6,
+      "attempted": true,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "Melanie and Caroline describe their journey through life together as an enduring friendship grounded in learning, growth, and mutual support. They share stories, celebrate milestones, make memories, face hardships, and motivate one another. Caroline\u2019s journey centers on transition, self-acceptance, community, and transforming past struggles into advocacy and future ambitions, while Melanie\u2019s centers on family, parenting, self-care, creativity, nature, and resilience. Melanie consistently supports Caroline\u2019s courage and authenticity, and both see their relationship as a source of encouragement and stability.",
+      "brief": "Melanie and Caroline describe life together as an ongoing journey of learning, growth, and mutual support. Caroline\u2019s path includes transition, self-acceptance, finding supportive community, and turning past struggles into advocacy, counseling ambitions, art, and plans to adopt; Melanie repeatedly encourages her courage and authenticity (session_1.md; session_6.md; session_14.md; session_16.md; session_19.md). Melanie describes her own journey through family life, parenting, self-care, creativity, nature, and difficult moments, with family providing motivation and stability (session_2.md; session_8.md; session_10.md; session_18.md). Together, they frame their relationship as friendship in which they share stories, celebrate milestones, make memories, face hardships, and \u201cmotivat[e] and help[] each other out as we journey through life\u201d (session_3.md; session_12.md; session_17.md).",
+      "citations": [
+        "session_1.md",
+        "session_2.md",
+        "session_3.md",
+        "session_6.md",
+        "session_8.md",
+        "session_10.md",
+        "session_12.md",
+        "session_14.md",
+        "session_16.md",
+        "session_17.md",
+        "session_18.md",
+        "session_19.md"
+      ],
+      "citationProvenanceValid": true,
+      "sourceReads": [
+        {
+          "path": "session_3.md",
+          "sha256": "1046cddf0c80f0bac2dfb1ebe7d7175bc6d165f2a8b6643cd5c390273799e8de",
+          "bytes": 5164
+        },
+        {
+          "path": "session_4.md",
+          "sha256": "599973f70e545ca5fee5978dbfa32d86a7c4fa62b35f81e325768583d3ab20e8",
+          "bytes": 3685
+        },
+        {
+          "path": "session_7.md",
+          "sha256": "f9ff5cbdf9350bfa2607074e012da836e6ebdcc49fd73ce5e3c0056742de0087",
+          "bytes": 4664
+        },
+        {
+          "path": "session_11.md",
+          "sha256": "e699846bce8c7ba0af8bd54d0a49eb133ecba3bc7fe589c5a0fc8f8bd08f0c1f",
+          "bytes": 3798
+        },
+        {
+          "path": "session_17.md",
+          "sha256": "463dd1c87c177d69d047bdb6cd080b49a972c94b20f131a83eebc7317551f7a0",
+          "bytes": 4762
+        },
+        {
+          "path": "session_19.md",
+          "sha256": "2d02dce8bc093d22b7820992c10e200a67c3f0b88d71c68ad91c65fbfa4c4a31",
+          "bytes": 2976
+        },
+        {
+          "path": "session_8.md",
+          "sha256": "a085dc2ccbac646b1719643c67f94ae998821828550ad01251678c0324a97a2a",
+          "bytes": 6625
+        },
+        {
+          "path": "session_10.md",
+          "sha256": "1161801e261acab9b681b64484bf7e388e9b79a687343721e4bf948a8ef32c43",
+          "bytes": 4625
+        },
+        {
+          "path": "session_15.md",
+          "sha256": "d96a97423324b4eb13262551b653b7b09ca837e40467dc42045b54030d28c27c",
+          "bytes": 4934
+        },
+        {
+          "path": "session_14.md",
+          "sha256": "6c1d947a8d6485b2ede91554b2e1add95f633d0405ce5b48b1c162a74f41dcf3",
+          "bytes": 6884
+        },
+        {
+          "path": "session_12.md",
+          "sha256": "396ff55b5f069fc8d7ca569a8cbc3f8098ac53da77f85a2769ba08e6d2a86fdd",
+          "bytes": 3382
+        },
+        {
+          "path": "session_13.md",
+          "sha256": "7b6173254a997c3913ccc1eb198d74e76f2f218b9d9090669e8689cf8e386a71",
+          "bytes": 3349
+        },
+        {
+          "path": "session_18.md",
+          "sha256": "2cea7854db3414d081231034de442f3afcc395b8bb4347475ca333ea30cf5495",
+          "bytes": 3590
+        },
+        {
+          "path": "session_16.md",
+          "sha256": "307112198626478d4b169b60874bb021bb5113321bed75f4ea76f985588557bc",
+          "bytes": 4547
+        },
+        {
+          "path": "session_2.md",
+          "sha256": "082573f4ac4a617791628763c83f99f5b9d44080e1710e9c0f282bfb5995249d",
+          "bytes": 3004
+        },
+        {
+          "path": "session_5.md",
+          "sha256": "17b2f9ca64b219de0f13f3c838ea4b91bf1cf8aeff0cd424d8658527da523313",
+          "bytes": 2586
+        },
+        {
+          "path": "session_1.md",
+          "sha256": "6af371e96df166f8489616ce9f398828859655751aeeb5ba94bcd258a1c462af",
+          "bytes": 2136
+        },
+        {
+          "path": "session_6.md",
+          "sha256": "0c7e4cdfd0861b804a2bb197d0814ccbee8d19eb89cf0e347bdc37704cb2ea60",
+          "bytes": 2952
+        },
+        {
+          "path": "session_9.md",
+          "sha256": "424461bc5f05a96e47c1fedf942761b5597306d0db268cc7c315e3e27605e405",
+          "bytes": 2677
+        }
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": 10,
+          "hasMore": true,
+          "paths": [
+            "session_3.md",
+            "session_8.md",
+            "session_17.md",
+            "session_4.md",
+            "session_10.md",
+            "session_15.md",
+            "session_11.md",
+            "session_7.md",
+            "session_14.md",
+            "session_19.md"
+          ],
+          "pageSha256": "f9b020844498e204eea3b56c0ba5b9d5bde33732d5beca897e14b5d1f8f17a15"
+        },
+        {
+          "offset": 10,
+          "nextOffset": null,
+          "hasMore": false,
+          "paths": [
+            "session_12.md",
+            "session_13.md",
+            "session_18.md",
+            "session_16.md",
+            "session_2.md",
+            "session_5.md",
+            "session_1.md",
+            "session_6.md",
+            "session_9.md"
+          ],
+          "pageSha256": "ce7fcb9ead14f6e33b63f11e16b28aec1a82dc2718fbcb2f22b261777c9ad6df"
+        }
+      ],
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 9.517,
+          "promptBytes": 11114,
+          "promptSha256": "0066e2b52023b1be2197b747a8940ea0c82ccf6b5bdde3c8929c1034597a54be",
+          "usage": {
+            "input_tokens": 17918,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 193,
+            "reasoning_output_tokens": 137
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 10.338,
+          "promptBytes": 37483,
+          "promptSha256": "ecd0df0fabec7e0b50c6e2a11f7f34fd4d76cb4134ca08536e9738ea4d1c05db",
+          "usage": {
+            "input_tokens": 24666,
+            "cached_input_tokens": 8960,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 172,
+            "reasoning_output_tokens": 126
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 9.041,
+          "promptBytes": 59922,
+          "promptSha256": "a531c90de9082a2ab5d78b72e05b85a4664e52ccc9bd421cbb68fa12d8de478f",
+          "usage": {
+            "input_tokens": 30487,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 132,
+            "reasoning_output_tokens": 61
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 10.977,
+          "promptBytes": 90037,
+          "promptSha256": "833d58fc5b9dec7dc031c86e8e4d7dbd34508b11dbcd660f47a857ced837f76f",
+          "usage": {
+            "input_tokens": 38438,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 238,
+            "reasoning_output_tokens": 22
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "lead",
+          "model": "gpt-5.6-sol",
+          "sessionResumed": false,
+          "elapsedSeconds": 9.432,
+          "promptBytes": 1668,
+          "promptSha256": "6e1e2163a204bff5a9d668c5526f8d20ed1051c56c7325d1889a361c1c4c6766",
+          "usage": {
+            "input_tokens": 17129,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 184,
+            "reasoning_output_tokens": 0
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 128638,
+        "cached_input_tokens": 51200,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 919,
+        "reasoning_output_tokens": 346
+      },
+      "elapsedSeconds": 49.728,
+      "goldNotesRead": 1,
+      "goldNotes": 1,
+      "completeGoldNoteReads": true,
+      "category": 4,
+      "rawQaF1": 0.0547945205479452,
+      "operationalAdjustedQaF1": 0.0547945205479452
+    },
+    {
+      "id": "conv-26:142",
+      "caseIndex": 3,
+      "arm": "current",
+      "attemptIndex": 7,
+      "attempted": true,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "Melanie and Caroline describe their journey through life as an ongoing, supportive partnership grounded in love, acceptance, friendship, and mutual encouragement. Through transition, mental-health struggles, family life, parenthood, creativity, advocacy, and setbacks, they face difficulties side by side while sharing stories, learning, growing, and helping others.",
+      "brief": "Melanie and Caroline describe their journey together as an ongoing, supportive partnership through life\u2019s challenges and growth. Caroline shares her transgender transition, struggles with acceptance and mental health, and her efforts to advocate for LGBTQ+ people and help others. Melanie consistently encourages her courage and purpose. Melanie describes her own journey through family life, marriage, parenthood, creativity, and setbacks, with Caroline offering affirmation and practical encouragement. Together, they emphasize sharing stories, learning, growing, helping others, and facing life\u2019s difficulties side by side\u2014with love, acceptance, friendship, and mutual motivation ([session_3.md](session_3.md); [session_4.md](session_4.md); [session_8.md](session_8.md); [session_17.md](session_17.md); [session_19.md](session_19.md)).",
+      "citations": [
+        "session_3.md",
+        "session_4.md",
+        "session_8.md",
+        "session_17.md",
+        "session_19.md"
+      ],
+      "citationProvenanceValid": true,
+      "sourceReads": [
+        {
+          "path": "session_3.md",
+          "sha256": "1046cddf0c80f0bac2dfb1ebe7d7175bc6d165f2a8b6643cd5c390273799e8de",
+          "bytes": 5164
+        },
+        {
+          "path": "session_19.md",
+          "sha256": "2d02dce8bc093d22b7820992c10e200a67c3f0b88d71c68ad91c65fbfa4c4a31",
+          "bytes": 2976
+        },
+        {
+          "path": "session_14.md",
+          "sha256": "6c1d947a8d6485b2ede91554b2e1add95f633d0405ce5b48b1c162a74f41dcf3",
+          "bytes": 6884
+        },
+        {
+          "path": "session_7.md",
+          "sha256": "f9ff5cbdf9350bfa2607074e012da836e6ebdcc49fd73ce5e3c0056742de0087",
+          "bytes": 4664
+        },
+        {
+          "path": "session_4.md",
+          "sha256": "599973f70e545ca5fee5978dbfa32d86a7c4fa62b35f81e325768583d3ab20e8",
+          "bytes": 3685
+        },
+        {
+          "path": "session_10.md",
+          "sha256": "1161801e261acab9b681b64484bf7e388e9b79a687343721e4bf948a8ef32c43",
+          "bytes": 4625
+        },
+        {
+          "path": "session_17.md",
+          "sha256": "463dd1c87c177d69d047bdb6cd080b49a972c94b20f131a83eebc7317551f7a0",
+          "bytes": 4762
+        },
+        {
+          "path": "session_8.md",
+          "sha256": "a085dc2ccbac646b1719643c67f94ae998821828550ad01251678c0324a97a2a",
+          "bytes": 6625
+        },
+        {
+          "path": "session_11.md",
+          "sha256": "e699846bce8c7ba0af8bd54d0a49eb133ecba3bc7fe589c5a0fc8f8bd08f0c1f",
+          "bytes": 3798
+        },
+        {
+          "path": "session_15.md",
+          "sha256": "d96a97423324b4eb13262551b653b7b09ca837e40467dc42045b54030d28c27c",
+          "bytes": 4934
+        }
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": 10,
+          "hasMore": true,
+          "paths": [
+            "session_3.md",
+            "session_8.md",
+            "session_17.md",
+            "session_4.md",
+            "session_10.md",
+            "session_15.md",
+            "session_11.md",
+            "session_7.md",
+            "session_14.md",
+            "session_19.md"
+          ],
+          "pageSha256": "ab3c5f74f91879552e256e3e7eabb573095b7471ec958bd190fde9d3b487ec3a"
+        }
+      ],
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 8.475,
+          "promptBytes": 10033,
+          "promptSha256": "b8a1e4cb5974f72805fc99e0f7b21b06d8d37cfdc52effadef63e6e3c6035a3d",
+          "usage": {
+            "input_tokens": 17736,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 96,
+            "reasoning_output_tokens": 40
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 9.117,
+          "promptBytes": 39413,
+          "promptSha256": "f4e03d0305f45fddb4175fd6f19646e192e35b2e81f9407bb105606e46ff524f",
+          "usage": {
+            "input_tokens": 25192,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 125,
+            "reasoning_output_tokens": 79
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 13.508,
+          "promptBytes": 60512,
+          "promptSha256": "3e48672adefe06683f13f5ead70cc886fbff701a221453cfb00e9e36300c91bf",
+          "usage": {
+            "input_tokens": 30617,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 278,
+            "reasoning_output_tokens": 84
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "lead",
+          "model": "gpt-5.6-sol",
+          "sessionResumed": false,
+          "elapsedSeconds": 9.675,
+          "promptBytes": 1466,
+          "promptSha256": "1e5e43018c84c6f94e3a0a28eac6f68144d9bb20adc142e0f6c7ac094eae52bc",
+          "usage": {
+            "input_tokens": 17051,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 107,
+            "reasoning_output_tokens": 0
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 90596,
+        "cached_input_tokens": 28160,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 606,
+        "reasoning_output_tokens": 203
+      },
+      "elapsedSeconds": 41.028,
+      "goldNotesRead": 1,
+      "goldNotes": 1,
+      "completeGoldNoteReads": true,
+      "category": 4,
+      "rawQaF1": 0.13043478260869565,
+      "operationalAdjustedQaF1": 0.13043478260869565
+    },
+    {
+      "id": "conv-30:84",
+      "caseIndex": 4,
+      "arm": "current",
+      "attemptIndex": 8,
+      "attempted": true,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "A contemporary dance piece.",
+      "brief": "Jon\u2019s team performed a contemporary dance piece to win first place. [session_1.md](session_1.md:16)",
+      "citations": [
+        "session_1.md"
+      ],
+      "citationProvenanceValid": true,
+      "sourceReads": [
+        {
+          "path": "session_1.md",
+          "sha256": "3039d84783547b2966459c31e131960b3cd773c395de7760b77d70a3757f2f5c",
+          "bytes": 3652
+        },
+        {
+          "path": "session_11.md",
+          "sha256": "5a5ddb36313d66606429ebc2750dc18b6c22263431e1ba80ba4971a6f749f656",
+          "bytes": 2919
+        },
+        {
+          "path": "session_14.md",
+          "sha256": "2e07f0863d112c61d906a086eb07d29e99b152f3bd70b8152feb0b293bf95348",
+          "bytes": 2745
+        },
+        {
+          "path": "session_16.md",
+          "sha256": "cb1fa4cc8853087897d8c47ebdabb6fca7d1bb5b29cac73d526f32afa9d46bb5",
+          "bytes": 2311
+        },
+        {
+          "path": "session_2.md",
+          "sha256": "b9ac8d3bd17b4c6fb38109a153fb8cb5dbacb78b569b46f9e54d008ae505d061",
+          "bytes": 2854
+        },
+        {
+          "path": "session_3.md",
+          "sha256": "450c02b5fc0a437c591878eddb71dc39242bb48fa37793ed018533d40db5e5de",
+          "bytes": 2604
+        },
+        {
+          "path": "session_4.md",
+          "sha256": "bc0563bb5f62b460cc311b489e30add019d1ace91bfd023cb08fef1f7a23128b",
+          "bytes": 2413
+        },
+        {
+          "path": "session_5.md",
+          "sha256": "af207ed02e95f0cb5cf24e7d31de1fb168f0a9665f8307be2ba91637c56e6cf3",
+          "bytes": 4803
+        },
+        {
+          "path": "session_7.md",
+          "sha256": "52e18eadc125b3d1a9f60867f43991376b6edda3cfd63dab838cf4129737ab65",
+          "bytes": 2328
+        },
+        {
+          "path": "session_8.md",
+          "sha256": "c61fe03c2a7fb192db7d66721bc6d5de5723f15acad4c69d25fdc1a11aac42cb",
+          "bytes": 4382
+        }
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": 10,
+          "hasMore": true,
+          "paths": [
+            "session_1.md",
+            "session_5.md",
+            "session_2.md",
+            "session_8.md",
+            "session_11.md",
+            "session_7.md",
+            "session_4.md",
+            "session_16.md",
+            "session_3.md",
+            "session_14.md"
+          ],
+          "pageSha256": "936185714b08aa434530a11203e0bd32ad49fbb7d6a807fb338ef856e6512414"
+        },
+        {
+          "offset": 10,
+          "nextOffset": null,
+          "hasMore": false,
+          "paths": [
+            "session_9.md",
+            "session_6.md",
+            "session_18.md",
+            "session_13.md",
+            "session_10.md",
+            "session_15.md",
+            "session_12.md",
+            "session_17.md",
+            "session_19.md"
+          ],
+          "pageSha256": "24e96bb0b1c06da2a80fa15bb1547d0058aaa2f50eaa0ef02161030b83d13f46"
+        }
+      ],
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 8.273,
+          "promptBytes": 9869,
+          "promptSha256": "784da0b49fdd249402e5ed00142d2bfaed0f6be47c96c7d4b5a199b87bd8a17b",
+          "usage": {
+            "input_tokens": 17753,
+            "cached_input_tokens": 8960,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 63,
+            "reasoning_output_tokens": 37
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 12.808,
+          "promptBytes": 9188,
+          "promptSha256": "f3beb4ae17d538a78e5012c01cea8b0ff09180969e96610eb312026cb23f3a72",
+          "usage": {
+            "input_tokens": 17612,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 190,
+            "reasoning_output_tokens": 114
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 12.215,
+          "promptBytes": 42340,
+          "promptSha256": "31cd294a852c34a9504d5caed5e08cf99dbbb6c7ed41e2bc9331155e9fdf5534",
+          "usage": {
+            "input_tokens": 26734,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 198,
+            "reasoning_output_tokens": 147
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "lead",
+          "model": "gpt-5.6-sol",
+          "sessionResumed": false,
+          "elapsedSeconds": 7.293,
+          "promptBytes": 714,
+          "promptSha256": "14f2a6a349a073fc8884ebd846888189c46223d6285f6aaf31105ab3d40e4324",
+          "usage": {
+            "input_tokens": 16912,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 27,
+            "reasoning_output_tokens": 0
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 79011,
+        "cached_input_tokens": 37120,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 478,
+        "reasoning_output_tokens": 298
+      },
+      "elapsedSeconds": 40.868,
+      "goldNotesRead": 1,
+      "goldNotes": 1,
+      "completeGoldNoteReads": true,
+      "category": 5,
+      "rawQaF1": 0.0,
+      "operationalAdjustedQaF1": 0.0
+    },
+    {
+      "id": "conv-30:84",
+      "caseIndex": 4,
+      "arm": "coverage",
+      "attemptIndex": 9,
+      "attempted": true,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "The kind of dance piece Jon\u2019s team performed is not specified.",
+      "brief": "The supplied notes do not specify what kind of piece Jon\u2019s team performed to win first place. They only establish that his dance crew won a local competition (session_1.md, D1:16). Gina\u2019s team performed a contemporary piece called \u201cFinding Freedom,\u201d but that was not Jon\u2019s team (session_1.md, D1:17\u201319).",
+      "citations": [
+        "session_1.md"
+      ],
+      "citationProvenanceValid": true,
+      "sourceReads": [
+        {
+          "path": "session_1.md",
+          "sha256": "3039d84783547b2966459c31e131960b3cd773c395de7760b77d70a3757f2f5c",
+          "bytes": 3652
+        },
+        {
+          "path": "session_5.md",
+          "sha256": "af207ed02e95f0cb5cf24e7d31de1fb168f0a9665f8307be2ba91637c56e6cf3",
+          "bytes": 4803
+        },
+        {
+          "path": "session_2.md",
+          "sha256": "b9ac8d3bd17b4c6fb38109a153fb8cb5dbacb78b569b46f9e54d008ae505d061",
+          "bytes": 2854
+        },
+        {
+          "path": "session_8.md",
+          "sha256": "c61fe03c2a7fb192db7d66721bc6d5de5723f15acad4c69d25fdc1a11aac42cb",
+          "bytes": 4382
+        },
+        {
+          "path": "session_7.md",
+          "sha256": "52e18eadc125b3d1a9f60867f43991376b6edda3cfd63dab838cf4129737ab65",
+          "bytes": 2328
+        },
+        {
+          "path": "session_4.md",
+          "sha256": "bc0563bb5f62b460cc311b489e30add019d1ace91bfd023cb08fef1f7a23128b",
+          "bytes": 2413
+        },
+        {
+          "path": "session_16.md",
+          "sha256": "cb1fa4cc8853087897d8c47ebdabb6fca7d1bb5b29cac73d526f32afa9d46bb5",
+          "bytes": 2311
+        },
+        {
+          "path": "session_3.md",
+          "sha256": "450c02b5fc0a437c591878eddb71dc39242bb48fa37793ed018533d40db5e5de",
+          "bytes": 2604
+        },
+        {
+          "path": "session_14.md",
+          "sha256": "2e07f0863d112c61d906a086eb07d29e99b152f3bd70b8152feb0b293bf95348",
+          "bytes": 2745
+        }
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": 10,
+          "hasMore": true,
+          "paths": [
+            "session_1.md",
+            "session_5.md",
+            "session_2.md",
+            "session_8.md",
+            "session_11.md",
+            "session_7.md",
+            "session_4.md",
+            "session_16.md",
+            "session_3.md",
+            "session_14.md"
+          ],
+          "pageSha256": "aeed7c03388ab5d615e7310675cd835a35bfc256ba495c4df33722ad65d16520"
+        },
+        {
+          "offset": 10,
+          "nextOffset": null,
+          "hasMore": false,
+          "paths": [
+            "session_9.md",
+            "session_6.md",
+            "session_18.md",
+            "session_13.md",
+            "session_10.md",
+            "session_15.md",
+            "session_12.md",
+            "session_17.md",
+            "session_19.md"
+          ],
+          "pageSha256": "936c2e399373a0add7c5490d75d35999d57ae1f5edca55f0b159e16cff31abb0"
+        }
+      ],
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 8.0,
+          "promptBytes": 11211,
+          "promptSha256": "ad55f7ac38fdb12a000b4f416e15d4b62500379c5ed663abd16b4b518e87dade",
+          "usage": {
+            "input_tokens": 18003,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 58,
+            "reasoning_output_tokens": 27
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 11.199,
+          "promptBytes": 15101,
+          "promptSha256": "78b4c1b19a01ba1594faa8a8237ad7e48f2373e6ddfabfb6e658fd71f42b3425",
+          "usage": {
+            "input_tokens": 19106,
+            "cached_input_tokens": 17152,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 229,
+            "reasoning_output_tokens": 163
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 10.683,
+          "promptBytes": 41227,
+          "promptSha256": "b650f282ff35421a4ec75e0a74d65d89caf2b55ac3fe8dde520ae0bbdd302c5c",
+          "usage": {
+            "input_tokens": 26230,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 234,
+            "reasoning_output_tokens": 208
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "sessionResumed": false,
+          "elapsedSeconds": 10.126,
+          "promptBytes": 39898,
+          "promptSha256": "a766434cc4f84adf9c390c88ab05bcebe9999e6cda50590d8947f61f73d5b4de",
+          "usage": {
+            "input_tokens": 25956,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 193,
+            "reasoning_output_tokens": 95
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        },
+        {
+          "stage": "lead",
+          "model": "gpt-5.6-sol",
+          "sessionResumed": false,
+          "elapsedSeconds": 10.171,
+          "promptBytes": 911,
+          "promptSha256": "af7256c30b33261364215ef0a96bdc3dba0438ab3fde6171407c7829963a339a",
+          "usage": {
+            "input_tokens": 16955,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 35,
+            "reasoning_output_tokens": 0
+          },
+          "failed": false,
+          "failureKind": null,
+          "sessionIdentityFailed": false,
+          "warnings": [
+            "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 106250,
+        "cached_input_tokens": 45312,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 749,
+        "reasoning_output_tokens": 493
+      },
+      "elapsedSeconds": 50.538,
+      "goldNotesRead": 1,
+      "goldNotes": 1,
+      "completeGoldNoteReads": true,
+      "category": 5,
+      "rawQaF1": 0.0,
+      "operationalAdjustedQaF1": 0.0
+    }
+  ],
+  "independentSemanticReview": "not performed",
+  "limitations": [
+    "Five exposed development questions; one per category and distinct conversation, no powered inference",
+    "Same host but cache cannot be reset; order alternates, remains imperfect with odd pair count",
+    "Category 4 may require general knowledge beyond retrieved history; preserve mismatch rather than exclude after seeing outcomes",
+    "Category 5 official phrase score is not semantic abstention correctness",
+    "Gold-note reads do not establish semantic support or complete answers",
+    "Native usage can omit failed-call tokens when the host does not report them",
+    "Official raw scores preserve generated answers even after an operational failure; unattempted/no-answer use empty strings. Operational-adjusted scores separately assign zero to failures as predeclared.",
+    "Not a full official benchmark run or competitor comparison"
+  ]
+}

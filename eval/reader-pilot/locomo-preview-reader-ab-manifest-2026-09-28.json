@@ -1,0 +1,111 @@
+{
+  "protocol": "locomo-preview-reader-development-ab-v1",
+  "datasetSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "selectionSeed": "graphmory-locomo-preview-reader-ab-v1-2026-09-28",
+  "selectedIds": [
+    "conv-42:19",
+    "conv-47:52",
+    "conv-48:36",
+    "conv-26:142",
+    "conv-30:84"
+  ],
+  "categories": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "executionOrder": [
+    {
+      "id": "conv-42:19",
+      "caseIndex": 0,
+      "arm": "current"
+    },
+    {
+      "id": "conv-42:19",
+      "caseIndex": 0,
+      "arm": "coverage"
+    },
+    {
+      "id": "conv-47:52",
+      "caseIndex": 1,
+      "arm": "coverage"
+    },
+    {
+      "id": "conv-47:52",
+      "caseIndex": 1,
+      "arm": "current"
+    },
+    {
+      "id": "conv-48:36",
+      "caseIndex": 2,
+      "arm": "current"
+    },
+    {
+      "id": "conv-48:36",
+      "caseIndex": 2,
+      "arm": "coverage"
+    },
+    {
+      "id": "conv-26:142",
+      "caseIndex": 3,
+      "arm": "coverage"
+    },
+    {
+      "id": "conv-26:142",
+      "caseIndex": 3,
+      "arm": "current"
+    },
+    {
+      "id": "conv-30:84",
+      "caseIndex": 4,
+      "arm": "current"
+    },
+    {
+      "id": "conv-30:84",
+      "caseIndex": 4,
+      "arm": "coverage"
+    }
+  ],
+  "configuration": {
+    "mode": "auto",
+    "curator": "gpt-5.6-luna",
+    "lead": "gpt-5.6-sol",
+    "reasoning": "low",
+    "maxRounds": 10,
+    "maxInputBytes": 300000,
+    "structuredCitations": true,
+    "persistentCurator": false,
+    "compactFollowup": false
+  },
+  "readerInputSha256": "9b2cce9e59845cc15dfdf73b852024804980d03f272f8e5ecceda613af14ea4d",
+  "labelsSha256": "5e133685ec31c9317300d1b90711fc8ead35932c112c92f0b59d56fe0e643142",
+  "sourceHashes": {
+    "scripts/prepare-locomo-preview-reader-ab.mjs": "96b12bd43d265d524e5649361d6d4d799193d0755f82fb5c19d9156cbee68444",
+    "scripts/run-curator-paging-pilot.py": "d615f673ff69d20602885130d127faa082bb9323ef63e2e3c5e840059396ce15",
+    "scripts/lib/locomo.mjs": "b5138a78a26663238e0b619b4d24d057819a4eb8a6cec45472e3b64aee536d2a",
+    "scripts/brain-sync.mjs": "218a90cd698432193b3e34ddc0243f66f250b3ad6b288703ee02a74478a9b527",
+    "src/decision-recall.mjs": "def78f97a4331e2167128bd904314a95fcf41ccb3f40e9a4e5ec6d733c1f9dba",
+    "src/retrieval.mjs": "4a85f5662bbf44d05eaeacb386711f05641bb550193d84c3dd7402853c3991fe",
+    "src/memory-recall.mjs": "4f8765badf33121957f9d29c25cf0480c552606cfbb09676acf045c040bb703f"
+  },
+  "holdoutNotRendered": [
+    "conv-41",
+    "conv-44",
+    "conv-49"
+  ],
+  "analysis": {
+    "officialScorer": "locomo-pinned-function-bodies-raw-qa-v1",
+    "operationalFailures": "Keep all ten planned attempts; failed/no-answer trials score zero for all-attempt aggregate and report failure separately",
+    "supportRubric": "For each answer: all requested reference facts covered, no unsupported claim, correct speaker/scope/time/negation, traceable delivered sources; abstain when evidence missing. Independent blinded adjudication required before primary acceptance.",
+    "efficiency": "Curator plus Lead time and native usage; observed cache separated; no causal efficiency claim from five nonreplicated pairs",
+    "promotion": "Not sufficient for promotion; preserve paired regressions and freeze final protocol before opening holdout"
+  },
+  "limitations": [
+    "Five exposed development questions; one per category and distinct conversation, no powered inference",
+    "Same host but cache cannot be reset; order alternates, remains imperfect with odd pair count",
+    "Category 4 may require general knowledge beyond retrieved history; preserve mismatch rather than exclude after seeing outcomes",
+    "Category 5 official phrase score is not semantic abstention correctness"
+  ]
+}

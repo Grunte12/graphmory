@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import pathlib
+import re
 import subprocess
 import time
 
@@ -59,6 +60,14 @@ report = {'protocol': 'curator-paging-development-v2-boolean-continuation', 'id'
 
 def save():
     (out / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
+
+
+def brief_mentions_source(brief, name):
+    # Obsidian extensionless links and session headings identify the same exact
+    # supplied path. Boundaries prevent note.md.bak / other-note.md false matches.
+    stem = name[:-3] if name.endswith('.md') else name
+    token = re.escape(stem) + (r'(?:\.md)?' if name.endswith('.md') else '')
+    return re.search(r'(?<![\w/\\.-])' + token + r'(?![\w/\\-]|\.\w)', brief) is not None
 
 
 def command_json(command):
@@ -225,7 +234,7 @@ try:
     if args.structured_citations:
         citations = answer['citations']
         report['citations'] = citations
-        if not isinstance(citations, list) or any(not isinstance(name, str) or name not in read or name not in report['brief'] for name in citations) or len(set(citations)) != len(citations):
+        if not isinstance(citations, list) or any(not isinstance(name, str) or name not in read or not brief_mentions_source(report['brief'], name) for name in citations) or len(set(citations)) != len(citations):
             raise RuntimeError('Invalid lead citation provenance')
         report['citationProvenanceValid'] = True
     for name, expected in case['sources'].items():

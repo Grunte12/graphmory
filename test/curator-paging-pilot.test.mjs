@@ -25,6 +25,8 @@ function runFixture(mode, extraArgs = []) {
     const response=schema.properties.answer?{answer:'Ada owns the fixture (note.md)'}:
       count===0?{read_paths:[process.env.PAGING_TEST_MODE==='unseen'?'hidden-gold.md':'note.md'],next_page:process.env.PAGING_TEST_MODE==='exhausted-next',brief:''}:
       {read_paths:[],next_page:false,brief:'Ada owns the fixture (note.md)'};
+    const citeBrief={extensionless:'Ada owns the fixture [[note]].',prefix:'Ada owns the fixture (note.md.bak)',suffix:'Ada owns the fixture (other-note.md)',differentExtension:'Ada owns the fixture (note.pdf)',punctuation:'Ada owns the fixture: note.md.'};
+    if(response.brief && citeBrief[process.env.PAGING_TEST_MODE])response.brief=citeBrief[process.env.PAGING_TEST_MODE];
     if(schema.properties.citations)response.citations=[process.env.PAGING_TEST_MODE==='bad-citation'?'unread.md':'note.md'];
     console.log(JSON.stringify({type:'item.completed',item:{type:'agent_message',text:JSON.stringify(response)}}));
     console.log(JSON.stringify({type:'turn.completed',usage:{input_tokens:10,output_tokens:3}}));
@@ -98,4 +100,17 @@ test('coverage-preview option is passed through actual CLI and recorded', () => 
   assert.equal(child.status, 0, child.stderr)
   assert.equal(report.coveragePreviews, true)
   assert.equal(report.runComplete, true)
+})
+
+test('citation identity accepts Markdown extension omission and punctuation but rejects path substrings', () => {
+  for (const mode of ['extensionless', 'punctuation']) {
+    const valid = runFixture(mode, ['--structured-citations'])
+    assert.equal(valid.child.status, 0, valid.child.stderr)
+    assert.equal(valid.report.citationProvenanceValid, true)
+  }
+  for (const mode of ['prefix', 'suffix', 'differentExtension']) {
+    const invalid = runFixture(mode, ['--structured-citations'])
+    assert.notEqual(invalid.child.status, 0, mode)
+    assert.match(invalid.report.stopReason, /citation provenance/)
+  }
 })
