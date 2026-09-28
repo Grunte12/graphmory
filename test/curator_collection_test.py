@@ -170,6 +170,7 @@ else:
         env = dict(os.environ, PATH=str(bin_dir) + os.pathsep + os.environ['PATH'],
                    TEST_SOURCE_SHA=digest, PYTHONDONTWRITEBYTECODE='1')
         for name, flags in [('control', []), ('collection', ['--collection-ledger']),
+                            ('ranked', ['--ranked-originals']),
                             ('basic', ['--basic-config', str(config)])]:
             with self.subTest(name=name):
                 out = self.root / name
@@ -187,6 +188,9 @@ else:
                 if name == 'collection':
                     self.assertEqual(report['collection']['ledgerEntries'], 1)
                     self.assertEqual(report['collection']['verifiedSpans'], 1)
+                if name == 'ranked':
+                    self.assertEqual(report['rankedOriginalsDelivery']['selectedCount'], 1)
+                    self.assertEqual(report['sourceReads'][0]['transport'], 'ranked-originals')
 
 
 if __name__ == '__main__':

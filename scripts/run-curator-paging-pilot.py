@@ -31,6 +31,7 @@ parser.add_argument('--compact-prefetch', action='store_true', help='Omit previe
 parser.add_argument('--basic-config', help='Isolated Basic Memory 0.23.2 hybrid index configuration')
 parser.add_argument('--source-index', action='store_true', help='Offer the same original path/hash scope and original reads to every arm')
 parser.add_argument('--collection-ledger', action='store_true', help='Experimental full-scope original collection before Curator synthesis')
+parser.add_argument('--ranked-originals', action='store_true', help='Experimental byte-bounded original prefetch in current retrieval rank order')
 args = parser.parse_args()
 lead_model = args.lead_model or args.model
 if not 1 <= args.max_rounds <= 10 or args.max_input_bytes < 1000:
@@ -45,6 +46,9 @@ if args.collection_ledger and (not args.source_index or args.basic_config or arg
     raise RuntimeError('Collection requires shared source-index and Graphmory without prefetch')
 if args.collection_ledger and args.max_rounds < 2:
     raise RuntimeError('Collection requires at least two Curator calls: map and synthesis')
+if args.ranked_originals and (not args.source_index or args.basic_config or args.prefetch_wide_originals
+                              or args.collection_ledger or args.mode != 'auto'):
+    raise RuntimeError('Ranked originals require Graphmory auto, shared source-index, and no other prefetch')
 data = pathlib.Path(args.input).resolve()
 case = json.loads(data.read_text())[args.case_index]
 if set(case) != {'id', 'question', 'vault', 'sources'}:
@@ -95,6 +99,7 @@ report = {'protocol': 'curator-paging-development-v4-tool-error-feedback', 'id':
           'evidenceState': args.evidence_state, 'evidenceStateSnapshots': [],
           'prefetchWideOriginals': args.prefetch_wide_originals, 'compactPrefetch': args.compact_prefetch, 'prefetch': None,
           'sourceIndex': args.source_index, 'collectionLedger': args.collection_ledger, 'collection': None,
+          'rankedOriginals': args.ranked_originals, 'rankedOriginalsDelivery': None,
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
           'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [], 'sourceToolCalls': [], 'sourceRequests': [], 'sourceRequestErrors': [],
           'brief': None, 'answer': None, 'runComplete': False, 'stopReason': None,
@@ -307,6 +312,51 @@ try:
             read.update(available)
             report['sourceReads'] += [{key: row[key] for key in ('path', 'sha256', 'bytes')} | {'transport': 'recall-prefetch'} for row in prefetched]
             save()
+    if args.ranked_originals:
+        byte_budget = args.max_input_bytes // 2
+        ranked_paths = []
+        planned_bytes = 0
+        for row in page['results']:
+            name = row['path']
+            if name not in case['sources'] or name in ranked_paths:
+                raise RuntimeError('Invalid ranked original path')
+            size = (vault / name).stat().st_size
+            if planned_bytes + size > byte_budget:
+                break
+            ranked_paths.append(name)
+            planned_bytes += size
+        report['rankedOriginalsDelivery'] = {
+            'byteBudget': byte_budget, 'selectedPaths': ranked_paths,
+            'selectedCount': len(ranked_paths), 'plannedSourceBytes': planned_bytes,
+            'status': 'ready' if ranked_paths else 'first-original-exceeds-budget',
+            'hasMoreCandidates': page['hasMore'],
+        }
+        if ranked_paths:
+            sources, output_bytes, tool_seconds = command_json([
+                'node', str(cli), 'read-notes', '--vault', str(vault),
+                '--paths', json.dumps(ranked_paths),
+            ])
+            delivered = sources.get('sources')
+            if (not isinstance(delivered, list) or len(delivered) != len(ranked_paths)
+                or [row.get('path') for row in delivered] != ranked_paths):
+                raise RuntimeError('Ranked original delivery mismatch')
+            actual_bytes = 0
+            for row in delivered:
+                if (row.get('sha256') != case['sources'][row['path']]
+                    or not isinstance(row.get('markdown'), str)
+                    or hashlib.sha256(row['markdown'].encode()).hexdigest() != row['sha256']):
+                    raise RuntimeError('Ranked original hash mismatch')
+                actual_bytes += len(row['markdown'].encode())
+            if actual_bytes != planned_bytes or actual_bytes > byte_budget:
+                raise RuntimeError('Ranked original byte budget mismatch')
+            originals.extend(delivered)
+            read.update(ranked_paths)
+            report['sourceReads'].extend({key: row[key] for key in ('path', 'sha256', 'bytes')}
+                                         | {'transport': 'ranked-originals'} for row in delivered)
+            report['sourceToolCalls'].append({'paths': ranked_paths, 'toolOutputBytes': output_bytes,
+                                              'toolSeconds': tool_seconds})
+            report['rankedOriginalsDelivery']['actualSourceBytes'] = actual_bytes
+        save()
     feedback = None
     for turn in range(0 if args.collection_ledger else args.max_rounds):
         # Only the current page and verified original reads are supplied. Older previews
