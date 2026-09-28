@@ -7,6 +7,7 @@ import pathlib
 import re
 import subprocess
 import time
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input', required=True)
@@ -21,6 +22,7 @@ parser.add_argument('--persistent-curator', action='store_true')
 parser.add_argument('--compact-followup', action='store_true')
 parser.add_argument('--structured-citations', action='store_true')
 parser.add_argument('--coverage-previews', action='store_true')
+parser.add_argument('--basic-config', help='Isolated Basic Memory 0.23.2 hybrid index configuration')
 args = parser.parse_args()
 lead_model = args.lead_model or args.model
 if not 1 <= args.max_rounds <= 10 or args.max_input_bytes < 1000:
@@ -36,6 +38,28 @@ for name, expected in case['sources'].items():
     file = vault / name
     if file.is_symlink() or not file.resolve().is_relative_to(vault) or hashlib.sha256(file.read_bytes()).hexdigest() != expected:
         raise RuntimeError('Invalid source boundary/hash')
+basic = None
+basic_env = None
+indexed_hashes = {}
+if args.basic_config:
+    basic = json.loads(pathlib.Path(args.basic_config).read_text())
+    if set(basic) != {'exe', 'state', 'home', 'notes', 'project'} or any(not isinstance(basic[key], str) or not pathlib.Path(basic[key]).is_absolute() for key in ('exe', 'state', 'home', 'notes')) or not isinstance(basic['project'], str) or not basic['project']:
+        raise RuntimeError('Invalid isolated Basic Memory configuration')
+    notes = pathlib.Path(basic['notes']).resolve()
+    if notes == vault or vault in notes.parents or notes in vault.parents:
+        raise RuntimeError('Native index and original vault must be separate')
+    for name in case['sources']:
+        file = notes / name
+        if file.is_symlink() or not file.resolve().is_relative_to(notes) or not file.is_file():
+            raise RuntimeError('Missing or unsafe native indexed note')
+        indexed_hashes[name] = hashlib.sha256(file.read_bytes()).hexdigest()
+    basic_env = dict(os.environ, BASIC_MEMORY_CONFIG_DIR=basic['state'], BASIC_MEMORY_HOME=basic['notes'],
+                     XDG_CONFIG_HOME=basic['home'], BASIC_MEMORY_AUTO_UPDATE='false',
+                     BASIC_MEMORY_SEMANTIC_SEARCH_ENABLED='true', BASIC_MEMORY_DEFAULT_SEARCH_TYPE='hybrid',
+                     BASIC_MEMORY_RERANKER_ENABLED='false')
+    version = subprocess.run([basic['exe'], '--version'], env=basic_env, capture_output=True, text=True, timeout=30)
+    if version.returncode or version.stdout.strip() != 'Basic Memory version: 0.23.2':
+        raise RuntimeError('Basic Memory version mismatch')
 out = pathlib.Path(args.out).resolve()
 if out.exists():
     raise RuntimeError('Preserve prior trials')
@@ -45,6 +69,8 @@ workspace.mkdir()
 root = pathlib.Path(__file__).resolve().parents[1]
 cli = root / 'scripts/brain-sync.mjs'
 report = {'protocol': 'curator-paging-development-v4-tool-error-feedback', 'id': case['id'], 'question': case['question'],
+          'retrieval': 'basic-memory-hybrid' if basic else 'graphmory-managed',
+          'indexedSourceHashes': indexed_hashes if basic else None,
           'model': args.model, 'leadModel': lead_model, 'mode': args.mode, 'maxRounds': args.max_rounds, 'maxInputBytes': args.max_input_bytes,
           'persistentCurator': args.persistent_curator, 'compactFollowup': args.compact_followup,
           'structuredCitations': args.structured_citations,
@@ -84,14 +110,39 @@ def command_json(command):
     return json.loads(child.stdout)
 
 
+def native_json(command):
+    started = time.monotonic()
+    child = subprocess.run([basic['exe'], *command], env=basic_env, text=True, capture_output=True, timeout=120)
+    if child.returncode:
+        raise RuntimeError('Basic Memory CLI failed')
+    return json.loads(child.stdout), len(child.stdout.encode()), round(time.monotonic() - started, 3)
+
+
 def retrieval(offset):
-    page = command_json(['node', str(cli), 'recall-managed', '--vault', str(vault), '--query', case['question'],
-                         '--agent', '--offset', str(offset), '--' + args.mode] +
-                        (['--coverage-previews'] if args.coverage_previews else []))
+    if basic:
+        if offset < 0 or offset % 10:
+            raise RuntimeError('Invalid native page offset')
+        native, output_bytes, tool_seconds = native_json(['tool', 'search-notes', case['question'], '--project', basic['project'],
+            '--local', '--page-size', '10', '--page', str(offset // 10 + 1), '--json', '--hybrid'])
+        if not isinstance(native, dict) or not isinstance(native.get('results'), list) or not isinstance(native.get('has_more'), bool):
+            raise RuntimeError('Invalid native search response')
+        paths = [row.get('file_path') for row in native['results']]
+        if any(name not in case['sources'] for name in paths) or len(paths) != len(set(paths)):
+            raise RuntimeError('Unmapped or duplicate native search paths')
+        page = {'offset': offset, 'nextOffset': offset + 10 if native['has_more'] else None,
+                'hasMore': native['has_more'], 'results': [{**row, 'path': row['file_path']} for row in native['results']]}
+    else:
+        started = time.monotonic()
+        page = command_json(['node', str(cli), 'recall-managed', '--vault', str(vault), '--query', case['question'],
+                             '--agent', '--offset', str(offset), '--' + args.mode] +
+                            (['--coverage-previews'] if args.coverage_previews else []))
+        output_bytes = len(json.dumps(page).encode())
+        tool_seconds = round(time.monotonic() - started, 3)
     if page.get('offset') != offset or not isinstance(page.get('results'), list):
         raise RuntimeError('Invalid retrieval page')
     report['pages'].append({'offset': offset, 'nextOffset': page['nextOffset'], 'hasMore': page['hasMore'],
                             'paths': [row['path'] for row in page['results']],
+                            'toolSeconds': tool_seconds, 'toolOutputBytes': output_bytes,
                             'pageSha256': hashlib.sha256(json.dumps(page, sort_keys=True).encode()).hexdigest()})
     save()
     return page
@@ -159,7 +210,7 @@ schema = {'type': 'object', 'properties': {'read_paths': {'type': 'array', 'item
           'next_page': {'type': 'boolean'}, 'brief': {'type': 'string'}},
           'required': ['read_paths', 'next_page', 'brief'], 'additionalProperties': False}
 instruction = ('Act as the memory curator. Use only supplied evidence; never use tools, files or shell directly. '
-               'The runner executes Graphmory commands for you. Return read_paths for original notes and next_page=true if more candidates are needed. '
+               'The runner executes memory-tool commands for you. Return read_paths for original notes and next_page=true if more candidates are needed. '
                'The runner determines the exact continuation offset; never calculate it. Only request paths on supplied pages. '
                'When requesting evidence, leave brief empty. When sufficient, use empty read_paths and next_page=false '
                'and return a concise source-cited brief. If hasMore=false, next_page must be false. '
@@ -224,13 +275,25 @@ try:
             raise RuntimeError('Brief returned while evidence request pending')
         report['sourceRequests'].append({'turn': turn, 'requested': requested, 'new': unread, 'reused': reused})
         if unread:
-            sources = command_json(['node', str(cli), 'read-notes', '--vault', str(vault), '--paths', json.dumps(unread)])
+            if basic:
+                native_sources = []
+                for name in unread:
+                    native, output_bytes, tool_seconds = native_json(['tool', 'read-note', name, '--project', basic['project'], '--local', '--json'])
+                    if not isinstance(native, dict) or native.get('file_path') != name or not isinstance(native.get('content'), str):
+                        raise RuntimeError('Invalid native note read')
+                    content = native['content']
+                    native_sources.append({'path': name, 'sha256': hashlib.sha256(content.encode()).hexdigest(),
+                        'markdown': content, 'bytes': len(content.encode()), 'toolOutputBytes': output_bytes,
+                        'toolSeconds': tool_seconds, 'originalSha256': case['sources'][name], 'indexedSha256': indexed_hashes[name]})
+                sources = {'sources': native_sources}
+            else:
+                sources = command_json(['node', str(cli), 'read-notes', '--vault', str(vault), '--paths', json.dumps(unread)])
             if set(row['path'] for row in sources['sources']) != set(unread):
                 raise RuntimeError('Source delivery mismatch')
             for row in sources['sources']:
-                if row['sha256'] != case['sources'][row['path']] or hashlib.sha256(row['markdown'].encode()).hexdigest() != row['sha256']:
+                if (not basic and row['sha256'] != case['sources'][row['path']]) or hashlib.sha256(row['markdown'].encode()).hexdigest() != row['sha256']:
                     raise RuntimeError('Original source mutated/hash mismatch')
-            report['sourceReads'] += [{'path': row['path'], 'sha256': row['sha256'], 'bytes': row['bytes']} for row in sources['sources']]
+            report['sourceReads'] += [{key: row[key] for key in ('path', 'sha256', 'bytes', 'toolOutputBytes', 'toolSeconds', 'originalSha256', 'indexedSha256') if key in row} for row in sources['sources']]
             read.update(unread)
             originals.extend(sources['sources'])
         original_by_path = {row['path']: row for row in originals}
@@ -273,6 +336,8 @@ try:
     for name, expected in case['sources'].items():
         if hashlib.sha256((vault / name).read_bytes()).hexdigest() != expected:
             raise RuntimeError('Source mutation')
+        if basic and hashlib.sha256((notes / name).read_bytes()).hexdigest() != indexed_hashes[name]:
+            raise RuntimeError('Native index source mutation')
     report['runComplete'] = True
     report['stopReason'] = 'curator-finalized'
 except Exception as error:

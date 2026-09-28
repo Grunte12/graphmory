@@ -77,7 +77,15 @@ function runFixture(mode, extraArgs = []) {
     console.log(JSON.stringify({type:'turn.completed',usage:{input_tokens:10,output_tokens:3}}));
   });\n`
   fs.writeFileSync(path.join(bin, 'codex'), fake, { mode: 0o700 })
-  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), '--model', 'gpt-5.6-luna', '--lead-model', 'gpt-5.6-sol', ...extraArgs, ...(['persistent', 'changed-session', 'compact-repeat'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : []), ...(['citation', 'bad-citation'].includes(mode) ? ['--structured-citations'] : [])], {
+  if (mode === 'basic') {
+    const native = path.join(dir, 'native'), notes = path.join(native, 'notes')
+    fs.mkdirSync(notes, { recursive: true })
+    fs.writeFileSync(path.join(notes, 'note.md'), '# Fixture\n## Fact\nThe fixture owner is Ada.\n')
+    const bm = path.join(bin, 'bm')
+    fs.writeFileSync(bm, `#!${process.execPath}\nconst args=process.argv.slice(2);if(args[0]==='--version')process.stdout.write('Basic Memory version: 0.23.2\\n');else if(args[0]==='tool'&&args[1]==='search-notes')process.stdout.write(JSON.stringify({results:[{file_path:'note.md',content:'The fixture owner is Ada.',matched_chunk:'Ada owns the fixture'}],has_more:false,current_page:1,page_size:10,total:1,total_is_exact:true}));else if(args[0]==='tool'&&args[1]==='read-note')process.stdout.write(JSON.stringify({file_path:'note.md',content:'# Fixture\\n## Fact\\nThe fixture owner is Ada.\\n'}));else process.exit(9);`, { mode: 0o700 })
+    fs.writeFileSync(path.join(dir, 'basic.json'), JSON.stringify({ exe: bm, state: path.join(native, 'state'), home: path.join(native, 'home'), notes, project: 'pilot' }))
+  }
+  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), '--model', 'gpt-5.6-luna', '--lead-model', 'gpt-5.6-sol', ...extraArgs, ...(mode === 'basic' ? ['--basic-config', path.join(dir, 'basic.json')] : []), ...(['persistent', 'changed-session', 'compact-repeat'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : []), ...(['citation', 'bad-citation'].includes(mode) ? ['--structured-citations'] : [])], {
     encoding: 'utf8', timeout: 10000,
     env: { ...process.env, PATH: bin + path.delimiter + process.env.PATH, PAGING_TEST_MODE: mode, PAGING_TEST_COUNTER: path.join(dir, 'counter') },
   })
@@ -99,6 +107,16 @@ test('curator mediation delivers verified original through actual CLI and gives 
   assert.deepEqual(report.sourceReads.map(row => row.path), ['note.md'])
   assert.equal(report.answer, 'Ada owns the fixture (note.md)')
   assert.equal(report.stopReason, 'curator-finalized')
+})
+test('isolated Basic Memory hybrid adapter preserves native content, mapped paths and indexed-source hashes', () => {
+  const { child, report } = runFixture('basic')
+  assert.equal(child.status, 0, child.stderr)
+  assert.equal(report.runComplete, true)
+  assert.equal(report.retrieval, 'basic-memory-hybrid')
+  assert.deepEqual(report.pages[0].paths, ['note.md'])
+  assert.equal(report.pages[0].toolOutputBytes > 0, true)
+  assert.deepEqual(report.sourceReads.map(row => row.path), ['note.md'])
+  assert.equal(report.sourceReads[0].indexedSha256, report.indexedSourceHashes['note.md'])
 })
 test('curator mediation rejects unsafe source paths and never reaches lead', () => {
   const { child, report } = runFixture('unsafe')
