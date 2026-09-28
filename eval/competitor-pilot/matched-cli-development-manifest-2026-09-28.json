@@ -1,0 +1,46 @@
+{
+  "protocol": "longmemeval-development-matched-cli-retrieval-v1",
+  "frozenBeforeFullRun": true,
+  "datasetSha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "selectedIds": [
+    "09ba9854_abs",
+    "a96c20ee_abs",
+    "50635ada",
+    "945e3d21",
+    "67e0d0f2",
+    "gpt4_d84a3211",
+    "a40e080f",
+    "c7cf7dfd",
+    "07b6f563",
+    "caf03d32",
+    "d52b4f67",
+    "29f2956b",
+    "gpt4_6ed717ea",
+    "gpt4_cd90e484"
+  ],
+  "scriptSha256": "544e8e458d831f12f11d5d809485e1ffd8d3ca738fda745177fb524c5e2b092d",
+  "graphmoryCliSha256": "218a90cd698432193b3e34ddc0243f66f250b3ad6b288703ee02a74478a9b527",
+  "basicMemoryVersion": "0.23.2",
+  "arms": [
+    "basic-memory-hybrid",
+    "graphmory-recall-loop"
+  ],
+  "perCaseRepeats": 3,
+  "ordering": "Alternating first arm by case index; both CLI searches repeated three times after Basic Memory native ingest",
+  "primaryRetrievalMetric": "Complete evidence@10 over 12 answerable cases",
+  "secondary": [
+    "Complete evidence@3",
+    "Recall@3",
+    "Recall@10",
+    "warm CLI wall latency",
+    "warm stdout bytes",
+    "native ingest wall latency",
+    "operational failures"
+  ],
+  "nonClaims": [
+    "No answer-level quality",
+    "No model token cost",
+    "No holdout",
+    "No end-to-end memory workflow superiority"
+  ]
+}
