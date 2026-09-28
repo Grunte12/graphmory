@@ -1,0 +1,11 @@
+{
+  "protocol": "support-judge-calibration-v1",
+  "manifestSha256": "d96c2a40722f5818c4d7bd62bb29a3df1c1c943dfdb45b151f8e05fd0c43064a",
+  "reviewSha256": "164668ef3ef6cca37962705acb5da154f76ef2264d5508622409660c95b7d6a8",
+  "scoreSha256": "8b1476d5fb83408490e419499cbff6d4d78d2bdb994406d155e6082d923b25ce",
+  "reviewer": "gpt-6-luna",
+  "reasoning": "low",
+  "reviewAttempts": 1,
+  "packetAndLabelsMatchFrozenHashes": true,
+  "usageTokens": "Not exposed by collaboration tool; no monetary cost claim."
+}

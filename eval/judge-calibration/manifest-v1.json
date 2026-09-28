@@ -1,0 +1,12 @@
+{
+  "protocol": "support-judge-calibration-v1",
+  "baseline": "f1d3237",
+  "reviewer": "gpt-6-luna",
+  "reasoning": "low",
+  "plannedReviewers": 1,
+  "plannedCases": 20,
+  "hashes": {
+    "packet-v1.json": "16cd3942d0b41f7705c5bafb981e082718512fa7033e4ac38e598d062220edbc",
+    "labels-v1.json": "b56964040bbf3d473e750aa05921abb686ade50683b8daf4ed36c626413400c3"
+  }
+}

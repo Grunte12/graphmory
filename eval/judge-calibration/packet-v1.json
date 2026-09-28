@@ -1,0 +1,238 @@
+{
+  "protocol": "support-judge-calibration-v1",
+  "instructions": "Evaluate each answer against ONLY supplied sources and question. Return one row per blindId with sourceSupport, complete, citationCoverage, supportedComplete (yes/no/unclear), and brief rationale with source paths. supportedComplete=yes only when all other fields are yes. Evaluate scope, dates, negation, event identity, unresolved conflict, missing evidence, all requested facts and extra claims. A cited filename alone does not support a contradicted or missing claim. Correct refusal with cited missing/conflicting evidence is complete. No treatment or benchmark-reference identity is provided. Do not inspect label files or other repository artifacts.",
+  "cases": [
+    {
+      "blindId": "a20b8a66976f",
+      "question": "How many actual script rejections did Ada receive?",
+      "sources": {
+        "events.md": "January 2: Ada received a rejection from Studio Pine. January 5: Ada discussed the same Studio Pine rejection letter again. January 9: Ada submitted a new script and fears it may be rejected."
+      },
+      "answer": "Three rejections.",
+      "citations": [
+        "events.md"
+      ]
+    },
+    {
+      "blindId": "a74a520a07ef",
+      "question": "Who owns Cedar?",
+      "sources": {
+        "owner.md": "Cedar owner: Mira. No deadline is recorded."
+      },
+      "answer": "Mira.",
+      "citations": [
+        "owner.md"
+      ]
+    },
+    {
+      "blindId": "da05d7f6994e",
+      "question": "Who owns Cedar and what is its launch date?",
+      "sources": {
+        "owner.md": "Cedar owner: Mira.",
+        "launch.md": "Cedar launches on May 8."
+      },
+      "answer": "Mira owns Cedar; launch is May 8.",
+      "citations": [
+        "owner.md",
+        "launch.md"
+      ]
+    },
+    {
+      "blindId": "5d68f02b8bea",
+      "question": "What was the Atlas deadline before the January 20 update?",
+      "sources": {
+        "old.md": "January 1: Atlas deadline is March 4.",
+        "update.md": "January 20: Atlas deadline changed from March 4 to April 9."
+      },
+      "answer": "April 9.",
+      "citations": [
+        "update.md"
+      ]
+    },
+    {
+      "blindId": "d5fa67655c13",
+      "question": "What is North project budget?",
+      "sources": {
+        "north.md": "North budget: $12,000.",
+        "south.md": "South budget: $90,000."
+      },
+      "answer": "$90,000.",
+      "citations": [
+        "south.md"
+      ]
+    },
+    {
+      "blindId": "d21beee107c4",
+      "question": "What is the current Atlas deadline?",
+      "sources": {
+        "old.md": "January 1: Atlas deadline is March 4.",
+        "update.md": "January 20: Atlas deadline changed from March 4 to April 9."
+      },
+      "answer": "April 9.",
+      "citations": [
+        "update.md"
+      ]
+    },
+    {
+      "blindId": "1d7c913f5a11",
+      "question": "How many actual script rejections did Ada receive?",
+      "sources": {
+        "events.md": "January 2: Ada received a rejection from Studio Pine. January 5: Ada discussed the same Studio Pine rejection letter again. January 9: Ada submitted a new script and fears it may be rejected."
+      },
+      "answer": "One actual rejection; the later mention repeats it and the new submission has no outcome.",
+      "citations": [
+        "events.md"
+      ]
+    },
+    {
+      "blindId": "82b761941a8f",
+      "question": "What budget can we confidently report for Cove?",
+      "sources": {
+        "a.md": "June 2: Cove budget $5,000.",
+        "b.md": "June 2: Cove budget $8,000. Neither note says it replaces the other."
+      },
+      "answer": "The notes conflict: $5,000 versus $8,000. A confirmed single budget is unavailable.",
+      "citations": [
+        "a.md",
+        "b.md"
+      ]
+    },
+    {
+      "blindId": "b373e4b7af0e",
+      "question": "Is the Ember feature enabled?",
+      "sources": {
+        "settings.md": "Ember feature is not enabled. It may be enabled next quarter."
+      },
+      "answer": "No; it is currently disabled.",
+      "citations": [
+        "settings.md"
+      ]
+    },
+    {
+      "blindId": "8aa11e642a71",
+      "question": "Who owns Cedar?",
+      "sources": {
+        "owner.md": "Cedar owner: Mira. No deadline is recorded."
+      },
+      "answer": "Mira owns Cedar and the deadline is July 1.",
+      "citations": [
+        "owner.md"
+      ]
+    },
+    {
+      "blindId": "563b0212ef2a",
+      "question": "What budget can we confidently report for Cove?",
+      "sources": {
+        "a.md": "June 2: Cove budget $5,000.",
+        "b.md": "June 2: Cove budget $8,000. Neither note says it replaces the other."
+      },
+      "answer": "$8,000; it is confirmed.",
+      "citations": [
+        "b.md"
+      ]
+    },
+    {
+      "blindId": "01bc31af5195",
+      "question": "What is North project budget?",
+      "sources": {
+        "north.md": "North budget: $12,000.",
+        "south.md": "South budget: $90,000."
+      },
+      "answer": "$12,000.",
+      "citations": [
+        "north.md"
+      ]
+    },
+    {
+      "blindId": "c04f26f3cb70",
+      "question": "What is the current Atlas deadline?",
+      "sources": {
+        "old.md": "January 1: Atlas deadline is March 4.",
+        "update.md": "January 20: Atlas deadline changed from March 4 to April 9."
+      },
+      "answer": "March 4.",
+      "citations": [
+        "old.md"
+      ]
+    },
+    {
+      "blindId": "daca7543a003",
+      "question": "Who owns Cedar and what is its launch date?",
+      "sources": {
+        "owner.md": "Cedar owner: Mira.",
+        "launch.md": "Cedar launches on May 8."
+      },
+      "answer": "Mira owns Cedar.",
+      "citations": [
+        "owner.md"
+      ]
+    },
+    {
+      "blindId": "9c84f1e66c02",
+      "question": "What is the train fare for the River trip?",
+      "sources": {
+        "river.md": "River trip: travel by train. Fare is not recorded.",
+        "hill.md": "Hill trip: train fare $40."
+      },
+      "answer": "The River fare is not recorded, so I cannot give an amount.",
+      "citations": [
+        "river.md"
+      ]
+    },
+    {
+      "blindId": "dc0f3173db66",
+      "question": "Who owns Cedar?",
+      "sources": {
+        "owner.md": "Cedar owner: Mira."
+      },
+      "answer": "Mira.",
+      "citations": [
+        "owner.md"
+      ]
+    },
+    {
+      "blindId": "eaf904037c05",
+      "question": "What was the Atlas deadline before the January 20 update?",
+      "sources": {
+        "old.md": "January 1: Atlas deadline is March 4.",
+        "update.md": "January 20: Atlas deadline changed from March 4 to April 9."
+      },
+      "answer": "March 4.",
+      "citations": [
+        "old.md"
+      ]
+    },
+    {
+      "blindId": "40d17fcf71be",
+      "question": "Who owns Cedar?",
+      "sources": {
+        "owner.md": "Cedar owner: Mira."
+      },
+      "answer": "Mira.",
+      "citations": []
+    },
+    {
+      "blindId": "39849d1c921a",
+      "question": "What is the train fare for the River trip?",
+      "sources": {
+        "river.md": "River trip: travel by train. Fare is not recorded.",
+        "hill.md": "Hill trip: train fare $40."
+      },
+      "answer": "$40.",
+      "citations": [
+        "hill.md"
+      ]
+    },
+    {
+      "blindId": "4a63fbd87081",
+      "question": "Is the Ember feature enabled?",
+      "sources": {
+        "settings.md": "Ember feature is not enabled. It may be enabled next quarter."
+      },
+      "answer": "Yes, it is enabled.",
+      "citations": [
+        "settings.md"
+      ]
+    }
+  ]
+}
