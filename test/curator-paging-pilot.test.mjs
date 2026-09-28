@@ -89,6 +89,8 @@ function runFixture(mode, extraArgs = []) {
   if (mode === 'basic') {
     const native = path.join(dir, 'native'), notes = path.join(native, 'notes')
     fs.mkdirSync(notes, { recursive: true })
+    fs.mkdirSync(path.join(native, 'state'), { recursive: true })
+    fs.mkdirSync(path.join(native, 'home'), { recursive: true })
     fs.writeFileSync(path.join(notes, 'note.md'), '# Fixture\n## Fact\nThe fixture owner is Ada.\n')
     const bm = path.join(bin, 'bm')
     fs.writeFileSync(bm, `#!${process.execPath}\nconst args=process.argv.slice(2);if(args[0]==='--version')process.stdout.write('Basic Memory version: 0.23.2\\n');else if(args[0]==='tool'&&args[1]==='search-notes')process.stdout.write(JSON.stringify({results:[{file_path:'note.md',content:'The fixture owner is Ada.',matched_chunk:'Ada owns the fixture'}],has_more:false,current_page:1,page_size:10,total:1,total_is_exact:true}));else if(args[0]==='tool'&&args[1]==='read-note')process.stdout.write(JSON.stringify({file_path:'note.md',content:'# Fixture\\n## Fact\\nThe fixture owner is Ada.\\n'}));else process.exit(9);`, { mode: 0o700 })

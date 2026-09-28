@@ -76,8 +76,11 @@ if args.basic_config:
     basic_env = dict(os.environ, BASIC_MEMORY_CONFIG_DIR=basic['state'], BASIC_MEMORY_HOME=basic['notes'],
                      XDG_CONFIG_HOME=basic['home'], BASIC_MEMORY_AUTO_UPDATE='false',
                      BASIC_MEMORY_SEMANTIC_SEARCH_ENABLED='true', BASIC_MEMORY_DEFAULT_SEARCH_TYPE='hybrid',
-                     BASIC_MEMORY_RERANKER_ENABLED='false')
-    version = subprocess.run([basic['exe'], '--version'], env=basic_env, capture_output=True, text=True, timeout=30)
+                     BASIC_MEMORY_RERANKER_ENABLED='false',
+                     FASTEMBED_CACHE_PATH=str(pathlib.Path(basic['state']) / 'fastembed_cache'),
+                     HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1')
+    version = subprocess.run([basic['exe'], '--version'], env=basic_env, cwd=basic['home'],
+                             capture_output=True, text=True, timeout=30)
     if version.returncode or version.stdout.strip() != 'Basic Memory version: 0.23.2':
         raise RuntimeError('Basic Memory version mismatch')
 out = pathlib.Path(args.out).resolve()
@@ -138,7 +141,8 @@ def command_json(command):
 
 def native_json(command):
     started = time.monotonic()
-    child = subprocess.run([basic['exe'], *command], env=basic_env, text=True, capture_output=True, timeout=120)
+    child = subprocess.run([basic['exe'], *command], env=basic_env, cwd=basic['home'],
+                           text=True, capture_output=True, timeout=120)
     if child.returncode:
         raise RuntimeError('Basic Memory CLI failed')
     return json.loads(child.stdout), len(child.stdout.encode()), round(time.monotonic() - started, 3)
