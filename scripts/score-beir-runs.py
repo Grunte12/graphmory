@@ -25,6 +25,8 @@ if out.exists():
 sha = lambda data: hashlib.sha256(data).hexdigest()
 archive_bytes = pathlib.Path(args.zip).read_bytes()
 manifest = json.loads((directory / 'manifest.json').read_text())
+if manifest.get('complete') is False:
+    raise RuntimeError('Refuse an incomplete retrieval run')
 if sha(archive_bytes) != manifest['archiveSha256']:
     raise RuntimeError('Dataset archive drift')
 with zipfile.ZipFile(io.BytesIO(archive_bytes)) as archive:
@@ -41,16 +43,23 @@ report = dict(dataset=args.dataset, split=args.split, queryCount=len(qrels),
               pytrecEvalTerrierVersion=importlib.metadata.version('pytrec-eval-terrier'),
               evaluationSourceSha256=sha(pathlib.Path(inspect.getsourcefile(EvaluateRetrieval.evaluate)).read_bytes()),
               runManifestSha256=sha((directory / 'manifest.json').read_bytes()), arms={})
-for arm in ('bm25', 'managedLexical'):
+arms = manifest.get('arms', ['bm25', 'managedLexical'])
+if (not isinstance(arms, list) or not arms
+    or any(not isinstance(arm, str) or not arm.isidentifier() for arm in arms)
+    or len(set(arms)) != len(arms)):
+    raise RuntimeError('Invalid runfile arm list')
+ks = manifest.get('kValues', [1, 3, 5, 10, 100, 1000])
+if not isinstance(ks, list) or not ks or any(type(k) is not int or k < 1 for k in ks):
+    raise RuntimeError('Invalid metric cutoffs')
+for arm in arms:
     raw = (directory / (arm + '.json')).read_bytes()
     results = json.loads(raw)
     if set(results) != set(qrels) or any(not isinstance(values, dict) for values in results.values()):
         raise RuntimeError('Incomplete runfile')
-    ks = [1, 3, 5, 10, 100, 1000]
     # Preserve the official evaluator's default same-ID exclusion and record it.
     ndcg, mean_ap, recall, precision = EvaluateRetrieval.evaluate(qrels, results, ks)
     report['arms'][arm] = dict(runSha256=sha(raw), ignoreIdenticalIds=True, ndcg=ndcg, map=mean_ap, recall=recall, precision=precision,
                               mrr=EvaluateRetrieval.evaluate_custom(qrels, results, ks, metric='mrr'))
 out.write_text(json.dumps(report, indent=2) + '\n')
-print(json.dumps({arm: {'NDCG@10': value['ndcg']['NDCG@10'], 'Recall@10': value['recall']['Recall@10']}
+print(json.dumps({arm: {**value['ndcg'], **value['recall']}
                   for arm, value in report['arms'].items()}))

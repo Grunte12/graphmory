@@ -42,6 +42,17 @@ with zipfile.ZipFile(sys.argv[1],'w') as z:
       assert.deepEqual(Object.keys(result), ['q-1'])
       assert.deepEqual(Object.keys(result['q-1']), ['doc-1'])
     }
+    const semanticOut = path.join(dir, 'semantic-missing')
+    const semantic = spawnSync(process.execPath, ['scripts/export-beir-existing-semantic.mjs',
+      '--prepared', out, '--out', semanticOut, '--model-cache', path.join(dir, 'cache')], {
+      encoding: 'utf8', env: { ...process.env, MPH_TEST_SEMANTIC_MOCK_MISSING: '1' },
+    })
+    assert.notEqual(semantic.status, 0)
+    const ledger = JSON.parse(fs.readFileSync(path.join(semanticOut, 'manifest.json')))
+    assert.equal(ledger.complete, false)
+    assert.deepEqual(ledger.planned, ['q-1'])
+    assert.deepEqual(ledger.attempted, [])
+    assert.match(ledger.stopReason, /OPTIONAL_DEPENDENCY_MISSING/)
     fs.appendFileSync(path.join(out, 'vault/docs/doc-1.md'), 'Mutation')
     const corrupt = spawnSync(process.execPath, ['scripts/export-beir-lexical-runs.mjs', '--prepared', out, '--out', path.join(dir, 'corrupt')], { encoding: 'utf8' })
     assert.notEqual(corrupt.status, 0)
