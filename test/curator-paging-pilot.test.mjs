@@ -90,21 +90,33 @@ function runFixture(mode, extraArgs = []) {
     env: { ...process.env, PATH: bin + path.delimiter + process.env.PATH, PAGING_TEST_MODE: mode, PAGING_TEST_COUNTER: path.join(dir, 'counter') },
   })
   const report = JSON.parse(fs.readFileSync(path.join(dir, 'run', 'report.json')))
+  let exactGraphToolBytes = null
+  if (mode === 'valid') {
+    const cli = new URL('../scripts/brain-sync.mjs', import.meta.url).pathname
+    const search = spawnSync(process.execPath, [cli, 'recall-managed', '--vault', vault, '--query', 'Who owns the fixture?', '--agent', '--offset', '0', '--bundle'], { encoding: 'utf8' })
+    const read = spawnSync(process.execPath, [cli, 'read-notes', '--vault', vault, '--paths', '["note.md"]'], { encoding: 'utf8' })
+    assert.equal(search.status, 0, search.stderr)
+    assert.equal(read.status, 0, read.stderr)
+    exactGraphToolBytes = { search: Buffer.byteLength(search.stdout), read: Buffer.byteLength(read.stdout) }
+  }
   assert.equal(fs.readFileSync(path.join(vault, 'note.md'), 'utf8'), markdown)
   if (process.env.READER_FIXTURE_REPORT_DIR) {
     fs.mkdirSync(process.env.READER_FIXTURE_REPORT_DIR, { recursive: true })
     fs.writeFileSync(path.join(process.env.READER_FIXTURE_REPORT_DIR, mode + '.json'), JSON.stringify(report, null, 2) + '\n', { flag: 'wx' })
   }
   fs.rmSync(dir, { recursive: true, force: true })
-  return { child, report }
+  return { child, report, exactGraphToolBytes }
 }
 test('curator mediation delivers verified original through actual CLI and gives lead only final brief', () => {
-  const { child, report } = runFixture('valid')
+  const { child, report, exactGraphToolBytes } = runFixture('valid')
   assert.equal(child.status, 0, child.stderr)
   assert.equal(report.runComplete, true)
   assert.equal(report.modelCalls.length, 3)
   assert.deepEqual(report.modelCalls.map(row => row.model), ['gpt-5.6-luna', 'gpt-5.6-luna', 'gpt-5.6-sol'])
   assert.deepEqual(report.sourceReads.map(row => row.path), ['note.md'])
+  assert.equal(report.pages[0].toolOutputBytes, exactGraphToolBytes.search)
+  assert.equal(report.sourceToolCalls[0].toolOutputBytes, exactGraphToolBytes.read)
+  assert.deepEqual(report.sourceToolCalls[0].paths, ['note.md'])
   assert.equal(report.answer, 'Ada owns the fixture (note.md)')
   assert.equal(report.stopReason, 'curator-finalized')
 })

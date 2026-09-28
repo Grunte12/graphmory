@@ -76,7 +76,7 @@ report = {'protocol': 'curator-paging-development-v4-tool-error-feedback', 'id':
           'structuredCitations': args.structured_citations,
           'coveragePreviews': args.coverage_previews,
           'runnerSha256': hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
-          'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [], 'sourceRequests': [], 'sourceRequestErrors': [],
+          'inputSha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'modelCalls': [], 'pages': [], 'sourceReads': [], 'sourceToolCalls': [], 'sourceRequests': [], 'sourceRequestErrors': [],
           'brief': None, 'answer': None, 'runComplete': False, 'stopReason': None,
           'limitations': ['One exposed development case; no quality acceptance or latency tail claim',
                           'No-tool boundary is checked in trace, not a proven filesystem isolation guarantee',
@@ -104,10 +104,11 @@ def classify_source_requests(requested, available, read):
 
 
 def command_json(command):
+    started = time.monotonic()
     child = subprocess.run(command, text=True, capture_output=True, timeout=30)
     if child.returncode:
         raise RuntimeError('Graphmory CLI failed')
-    return json.loads(child.stdout)
+    return json.loads(child.stdout), len(child.stdout.encode()), round(time.monotonic() - started, 3)
 
 
 def native_json(command):
@@ -132,12 +133,9 @@ def retrieval(offset):
         page = {'offset': offset, 'nextOffset': offset + 10 if native['has_more'] else None,
                 'hasMore': native['has_more'], 'results': [{**row, 'path': row['file_path']} for row in native['results']]}
     else:
-        started = time.monotonic()
-        page = command_json(['node', str(cli), 'recall-managed', '--vault', str(vault), '--query', case['question'],
-                             '--agent', '--offset', str(offset), '--' + args.mode] +
-                            (['--coverage-previews'] if args.coverage_previews else []))
-        output_bytes = len(json.dumps(page).encode())
-        tool_seconds = round(time.monotonic() - started, 3)
+        page, output_bytes, tool_seconds = command_json(['node', str(cli), 'recall-managed', '--vault', str(vault), '--query', case['question'],
+                                                         '--agent', '--offset', str(offset), '--' + args.mode] +
+                                                        (['--coverage-previews'] if args.coverage_previews else []))
     if page.get('offset') != offset or not isinstance(page.get('results'), list):
         raise RuntimeError('Invalid retrieval page')
     report['pages'].append({'offset': offset, 'nextOffset': page['nextOffset'], 'hasMore': page['hasMore'],
@@ -285,9 +283,11 @@ try:
                     native_sources.append({'path': name, 'sha256': hashlib.sha256(content.encode()).hexdigest(),
                         'markdown': content, 'bytes': len(content.encode()), 'toolOutputBytes': output_bytes,
                         'toolSeconds': tool_seconds, 'originalSha256': case['sources'][name], 'indexedSha256': indexed_hashes[name]})
+                    report['sourceToolCalls'].append({'paths': [name], 'toolOutputBytes': output_bytes, 'toolSeconds': tool_seconds})
                 sources = {'sources': native_sources}
             else:
-                sources = command_json(['node', str(cli), 'read-notes', '--vault', str(vault), '--paths', json.dumps(unread)])
+                sources, output_bytes, tool_seconds = command_json(['node', str(cli), 'read-notes', '--vault', str(vault), '--paths', json.dumps(unread)])
+                report['sourceToolCalls'].append({'paths': unread, 'toolOutputBytes': output_bytes, 'toolSeconds': tool_seconds})
             if set(row['path'] for row in sources['sources']) != set(unread):
                 raise RuntimeError('Source delivery mismatch')
             for row in sources['sources']:
