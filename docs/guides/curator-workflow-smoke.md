@@ -82,6 +82,7 @@ EOF
 
 cp "$VAULT/90 Evidence/Release decision.md" "$SMOKE_ROOT/Release decision.baseline.md"
 shasum -a 256 "$VAULT/90 Evidence/Release decision.md" "$SMOKE_ROOT/Release decision.baseline.md"
+grep -F 'Evidence E1: [[90 Evidence/Release decision#E1]]' "$VAULT/01 Projects/Release/Release ownership.md" > "$SMOKE_ROOT/E1.baseline.md"
 
 graphmory doctor --vault "$VAULT" --json
 graphmory graph-audit --vault "$VAULT" --json
@@ -97,7 +98,7 @@ graphmory-setup --host codex --scope project --project "$SMOKE_ROOT" --model gpt
 
 In the fresh Codex session opened on `SMOKE_ROOT`, replace `<VAULT>` below with the printed absolute value of `$VAULT`, then ask the lead to delegate a read-only task to the installed `graphmory_curator`:
 
-> Use native named-agent dispatch to ask `graphmory_curator` what ownership rule the production runbook reaches by following its map. Give it the vault path `<VAULT>`. It should use `graphmory recall-managed --vault "<VAULT>" --query "What ownership rule does the production release runbook use?" --scope "01 Projects/Release" --agent`, inspect returned originals, then use `graphmory recall-explore --vault "<VAULT>" --query "What ownership note does the runbook reach through its MOC?" --scope "01 Projects/Release" --agent`. Return the source-backed path chain and quote E1. State explicitly that E1 proves who owns readiness, not who approves a release; report E0's conflicting approval rule or say approval remains unverified if E0 was not returned. Do not edit.
+> Use native named-agent dispatch to ask `graphmory_curator` what ownership rule the production runbook reaches by following its map. Give it the vault path `<VAULT>`. It should use `graphmory recall-managed --vault "<VAULT>" --query "What ownership rule does the production release runbook use?" --scope "01 Projects/Release" --agent`, inspect returned originals, then use `graphmory recall-explore --vault "<VAULT>" --query "What ownership note does the runbook reach through its MOC?" --scope "01 Projects/Release" --agent`. Follow the ownership note's historical-policy link to the old rule and E0. Return the source-backed path chain and quote E1. State explicitly that E1 proves who owns readiness, not who approves a release; report E0's conflicting approval rule or say approval remains unverified if E0 was not returned. Do not edit.
 
 Confirm the host shows a native child run for `graphmory_curator` and that the child read the installed `memory-curator` skill. A role file on disk or a lead's text claiming it delegated is not proof of dispatch. The recall result should identify the runbook-to-map-to-ownership route and cite the original evidence; graph traversal is a navigation aid, so the child must open the notes before treating the rule as supported.
 
@@ -131,17 +132,19 @@ Ask the lead to author and pass this bounded patch to `graphmory_curator`:
 }
 ```
 
-The lead must state that the synthetic user authorizes superseding the old approval rule based on E2. The curator should open the E2 source and both target notes, apply the patch with the host's normal file-editing tools, retain E1, mark the old rule superseded with a replacement link, and return `APPLIED` with paths. In this default curator workflow it should not call `curate-plan`; that command is for hosted Jev/local decision workflows and does not edit notes.
+When delegating, the lead must say: “The synthetic user explicitly authorizes the E2 policy update and superseding only `01 Projects/Release/Old approval rule.md`. Preserve the E0/E1 evidence records.” The curator should open the E2 source and both target notes, apply the patch with the host's normal file-editing tools, retain E1, mark the old rule superseded with a replacement link, and return `APPLIED` with paths. In this default curator workflow it should not call `curate-plan`; that command is for hosted Jev/local decision workflows and does not edit notes.
 
 Then verify the resulting files and reports:
 
 ```sh
 test -f "$VAULT/01 Projects/Release/Old approval rule.md"
 grep -nE 'E1|E2|supersed|replacement' "$VAULT/01 Projects/Release/Release ownership.md" "$VAULT/01 Projects/Release/Old approval rule.md"
+grep -F 'Evidence E1:' "$VAULT/01 Projects/Release/Release ownership.md" > "$SMOKE_ROOT/E1.after.md"
+cmp "$SMOKE_ROOT/E1.baseline.md" "$SMOKE_ROOT/E1.after.md"
 shasum -a 256 "$VAULT/90 Evidence/Release decision.md" "$SMOKE_ROOT/Release decision.baseline.md"
 cmp "$VAULT/90 Evidence/Release decision.md" "$SMOKE_ROOT/Release decision.baseline.md"
 graphmory graph-audit --vault "$VAULT" --json
 graphmory lifecycle-audit --vault "$VAULT" --json
 ```
 
-The workflow smoke passes when the native child actually ran, recall returned the linked ownership route with source evidence, the E2-authorized approval rule is active, the old rule remains present and superseded, E1 remains in the canonical note, and the full evidence file is byte-identical to its baseline. Audit cleanliness is a separate result: inspect and report every graph/lifecycle finding, including heuristic lifecycle warnings. Repair only supported metadata/link issues; do not hide warnings or change claim meaning to force a clean report. Stop with a blocker if a critical/high finding cannot be safely resolved. Record CLI installation, skill discovery, dispatch, patch status, evidence integrity, and audit results separately. Remove only the printed temporary directory after reviewing its path if you want to clean up.
+The workflow smoke passes when the native child actually ran, recall returned the linked ownership route with source evidence, the E2-authorized approval rule is active, the old rule remains present and superseded, the E1 citation line is unchanged, and the full evidence file is byte-identical to its baseline. Audit cleanliness is a separate result: inspect and report every graph/lifecycle finding, including heuristic lifecycle warnings. Repair only supported metadata/link issues; do not hide warnings or change claim meaning to force a clean report. Stop with a blocker if a critical/high finding cannot be safely resolved. Record CLI installation, skill discovery, dispatch, patch status, evidence integrity, and audit results separately. Remove only the printed temporary directory after reviewing its path if you want to clean up.
