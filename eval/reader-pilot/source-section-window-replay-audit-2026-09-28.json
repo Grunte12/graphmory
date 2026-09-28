@@ -1,0 +1,9 @@
+{
+  "protocol": "source-section-window-deterministic-replay-audit-v1",
+  "resultArtifactSha256": "6ec470f8017561ebfd7a5b973cabe6e6ba72304158fbaa7b709717c7c5fdcb91",
+  "replayByteIdentical": true,
+  "cases": 1099,
+  "variants": 3,
+  "modelCalls": 0,
+  "holdoutRendered": false
+}
