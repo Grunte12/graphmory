@@ -35,6 +35,7 @@ import { writeFileAtomic, writeJsonAtomic } from "../src/atomic-write.mjs"
 import { loadRuntimeConfig, runtimeConfigPath, saveRuntimeConfig } from "../src/runtime-config.mjs"
 import { managedRecall } from "../src/decision-recall.mjs"
 import { readSourceNotes } from "../src/source-read.mjs"
+import { createEvidenceCollection, collectEvidencePage, recordEvidenceSpan, summarizeEvidenceCollection } from "../src/evidence-collection.mjs"
 import { planDecisionCuration } from "../src/decision-curation.mjs"
 import { recallVaultAdaptive } from "../src/adaptive-recall.mjs"
 
@@ -1887,7 +1888,32 @@ try {
   else if (command === "recall-managed") await recallManaged()
   else if (command === "read-notes") {
     if (!option("--vault") || !option("--paths")) throw new Error("read-notes requires --vault and --paths")
-    console.log(JSON.stringify(readSourceNotes(option("--vault"), JSON.parse(option("--paths")))))
+    const requestedPaths = JSON.parse(option("--paths"))
+    const statePath = option("--collect-state")
+    if (!statePath) console.log(JSON.stringify(readSourceNotes(option("--vault"), requestedPaths)))
+    else {
+      const initial = createEvidenceCollection({ vaultRoot: option("--vault"), paths: requestedPaths,
+        scopeLabel: option("--collection-scope") || "explicit source paths" })
+      if (fs.existsSync(statePath) && fs.lstatSync(statePath).isSymbolicLink()) throw new Error("Collection state must not be a symlink")
+      const state = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, "utf8")) : initial
+      if (state.snapshotId !== initial.snapshotId) throw new Error("Collection state does not match current source scope")
+      let result
+      if (option("--record-span")) {
+        recordEvidenceSpan(state, JSON.parse(option("--record-span")))
+        result = summarizeEvidenceCollection(state)
+      } else result = collectEvidencePage(state, { maxBytes: Number(option("--bundle-bytes") || 16000) })
+      const temporary = `${statePath}.${process.pid}.tmp`
+      let temporaryCreated = false
+      try {
+        fs.writeFileSync(temporary, JSON.stringify(state), { flag: "wx", mode: 0o600 })
+        temporaryCreated = true
+        fs.renameSync(temporary, statePath)
+      } catch (error) {
+        if (temporaryCreated && fs.existsSync(temporary)) fs.unlinkSync(temporary)
+        throw error
+      }
+      console.log(JSON.stringify(result))
+    }
   }
   else if (command === "graph-audit") graphAudit()
   else if (command === "recall-explore") await recallExplore()
