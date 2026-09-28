@@ -1,0 +1,80 @@
+{
+  "kind": "synthetic candidate access; not answer quality",
+  "complete": false,
+  "stopReason": "Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- true\n",
+  "model": "Xenova/bge-small-en-v1.5",
+  "queries": [
+    "How are long-lived memories preserved?",
+    "List all durable recollections and their observations."
+  ],
+  "expectedPaths": [
+    "projects/note-01.md",
+    "projects/note-02.md",
+    "projects/note-03.md",
+    "projects/note-04.md",
+    "projects/note-05.md",
+    "projects/note-06.md",
+    "projects/note-07.md",
+    "projects/note-08.md",
+    "projects/note-09.md",
+    "projects/note-10.md",
+    "projects/note-11.md",
+    "projects/note-12.md",
+    "projects/note-13.md",
+    "projects/note-14.md",
+    "projects/note-15.md",
+    "projects/note-16.md",
+    "projects/note-17.md",
+    "projects/note-18.md"
+  ],
+  "sourceHashes": {
+    "projects/note-01.md": "db36548e6086c093e22cf2aafa4aed4a59bd15ba12d7e891b27548c527eacbca",
+    "projects/note-02.md": "eb47f482db9a8de87ec39fdd993118c4590024d6b6e8a45fdaa25361771a9828",
+    "projects/note-03.md": "aa9037656269f608a941b8a7c20b808b7ac957492fce73d22057e91a9ef519cd",
+    "projects/note-04.md": "07a85651037b1a7cf7db4a6612607676b37cd8315ee7eadc0363f3c5e15f8781",
+    "projects/note-05.md": "4390c72b1551180f4393bd1dfc93d10fd5a4737c22876304f5fa6bcd51bdbb4d",
+    "projects/note-06.md": "cfda62704fc47753a661e075534737d0a2e57ef86d21b6d29a68c69d9ed48bd7",
+    "projects/note-07.md": "13fabff95bc1aa50e35acbb6391801985ec80f44e9a6cf5523d377c11d07e1fc",
+    "projects/note-08.md": "c9552d0ccbfb99e8792e462e2c880a7cb5e5159b17186422631e156e5ccf449e",
+    "projects/note-09.md": "e26ccf811e7da3ccf8f8448ff50637c91ff56944c302b6d7dc0858f4f77ae165",
+    "projects/note-10.md": "f750fe6a0c3e365e1f48fc4111b1663bb30585b9a17f9bf0ac726ffc4299e404",
+    "projects/note-11.md": "d6122a7624ea0e87ec37cab62e8af00cd6b0b12529a9c80802548d92523301e8",
+    "projects/note-12.md": "2305e42cb377f0361a39d0d1b9f0ccbda760fe3443d6e483fc085864dad0f6f6",
+    "projects/note-13.md": "1cab8fd863f29ebf1b55c88dbbb4de3e35394b3b2aa812ef542966a7e7c18862",
+    "projects/note-14.md": "955a2833b46051ce075b48e188975b834db8db869f96a24547e96696da98fbc7",
+    "projects/note-15.md": "dfa074cd530785dd01648e538efedfb78eb1e0dbf75a673de498c2477a04ebe9",
+    "projects/note-16.md": "46e509ce0e4313028b9adc6a4fabdcb1ca5348ecd785648c23965e2e1fdce837",
+    "projects/note-17.md": "004beebb507df3795b4696bf960ea6af65ea66358c633c4ceb338730281fcc24",
+    "projects/note-18.md": "022a69852bc844f3c02490de7aee3c9aed131d8c5a2b64d953630b774a67817a",
+    "projects/stale.md": "4277575b4bffa04c19780adfc74532645dd73e5553fd402aac269f914bdf5890",
+    "projects/raw.md": "cf3139b8ae502f159248adf447a42de51e1d369493ce4b4132ec2f6bfa6f89fa",
+    "projects/navigation.md": "989c35a79e7ce1d46f4652f64a7317cacb1888cf15647b12f70c251af943a7ad",
+    "projects/historical.md": "3a2c5d7f8c9e6d64b2ad89f917ea872863dd84d06a11c847b7299fe595a2a90e",
+    "elsewhere/outside.md": "3e24130c1dafb6c8c83642880e7b0e1fb8ee8266e6057ac09bb6a31278c8e9ed"
+  },
+  "planned": [
+    "0:normal",
+    "0:byte-budget",
+    "0:adaptive",
+    "1:normal",
+    "1:byte-budget",
+    "1:adaptive"
+  ],
+  "attempts": [
+    {
+      "id": "0:normal",
+      "pages": [
+        {
+          "offset": 0,
+          "milliseconds": 7.155707999999997,
+          "totalCandidates": 0,
+          "hasMore": false,
+          "nextOffset": null,
+          "paths": []
+        }
+      ],
+      "paths": [],
+      "passed": false
+    }
+  ]
+}

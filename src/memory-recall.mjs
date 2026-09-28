@@ -1,6 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
-import { governedRank, parseMarkdown, sectionFocusRerank } from "./retrieval.mjs"
+import { governedRank, isAnswerCandidate, isRetrievable, parseMarkdown, sectionFocusRerank } from "./retrieval.mjs"
 
 const SKIP_DIRECTORIES = new Set([".git", ".obsidian", ".memory-patch-harness", "node_modules"])
 const RAW_ROOTS = new Set(["00 inbox", "clippings"])
@@ -94,6 +94,7 @@ export function recallVaultLoop(vault, query, {
   shortlistLimit = 0,
   rerank = false,
   documents: suppliedDocuments,
+  precomputedRankedLanes = [],
   allowLargePage = false,
 } = {}) {
   if (!query?.trim()) throw new Error("query is required")
@@ -114,9 +115,13 @@ export function recallVaultLoop(vault, query, {
       excluded: retrieval.excluded,
     }
   })
-  const all = fuseRankedLanes(lanes)
+  const extraLanes = sanitizePrecomputedLanes(precomputedRankedLanes, documents, {
+    scope, includeNoncanonical, includeSuperseded, includeNavigation,
+  })
+  const rankedLanes = extraLanes.length ? [...lanes, ...extraLanes] : lanes
+  const all = fuseRankedLanes(rankedLanes)
   // Preserve the previous first-page ordering; deeper lane results remain reachable.
-  const shortlist = shortlistLimit > 0 ? fuseRankedLanes(lanes.map((lane) => ({ ...lane, results: lane.results.slice(0, shortlistLimit) }))).slice(0, 10) : []
+  const shortlist = shortlistLimit > 0 ? fuseRankedLanes(rankedLanes.map((lane) => ({ ...lane, results: lane.results.slice(0, shortlistLimit) }))).slice(0, 10) : []
   const shortlistIds = new Set(shortlist.map((item) => item.id))
   const fused = shortlistLimit > 0 ? [...shortlist, ...all.filter((item) => !shortlistIds.has(item.id))] : all
   const top = fused.slice(offset, offset + k)
@@ -159,6 +164,37 @@ export function recallVaultLoop(vault, query, {
       lanes: item.lanes,
     })),
   }
+}
+
+function sanitizePrecomputedLanes(precomputedRankedLanes, documents, {
+  scope, includeNoncanonical, includeSuperseded, includeNavigation,
+}) {
+  if (!Array.isArray(precomputedRankedLanes)) throw new Error("precomputedRankedLanes must be an array")
+  if (!precomputedRankedLanes.length) return []
+
+  const governedDocuments = new Map(filterByScope(documents, scope)
+    .filter((document) => isRetrievable(document, { includeNoncanonical, includeSuperseded })
+      && (includeNavigation || isAnswerCandidate(document)))
+    .map((document) => [document.id, document]))
+  const sanitized = []
+  for (const lane of precomputedRankedLanes) {
+    if (!lane || typeof lane.method !== "string" || !Array.isArray(lane.results)) {
+      throw new Error("precomputed ranked lanes must include a method and results array")
+    }
+    const seen = new Set()
+    const results = []
+    for (const item of lane.results) {
+      const id = item?.id
+      if (typeof id !== "string" || seen.has(id)) continue
+      const document = governedDocuments.get(id)
+      if (!document) continue
+      seen.add(id)
+      // Never trust semantic-lane titles, statuses, or other note metadata.
+      results.push(document)
+    }
+    if (results.length) sanitized.push({ method: lane.method, results })
+  }
+  return sanitized
 }
 
 export function fuseRankedLanes(lanes, constant = 60) {

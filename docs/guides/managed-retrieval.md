@@ -41,6 +41,32 @@ For local retrieval reranking, use a server exposing `POST /v1/rerank` with `{mo
 
 Compare managed workflows with `node scripts/eval-managed-recall.mjs --vault /path/to/vault --queries eval/real-vault/queries.json --config /path/to/runtime.json`. The query set must contain frozen gold paths matching the selected vault. The report labels the vault private and omits query text, but per-query retrieved paths are included when `--json` is requested; keep that report private for a personal vault.
 
+## Optional semantic candidates for Curator
+
+For paraphrases that lexical search may miss, explicitly add
+`--semantic-expansion` to Curator recall. It adds the local BGE semantic lane
+before pagination, on every requested page. Follow `nextOffset` with the same
+query, scope and flags until `hasMore` is false. The page size limits transport,
+not the total number of candidates available to Curator.
+
+```sh
+graphmory recall-managed --vault /path/to/vault --query "How do we preserve long-lived memories?" --semantic-expansion --agent
+```
+
+The compact response marks `expanded: true`, `semanticModel` and
+`candidateLanes`. These describe candidate discovery, not verified relevance
+or answer completeness. Curator still reads originals and checks provenance.
+Semantic candidates obey current lifecycle, scope and canonical-memory rules.
+Historical questions can combine this with `--include-superseded`.
+
+This requires the optional Transformers dependency and a downloaded embedding
+model; it uses local inference, not a hosted LLM. First use may download model
+files. `--model-cache /path/to/cache` selects a reusable cache outside the
+vault. Missing dependencies or inference failures remain command errors.
+Omitting the flag preserves dependency-free lexical recall. The existing
+large-corpus benchmark used approximately two GiB of peak RAM: this option is
+not a lightweight default. See the [frozen integration protocol](../evaluation/curator-semantic-integration-protocol-2026-09-29.md).
+
 ## Experimental link navigation
 
 The normal `recall` and `recall-loop` commands keep `canonical_memory: false` navigation notes in the ranked corpus but omit them from the answer results. Managed recall inherits this rule, including when optional semantic expansion proposes extra candidates. Use `--include-navigation` with the ordinary recall commands when intentionally inspecting a MOC or derived index. This preserves source-note slots in the returned candidate list without deleting the index or its links.

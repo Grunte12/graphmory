@@ -1,7 +1,7 @@
 import { retrievalMethods } from "./runtime-config.mjs"
 import { createHash } from "node:crypto"
 import { loadVaultDocuments, recallVaultLoop } from "./memory-recall.mjs"
-import { recallVaultSemantic } from "./semantic-recall.mjs"
+import { rankSemanticVectorLane, recallVaultSemantic } from "./semantic-recall.mjs"
 import { isAnswerCandidate, splitMarkdownSections, tokenize } from "./retrieval.mjs"
 import { readSourceNotes } from "./source-read.mjs"
 
@@ -18,6 +18,8 @@ export async function managedRecall(vault, query, config, {
   includeSuperseded = false,
   prefetchWideOriginals = false,
   compactPrefetch = false,
+  modelCache = "",
+  semanticLaneImpl = rankSemanticVectorLane,
   semanticRecallImpl = recallVaultSemantic,
   fetchImpl = fetch,
 } = {}) {
@@ -38,8 +40,14 @@ export async function managedRecall(vault, query, config, {
   const vaultDocuments = loadVaultDocuments(vault, { scope })
   const methods = retrievalMethods(config.retrievalProfile)
   if (config.workflow === "curator") {
+    const semanticLane = semanticExpansion
+      ? await semanticLaneImpl(vault, query, {
+          documents: vaultDocuments, scope, includeSuperseded, answerCandidatesOnly: true, modelCache,
+        })
+      : null
     const page = recallVaultLoop(vault, query, { k: bundleBytes || adaptiveBundle ? Math.max(1, vaultDocuments.length) : k, offset, scope,
       perMethodLimit: vaultDocuments.length, shortlistLimit: limit, documents: vaultDocuments, methods, includeSuperseded,
+      precomputedRankedLanes: semanticLane ? [semanticLane] : [],
       allowLargePage: Boolean(bundleBytes || adaptiveBundle) })
     const adaptiveMode = adaptiveBundle ? chooseAdaptiveMode(query, page.results.slice(0, 10)) : null
     const effectiveBundleBytes = bundleBytes || (adaptiveMode === "wide" ? 32000 : 0)
@@ -83,17 +91,27 @@ export async function managedRecall(vault, query, config, {
       ? results.map(({ evidencePreview, sourceReadRequired, previewOmitted, ...result }) => result)
       : results
     if (compactPrefetch && prefetch?.status === "ready") prefetch = { ...prefetch, presentation: "originals-only" }
+    const nextSteps = page.nextSteps.slice(0, 2)
+    if (semanticLane && page.scanLimitReached) {
+      nextSteps.unshift("The scan limit was reached; semantic candidates cover only scanned notes.")
+      nextSteps.length = 2
+    }
     return {
       query, workflow: "curator", curator: config.curator,
       ...(includeSuperseded ? { historicalCandidatesIncluded: true } : {}),
       confidence: page.confidence, retrievalConfidence: page.confidence, needsExpansion: page.needsExpansion, scanLimitReached: page.scanLimitReached,
       offset: page.offset, totalCandidates: page.totalCandidates, hasMore, nextOffset: hasMore ? offset + results.length : null,
+      ...(semanticLane ? {
+        expanded: true,
+        semanticModel: semanticLane.model,
+        candidateLanes: [...methods, semanticLane.method],
+      } : {}),
       ...(effectiveBundleBytes ? { bundleBytes: effectiveBundleBytes, bundleUsedBytes } : {}),
       ...(adaptiveMode ? { adaptiveMode } : {}),
       ...(prefetch ? { prefetch } : {}),
       ...(originalSources ? { originalSources } : {}),
       results: returnedResults,
-      nextSteps: page.nextSteps.slice(0, 2),
+      nextSteps,
     }
   }
   const initial = recallVaultLoop(vault, query, { k: 10, scope, perMethodLimit: limit, documents: vaultDocuments, methods })

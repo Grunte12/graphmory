@@ -47,6 +47,136 @@ test("curator pages through all matching paths while an explicit smaller page st
   } finally { fs.rmSync(vault, { recursive: true, force: true }) }
 })
 
+test("Curator semantic candidates remain pageable through ordinary, byte and adaptive pages", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-curator-semantic-pages-"))
+  try {
+    const project = path.join(vault, "Project")
+    fs.mkdirSync(project)
+    const names = ["Amber", "Birch", "Cedar", "Dahlia", "Elm", "Flint", "Garnet", "Hazel", "Indigo", "Juniper", "Kelp", "Lilac", "Maple", "Nectar", "Olive", "Pebble", "Quartz", "Rowan"]
+    for (const [index, name] of names.entries()) {
+      fs.writeFileSync(path.join(project, `note-${String(index).padStart(2, "0")}.md`),
+        `# ${name} reference record with a deliberately extended heading for byte-page coverage\n\nContent has no query terms.`)
+    }
+    let laneCalls = 0
+    const semanticLaneImpl = async (_vault, _query, options) => {
+      laneCalls += 1
+      assert.equal(options.scope, "Project")
+      assert.equal(options.answerCandidatesOnly, true)
+      assert.equal(options.documents.length, 18)
+      return {
+        method: "semantic-vector",
+        model: "injected-bge",
+        results: [...options.documents].reverse().map((document, index) => ({
+          id: document.id, score: 1000 - index,
+        })),
+      }
+    }
+
+    async function collect(options = {}) {
+      let offset = 0
+      const paths = []
+      let pageCount = 0
+      while (true) {
+        const page = await managedRecall(vault, "zzqvnebrule", DEFAULT_RUNTIME_CONFIG, {
+          ...options, offset, scope: "Project", semanticExpansion: true, semanticLaneImpl,
+        })
+        pageCount += 1
+        assert.equal(page.expanded, true)
+        assert.equal(page.semanticModel, "injected-bge")
+        assert.deepEqual(page.candidateLanes, ["bm25", "bm25f-focused-sections", "semantic-vector"])
+        assert.equal(page.totalCandidates, 18)
+        assert.equal(page.scanLimitReached, false)
+        assert.ok(page.results.length > 0)
+        assert.ok(page.results.every((item) => !Object.hasOwn(item, "relevance")))
+        paths.push(...page.results.map((item) => item.path))
+        if (!page.hasMore) break
+        assert.equal(page.nextOffset, offset + page.results.length)
+        assert.ok(page.nextOffset > offset)
+        offset = page.nextOffset
+        assert.ok(pageCount < 20)
+      }
+      assert.equal(new Set(paths).size, 18)
+      assert.deepEqual(paths, names.map((_, index) => `Project/note-${String(17 - index).padStart(2, "0")}.md`))
+      return pageCount
+    }
+
+    assert.equal((await managedRecall(vault, "zzqvnebrule", DEFAULT_RUNTIME_CONFIG, { scope: "Project" })).totalCandidates, 0)
+    const ordinaryPages = await collect()
+    const bytePages = await collect({ bundleBytes: 2000 })
+    const adaptivePages = await collect({ adaptiveBundle: true })
+    assert.equal(ordinaryPages, 2)
+    assert.ok(bytePages > 1)
+    assert.equal(adaptivePages, 2)
+    assert.equal(laneCalls, ordinaryPages + bytePages + adaptivePages)
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
+})
+
+test("Curator sanitizes semantic lane IDs and uses authoritative note metadata", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-curator-semantic-filter-"))
+  try {
+    const project = path.join(vault, "Project")
+    fs.mkdirSync(project)
+    fs.writeFileSync(path.join(project, "current.md"), "# Real Current Title\n\nCurrent content.")
+    fs.writeFileSync(path.join(project, "stale.md"), "---\nstatus: stale\n---\n# Stale\n\nOld content.")
+    fs.writeFileSync(path.join(project, "navigation.md"), "---\ncanonical_memory: false\n---\n# Navigation\n\nIndex only.")
+    fs.writeFileSync(path.join(project, "history.md"), "---\nstatus: superseded\n---\n# Superseded\n\nEarlier content.")
+    fs.mkdirSync(path.join(vault, "00 inbox"))
+    fs.writeFileSync(path.join(vault, "00 inbox", "raw.md"), "# Raw\n\nInbox content.")
+    fs.writeFileSync(path.join(vault, "outside.md"), "# Outside\n\nOut of scope.")
+    const semanticLaneImpl = async (_vault, _query, options) => ({
+      method: "semantic-vector",
+      model: "injected-bge",
+      results: [
+        { id: "Project/current.md", title: "Forged title", metadata: { status: "stale" } },
+        { id: "Project/current.md", title: "duplicate" },
+        { id: "Project/stale.md" },
+        { id: "Project/navigation.md" },
+        { id: "Project/history.md" },
+        { id: "00 inbox/raw.md" },
+        { id: "outside.md" },
+        { id: "Project/unknown.md" },
+      ],
+    })
+
+    const current = await managedRecall(vault, "semantic query", DEFAULT_RUNTIME_CONFIG, {
+      scope: "Project", semanticExpansion: true, semanticLaneImpl,
+    })
+    assert.deepEqual(current.results.map((item) => item.path), ["Project/current.md"])
+    assert.equal(current.totalCandidates, 1)
+    assert.equal(current.results[0].title, "Real Current Title")
+    assert.equal(current.results[0].status, "current")
+
+    const historical = await managedRecall(vault, "semantic query", DEFAULT_RUNTIME_CONFIG, {
+      scope: "Project", includeSuperseded: true, semanticExpansion: true, semanticLaneImpl,
+    })
+    assert.ok(historical.results.some((item) => item.path === "Project/history.md"))
+    assert.equal(historical.historicalCandidatesIncluded, true)
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
+})
+
+test("Curator semantic expansion is opt-in and inference failures stay explicit", async () => {
+  const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-curator-semantic-opt-in-"))
+  try {
+    fs.writeFileSync(path.join(vault, "current.md"), "# Current\n\nSome current content.")
+    let laneCalls = 0
+    const semanticLaneImpl = async () => {
+      laneCalls += 1
+      throw new Error("OPTIONAL_DEPENDENCY_MISSING: semantic model unavailable")
+    }
+    const baseline = await managedRecall(vault, "current", DEFAULT_RUNTIME_CONFIG)
+    const disabled = await managedRecall(vault, "current", DEFAULT_RUNTIME_CONFIG, {
+      semanticExpansion: false, semanticLaneImpl,
+    })
+    assert.deepEqual(disabled, baseline)
+    assert.equal(laneCalls, 0)
+    assert.equal(Object.hasOwn(disabled, "expanded"), false)
+    await assert.rejects(managedRecall(vault, "current", DEFAULT_RUNTIME_CONFIG, {
+      semanticExpansion: true, semanticLaneImpl,
+    }), /OPTIONAL_DEPENDENCY_MISSING/u)
+    assert.equal(laneCalls, 1)
+  } finally { fs.rmSync(vault, { recursive: true, force: true }) }
+})
+
 test("optional curator previews keep every candidate and prefer matched user evidence on ties", async () => {
   const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-curator-preview-"))
   try {

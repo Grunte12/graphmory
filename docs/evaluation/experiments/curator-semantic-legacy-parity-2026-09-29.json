@@ -1,0 +1,62 @@
+{
+  "queryCount": 300,
+  "corpusCount": 5183,
+  "complete": true,
+  "exactOriginalIdRanks": true,
+  "baselineRunSha256": "019287a0ad1b3bc2a1eb04e08779897d4663aa4df4979c4833aa92ee98f642b8",
+  "currentRunSha256": "019287a0ad1b3bc2a1eb04e08779897d4663aa4df4979c4833aa92ee98f642b8",
+  "archiveSha256": "536e14446a0ba56ed1398ab1055f39fe852686ecad24a6306c80c490fa8e0165",
+  "codeHashes": {
+    "scripts/export-beir-existing-semantic.mjs": "cdca78ff71bb16b292b62b19ff18109fd3dbe178608a8538266139b484f37fbb",
+    "src/semantic-recall.mjs": "a5b787aaaf6e96049ca3c98f52d15a6bddee4c20a0edd3308d76fbc5dbd4b93d",
+    "src/retrieval.mjs": "28f656a4bef7806d9a2a7690c2c31b7ad0732b894e05946e186286e05a4bc6c1",
+    "src/memory-recall.mjs": "1d10342fa253745b98732bab1bf1d8e8fe95574c807ad062479ac538216cab36"
+  },
+  "officialScore": {
+    "dataset": "scifact",
+    "split": "test",
+    "queryCount": 300,
+    "evaluator": "unchanged BEIR EvaluateRetrieval",
+    "beirVersion": "2.2.0",
+    "pytrecEvalTerrierVersion": "0.5.10",
+    "evaluationSourceSha256": "f346bd20f258e552895e438257e3cc91308b65e0b1ee6c09422e987084bc3bd0",
+    "runManifestSha256": "37a88b9d13ae8f8544d509aa01379af19e62709913b661334496fc0955276f3d",
+    "arms": {
+      "existingBgeHybrid": {
+        "runSha256": "019287a0ad1b3bc2a1eb04e08779897d4663aa4df4979c4833aa92ee98f642b8",
+        "ignoreIdenticalIds": true,
+        "ndcg": {
+          "NDCG@1": 0.57667,
+          "NDCG@3": 0.65803,
+          "NDCG@5": 0.68276,
+          "NDCG@10": 0.70797
+        },
+        "map": {
+          "MAP@1": 0.55178,
+          "MAP@3": 0.63121,
+          "MAP@5": 0.64655,
+          "MAP@10": 0.65845
+        },
+        "recall": {
+          "Recall@1": 0.55178,
+          "Recall@3": 0.71172,
+          "Recall@5": 0.77339,
+          "Recall@10": 0.84667
+        },
+        "precision": {
+          "P@1": 0.57667,
+          "P@3": 0.25778,
+          "P@5": 0.16933,
+          "P@10": 0.094
+        },
+        "mrr": {
+          "MRR@1": 0.57667,
+          "MRR@3": 0.64667,
+          "MRR@5": 0.66133,
+          "MRR@10": 0.67078
+        }
+      }
+    }
+  },
+  "comparison": "legacy API refactor regression; not new Curator answer quality or latency comparison"
+}

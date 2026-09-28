@@ -66,6 +66,9 @@ try {
     if (ledger.attempted.length % 25 === 0) console.log(JSON.stringify({ completed: ledger.attempted.length, planned: queries.length }))
   }
   verifySources()
+  for (const [name, digest] of Object.entries(ledger.codeHashes)) {
+    if (sha(fs.readFileSync(new URL('../' + name, import.meta.url))) !== digest) throw new Error('Implementation drift: ' + name)
+  }
   ledger.processResourceUsage = process.resourceUsage()
   ledger.finalProcessMemoryBytes = process.memoryUsage()
   ledger.complete = true

@@ -3,7 +3,7 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import test from "node:test"
-import { cachedDocumentVectors, semanticConfidence } from "../src/semantic-recall.mjs"
+import { cachedDocumentVectors, rankSemanticVectorLane, semanticConfidence } from "../src/semantic-recall.mjs"
 import { parseMarkdown } from "../src/retrieval.mjs"
 
 test("semantic confidence stays low when only one retrieval lane supports the top result", () => {
@@ -43,4 +43,20 @@ test("semantic vectors are reused across calls and changed notes are re-embedded
     assert.equal(files.length, 1)
     if (process.platform !== "win32") assert.equal(fs.statSync(path.join(directory, "graphmory-vectors", files[0])).mode & 0o777, 0o600)
   } finally { fs.rmSync(directory, { recursive: true, force: true }) }
+})
+
+test("the full semantic lane reports a missing optional embedding dependency", async () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-semantic-lane-missing-"))
+  const previous = process.env.MPH_TEST_SEMANTIC_MOCK_MISSING
+  process.env.MPH_TEST_SEMANTIC_MOCK_MISSING = "1"
+  try {
+    const documents = [parseMarkdown("note.md", "# Note\n\nCurrent note.")]
+    await assert.rejects(rankSemanticVectorLane(directory, "query", {
+      documents, model: "missing-dependency-test", modelCache: directory,
+    }), /OPTIONAL_DEPENDENCY_MISSING/u)
+  } finally {
+    if (previous === undefined) delete process.env.MPH_TEST_SEMANTIC_MOCK_MISSING
+    else process.env.MPH_TEST_SEMANTIC_MOCK_MISSING = previous
+    fs.rmSync(directory, { recursive: true, force: true })
+  }
 })
