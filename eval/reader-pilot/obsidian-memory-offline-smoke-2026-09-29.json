@@ -1,0 +1,825 @@
+{
+  "artifacts": {
+    "approved_proposal_id": "prop-offline-smoke-approv-20260929t053449z-a3cec7b6",
+    "proposal_retry_before_after": {
+      "after": {
+        "journal_count": 1,
+        "target": {
+          "file_count": 1,
+          "path": "memory/facts/elena-voss/tool.md",
+          "sha256": "fa53ad42c336295daa44f128c71bffff1572c44eb45acc8ed9ed71c76736eed7"
+        }
+      },
+      "before": {
+        "journal_count": 1,
+        "target": {
+          "file_count": 1,
+          "path": "memory/facts/elena-voss/tool.md",
+          "sha256": "fa53ad42c336295daa44f128c71bffff1572c44eb45acc8ed9ed71c76736eed7"
+        }
+      }
+    },
+    "stale_case_target": {
+      "file_count": 0,
+      "path": "memory/facts/concordance/language.md",
+      "sha256": null
+    },
+    "stale_proposal_id": "prop-offline-smoke-stale--20260929t053449z-9fe31c1f",
+    "transaction_retry_before_after": {
+      "after": {
+        "matching_journals": [
+          "txn-obsidian-smoke-retry-202-20260929t053449z-a16e9f9a.md"
+        ],
+        "target": {
+          "file_count": 1,
+          "path": "memory/facts/elena-voss/collaborator.md",
+          "sha256": "abd7fdbb401c0ccdd3aa2512dc5d5130bffe3ee25f791a9fa748f469ab5e920e"
+        }
+      },
+      "before": {
+        "matching_journals": [
+          "txn-obsidian-smoke-retry-202-20260929t053449z-a16e9f9a.md"
+        ],
+        "target": {
+          "file_count": 1,
+          "path": "memory/facts/elena-voss/collaborator.md",
+          "sha256": "abd7fdbb401c0ccdd3aa2512dc5d5130bffe3ee25f791a9fa748f469ab5e920e"
+        }
+      }
+    }
+  },
+  "blocker": null,
+  "cleanup": {
+    "exact_temporary_checkout_vault_and_venv_removed": true,
+    "no_background_process_started": true
+  },
+  "commands": [
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "--version"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "python_version_in_venv",
+      "status": "passed",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "9dcfe8b0cd3c0e7dc319ce79c66bba0bef6c1928973103b72d03f57bf32bb412"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/pip",
+        "show",
+        "PyYAML"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "installed_pyyaml_metadata",
+      "status": "passed",
+      "stderr_sha256": "321f1c42a618b5c3a5cb20dbda57aead19d31f05d2a733f971441126bd6f8c9d",
+      "stdout_sha256": "4437fb46e94fe63b6409bf71efabf5c5e24c5a2ca60747aa3fff326b9e35bad4"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "baseline_git_revision",
+      "status": "passed",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "945cae5a45e6c9b0f6a3245ce8236f264f76458f399a58c6ba19db81e82ed6b4"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/lint.py",
+        "--strict"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "strict_lint_baseline",
+      "status": "passed",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "tools/rebuild-views.sh"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "rebuild_views_baseline",
+      "status": "passed",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "tools/rebuild-indexes.sh"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "rebuild_indexes_baseline",
+      "status": "passed",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "11a36d5e6556d392eac1043132106ed30da54afc046b27cfbbd549164f235439"
+    },
+    {
+      "argv": [
+        "tools/query.sh",
+        "facts",
+        "--entity",
+        "elena-voss",
+        "--json"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "data_fields": [
+        "facts"
+      ],
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "json_envelope": "valid",
+      "name": "query_baseline",
+      "ok": true,
+      "status": "passed",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "41c79a02f4c1c34d9f5ccf8312c1fcf7bf490df1f7896e346f2d721f22a5a84c"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/propose.py",
+        "--json",
+        "create",
+        "--title",
+        "Offline smoke approved update",
+        "--namespace",
+        "facts",
+        "--proposer",
+        "agent-local-1234abcd",
+        "--op",
+        "create_fact",
+        "--entity",
+        "elena-voss",
+        "--predicate",
+        "tool",
+        "--value",
+        "offline-smoke-approved"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "data_fields": [
+        "applied_at",
+        "approvals",
+        "content_hash",
+        "created_at",
+        "hash_version",
+        "namespace",
+        "ops",
+        "proposal_id",
+        "proposer_id",
+        "required_approvals",
+        "status",
+        "title",
+        "transaction_id",
+        "type"
+      ],
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "json_envelope": "valid",
+      "name": "proposal_create_approved_case",
+      "ok": true,
+      "status": "passed",
+      "stderr_sha256": "2d5bb47a3e4acd397d880b79b5b23532769461f50c1975a81504afdee3debea9",
+      "stdout_sha256": "216752ed728aa0965410eff47c46dc309246966aee335ece3e457f4d2d52704a"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/review.py",
+        "--json",
+        "approve",
+        "--proposal-id",
+        "prop-offline-smoke-approv-20260929t053449z-a3cec7b6",
+        "--reviewer",
+        "agent-test-1234abcd"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "data_fields": [],
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "json_envelope": "valid",
+      "name": "unauthorized_review_refusal",
+      "ok": false,
+      "status": "passed",
+      "stderr_sha256": "9a160297baecd940b8196452f358fac49c5ccba117bc8fcc5911dfb080fe7a96",
+      "stdout_sha256": "be6ead22fe391075d7b15ecba80202b90418a83375a3a589b671bb0051156423"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/review.py",
+        "--json",
+        "approve",
+        "--proposal-id",
+        "prop-offline-smoke-approv-20260929t053449z-a3cec7b6",
+        "--reviewer",
+        "agent-human-00000001"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "data_fields": [
+        "proposal",
+        "review"
+      ],
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "json_envelope": "valid",
+      "name": "authorized_review",
+      "ok": true,
+      "status": "passed",
+      "stderr_sha256": "5c9e7b33916237a872c82fcb9acc9cab4ac84f8b41f3bf2e72811c2f64815c86",
+      "stdout_sha256": "421a924238114c2bddab952ff9f517a0bc2b661bfcfeeca1557a6fba37aacb61"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/propose.py",
+        "--json",
+        "apply",
+        "--proposal-id",
+        "prop-offline-smoke-approv-20260929t053449z-a3cec7b6",
+        "--yes"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "data_fields": [
+        "applied_at",
+        "approvals",
+        "content_hash",
+        "created_at",
+        "hash_version",
+        "namespace",
+        "ops",
+        "proposal_id",
+        "proposer_id",
+        "required_approvals",
+        "status",
+        "title",
+        "transaction_id",
+        "type"
+      ],
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "json_envelope": "valid",
+      "name": "approved_proposal_apply",
+      "ok": true,
+      "status": "passed",
+      "stderr_sha256": "a83e60c0c08ce7ea4c53ae79b600b8a8c36bda9292d8afc103d666ba3295db0f",
+      "stdout_sha256": "17aee08d9055359f08bc6cdf1ff6095a16661230c061c25516454f5146bd1bbd"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/propose.py",
+        "--json",
+        "apply",
+        "--proposal-id",
+        "prop-offline-smoke-approv-20260929t053449z-a3cec7b6",
+        "--yes"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "data_fields": [
+        "applied_at",
+        "approvals",
+        "content_hash",
+        "created_at",
+        "hash_version",
+        "namespace",
+        "ops",
+        "proposal_id",
+        "proposer_id",
+        "required_approvals",
+        "status",
+        "title",
+        "transaction_id",
+        "type"
+      ],
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "json_envelope": "valid",
+      "name": "approved_proposal_apply_retry",
+      "ok": true,
+      "status": "passed",
+      "stderr_sha256": "c3cc8f4c7e92d685ce157e41bec39492842cc03f22a3a8a446e763fecfe82e5a",
+      "stdout_sha256": "2d3dfd8b5d51abdd0f3c59db92334b341fb6fc5ea0b885969c3f4f3333224bad"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/transact.py",
+        "--json",
+        "begin",
+        "--idempotency-key",
+        "obsidian-smoke-retry-2026-09-29",
+        "--agent",
+        "agent-local-1234abcd",
+        "--expected-revision",
+        "0469f7baa62d66fa890db995aa43d7a3b86ffd9e"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "data_fields": [
+        "agent_id",
+        "created_at",
+        "expected_revision",
+        "idempotency_key",
+        "ops",
+        "status",
+        "transaction_id"
+      ],
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "json_envelope": "valid",
+      "name": "transaction_begin",
+      "ok": true,
+      "status": "passed",
+      "stderr_sha256": "9fbca71d0ee3e01493bff626a26f93f18e8b973549993c33df31164cc861a925",
+      "stdout_sha256": "708da6df27895a5909912117dde61285c1d007bbee88043576f08e57ee6786ec"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/transact.py",
+        "add",
+        "--txn-id",
+        "txn-obsidian-smoke-retry-202-20260929t053449z-a16e9f9a",
+        "--op",
+        "create_fact",
+        "--entity",
+        "elena-voss",
+        "--predicate",
+        "collaborator",
+        "--value",
+        "offline-smoke-retry"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "transaction_add",
+      "status": "passed",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "1e341814503d5db1a71ce276087bfba74a0a2c965b646d0a239a77e05a53b47a"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/transact.py",
+        "commit",
+        "--txn-id",
+        "txn-obsidian-smoke-retry-202-20260929t053449z-a16e9f9a",
+        "--yes"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "transaction_commit",
+      "status": "passed",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "8a58e459b7abefb15200ced0af64487834cd6bd79e9f82d459258f00752cf22d"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/transact.py",
+        "--json",
+        "begin",
+        "--idempotency-key",
+        "obsidian-smoke-retry-2026-09-29",
+        "--agent",
+        "agent-local-1234abcd",
+        "--expected-revision",
+        "0469f7baa62d66fa890db995aa43d7a3b86ffd9e"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "data_fields": [
+        "agent_id",
+        "committed_at",
+        "committed_revision",
+        "created_at",
+        "expected_revision",
+        "failure_reason",
+        "idempotency_key",
+        "ops",
+        "status",
+        "transaction_id",
+        "type"
+      ],
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "json_envelope": "valid",
+      "name": "transaction_idempotency_retry",
+      "ok": true,
+      "status": "passed",
+      "stderr_sha256": "62ee0321c209adfc705a5960f847d7983da14a69b55a6f72575d0f1ef9522b74",
+      "stdout_sha256": "7a893e59249e0f18d9fa4f5d7e3e16e392f8641288511e6b6787b89bda82057f"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/lint.py",
+        "--strict"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "strict_lint_after_successful_writes",
+      "status": "passed",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "tools/query.sh",
+        "facts",
+        "--entity",
+        "elena-voss",
+        "--json"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "data_fields": [
+        "facts"
+      ],
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "json_envelope": "valid",
+      "name": "query_after_successful_writes",
+      "ok": true,
+      "status": "passed",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "53967af596ce92a278b622ffa22df03a2535353a28f8977af7ca17fd1d8d91e8"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/propose.py",
+        "--json",
+        "create",
+        "--title",
+        "Offline smoke stale review",
+        "--namespace",
+        "facts",
+        "--proposer",
+        "agent-local-1234abcd",
+        "--op",
+        "create_fact",
+        "--entity",
+        "concordance",
+        "--predicate",
+        "language",
+        "--value",
+        "offline-smoke-stale"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "data_fields": [
+        "applied_at",
+        "approvals",
+        "content_hash",
+        "created_at",
+        "hash_version",
+        "namespace",
+        "ops",
+        "proposal_id",
+        "proposer_id",
+        "required_approvals",
+        "status",
+        "title",
+        "transaction_id",
+        "type"
+      ],
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "json_envelope": "valid",
+      "name": "proposal_create_stale_case",
+      "ok": true,
+      "status": "passed",
+      "stderr_sha256": "cf1260227842613c875f6b33c280963f4c1068ab56c17095c2c95d3b450cc968",
+      "stdout_sha256": "12b126bc0ef0311c8a373bc827e9b8055b275fdd96e1bd79ec1cd681ff317b7d"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/review.py",
+        "--json",
+        "approve",
+        "--proposal-id",
+        "prop-offline-smoke-stale--20260929t053449z-9fe31c1f",
+        "--reviewer",
+        "agent-human-00000001"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "data_fields": [
+        "proposal",
+        "review"
+      ],
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "json_envelope": "valid",
+      "name": "stale_case_authorized_review",
+      "ok": true,
+      "status": "passed",
+      "stderr_sha256": "f2bf0175705e6d7d74da9d2e5db76d8991fe18e6393b6376eb2ff039103f3c19",
+      "stdout_sha256": "554ded03897a50bead1414771b9b034cf95bc5d4e0cdff4b1927718fca4e5249"
+    },
+    {
+      "argv": [
+        "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python",
+        "tools/propose.py",
+        "--json",
+        "apply",
+        "--proposal-id",
+        "prop-offline-smoke-stale--20260929t053449z-9fe31c1f",
+        "--yes"
+      ],
+      "cwd": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41",
+      "data_fields": [],
+      "environment": {
+        "MEMORY_TODAY": "2026-09-21",
+        "PATH": "<isolated-venv>/bin:<inherited-PATH>",
+        "inherited_path_sha256": "3661a36a7895c871b8268a846349735f07b213af815bb4e41dbc9f2a3acd3f06"
+      },
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "json_envelope": "valid",
+      "name": "stale_review_apply_refusal",
+      "ok": false,
+      "status": "passed",
+      "stderr_sha256": "144286acaa1f1fdf32b6c5bdfd6a5650d5f803ffb3306f10a5495785ca5a8d4f",
+      "stdout_sha256": "9d7175d7fcdc9efca3c6e0e7d7cd01f016389e6c14f39442fdc750b412fc2678"
+    }
+  ],
+  "gates": [
+    {
+      "evidence": {
+        "package": "PyYAML",
+        "version": "6.0.3"
+      },
+      "name": "isolated_dependency",
+      "status": "passed"
+    },
+    {
+      "evidence": {
+        "expected_fixture_entity_and_predicate_present": true,
+        "query_exit_code": 0
+      },
+      "name": "query_baseline_has_facts",
+      "status": "passed"
+    },
+    {
+      "evidence": {
+        "expected_nonzero": true,
+        "policy_diagnostic_present": true
+      },
+      "name": "unauthorized_reviewer_refused",
+      "status": "passed"
+    },
+    {
+      "evidence": {
+        "fixture_policy_identity": "agent-human-00000001"
+      },
+      "name": "synthetic_authorized_review",
+      "status": "passed"
+    },
+    {
+      "evidence": {
+        "file_count": 1,
+        "sha256": "fa53ad42c336295daa44f128c71bffff1572c44eb45acc8ed9ed71c76736eed7"
+      },
+      "name": "approved_fact_written",
+      "status": "passed"
+    },
+    {
+      "evidence": {
+        "after": {
+          "journal_count": 1,
+          "target": {
+            "file_count": 1,
+            "path": "memory/facts/elena-voss/tool.md",
+            "sha256": "fa53ad42c336295daa44f128c71bffff1572c44eb45acc8ed9ed71c76736eed7"
+          }
+        },
+        "before": {
+          "journal_count": 1,
+          "target": {
+            "file_count": 1,
+            "path": "memory/facts/elena-voss/tool.md",
+            "sha256": "fa53ad42c336295daa44f128c71bffff1572c44eb45acc8ed9ed71c76736eed7"
+          }
+        }
+      },
+      "name": "proposal_retry_unchanged",
+      "status": "passed"
+    },
+    {
+      "evidence": {
+        "transaction_id_returned": true
+      },
+      "name": "transaction_begins",
+      "status": "passed"
+    },
+    {
+      "evidence": {
+        "after": {
+          "matching_journals": [
+            "txn-obsidian-smoke-retry-202-20260929t053449z-a16e9f9a.md"
+          ],
+          "target": {
+            "file_count": 1,
+            "path": "memory/facts/elena-voss/collaborator.md",
+            "sha256": "abd7fdbb401c0ccdd3aa2512dc5d5130bffe3ee25f791a9fa748f469ab5e920e"
+          }
+        },
+        "before": {
+          "matching_journals": [
+            "txn-obsidian-smoke-retry-202-20260929t053449z-a16e9f9a.md"
+          ],
+          "target": {
+            "file_count": 1,
+            "path": "memory/facts/elena-voss/collaborator.md",
+            "sha256": "abd7fdbb401c0ccdd3aa2512dc5d5130bffe3ee25f791a9fa748f469ab5e920e"
+          }
+        },
+        "transaction_id_replayed": true
+      },
+      "name": "transaction_retry_unchanged",
+      "status": "passed"
+    },
+    {
+      "evidence": {
+        "both_smoke_records_visible": true,
+        "query_exit_code": 0
+      },
+      "name": "query_sees_smoke_facts",
+      "status": "passed"
+    },
+    {
+      "evidence": {
+        "proposal_frontmatter_title_lines_changed": 1
+      },
+      "name": "stale_tamper_fixture",
+      "status": "passed"
+    },
+    {
+      "evidence": {
+        "content_hash_diagnostic_present": true,
+        "target_file_count": 0
+      },
+      "name": "stale_review_rejected_without_canonical_write",
+      "status": "passed"
+    }
+  ],
+  "overall_pass": true,
+  "parent_audit": {
+    "all_passed": true,
+    "checks": {
+      "parentProposalReplayExit0": true,
+      "parentReplayFactsAndTransactionFilesByteIdentical": true,
+      "proposalFactMatchesRecordedHash": true,
+      "sourcePinMatches": true,
+      "staleTargetAbsent": true,
+      "transactionFactMatchesRecordedHash": true
+    },
+    "independent_replay": {
+      "checked_file_count": 11,
+      "exit_code": 0,
+      "stderr_sha256": "c3cc8f4c7e92d685ce157e41bec39492842cc03f22a3a8a446e763fecfe82e5a",
+      "stdout_sha256": "2d3dfd8b5d51abdd0f3c59db92334b341fb6fc5ea0b885969c3f4f3333224bad"
+    }
+  },
+  "project": "Obsidian Memory for AI",
+  "protocol": "docs/evaluation/obsidian-memory-offline-smoke-protocol-2026-09-29.md",
+  "protocol_status": "pre-registered",
+  "public_environment_sanitization": "Full inherited PATH omitted; exact venv prepend and effective PATH hashes retained.",
+  "runtime": {
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "python": "3.12.10",
+    "synthetic_baseline_git_revision": "0469f7baa62d66fa890db995aa43d7a3b86ffd9e",
+    "venv_python": "/private/tmp/obsidian-memory-for-ai-smoke-2026-09-29/vault-v41/.venv/bin/python"
+  },
+  "scope": "deterministic capability smoke only; no model, semantic-quality, or Graphmory head-to-head evaluation",
+  "setup": {
+    "install_command": ".venv/bin/pip install -r requirements.txt",
+    "install_exit_code": 0,
+    "installed_pyyaml_version": "6.0.3",
+    "raw_install_output_retained": false,
+    "requirements_path": "examples/v4.1-minimal-vault/requirements.txt",
+    "requirements_sha256": "71749243f84428fee225bfaa796dca5ef6c1e83a98f6d2a407df615b0390d6fb"
+  },
+  "source_revision": "f87548aad314ab385d4784a618297e363b859238",
+  "upstream": "https://github.com/jrcruciani/obsidian-memory-for-ai"
+}
