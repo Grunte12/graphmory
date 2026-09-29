@@ -29,6 +29,8 @@ test("curator setup previews, installs host definitions, and refuses overwrite",
       assert.match(definition, new RegExp(model))
       assert.match(definition, /Memory Patch/)
       assert.match(definition, /validate-patch --input/)
+      assert.match(definition, /verify-patch-persistence --vault/)
+      assert.match(definition, /revalidate_when event/)
       assert.match(definition, /schema only/)
       assert.match(definition, /host's normal file-editing tools/)
       assert.match(definition, /do not call curate-plan/)

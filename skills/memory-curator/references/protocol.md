@@ -11,6 +11,10 @@ Require:
 - `provenance`
 - `confidence`
 - `suggested_type`
+- `lifecycle.status`
+- `lifecycle.revalidate_when`
+
+`lifecycle.valid_until` is optional and represents a separate date expiry. Preserve event-based `revalidate_when` conditions as a YAML list; a date does not satisfy an event trigger.
 
 Reject low-confidence patches unless the uncertainty itself is the durable fact being recorded.
 

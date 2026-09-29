@@ -39,6 +39,7 @@ import { createEvidenceCollection, collectEvidencePage, recordEvidenceSpan, summ
 import { planDecisionCuration } from "../src/decision-curation.mjs"
 import { recallVaultAdaptive } from "../src/adaptive-recall.mjs"
 import { validateMemoryPatch } from "../src/contracts.mjs"
+import { verifyPatchPersistence } from "../src/patch-persistence.mjs"
 
 const args = process.argv.slice(2)
 const command = args[0]
@@ -85,6 +86,32 @@ function validatePatchInput() {
   if (!result.valid) process.exitCode = 1
 }
 
+function verifyPatchPersistenceCommand() {
+  const input = option("--input")
+  const vault = option("--vault")
+  const notePath = option("--note")
+  const emitInvalid = (errors, exitCode = 1) => {
+    console.log(JSON.stringify({ valid: false, metadataOnly: true, checkedFields: [], errors }))
+    process.exitCode = exitCode
+  }
+  if (!input || !vault || !notePath) {
+    emitInvalid(["--vault, --input, and --note are required"], 2)
+    return
+  }
+
+  let patch
+  try {
+    patch = JSON.parse(fs.readFileSync(path.resolve(input), "utf8"))
+  } catch {
+    emitInvalid(["patch input cannot be read as valid JSON"])
+    return
+  }
+
+  const result = verifyPatchPersistence({ vault, patch, notePath })
+  console.log(JSON.stringify(result))
+  if (!result.valid) process.exitCode = 1
+}
+
 function usage(exitCode = 0) {
   const out = exitCode === 0 ? process.stdout : process.stderr
   out.write(`Graphmory brain sync\n\n`)
@@ -107,6 +134,7 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs recall-explore --vault <path> --query <text> [--scope <path>] [--k 3] [--agent|--json] (experimental)\n`)
   out.write(`  node scripts/brain-sync.mjs curate-plan --vault <path> --input <bundle.json> [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs validate-patch --input <patch.json> [--agent|--json] (schema-only preflight; no vault access or writes)\n`)
+  out.write(`  node scripts/brain-sync.mjs verify-patch-persistence --vault <path> --input <patch.json> --note <relative.md> [--agent|--json] (read-only lifecycle metadata check)\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs lifecycle-audit --vault <path> [--json] [--out <file>]\n`)
   out.write(`  node scripts/brain-sync.mjs init --vault <path> --repo <owner/repo> [--create-remote]\n`)
@@ -1960,6 +1988,7 @@ try {
   else if (command === "recall-explore") await recallExplore()
   else if (command === "curate-plan") await curatePlan()
   else if (command === "validate-patch") validatePatchInput()
+  else if (command === "verify-patch-persistence") verifyPatchPersistenceCommand()
   else if (command === "config") await configureRuntime()
   else if (command === "recall-rerank") recallRerank()
   else if (command === "recall-semantic") await recallSemantic()
