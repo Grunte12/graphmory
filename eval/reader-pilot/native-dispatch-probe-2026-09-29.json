@@ -1,0 +1,76 @@
+{
+  "experiment": "trace-preserving native dispatch-only probe",
+  "date": "2026-09-29",
+  "sourceBaselineRevision": "5ae87c6",
+  "uncommittedChange": "setup reminder and guide explain source-supported V2 dispatch shape; generated role unchanged",
+  "package": {
+    "name": "graphmory",
+    "version": "0.5.0-rc.3",
+    "integrity": "sha512-CKIbTDw22mENUHU6G8jqlb0FqyeD34P+Juo/0P6//rOuYKDBYD/GnubfGuMgaaY2KSLCRhqvzftxm4EAHsp8Qg=="
+  },
+  "execution": {
+    "exitCode": 0,
+    "wallSeconds": 36.629
+  },
+  "leadModel": "gpt-5.6-sol",
+  "leadReasoning": "low",
+  "actualChild": {
+    "model": "gpt-5.6-luna",
+    "reasoning_effort": "low",
+    "agent_role": "graphmory_curator"
+  },
+  "spawn": {
+    "namespace": "collaboration",
+    "name": "spawn_agent",
+    "agent_type": "graphmory_curator",
+    "fork_turns": "none",
+    "fork_contextPresent": false,
+    "modelOverridePresent": false,
+    "messageOmittedFromPublicEvidence": true,
+    "responseTaskName": "/root/graphmory_doctor"
+  },
+  "checks": {
+    "singleSpawn": true,
+    "namedRoleRequested": true,
+    "freshContextRequested": true,
+    "noModelOverride": true,
+    "runtimeRole": true,
+    "runtimeModel": true,
+    "terminalChild": true,
+    "actualDoctorOK": true
+  },
+  "dispatchGatePassed": true,
+  "lifecycleWorkflowVerified": false,
+  "doctor": {
+    "ok": true,
+    "vault": null,
+    "checks": [
+      {
+        "id": "node-version",
+        "status": "pass",
+        "required": true
+      },
+      {
+        "id": "git-cli",
+        "status": "pass",
+        "required": true
+      },
+      {
+        "id": "github-cli",
+        "status": "pass",
+        "required": false
+      },
+      {
+        "id": "github-auth",
+        "status": "warn",
+        "required": false
+      }
+    ]
+  },
+  "parentTraceSha256": "9be6b13b74e32a5b803894944521e7f85d46b192f70aa227833a406c32a60544",
+  "childTraceSha256": "8e01ec8933fab195ee0844304c2ff32826a9ad4aeb2fe30c0293c4960fbf9ee7",
+  "goalComplete": false,
+  "cleanupPending": false,
+  "temporaryWorkspaceRemoved": true,
+  "completedTestSessionsArchived": true
+}

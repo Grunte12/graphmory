@@ -60,8 +60,8 @@ try {
   }
   const action = fs.existsSync(agentPath) ? (fs.readFileSync(agentPath, "utf8") === content ? "unchanged" : "conflict") : "create"
   const skillAction = fs.existsSync(skillDir) ? (sameTree(skillSource, skillDir) ? "unchanged" : "conflict") : "create"
-  const verificationReminder = host === "codex" && scope === "project"
-    ? "Open this project as trusted in Codex, start a fresh session, and verify a native graphmory_curator child run."
+  const verificationReminder = host === "codex"
+    ? `${scope === "project" ? "Open this project as trusted in Codex, " : ""}start a fresh session, and verify a native graphmory_curator child run. With a spawn schema exposing fork_turns, select agent_type=graphmory_curator and fork_turns=none; a full-history fork cannot select the configured role.`
     : `Start a fresh ${host} session if needed and verify the named curator runs as a child.`
   console.log(JSON.stringify({ host, scope, model, agentPath, action, skillDir, skillAction, mode: apply ? "apply" : "preview" }, null, 2))
   if (action === "conflict") throw new Error("Existing agent differs. Review it manually; installer will not overwrite it")
