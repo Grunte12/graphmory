@@ -1,0 +1,611 @@
+{
+  "protocol": "tool-error-feedback-controlled-fixtures-v1",
+  "host": "Deterministic fake Codex executable; actual Graphmory CLI retrieval and original reads",
+  "modelNamesAndUsageAreMocked": true,
+  "cases": [
+    {
+      "fixture": "future-page",
+      "report": {
+        "protocol": "curator-paging-development-v4-tool-error-feedback",
+        "id": "fixture:0",
+        "question": "Who owns the fixture?",
+        "model": "gpt-5.6-luna",
+        "leadModel": "gpt-5.6-sol",
+        "mode": "auto",
+        "maxRounds": 5,
+        "maxInputBytes": 300000,
+        "persistentCurator": false,
+        "compactFollowup": false,
+        "structuredCitations": true,
+        "coveragePreviews": false,
+        "runnerSha256": "73b1b597d5bc19d4941dc4f23e51dfa5f73fcb78ec94c542f5a247f7f89cd6b2",
+        "inputSha256": "ec1f364e6ca64fc69d6a8ed60c78ca1cd8c672d13f613dbc6cd2217ab3b65010",
+        "modelCalls": [
+          {
+            "stage": "curator",
+            "model": "gpt-5.6-luna",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.075,
+            "promptBytes": 2769,
+            "promptSha256": "f713b18fe61bb783e7b6ef9b04e04b536f610d93c12d171afad7a21e76bb8f46",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          },
+          {
+            "stage": "curator",
+            "model": "gpt-5.6-luna",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.023,
+            "promptBytes": 3037,
+            "promptSha256": "4f4d67ae9aba7d04e38b399875ba96f1cf6fac1bfb630391f366292f556c70ca",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          },
+          {
+            "stage": "curator",
+            "model": "gpt-5.6-luna",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.021,
+            "promptBytes": 2930,
+            "promptSha256": "5217e5c23c092768396eb738289dd9b8bca8f83bbe3c5693bcf60f17802e7b80",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          },
+          {
+            "stage": "curator",
+            "model": "gpt-5.6-luna",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.021,
+            "promptBytes": 3139,
+            "promptSha256": "bae13b29918dbfa1cd1892efaef888c035928ee962d4a4144d0b063ab4e58a8c",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          },
+          {
+            "stage": "lead",
+            "model": "gpt-5.6-sol",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.023,
+            "promptBytes": 451,
+            "promptSha256": "74e43dc59c89d795b3898f4e2a38690d4d1a2e52f9a550a9cb544bd7e5c511d6",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          }
+        ],
+        "pages": [
+          {
+            "offset": 0,
+            "nextOffset": 10,
+            "hasMore": true,
+            "paths": [
+              "note.md",
+              "next-00.md",
+              "next-01.md",
+              "next-02.md",
+              "next-03.md",
+              "next-04.md",
+              "next-05.md",
+              "next-06.md",
+              "next-07.md",
+              "next-08.md"
+            ],
+            "pageSha256": "e6d92084f25765a1ca2861c4ddf97e3ab3e9e7b82a77eb667d02525031a988a9"
+          },
+          {
+            "offset": 10,
+            "nextOffset": 20,
+            "hasMore": true,
+            "paths": [
+              "next-09.md",
+              "next-10.md",
+              "next-11.md",
+              "next-12.md",
+              "next-13.md",
+              "next-14.md",
+              "next-15.md",
+              "next-16.md",
+              "next-17.md",
+              "next-18.md"
+            ],
+            "pageSha256": "3909d66d1b9e5484dd05b9d78d1189d9065db143db543fc00653db851e93f969"
+          }
+        ],
+        "sourceReads": [
+          {
+            "path": "next-10.md",
+            "sha256": "64346964e7830b822f3b25fcf3f5afb922be070ba139ed8b2ae24574cbeeab96",
+            "bytes": 54
+          }
+        ],
+        "sourceRequests": [
+          {
+            "turn": 1,
+            "requested": [],
+            "new": [],
+            "reused": []
+          },
+          {
+            "turn": 2,
+            "requested": [
+              "next-10.md"
+            ],
+            "new": [
+              "next-10.md"
+            ],
+            "reused": []
+          }
+        ],
+        "sourceRequestErrors": [
+          {
+            "turn": 0,
+            "code": "UNSEEN_SOURCE_PATH",
+            "unseen": [
+              "next-10.md"
+            ],
+            "rejectedRequest": [
+              "next-10.md"
+            ],
+            "nextPageRequested": true
+          }
+        ],
+        "brief": "Ada owns the fixture (next-10.md)",
+        "answer": "Ada owns the fixture (next-10.md)",
+        "runComplete": true,
+        "stopReason": "curator-finalized",
+        "limitations": [
+          "One exposed development case; no quality acceptance or latency tail claim",
+          "No-tool boundary is checked in trace, not a proven filesystem isolation guarantee",
+          "No official answer scorer or independent calibrated semantic judge",
+          "Subscription bill allocation unknown; native token categories retained"
+        ],
+        "citations": [
+          "next-10.md"
+        ],
+        "citationProvenanceValid": true,
+        "elapsedSeconds": 0.269
+      }
+    },
+    {
+      "fixture": "recover-unseen",
+      "report": {
+        "protocol": "curator-paging-development-v4-tool-error-feedback",
+        "id": "fixture:0",
+        "question": "Who owns the fixture?",
+        "model": "gpt-5.6-luna",
+        "leadModel": "gpt-5.6-sol",
+        "mode": "bundle",
+        "maxRounds": 3,
+        "maxInputBytes": 300000,
+        "persistentCurator": false,
+        "compactFollowup": false,
+        "structuredCitations": false,
+        "coveragePreviews": false,
+        "runnerSha256": "73b1b597d5bc19d4941dc4f23e51dfa5f73fcb78ec94c542f5a247f7f89cd6b2",
+        "inputSha256": "9849a87b92febc0bd9af41de182d9dfe6184e69be5bd295a1d4b7c30bec3f219",
+        "modelCalls": [
+          {
+            "stage": "curator",
+            "model": "gpt-5.6-luna",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.2,
+            "promptBytes": 1301,
+            "promptSha256": "ef12a72d893d8a79ab53d7e09045913959166940c0262c3538741601b0e4779f",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          },
+          {
+            "stage": "curator",
+            "model": "gpt-5.6-luna",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.028,
+            "promptBytes": 1573,
+            "promptSha256": "e526658c4a8828cffcf3f245569091a1ac9b2b0226939799dc33a5fead7bc7a1",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          },
+          {
+            "stage": "curator",
+            "model": "gpt-5.6-luna",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.021,
+            "promptBytes": 1493,
+            "promptSha256": "7cbe05f669b17bf3a1280ade5d0d16e3d97808e75b425540824158d48fdb95ab",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          },
+          {
+            "stage": "lead",
+            "model": "gpt-5.6-sol",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.022,
+            "promptBytes": 244,
+            "promptSha256": "b92a9dc6a2958eb8dbcb5b7df4d78c50871127e8e4a005c1919ff59e36919b11",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          }
+        ],
+        "pages": [
+          {
+            "offset": 0,
+            "nextOffset": null,
+            "hasMore": false,
+            "paths": [
+              "note.md"
+            ],
+            "pageSha256": "f9eaf1edf6c52a8ea610ee33ff89585e616b1ef438cc31de7b61068fc5560543"
+          }
+        ],
+        "sourceReads": [
+          {
+            "path": "note.md",
+            "sha256": "1bb99f6a667a42adb9191349f78e732f132fcfcc7dd3315eed50f707a00152cf",
+            "bytes": 43
+          }
+        ],
+        "sourceRequests": [
+          {
+            "turn": 1,
+            "requested": [
+              "note.md"
+            ],
+            "new": [
+              "note.md"
+            ],
+            "reused": []
+          }
+        ],
+        "sourceRequestErrors": [
+          {
+            "turn": 0,
+            "code": "UNSEEN_SOURCE_PATH",
+            "unseen": [
+              "hidden-gold.md"
+            ],
+            "rejectedRequest": [
+              "hidden-gold.md"
+            ],
+            "nextPageRequested": true
+          }
+        ],
+        "brief": "Ada owns the fixture (note.md)",
+        "answer": "Ada owns the fixture (note.md)",
+        "runComplete": true,
+        "stopReason": "curator-finalized",
+        "limitations": [
+          "One exposed development case; no quality acceptance or latency tail claim",
+          "No-tool boundary is checked in trace, not a proven filesystem isolation guarantee",
+          "No official answer scorer or independent calibrated semantic judge",
+          "Subscription bill allocation unknown; native token categories retained"
+        ],
+        "elapsedSeconds": 0.333
+      }
+    },
+    {
+      "fixture": "repeat-unseen",
+      "report": {
+        "protocol": "curator-paging-development-v4-tool-error-feedback",
+        "id": "fixture:0",
+        "question": "Who owns the fixture?",
+        "model": "gpt-5.6-luna",
+        "leadModel": "gpt-5.6-sol",
+        "mode": "bundle",
+        "maxRounds": 3,
+        "maxInputBytes": 300000,
+        "persistentCurator": false,
+        "compactFollowup": false,
+        "structuredCitations": false,
+        "coveragePreviews": false,
+        "runnerSha256": "73b1b597d5bc19d4941dc4f23e51dfa5f73fcb78ec94c542f5a247f7f89cd6b2",
+        "inputSha256": "210beb085ed27cf413ef3c80679a8f4d1557e59357a19824287ae8ab1ed16aaf",
+        "modelCalls": [
+          {
+            "stage": "curator",
+            "model": "gpt-5.6-luna",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.072,
+            "promptBytes": 1301,
+            "promptSha256": "ef12a72d893d8a79ab53d7e09045913959166940c0262c3538741601b0e4779f",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          },
+          {
+            "stage": "curator",
+            "model": "gpt-5.6-luna",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.022,
+            "promptBytes": 1493,
+            "promptSha256": "7cbe05f669b17bf3a1280ade5d0d16e3d97808e75b425540824158d48fdb95ab",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          },
+          {
+            "stage": "curator",
+            "model": "gpt-5.6-luna",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.021,
+            "promptBytes": 1765,
+            "promptSha256": "9980f01dae2a64a9e88ec18dceb4f550b412bf317072cb040a4e4d73d9e164e9",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          },
+          {
+            "stage": "lead",
+            "model": "gpt-5.6-sol",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.021,
+            "promptBytes": 244,
+            "promptSha256": "b92a9dc6a2958eb8dbcb5b7df4d78c50871127e8e4a005c1919ff59e36919b11",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          }
+        ],
+        "pages": [
+          {
+            "offset": 0,
+            "nextOffset": null,
+            "hasMore": false,
+            "paths": [
+              "note.md"
+            ],
+            "pageSha256": "f9eaf1edf6c52a8ea610ee33ff89585e616b1ef438cc31de7b61068fc5560543"
+          }
+        ],
+        "sourceReads": [
+          {
+            "path": "note.md",
+            "sha256": "1bb99f6a667a42adb9191349f78e732f132fcfcc7dd3315eed50f707a00152cf",
+            "bytes": 43
+          }
+        ],
+        "sourceRequests": [
+          {
+            "turn": 0,
+            "requested": [
+              "note.md"
+            ],
+            "new": [
+              "note.md"
+            ],
+            "reused": []
+          }
+        ],
+        "sourceRequestErrors": [
+          {
+            "turn": 1,
+            "code": "UNSEEN_SOURCE_PATH",
+            "unseen": [
+              "hidden-gold.md"
+            ],
+            "rejectedRequest": [
+              "note.md",
+              "hidden-gold.md"
+            ],
+            "nextPageRequested": false
+          }
+        ],
+        "brief": "Ada owns the fixture (note.md)",
+        "answer": "Ada owns the fixture (note.md)",
+        "runComplete": true,
+        "stopReason": "curator-finalized",
+        "limitations": [
+          "One exposed development case; no quality acceptance or latency tail claim",
+          "No-tool boundary is checked in trace, not a proven filesystem isolation guarantee",
+          "No official answer scorer or independent calibrated semantic judge",
+          "Subscription bill allocation unknown; native token categories retained"
+        ],
+        "elapsedSeconds": 0.197
+      }
+    },
+    {
+      "fixture": "unseen-forever",
+      "report": {
+        "protocol": "curator-paging-development-v4-tool-error-feedback",
+        "id": "fixture:0",
+        "question": "Who owns the fixture?",
+        "model": "gpt-5.6-luna",
+        "leadModel": "gpt-5.6-sol",
+        "mode": "bundle",
+        "maxRounds": 3,
+        "maxInputBytes": 300000,
+        "persistentCurator": false,
+        "compactFollowup": false,
+        "structuredCitations": false,
+        "coveragePreviews": false,
+        "runnerSha256": "73b1b597d5bc19d4941dc4f23e51dfa5f73fcb78ec94c542f5a247f7f89cd6b2",
+        "inputSha256": "e3632b3f9ccfa01360adfaa973816a4146b75cb684421fbefd2c0d90b26757b4",
+        "modelCalls": [
+          {
+            "stage": "curator",
+            "model": "gpt-5.6-luna",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.077,
+            "promptBytes": 1301,
+            "promptSha256": "ef12a72d893d8a79ab53d7e09045913959166940c0262c3538741601b0e4779f",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          },
+          {
+            "stage": "curator",
+            "model": "gpt-5.6-luna",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.023,
+            "promptBytes": 1573,
+            "promptSha256": "e526658c4a8828cffcf3f245569091a1ac9b2b0226939799dc33a5fead7bc7a1",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          },
+          {
+            "stage": "curator",
+            "model": "gpt-5.6-luna",
+            "sessionResumed": false,
+            "elapsedSeconds": 0.021,
+            "promptBytes": 1573,
+            "promptSha256": "e526658c4a8828cffcf3f245569091a1ac9b2b0226939799dc33a5fead7bc7a1",
+            "usage": {
+              "input_tokens": 10,
+              "output_tokens": 3
+            },
+            "failed": false,
+            "failureKind": null,
+            "sessionIdentityFailed": false,
+            "warnings": []
+          }
+        ],
+        "pages": [
+          {
+            "offset": 0,
+            "nextOffset": null,
+            "hasMore": false,
+            "paths": [
+              "note.md"
+            ],
+            "pageSha256": "f9eaf1edf6c52a8ea610ee33ff89585e616b1ef438cc31de7b61068fc5560543"
+          }
+        ],
+        "sourceReads": [],
+        "sourceRequests": [],
+        "sourceRequestErrors": [
+          {
+            "turn": 0,
+            "code": "UNSEEN_SOURCE_PATH",
+            "unseen": [
+              "hidden-gold.md"
+            ],
+            "rejectedRequest": [
+              "hidden-gold.md"
+            ],
+            "nextPageRequested": true
+          },
+          {
+            "turn": 1,
+            "code": "UNSEEN_SOURCE_PATH",
+            "unseen": [
+              "hidden-gold.md"
+            ],
+            "rejectedRequest": [
+              "hidden-gold.md"
+            ],
+            "nextPageRequested": true
+          },
+          {
+            "turn": 2,
+            "code": "UNSEEN_SOURCE_PATH",
+            "unseen": [
+              "hidden-gold.md"
+            ],
+            "rejectedRequest": [
+              "hidden-gold.md"
+            ],
+            "nextPageRequested": true
+          }
+        ],
+        "brief": null,
+        "answer": null,
+        "runComplete": false,
+        "stopReason": "round-budget",
+        "limitations": [
+          "One exposed development case; no quality acceptance or latency tail claim",
+          "No-tool boundary is checked in trace, not a proven filesystem isolation guarantee",
+          "No official answer scorer or independent calibrated semantic judge",
+          "Subscription bill allocation unknown; native token categories retained"
+        ],
+        "elapsedSeconds": 0.153
+      }
+    }
+  ],
+  "limitations": [
+    "Synthetic fixtures and deterministic host decisions, not live model quality",
+    "Only tool-contract recovery, source boundary, pagination and round-budget checks",
+    "No benchmark or competitor acceptance claim"
+  ]
+}

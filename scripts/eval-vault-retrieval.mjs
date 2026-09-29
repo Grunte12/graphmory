@@ -15,8 +15,10 @@ const vault = path.resolve(option("--vault", ""))
 const queriesPath = path.resolve(option("--queries", ""))
 const output = option("--json", "")
 const k = Number.parseInt(option("--k", "3"), 10)
+const maxFiles = Number(option("--max-files", "5000"))
+if (!Number.isInteger(maxFiles) || maxFiles < 1) throw new Error("max-files must be a positive integer")
 if (!option("--vault") || !option("--queries") || !Number.isInteger(k) || k < 1) {
-  console.error("Usage: node scripts/eval-vault-retrieval.mjs --vault <path> --queries <json> [--k 3] [--json report]")
+  console.error("Usage: node scripts/eval-vault-retrieval.mjs --vault <path> --queries <json> [--k 3] [--max-files 5000] [--json report]")
   console.error("Query cases require id, query, and either relevant or relevant_groups. Optional scope narrows search by path/domain.")
   process.exit(2)
 }
@@ -25,7 +27,8 @@ if (!fs.existsSync(queriesPath)) {
   process.exit(2)
 }
 
-const documents = loadVaultDocuments(vault, { includeRawPaths: true })
+const documents = loadVaultDocuments(vault, { includeRawPaths: true, maxFiles })
+if (documents.length >= maxFiles) throw new Error("SCAN_LIMIT_REACHED: raise --max-files above the full corpus count before benchmarking")
 const queries = JSON.parse(fs.readFileSync(queriesPath, "utf8"))
 if (!Array.isArray(queries) || queries.length < 1) throw new Error("query set must be a non-empty array")
 

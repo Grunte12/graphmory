@@ -28,7 +28,70 @@ test("code examples/comments cannot add false edges; ambiguous, stale and scoped
   })
   assert.deepEqual(linkedNeighbors(buildNoteGraph(documents), "Start.md").map((n) => n.path), ["real/Target.md"])
   assert.deepEqual(linkedNeighbors(buildNoteGraph(documents, { scope: 'Start.md' }), "Start.md"), [])
+  const graph = buildNoteGraph(documents)
   assert.equal(summarizeNoteGraph(documents).issueCounts.ambiguous, 1)
+  assert.ok(graph.issues.some((issue) => issue.target === "Same" && issue.kind === "wiki" && issue.reason === "ambiguous"))
+  assert.ok(!graph.excludedReferences.some((reference) => reference.target === "Same"))
+})
+
+test("resolved superseded history targets are informational and stay out of current neighbors", () => {
+  const documents = docs({
+    "New Policy.md": "# New Policy\nSupersedes [[Old Policy]].",
+    "Old Policy.md": "---\nstatus: superseded\n---\n# Old Policy\nEarlier guidance.",
+  })
+  const graph = buildNoteGraph(documents)
+  const report = summarizeNoteGraph(documents)
+
+  assert.deepEqual(linkedNeighbors(graph, "New Policy.md"), [])
+  assert.deepEqual(graph.issues, [])
+  assert.deepEqual(graph.issueCounts, {})
+  assert.deepEqual(graph.excludedCounts, { "lifecycle:superseded": 1 })
+  assert.deepEqual(graph.excludedReferences, [{ source: "New Policy.md", target: "Old Policy",
+    relation: "links_to", kind: "wiki", resolvedPath: "Old Policy.md", reason: "lifecycle:superseded" }])
+  assert.deepEqual(report.excludedCounts, graph.excludedCounts)
+  assert.deepEqual(report.excludedReferences, graph.excludedReferences)
+})
+
+test("missing wiki and relative Markdown targets remain unresolved issues", () => {
+  const graph = buildNoteGraph(docs({
+    "Project/Start.md": '# Start\n[[Missing Note]] [missing](../Evidence/Not%20found.md)',
+  }))
+
+  assert.equal(graph.issueCounts.unresolved, 2)
+  assert.deepEqual(graph.issues.map(({ kind, reason }) => ({ kind, reason })), [
+    { kind: "wiki", reason: "unresolved" },
+    { kind: "markdown", reason: "unresolved" },
+  ])
+  assert.deepEqual(graph.excludedReferences, [])
+})
+
+test("scope and lifecycle exclusions have separate precise labels", () => {
+  const documents = docs({
+    "Project/Start.md": "# Start\n[[Project/Old]] [[Outside/Guide]]",
+    "Project/Old.md": "---\nstatus: stale\n---\n# Old",
+    "Outside/Guide.md": "# Guide",
+  })
+  const graph = buildNoteGraph(documents, { scope: "Project" })
+
+  assert.deepEqual(linkedNeighbors(graph, "Project/Start.md"), [])
+  assert.deepEqual(graph.issues, [])
+  assert.deepEqual(graph.excludedCounts, { "lifecycle:stale": 1, scope: 1 })
+  assert.deepEqual(graph.excludedReferences.map(({ resolvedPath, reason }) => ({ resolvedPath, reason })), [
+    { resolvedPath: "Project/Old.md", reason: "lifecycle:stale" },
+    { resolvedPath: "Outside/Guide.md", reason: "scope" },
+  ])
+})
+
+test("excluded-reference observations stay bounded while counts remain complete", () => {
+  const links = Array.from({ length: 30 }, () => "[[Old]]").join(" ")
+  const report = summarizeNoteGraph(docs({
+    "Start.md": `# Start\n${links}`,
+    "Old.md": "---\nstatus: superseded\n---\n# Old",
+  }))
+
+  assert.equal(report.excludedReferences.length, 20)
+  assert.deepEqual(report.excludedCounts, { "lifecycle:superseded": 30 })
+  assert.deepEqual(report.issues, [])
 })
 
 test("audit output and extraction stay bounded for noisy notes", () => {

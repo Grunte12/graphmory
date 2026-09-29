@@ -1,0 +1,780 @@
+{
+  "protocol": "synthetic-historical-lifecycle-delivery-v1",
+  "runnerSha256": "56bda4dc26a362f98aeb60dd4c1df327a8520d4695386c14c639e1752d3fd902",
+  "runtimeHashes": {
+    "src/retrieval.mjs": "28f656a4bef7806d9a2a7690c2c31b7ad0732b894e05946e186286e05a4bc6c1",
+    "src/memory-recall.mjs": "0fb19fa1c3c268b2cbd38b73ac8733ea6ff852a27d558c4fc3678de0f39593cd",
+    "src/decision-recall.mjs": "89169fdbd15793427ad2e1891d286d522cb5ee840cecd105302dfe37677421fc",
+    "scripts/brain-sync.mjs": "e75ed971310c63db8cc2b184b22a9a1fcd1e4492a6bf1b3e06dc28b57db519fc"
+  },
+  "plannedTrials": 24,
+  "actualTrials": 24,
+  "summary": {
+    "existing": {
+      "trials": 12,
+      "currentReachable": 6,
+      "priorReachable": 0,
+      "boundaryFailures": 0
+    },
+    "explicit-history": {
+      "trials": 12,
+      "currentReachable": 6,
+      "priorReachable": 6,
+      "boundaryFailures": 0
+    }
+  },
+  "rows": [
+    {
+      "id": "atomic-global",
+      "questionType": "current",
+      "arm": "existing",
+      "querySha256": "7e5b4e93e8d3e36eef06529638baca2810c93f5705d04b89349f3e20c5b90ffe",
+      "historical": false,
+      "requiredPath": "Cedar/current.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 396,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 41.35704199999999,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "atomic-global",
+      "questionType": "current",
+      "arm": "explicit-history",
+      "querySha256": "7e5b4e93e8d3e36eef06529638baca2810c93f5705d04b89349f3e20c5b90ffe",
+      "historical": false,
+      "requiredPath": "Cedar/current.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 396,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 36.054333,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "atomic-global",
+      "questionType": "prior",
+      "arm": "existing",
+      "querySha256": "3cc1fdcdca9bdd37a5509d1ad00f392164f84ed09a14479335a41911e7cb66c9",
+      "historical": false,
+      "requiredPath": "Cedar/prior.md",
+      "evidenceReachable": false,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 396,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 36.528999999999996,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "atomic-global",
+      "questionType": "prior",
+      "arm": "explicit-history",
+      "querySha256": "3cc1fdcdca9bdd37a5509d1ad00f392164f84ed09a14479335a41911e7cb66c9",
+      "historical": true,
+      "requiredPath": "Cedar/prior.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md",
+        "Cedar/prior.md",
+        "other.md"
+      ],
+      "statuses": [
+        "active",
+        "superseded",
+        "superseded"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 819,
+          "historicalCandidatesIncluded": true,
+          "paths": [
+            "Cedar/current.md",
+            "Cedar/prior.md",
+            "other.md"
+          ]
+        }
+      ],
+      "elapsedMs": 36.341042000000016,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "atomic-scoped",
+      "questionType": "current",
+      "arm": "existing",
+      "querySha256": "7e5b4e93e8d3e36eef06529638baca2810c93f5705d04b89349f3e20c5b90ffe",
+      "historical": false,
+      "requiredPath": "Cedar/current.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 396,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 37.317542,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "atomic-scoped",
+      "questionType": "current",
+      "arm": "explicit-history",
+      "querySha256": "7e5b4e93e8d3e36eef06529638baca2810c93f5705d04b89349f3e20c5b90ffe",
+      "historical": false,
+      "requiredPath": "Cedar/current.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 396,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 35.949375,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "atomic-scoped",
+      "questionType": "prior",
+      "arm": "existing",
+      "querySha256": "3cc1fdcdca9bdd37a5509d1ad00f392164f84ed09a14479335a41911e7cb66c9",
+      "historical": false,
+      "requiredPath": "Cedar/prior.md",
+      "evidenceReachable": false,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 396,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 36.16424999999998,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "atomic-scoped",
+      "questionType": "prior",
+      "arm": "explicit-history",
+      "querySha256": "3cc1fdcdca9bdd37a5509d1ad00f392164f84ed09a14479335a41911e7cb66c9",
+      "historical": true,
+      "requiredPath": "Cedar/prior.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/prior.md",
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "superseded",
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 616,
+          "historicalCandidatesIncluded": true,
+          "paths": [
+            "Cedar/prior.md",
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 36.18383299999999,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "conversation-global",
+      "questionType": "current",
+      "arm": "existing",
+      "querySha256": "7e5b4e93e8d3e36eef06529638baca2810c93f5705d04b89349f3e20c5b90ffe",
+      "historical": false,
+      "requiredPath": "Cedar/current.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 409,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 34.851541999999995,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "conversation-global",
+      "questionType": "current",
+      "arm": "explicit-history",
+      "querySha256": "7e5b4e93e8d3e36eef06529638baca2810c93f5705d04b89349f3e20c5b90ffe",
+      "historical": false,
+      "requiredPath": "Cedar/current.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 409,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 34.66416600000002,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "conversation-global",
+      "questionType": "prior",
+      "arm": "existing",
+      "querySha256": "3cc1fdcdca9bdd37a5509d1ad00f392164f84ed09a14479335a41911e7cb66c9",
+      "historical": false,
+      "requiredPath": "Cedar/prior.md",
+      "evidenceReachable": false,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 409,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 34.14074999999997,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "conversation-global",
+      "questionType": "prior",
+      "arm": "explicit-history",
+      "querySha256": "3cc1fdcdca9bdd37a5509d1ad00f392164f84ed09a14479335a41911e7cb66c9",
+      "historical": true,
+      "requiredPath": "Cedar/prior.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md",
+        "Cedar/prior.md",
+        "other.md"
+      ],
+      "statuses": [
+        "active",
+        "superseded",
+        "superseded"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 845,
+          "historicalCandidatesIncluded": true,
+          "paths": [
+            "Cedar/current.md",
+            "Cedar/prior.md",
+            "other.md"
+          ]
+        }
+      ],
+      "elapsedMs": 35.67108300000001,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "conversation-scoped",
+      "questionType": "current",
+      "arm": "existing",
+      "querySha256": "7e5b4e93e8d3e36eef06529638baca2810c93f5705d04b89349f3e20c5b90ffe",
+      "historical": false,
+      "requiredPath": "Cedar/current.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 409,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 34.13062500000001,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "conversation-scoped",
+      "questionType": "current",
+      "arm": "explicit-history",
+      "querySha256": "7e5b4e93e8d3e36eef06529638baca2810c93f5705d04b89349f3e20c5b90ffe",
+      "historical": false,
+      "requiredPath": "Cedar/current.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 409,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 36.541124999999965,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "conversation-scoped",
+      "questionType": "prior",
+      "arm": "existing",
+      "querySha256": "3cc1fdcdca9bdd37a5509d1ad00f392164f84ed09a14479335a41911e7cb66c9",
+      "historical": false,
+      "requiredPath": "Cedar/prior.md",
+      "evidenceReachable": false,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 409,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 34.64658300000008,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "conversation-scoped",
+      "questionType": "prior",
+      "arm": "explicit-history",
+      "querySha256": "3cc1fdcdca9bdd37a5509d1ad00f392164f84ed09a14479335a41911e7cb66c9",
+      "historical": true,
+      "requiredPath": "Cedar/prior.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/prior.md",
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "superseded",
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 642,
+          "historicalCandidatesIncluded": true,
+          "paths": [
+            "Cedar/prior.md",
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 34.63991699999997,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "nested-global",
+      "questionType": "current",
+      "arm": "existing",
+      "querySha256": "7e5b4e93e8d3e36eef06529638baca2810c93f5705d04b89349f3e20c5b90ffe",
+      "historical": false,
+      "requiredPath": "Cedar/current.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 471,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 35.05108300000006,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "nested-global",
+      "questionType": "current",
+      "arm": "explicit-history",
+      "querySha256": "7e5b4e93e8d3e36eef06529638baca2810c93f5705d04b89349f3e20c5b90ffe",
+      "historical": false,
+      "requiredPath": "Cedar/current.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 471,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 34.550083000000086,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "nested-global",
+      "questionType": "prior",
+      "arm": "existing",
+      "querySha256": "3cc1fdcdca9bdd37a5509d1ad00f392164f84ed09a14479335a41911e7cb66c9",
+      "historical": false,
+      "requiredPath": "Cedar/prior.md",
+      "evidenceReachable": false,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 471,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 34.70100000000002,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "nested-global",
+      "questionType": "prior",
+      "arm": "explicit-history",
+      "querySha256": "3cc1fdcdca9bdd37a5509d1ad00f392164f84ed09a14479335a41911e7cb66c9",
+      "historical": true,
+      "requiredPath": "Cedar/prior.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md",
+        "Cedar/prior.md",
+        "other.md"
+      ],
+      "statuses": [
+        "active",
+        "superseded",
+        "superseded"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 969,
+          "historicalCandidatesIncluded": true,
+          "paths": [
+            "Cedar/current.md",
+            "Cedar/prior.md",
+            "other.md"
+          ]
+        }
+      ],
+      "elapsedMs": 35.863958000000025,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "nested-scoped",
+      "questionType": "current",
+      "arm": "existing",
+      "querySha256": "7e5b4e93e8d3e36eef06529638baca2810c93f5705d04b89349f3e20c5b90ffe",
+      "historical": false,
+      "requiredPath": "Cedar/current.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 471,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 34.5685830000001,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "nested-scoped",
+      "questionType": "current",
+      "arm": "explicit-history",
+      "querySha256": "7e5b4e93e8d3e36eef06529638baca2810c93f5705d04b89349f3e20c5b90ffe",
+      "historical": false,
+      "requiredPath": "Cedar/current.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 471,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 34.59116599999993,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "nested-scoped",
+      "questionType": "prior",
+      "arm": "existing",
+      "querySha256": "3cc1fdcdca9bdd37a5509d1ad00f392164f84ed09a14479335a41911e7cb66c9",
+      "historical": false,
+      "requiredPath": "Cedar/prior.md",
+      "evidenceReachable": false,
+      "paths": [
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 471,
+          "historicalCandidatesIncluded": false,
+          "paths": [
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 35.30925000000002,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "nested-scoped",
+      "questionType": "prior",
+      "arm": "explicit-history",
+      "querySha256": "3cc1fdcdca9bdd37a5509d1ad00f392164f84ed09a14479335a41911e7cb66c9",
+      "historical": true,
+      "requiredPath": "Cedar/prior.md",
+      "evidenceReachable": true,
+      "paths": [
+        "Cedar/prior.md",
+        "Cedar/current.md"
+      ],
+      "statuses": [
+        "superseded",
+        "active"
+      ],
+      "pages": [
+        {
+          "offset": 0,
+          "stdoutBytes": 766,
+          "historicalCandidatesIncluded": true,
+          "paths": [
+            "Cedar/prior.md",
+            "Cedar/current.md"
+          ]
+        }
+      ],
+      "elapsedMs": 33.989374999999995,
+      "unsafeLifecycleReturned": false,
+      "navigationReturned": false,
+      "scopeViolated": false,
+      "sourcesUnchanged": true
+    }
+  ],
+  "limitations": [
+    "Synthetic mechanical evidence reachability; no answer model, official benchmark or semantic support grading",
+    "Explicit flag policy is supplied by the evaluator; autonomous Curator choice is unmeasured",
+    "Single-pass timings are observations, not latency/cost acceptance"
+  ]
+}

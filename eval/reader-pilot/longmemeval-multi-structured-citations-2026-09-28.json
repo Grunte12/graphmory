@@ -1,0 +1,187 @@
+{
+  "protocol": "curator-paging-development-v2-boolean-continuation",
+  "id": "67e0d0f2",
+  "question": "What is the total number of online courses I've completed?",
+  "model": "gpt-5.6-luna",
+  "mode": "auto",
+  "maxRounds": 4,
+  "maxInputBytes": 300000,
+  "persistentCurator": false,
+  "compactFollowup": false,
+  "structuredCitations": true,
+  "runnerSha256": "f222e2b8fe42311f5c78918eafa14cc2a5ccf8072852bf720394e3cbcb0c7499",
+  "inputSha256": "a92d667a473ecebe140480a57d6ca395c032a317e72cca7bbf2c68293e26c934",
+  "modelCalls": [
+    {
+      "stage": "curator",
+      "sessionResumed": false,
+      "elapsedSeconds": 7.133,
+      "promptBytes": 10646,
+      "promptSha256": "66963e4f1b3ff59cfc116bcfb9bac47718bdaa4b52e0af51523923e90bc11915",
+      "usage": {
+        "input_tokens": 17852,
+        "cached_input_tokens": 8960,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 109,
+        "reasoning_output_tokens": 57
+      },
+      "failed": false,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "curator",
+      "sessionResumed": false,
+      "elapsedSeconds": 8.009,
+      "promptBytes": 46068,
+      "promptSha256": "0d6466d3e9df6fce63ab36703204ef4b5a1bf04170b48f6eb620587244f8b890",
+      "usage": {
+        "input_tokens": 25248,
+        "cached_input_tokens": 14080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 220,
+        "reasoning_output_tokens": 182
+      },
+      "failed": false,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "curator",
+      "sessionResumed": false,
+      "elapsedSeconds": 7.64,
+      "promptBytes": 90532,
+      "promptSha256": "86cbd96f9f7eb5a16f3c1f87a6f4a7700797dfc5549795df6185add873e08444",
+      "usage": {
+        "input_tokens": 35269,
+        "cached_input_tokens": 8960,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 185,
+        "reasoning_output_tokens": 111
+      },
+      "failed": false,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "lead",
+      "sessionResumed": false,
+      "elapsedSeconds": 4.513,
+      "promptBytes": 695,
+      "promptSha256": "c505436613cdad91840f9e0f85f89313546302e1f03a4627d1c8f2ac4fd84e17",
+      "usage": {
+        "input_tokens": 15571,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 47,
+        "reasoning_output_tokens": 0
+      },
+      "failed": false,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "offset": 0,
+      "nextOffset": 10,
+      "hasMore": true,
+      "paths": [
+        "sessions/0038-e070111f44b2.md",
+        "sessions/0007-730ea6f80239.md",
+        "sessions/0015-b906b6c52cdc.md",
+        "sessions/0031-38799ee73189.md",
+        "sessions/0023-77032979a859.md",
+        "sessions/0022-ca6d95c69c07.md",
+        "sessions/0021-a278fb55032f.md",
+        "sessions/0048-65063946a1f0.md",
+        "sessions/0034-2e48efeb8ad1.md",
+        "sessions/0045-d08a4383acb0.md"
+      ],
+      "pageSha256": "5453ebd78d95eeb2c9d0b9300403a589f02fa34aaba65e1dc5e5c333a39fb1eb"
+    },
+    {
+      "offset": 10,
+      "nextOffset": 44,
+      "hasMore": true,
+      "paths": [
+        "sessions/0018-49866a73de31.md",
+        "sessions/0040-26bbf52975d3.md",
+        "sessions/0029-56b047332b29.md",
+        "sessions/0019-6db6226a1dfd.md",
+        "sessions/0047-0e6a15efe02e.md",
+        "sessions/0014-2ee06a6b258d.md",
+        "sessions/0016-28c7c28a696c.md",
+        "sessions/0030-3abef286a4a9.md",
+        "sessions/0024-9a9a8f6ea0f4.md",
+        "sessions/0028-cc5d3814b9af.md",
+        "sessions/0006-5053c57c29fc.md",
+        "sessions/0032-39ecaf77cdb7.md",
+        "sessions/0008-6733bdd6f107.md",
+        "sessions/0002-6f6a948ab9c0.md",
+        "sessions/0017-529a93a6c02c.md",
+        "sessions/0052-817273274698.md",
+        "sessions/0039-466a64e63448.md",
+        "sessions/0051-62c2f2b0f154.md",
+        "sessions/0020-dc1afb7a6dc4.md",
+        "sessions/0025-863b136acd67.md",
+        "sessions/0010-897d03f62884.md",
+        "sessions/0009-ac40d8037e42.md",
+        "sessions/0011-ea6d127d16d3.md",
+        "sessions/0012-61db214a6dd2.md",
+        "sessions/0013-4da60f488cd4.md",
+        "sessions/0049-bf4bae59ff65.md",
+        "sessions/0041-6437231d4c14.md",
+        "sessions/0043-001c98e9b10f.md",
+        "sessions/0044-eb04ad566548.md",
+        "sessions/0036-4d9f14184917.md",
+        "sessions/0005-b2f18defe91b.md",
+        "sessions/0027-a80bec8693d7.md",
+        "sessions/0003-00cad4bf99ce.md",
+        "sessions/0035-dfff16a71d08.md"
+      ],
+      "pageSha256": "b4e73cc315e73f80c187a312c582f4e4b2d9fc31dd253c187f2ac7a30cd2c263"
+    }
+  ],
+  "sourceReads": [
+    {
+      "path": "sessions/0038-e070111f44b2.md",
+      "sha256": "5538222e61681932515e71f4c47f5a16604f2c13b549644d9dc42286ac05055c",
+      "bytes": 16736
+    },
+    {
+      "path": "sessions/0007-730ea6f80239.md",
+      "sha256": "7138f30c61b81a59cf62c0a7b96a94561b10859f20ecca3cc29036c6ef1ecc79",
+      "bytes": 17822
+    },
+    {
+      "path": "sessions/0023-77032979a859.md",
+      "sha256": "ffd54ccb4b61cbad4f6beede91b817e713e59c4f5bffbb4d2212b4196be8d095",
+      "bytes": 22352
+    }
+  ],
+  "brief": "You\u2019ve completed 20 online courses in total: 12 Coursera courses and 8 edX courses. Sources: sessions/0038-e070111f44b2.md; sessions/0007-730ea6f80239.md",
+  "answer": "20 online courses",
+  "runComplete": true,
+  "stopReason": "curator-finalized",
+  "limitations": [
+    "One exposed development case; no quality acceptance or latency tail claim",
+    "No-tool boundary is checked in trace, not a proven filesystem isolation guarantee",
+    "No official answer scorer or independent calibrated semantic judge",
+    "Subscription bill allocation unknown; native token categories retained"
+  ],
+  "citations": [
+    "sessions/0038-e070111f44b2.md",
+    "sessions/0007-730ea6f80239.md"
+  ],
+  "citationProvenanceValid": true,
+  "elapsedSeconds": 27.565
+}

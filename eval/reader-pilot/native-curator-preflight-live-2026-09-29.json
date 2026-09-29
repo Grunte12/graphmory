@@ -1,0 +1,248 @@
+{
+  "frozenSetup": {
+    "packageSha256": "c4a01896333c88c1624658ce2a17c3a5ccc388befade98a443197b071dd37b22",
+    "roleSha256": "9910f449d6f999812089de0275783076f387fa99c9700299b17d725e92759076",
+    "scenarioSha256": "4b26c14bd7edb62b245a3f67a81e2c21c87ba861761d858e771fca545f4f2770",
+    "generatorSha256": "614432fda3394228b8184198cf78e7e474c4d827943729f9f0c9aab630059076",
+    "sourceRevision": "e34cfa7",
+    "models": {
+      "lead": "gpt-5.6-sol",
+      "curator": "gpt-5.6-luna"
+    }
+  },
+  "nativeRun": {
+    "exitCode": 0,
+    "elapsedSeconds": 238.308,
+    "timeout": false
+  },
+  "binding": {
+    "namedRole": "graphmory_curator",
+    "model": "gpt-5.6-luna",
+    "reasoningEffort": "low",
+    "parentBindingVerified": true,
+    "childCount": 1,
+    "completedChildTasks": 4,
+    "childTraceSha256": "d147c0dad1f7056dbe7b9c5adaa9f135e7c8bf79a70dcb8b1be00732ce9e674d"
+  },
+  "orderedPreflightAndPatchEvents": [
+    {
+      "index": 33,
+      "timestamp": "2026-09-29T04:51:52.501Z",
+      "kind": "preflight",
+      "case": "01-approved-supersession",
+      "returnedAt": "2026-09-29T04:51:52.614Z",
+      "outputIndex": 34,
+      "validFlags": [
+        "true"
+      ],
+      "schemaOnlyObserved": true
+    },
+    {
+      "index": 41,
+      "timestamp": "2026-09-29T04:52:07.916Z",
+      "kind": "vault-patch",
+      "case": "01-approved-supersession",
+      "returnedAt": "2026-09-29T04:52:08.348Z",
+      "outputIndex": 43
+    },
+    {
+      "index": 63,
+      "timestamp": "2026-09-29T04:52:46.307Z",
+      "kind": "preflight",
+      "case": "01-approved-supersession",
+      "returnedAt": "2026-09-29T04:52:46.462Z",
+      "outputIndex": 64,
+      "validFlags": [
+        "true"
+      ],
+      "schemaOnlyObserved": true
+    },
+    {
+      "index": 84,
+      "timestamp": "2026-09-29T04:53:30.839Z",
+      "kind": "preflight",
+      "case": "02-missing-provenance",
+      "returnedAt": "2026-09-29T04:53:30.963Z",
+      "outputIndex": 85,
+      "validFlags": [
+        "false"
+      ],
+      "schemaOnlyObserved": true
+    },
+    {
+      "index": 100,
+      "timestamp": "2026-09-29T04:54:05.665Z",
+      "kind": "preflight",
+      "case": "03-unresolved-current-conflict",
+      "returnedAt": "2026-09-29T04:54:05.785Z",
+      "outputIndex": 101,
+      "validFlags": [
+        "true"
+      ],
+      "schemaOnlyObserved": true
+    }
+  ],
+  "firstPreflightReturnedBeforeVaultPatch": true,
+  "cases": [
+    {
+      "id": "01-approved-supersession",
+      "immutableSourcesPreserved": true,
+      "wholeVaultUnchanged": false,
+      "changedPaths": [
+        "01 Projects/Helios/Independent Approval Policy.md",
+        "01 Projects/Helios/Release Policy.md",
+        "01 Projects/Helios/Runbook.md"
+      ],
+      "graphIssueCount": 0,
+      "lifecycleSummary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 0,
+        "total": 0
+      },
+      "afterManifest": {
+        ".obsidian/app.json": "8ba9c4e1032bd2b110ccf3c0b7d5311b2487238a4fb7bd7f34a4d27455eee64b",
+        "01 Projects/Helios/Independent Approval Policy.md": "48d521e3c7546f643bf993a101847a26334d30c0e3f43c4bea06b8c7a822e39c",
+        "01 Projects/Helios/Index.md": "fe74711065fff3cb0cab5a848da6489407ead77ddc3459655f3f607522f056cb",
+        "01 Projects/Helios/Release Policy.md": "ecc7c2b23d8e827e14a9ae48dc2e42ab269b427284ba5ac45f8c374c46bf88ab",
+        "01 Projects/Helios/Runbook.md": "70c1a6e51d2d974c8c11b7e7d98956fcd51e7669f6bfd22edf250345bc842fb5",
+        "90 Evidence/Approval Record.md": "2caa7da57607194be21036ef91e80a20a745afc12c32c1a00aa2f17686ba98b2"
+      }
+    },
+    {
+      "id": "02-missing-provenance",
+      "immutableSourcesPreserved": true,
+      "wholeVaultUnchanged": true,
+      "changedPaths": [],
+      "graphIssueCount": 0,
+      "lifecycleSummary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 0,
+        "total": 0
+      },
+      "afterManifest": {
+        ".obsidian/app.json": "8ba9c4e1032bd2b110ccf3c0b7d5311b2487238a4fb7bd7f34a4d27455eee64b",
+        "01 Projects/Helios/Index.md": "fe74711065fff3cb0cab5a848da6489407ead77ddc3459655f3f607522f056cb",
+        "01 Projects/Helios/Release Policy.md": "f55eb3565da08154fb4c414221574ec4f7a372cac05e942e1e16ac2c31d42ea5",
+        "01 Projects/Helios/Runbook.md": "729defe67d368d8af4928626bd07c40d59c8672ce84b1d90a81ec2692e1371d3",
+        "90 Evidence/Approval Record.md": "2caa7da57607194be21036ef91e80a20a745afc12c32c1a00aa2f17686ba98b2"
+      }
+    },
+    {
+      "id": "03-unresolved-current-conflict",
+      "immutableSourcesPreserved": true,
+      "wholeVaultUnchanged": true,
+      "changedPaths": [],
+      "graphIssueCount": 0,
+      "lifecycleSummary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 0,
+        "total": 0
+      },
+      "afterManifest": {
+        ".obsidian/app.json": "8ba9c4e1032bd2b110ccf3c0b7d5311b2487238a4fb7bd7f34a4d27455eee64b",
+        "01 Projects/Helios/Index.md": "fe74711065fff3cb0cab5a848da6489407ead77ddc3459655f3f607522f056cb",
+        "01 Projects/Helios/Retry Policy.md": "2c714f697eacf897ccb699a6a53ac2abc14acec130fd6bc5e0f79f7a88a769a7",
+        "01 Projects/Helios/Runbook.md": "32f8dbdde45386ed826cae41e5e022c5bdaafa4db821c7bb08a9ac40fc55b9d5",
+        "90 Evidence/Approved API Guide.md": "9edafe91a81967ea41244030ac564bbcb17c7a6e849a89a9f8f768ed20e91d6b",
+        "90 Evidence/Release Checklist.md": "c77afef81ad05bf6c2c1f5a1218bcffc0cef812ea21b2db4f840531461af1b95"
+      }
+    }
+  ],
+  "duplicateRetryMarkdownByteIdentical": true,
+  "currentRecallIncludesNewAndExcludesOldPolicy": true,
+  "leadFinal": {
+    "cases": [
+      {
+        "id": "01-approved-supersession",
+        "outcome": "APPLIED",
+        "changed_paths": [
+          "01 Projects/Helios/Independent Approval Policy.md",
+          "01 Projects/Helios/Runbook.md",
+          "01 Projects/Helios/Release Policy.md"
+        ],
+        "citations": [
+          "90 Evidence/Approval Record.md#E1",
+          "90 Evidence/Approval Record.md#E2"
+        ],
+        "warnings": [
+          "First-pass recall reported low retrieval confidence and needsExpansion=true, but hasMore=false.",
+          "Graph and lifecycle audits returned zero findings."
+        ]
+      },
+      {
+        "id": "02-missing-provenance",
+        "outcome": "BLOCKED",
+        "changed_paths": [],
+        "citations": [],
+        "warnings": [
+          "Validation failed: provenance must contain at least one evidence item.",
+          "Vault notes were not read; missing evidence was not inferred."
+        ]
+      },
+      {
+        "id": "03-unresolved-current-conflict",
+        "outcome": "TENSION",
+        "changed_paths": [],
+        "citations": [
+          "90 Evidence/Approved API Guide.md#A1",
+          "90 Evidence/Release Checklist.md#C1"
+        ],
+        "warnings": [
+          "A1 specifies 30 seconds; C1 specifies 60 seconds.",
+          "The API owner must designate the authoritative Helios production retry timeout."
+        ]
+      }
+    ],
+    "duplicate_retry": {
+      "outcome": "ALREADY_APPLIED_NO_OP",
+      "duplicate_created": false,
+      "hash_changes": {}
+    },
+    "dispatch_status": {
+      "native_named_agent": true,
+      "same_curator_reused": true,
+      "sequential_dispatches": 4,
+      "additional_model_jobs": 0
+    },
+    "unresolved": [
+      "Helios production retry timeout remains unresolved pending an API-owner decision."
+    ]
+  },
+  "limitations": [
+    "One synthetic Codex acceptance run, not general safety/quality or comparative performance.",
+    "Graph connectivity and original multi-note reads do not prove graph-engine retrieval traversal.",
+    "Same fixed replacement path was supplied for first apply and retry; general destination deduplication untested."
+  ],
+  "hostVersion": "codex-cli 0.146.0",
+  "completePatchPersistence": false,
+  "persistenceGap": {
+    "inputField": "lifecycle.revalidate_when",
+    "expected": [
+      "the production approval policy changes"
+    ],
+    "observedInNewNote": false,
+    "auditCaughtOmission": false
+  },
+  "declaredFunctionalGatesPassed": true,
+  "goalComplete": false,
+  "childOriginalReadsVerified": {
+    "approvedOriginalEvidenceBodyObserved": true,
+    "bothConflictingOriginalEvidenceBodiesObserved": true,
+    "method": "Scoped evidence-directory reads in exact child trace with returned source bodies; immutable manifests independently checked."
+  },
+  "cleanup": {
+    "nativeProcessTerminal": true,
+    "childTasksTerminal": true,
+    "testChildArchivedConfirmed": true,
+    "temporaryFixtureAndRawParentTraceRemoved": true
+  }
+}

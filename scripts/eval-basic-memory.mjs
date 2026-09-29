@@ -12,12 +12,21 @@ const args = process.argv.slice(2)
 const option = name => args.includes(name) ? args[args.indexOf(name) + 1] : undefined
 const inputPath = option('--input') ?? path.join(root, 'tmp/datasets/longmemeval_s_cleaned.json')
 const outPath = option('--out') ?? path.join(root, 'eval/competitor-pilot/native-results.json')
+if (fs.existsSync(outPath)) throw new Error('Preserve previous report; choose a new output')
+const hybrid = args.includes('--hybrid')
+const vector = args.includes('--vector')
+if (hybrid && vector) throw new Error('Choose hybrid or vector')
+const semantic = hybrid || vector
 const limit = Number(option('--limit') ?? '14')
 if (!Number.isInteger(limit) || limit < 1 || limit > 14) throw new Error('--limit must be 1..14')
 const base = path.join(root, 'tmp/competitors/basic-memory')
 const exe = path.join(base, 'venv/bin/bm')
 if (!fs.existsSync(exe)) throw new Error(`Missing pinned Basic Memory CLI: ${exe}`)
-const manifest = JSON.parse(fs.readFileSync(path.join(root, 'eval/longmemeval/pilot.json'), 'utf8'))
+const manifestPath = option('--ids-manifest') ?? path.join(root, 'eval/longmemeval/pilot.json')
+const manifestBytes = fs.readFileSync(manifestPath)
+const manifest = JSON.parse(manifestBytes)
+if (!Array.isArray(manifest.selectedIds) || !manifest.selectedIds.length || new Set(manifest.selectedIds).size !== manifest.selectedIds.length)
+  throw new Error('Manifest needs unique selectedIds')
 const selectedIds = manifest.selectedIds.slice(0, limit)
 const inputBytes = fs.readFileSync(inputPath)
 if (hash(inputBytes) !== manifest.sourceSha256) throw new Error('Input dataset SHA-256 differs from frozen pilot manifest')
@@ -29,7 +38,15 @@ function run(args, env, cwd, maxBuffer = 8 * 1024 * 1024) {
   return execFileSync(exe, args, { env, cwd, encoding: 'utf8', maxBuffer, timeout: 120_000, stdio: ['ignore', 'pipe', 'pipe'] })
 }
 function objectFromSearch(text) {
-  const parsed = JSON.parse(text)
+  let parsed
+  try { parsed = JSON.parse(text) }
+  catch (error) {
+    // Preserve public-fixture CLI stdout for diagnosis; never guess a JSON substring.
+    fs.mkdirSync(path.dirname(outPath), { recursive: true })
+    const diagnostic = `${outPath}.invalid-search-${rows.length}.txt`
+    fs.writeFileSync(diagnostic, text, { mode: 0o600 })
+    throw new Error(`Invalid search JSON; stdout preserved at ${path.basename(diagnostic)}: ${error.message}`)
+  }
   if (Array.isArray(parsed)) return parsed
   for (const key of ['results', 'items', 'notes', 'data']) if (Array.isArray(parsed?.[key])) return parsed[key]
   throw new Error(`Unrecognized Basic Memory JSON shape: ${Object.keys(parsed ?? {}).join(',')}`)
@@ -58,25 +75,31 @@ for (const id of selectedIds) {
   }
   const sourceHash = hash(Buffer.concat(prepared.documents.map(doc => Buffer.from(doc.markdown))))
   const env = { ...process.env, XDG_CONFIG_HOME: path.join(home, '.config'),
+    HF_HOME: path.join(base, 'huggingface-cache'),
+    HF_XET_CACHE: path.join(base, 'huggingface-cache', 'xet'),
     BASIC_MEMORY_CONFIG_DIR: state, BASIC_MEMORY_HOME: notes,
-    BASIC_MEMORY_AUTO_UPDATE: 'false', BASIC_MEMORY_SEMANTIC_SEARCH_ENABLED: 'false',
-    BASIC_MEMORY_DEFAULT_SEARCH_TYPE: 'text', BASIC_MEMORY_RERANKER_ENABLED: 'false' }
+    BASIC_MEMORY_AUTO_UPDATE: 'false', BASIC_MEMORY_SEMANTIC_SEARCH_ENABLED: String(semantic),
+    BASIC_MEMORY_DEFAULT_SEARCH_TYPE: hybrid ? 'hybrid' : vector ? 'vector' : 'text', BASIC_MEMORY_RERANKER_ENABLED: 'false' }
   try {
     const ingestStart = performance.now()
     run(['project', 'add', 'pilot', notes, '--local', '--default'], env, root)
-    const reindex = run(['reindex', '--search', '--project', 'pilot'], env, root)
+    const reindex = run(['reindex', '--search', ...(semantic ? ['--embeddings'] : []), '--project', 'pilot'], env, root)
     const indexMatch = reindex.match(/project index: (\d+) observed, (\d+) indexed/u)
     if (!indexMatch || Number(indexMatch[1]) !== prepared.documents.length || Number(indexMatch[2]) !== prepared.documents.length)
       throw new Error(`Reindex did not confirm all notes indexed: ${reindex.slice(-500)}`)
+    const embeddingMatch = semantic ? reindex.match(/Embeddings complete \(index=([^,]+),\s*model=([^)]*)\):\s*(\d+) entities embedded,\s*(\d+)\s*skipped,\s*(\d+) errors/u) : null
+    if (semantic && (!embeddingMatch || Number(embeddingMatch[3]) < 1 || Number(embeddingMatch[5]) !== 0))
+      throw new Error(`Semantic index was not built cleanly: ${reindex.slice(-700)}`)
     const ingestMs = performance.now() - ingestStart
     const query = args.includes('--question-only') ? prepared.query.text : `${prepared.query.text}\nAs of: ${prepared.query.date}`
-    const callSearch = q => run(['tool', 'search-notes', q, '--project', 'pilot', '--local', '--page-size', '12', '--json'], env, root)
+    const callSearch = q => run(['tool', 'search-notes', q, '--project', 'pilot', '--local', '--page-size', '12', '--json', ...(hybrid ? ['--hybrid'] : vector ? ['--vector'] : [])], env, root)
+    const callSmoke = q => run(['tool', 'search-notes', q, '--project', 'pilot', '--local', '--page-size', '12', '--json', '--title'], env, root)
     const firstText = prepared.documents[0].markdown.replace(/^#.*$/gmu, ' ').replace(/\b\d{4}-\d{2}-\d{2}\b/gu, ' ')
     const smokeQuery = firstText.match(/[A-Za-z][A-Za-z0-9'-]{7,}/u)?.[0]
     if (!smokeQuery) throw new Error('Cannot derive a known-item smoke term from first source note')
-    const smokeResults = objectFromSearch(callSearch(smokeQuery))
+    const smokeResults = objectFromSearch(vector ? callSmoke(prepared.documents[0].path.split('/').at(-1).replace(/\.md$/u, '')) : callSearch(smokeQuery))
     if (!smokeResults.some(result => result?.file_path === prepared.documents[0].path))
-      throw new Error(`Known-item FTS smoke failed for ${prepared.documents[0].path}`)
+      throw new Error(`Known-item smoke failed for ${prepared.documents[0].path}`)
     const repeats = []
     for (let repeat = 0; repeat < 3; repeat++) {
       const started = performance.now()
@@ -111,7 +134,12 @@ for (const id of selectedIds) {
       recallAt12: answerable ? hitCount(12) / relevant.length : null,
       completeAt3: answerable ? hitCount(3) === relevant.length : null,
       completeAt12: answerable ? hitCount(12) === relevant.length : null,
-      candidates: ranked.length, indexedFiles: Number(indexMatch[2]), ingestMs, knownItemSmoke: 'passed',
+      candidates: ranked.length, indexedFiles: Number(indexMatch[2]),
+      embeddingIndex: embeddingMatch?.[1] ?? null, embeddingModel: embeddingMatch?.[2] ?? null,
+      embeddedEntities: embeddingMatch ? Number(embeddingMatch[3]) : null,
+      skippedEmbeddings: embeddingMatch ? Number(embeddingMatch[4]) : null,
+      embeddingErrors: embeddingMatch ? Number(embeddingMatch[5]) : null,
+      ingestMs, knownItemSmoke: 'passed',
       changedSourceFiles: rewritten.filter(Boolean).length, sourceBodyHash: sourceHash,
       ingestedHash: hash(Buffer.concat(prepared.documents.map(doc => fs.readFileSync(path.join(notes, doc.path))))),
       repeats, selectedSessionPaths: ranked })
@@ -127,14 +155,15 @@ for (const id of selectedIds) {
 const successfulRuns = rows.filter(row => !row.failure)
 const answerableRuns = successfulRuns.filter(row => row.recallAt3 !== null)
 const average = key => answerableRuns.length ? answerableRuns.reduce((sum, row) => sum + Number(row[key]), 0) / answerableRuns.length : null
-const output = { suite: 'basic-memory-local-text-retrieval-pilot', competitor: 'Basic Memory', version: '0.23.2',
+const output = { suite: `basic-memory-local-${hybrid ? 'hybrid' : vector ? 'vector' : 'text'}-retrieval-pilot`, competitor: 'Basic Memory', version: '0.23.2',
+  requestedSearchMode: hybrid ? 'hybrid' : vector ? 'vector' : 'text', rerankerEnabled: false,
   environment: 'macOS arm64, Python 3.12.13, uv isolated venv; config/home per case',
-  search: 'Native bm tool search-notes plain query with --page-size 12 --json; semantic search disabled (default_type=text); Query format recorded separately; no keyword extraction.',
+  search: `Native bm tool search-notes plain query with --page-size 12 --json; semantic search ${semantic ? `enabled, explicit --${hybrid ? 'hybrid' : 'vector'}` : 'disabled (default_type=text)'}; query format recorded separately; no keyword extraction.`,
   ingestionAdaptation: 'Same original Markdown inputs; native Basic Memory ingestion may add frontmatter and normalize formatting. Changed file counts and before/after hashes are recorded; post-ingest byte equality is not claimed.',
   install: { command: "uv pip install --python tmp/competitors/basic-memory/venv/bin/python --cache-dir tmp/competitors/uv-cache --prerelease=allow 'basic-memory==0.23.2'",
     venvBytes: sizeTree(path.join(base, 'venv')), cacheBytes: sizeTree(path.join(root, 'tmp/competitors/uv-cache')) },
   queryFormat: args.includes('--question-only') ? 'question-only' : 'question-plus-date',
-  datasetSha256: hash(fs.readFileSync(inputPath)), selectedIds, cases: rows,
+  datasetSha256: hash(fs.readFileSync(inputPath)), idsManifestSha256: hash(manifestBytes), selectedIds, cases: rows,
   summary: { metricDenominator: 'Successful answerable cases only; failed cases must be included separately before comparisons', cases: rows.length, failedCases: rows.filter(row => row.failure).length, answerable: answerableRuns.length,
     recallAt3: average('recallAt3'), recallAt12: average('recallAt12'),
     completeAt3: average('completeAt3'), completeAt12: average('completeAt12'),
@@ -144,12 +173,13 @@ const output = { suite: 'basic-memory-local-text-retrieval-pilot', competitor: '
     medianWarmSearchMs: median(successfulRuns.flatMap(row => row.repeats.slice(1).map(rep => rep.elapsedMs))),
     medianWarmOutputBytes: median(successfulRuns.flatMap(row => row.repeats.slice(1).map(rep => rep.outputBytes))) },
   limitations: ['Development pilot only; not answer-accuracy or full memory-system evaluation.',
-    'Text-only native search, no Basic Memory semantic vectors or reranking; source sessions are separate Markdown notes.',
+    semantic ? `${hybrid ? 'Hybrid' : 'Vector'} requested with local default embeddings; reranking disabled; successful retrieval does not itself prove vector contributions.` : 'Text-only native search, no Basic Memory semantic vectors or reranking; source sessions are separate Markdown notes.',
     'Search timing includes CLI startup and SQLite setup on each call; not directly comparable with in-process Graphmory timings.',
     'Candidates mapped only when Basic Memory result output exposes the generated session note path; unmapped results remain in candidateCount.'] }
 fs.mkdirSync(path.dirname(outPath), { recursive: true })
 fs.writeFileSync(outPath, JSON.stringify(output, null, 2) + '\n')
 console.log(JSON.stringify(output.summary, null, 2))
+if (output.summary.failedCases) process.exitCode = 1
 
 function sizeTree(folder) {
   if (!fs.existsSync(folder)) return 0

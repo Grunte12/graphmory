@@ -1,0 +1,340 @@
+{
+  "suite": "basic-memory-local-vector-retrieval-pilot",
+  "competitor": "Basic Memory",
+  "version": "0.23.2",
+  "requestedSearchMode": "vector",
+  "rerankerEnabled": false,
+  "environment": "macOS arm64, Python 3.12.13, uv isolated venv; config/home per case",
+  "search": "Native bm tool search-notes plain query with --page-size 12 --json; semantic search enabled, explicit --vector; query format recorded separately; no keyword extraction.",
+  "ingestionAdaptation": "Same original Markdown inputs; native Basic Memory ingestion may add frontmatter and normalize formatting. Changed file counts and before/after hashes are recorded; post-ingest byte equality is not claimed.",
+  "install": {
+    "command": "uv pip install --python tmp/competitors/basic-memory/venv/bin/python --cache-dir tmp/competitors/uv-cache --prerelease=allow 'basic-memory==0.23.2'",
+    "venvBytes": 439029651,
+    "cacheBytes": 385652220
+  },
+  "queryFormat": "question-only",
+  "datasetSha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "selectedIds": [
+    "09ba9854_abs",
+    "a96c20ee_abs",
+    "50635ada"
+  ],
+  "cases": [
+    {
+      "id": "09ba9854_abs",
+      "category": "abstention",
+      "sessions": 50,
+      "duplicateSessionIds": 0,
+      "evidenceCount": null,
+      "recallAt3": null,
+      "recallAt12": null,
+      "completeAt3": null,
+      "completeAt12": null,
+      "candidates": 10,
+      "indexedFiles": 50,
+      "embeddingIndex": "sqlite-vec",
+      "embeddingModel": "FastEmbedEmbeddingProvider:bge-small-en-v1.5:384",
+      "embeddedEntities": 50,
+      "skippedEmbeddings": 0,
+      "embeddingErrors": 0,
+      "ingestMs": 33769.0995,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 50,
+      "sourceBodyHash": "01ebbce4b2bbc59f6428e2edb8ad9beaf90f46d0d9a7c6e8cce8eb820e72d166",
+      "ingestedHash": "c3712a0da7302d6125705f59ddeec0dc1cbb2295eecfefa4fb9bb8a3387608bd",
+      "repeats": [
+        {
+          "elapsedMs": 2220.4582080000037,
+          "outputBytes": 59548,
+          "rawRows": 10,
+          "uniqueSessions": 10,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": [
+            "sessions/0006-74b40853759b.md",
+            "sessions/0033-67233b2982aa.md",
+            "sessions/0031-3376b238ea96.md",
+            "sessions/0041-1e881a9b2a2f.md",
+            "sessions/0034-9bffaf6de3d8.md",
+            "sessions/0012-fcaba16bd870.md",
+            "sessions/0043-d04ba982db89.md",
+            "sessions/0035-da92723d17d1.md",
+            "sessions/0028-fb2284bde3c1.md",
+            "sessions/0036-10cb60850f8d.md"
+          ]
+        },
+        {
+          "elapsedMs": 2247.9028340000004,
+          "outputBytes": 59548,
+          "rawRows": 10,
+          "uniqueSessions": 10,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": [
+            "sessions/0006-74b40853759b.md",
+            "sessions/0033-67233b2982aa.md",
+            "sessions/0031-3376b238ea96.md",
+            "sessions/0041-1e881a9b2a2f.md",
+            "sessions/0034-9bffaf6de3d8.md",
+            "sessions/0012-fcaba16bd870.md",
+            "sessions/0043-d04ba982db89.md",
+            "sessions/0035-da92723d17d1.md",
+            "sessions/0028-fb2284bde3c1.md",
+            "sessions/0036-10cb60850f8d.md"
+          ]
+        },
+        {
+          "elapsedMs": 2110.182458999996,
+          "outputBytes": 59548,
+          "rawRows": 10,
+          "uniqueSessions": 10,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": [
+            "sessions/0006-74b40853759b.md",
+            "sessions/0033-67233b2982aa.md",
+            "sessions/0031-3376b238ea96.md",
+            "sessions/0041-1e881a9b2a2f.md",
+            "sessions/0034-9bffaf6de3d8.md",
+            "sessions/0012-fcaba16bd870.md",
+            "sessions/0043-d04ba982db89.md",
+            "sessions/0035-da92723d17d1.md",
+            "sessions/0028-fb2284bde3c1.md",
+            "sessions/0036-10cb60850f8d.md"
+          ]
+        }
+      ],
+      "selectedSessionPaths": [
+        "sessions/0006-74b40853759b.md",
+        "sessions/0033-67233b2982aa.md",
+        "sessions/0031-3376b238ea96.md",
+        "sessions/0041-1e881a9b2a2f.md",
+        "sessions/0034-9bffaf6de3d8.md",
+        "sessions/0012-fcaba16bd870.md",
+        "sessions/0043-d04ba982db89.md",
+        "sessions/0035-da92723d17d1.md",
+        "sessions/0028-fb2284bde3c1.md",
+        "sessions/0036-10cb60850f8d.md"
+      ]
+    },
+    {
+      "id": "a96c20ee_abs",
+      "category": "abstention",
+      "sessions": 53,
+      "duplicateSessionIds": 0,
+      "evidenceCount": null,
+      "recallAt3": null,
+      "recallAt12": null,
+      "completeAt3": null,
+      "completeAt12": null,
+      "candidates": 9,
+      "indexedFiles": 53,
+      "embeddingIndex": "sqlite-vec",
+      "embeddingModel": "FastEmbedEmbeddingProvider:bge-small-en-v1.5:384",
+      "embeddedEntities": 53,
+      "skippedEmbeddings": 0,
+      "embeddingErrors": 0,
+      "ingestMs": 35019.46916600001,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 53,
+      "sourceBodyHash": "eb14a1955013bc8d0a23e5d86fa10ffe836c8c28e55802af829bd68342527564",
+      "ingestedHash": "1b2b10125c49c944d229949497b5df5757fd0c4814786fea04dd90b57894fb09",
+      "repeats": [
+        {
+          "elapsedMs": 2202.907374999995,
+          "outputBytes": 58811,
+          "rawRows": 9,
+          "uniqueSessions": 9,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": [
+            "sessions/0019-9d104429f2ec.md",
+            "sessions/0052-c7d9223acbcb.md",
+            "sessions/0035-8c8f960f75e6.md",
+            "sessions/0037-40ad7f895621.md",
+            "sessions/0044-938ce7c6a19c.md",
+            "sessions/0023-39fd5ecd8efa.md",
+            "sessions/0048-41ba51aa40f9.md",
+            "sessions/0026-30a29a167601.md",
+            "sessions/0041-32ef9052ef2a.md"
+          ]
+        },
+        {
+          "elapsedMs": 2295.219458000007,
+          "outputBytes": 58811,
+          "rawRows": 9,
+          "uniqueSessions": 9,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": [
+            "sessions/0019-9d104429f2ec.md",
+            "sessions/0052-c7d9223acbcb.md",
+            "sessions/0035-8c8f960f75e6.md",
+            "sessions/0037-40ad7f895621.md",
+            "sessions/0044-938ce7c6a19c.md",
+            "sessions/0023-39fd5ecd8efa.md",
+            "sessions/0048-41ba51aa40f9.md",
+            "sessions/0026-30a29a167601.md",
+            "sessions/0041-32ef9052ef2a.md"
+          ]
+        },
+        {
+          "elapsedMs": 1983.284083000006,
+          "outputBytes": 58811,
+          "rawRows": 9,
+          "uniqueSessions": 9,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": [
+            "sessions/0019-9d104429f2ec.md",
+            "sessions/0052-c7d9223acbcb.md",
+            "sessions/0035-8c8f960f75e6.md",
+            "sessions/0037-40ad7f895621.md",
+            "sessions/0044-938ce7c6a19c.md",
+            "sessions/0023-39fd5ecd8efa.md",
+            "sessions/0048-41ba51aa40f9.md",
+            "sessions/0026-30a29a167601.md",
+            "sessions/0041-32ef9052ef2a.md"
+          ]
+        }
+      ],
+      "selectedSessionPaths": [
+        "sessions/0019-9d104429f2ec.md",
+        "sessions/0052-c7d9223acbcb.md",
+        "sessions/0035-8c8f960f75e6.md",
+        "sessions/0037-40ad7f895621.md",
+        "sessions/0044-938ce7c6a19c.md",
+        "sessions/0023-39fd5ecd8efa.md",
+        "sessions/0048-41ba51aa40f9.md",
+        "sessions/0026-30a29a167601.md",
+        "sessions/0041-32ef9052ef2a.md"
+      ]
+    },
+    {
+      "id": "50635ada",
+      "category": "knowledge-update",
+      "sessions": 48,
+      "duplicateSessionIds": 0,
+      "evidenceCount": 2,
+      "recallAt3": 1,
+      "recallAt12": 1,
+      "completeAt3": true,
+      "completeAt12": true,
+      "candidates": 12,
+      "indexedFiles": 48,
+      "embeddingIndex": "sqlite-vec",
+      "embeddingModel": "FastEmbedEmbeddingProvider:bge-small-en-v1.5:384",
+      "embeddedEntities": 48,
+      "skippedEmbeddings": 0,
+      "embeddingErrors": 0,
+      "ingestMs": 33296.579874999996,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 48,
+      "sourceBodyHash": "1c037776302d623c6d5e9ed0121e13912449b797e33d292c3f4c780c5e0bc1ea",
+      "ingestedHash": "515d2384d78e6a260f7f215ce7ab24a83050301ef7688991d2a4efbf722b9af4",
+      "repeats": [
+        {
+          "elapsedMs": 1968.7239580000023,
+          "outputBytes": 66139,
+          "rawRows": 12,
+          "uniqueSessions": 12,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": [
+            "sessions/0019-6c2b91037340.md",
+            "sessions/0043-d04b7a0b0436.md",
+            "sessions/0046-2d15dfdcf811.md",
+            "sessions/0030-a5d620685855.md",
+            "sessions/0018-a7d36d3469ff.md",
+            "sessions/0047-db17fabd2458.md",
+            "sessions/0017-62209128e7e9.md",
+            "sessions/0008-675647a34c73.md",
+            "sessions/0001-c1b1a807a5e4.md",
+            "sessions/0039-b0718c2020ba.md",
+            "sessions/0032-3b6f6f3e9d3a.md",
+            "sessions/0004-356bb49a3374.md"
+          ]
+        },
+        {
+          "elapsedMs": 1910.4618340000015,
+          "outputBytes": 66139,
+          "rawRows": 12,
+          "uniqueSessions": 12,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": [
+            "sessions/0019-6c2b91037340.md",
+            "sessions/0043-d04b7a0b0436.md",
+            "sessions/0046-2d15dfdcf811.md",
+            "sessions/0030-a5d620685855.md",
+            "sessions/0018-a7d36d3469ff.md",
+            "sessions/0047-db17fabd2458.md",
+            "sessions/0017-62209128e7e9.md",
+            "sessions/0008-675647a34c73.md",
+            "sessions/0001-c1b1a807a5e4.md",
+            "sessions/0039-b0718c2020ba.md",
+            "sessions/0032-3b6f6f3e9d3a.md",
+            "sessions/0004-356bb49a3374.md"
+          ]
+        },
+        {
+          "elapsedMs": 1932.426833000005,
+          "outputBytes": 66139,
+          "rawRows": 12,
+          "uniqueSessions": 12,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": [
+            "sessions/0019-6c2b91037340.md",
+            "sessions/0043-d04b7a0b0436.md",
+            "sessions/0046-2d15dfdcf811.md",
+            "sessions/0030-a5d620685855.md",
+            "sessions/0018-a7d36d3469ff.md",
+            "sessions/0047-db17fabd2458.md",
+            "sessions/0017-62209128e7e9.md",
+            "sessions/0008-675647a34c73.md",
+            "sessions/0001-c1b1a807a5e4.md",
+            "sessions/0039-b0718c2020ba.md",
+            "sessions/0032-3b6f6f3e9d3a.md",
+            "sessions/0004-356bb49a3374.md"
+          ]
+        }
+      ],
+      "selectedSessionPaths": [
+        "sessions/0019-6c2b91037340.md",
+        "sessions/0043-d04b7a0b0436.md",
+        "sessions/0046-2d15dfdcf811.md",
+        "sessions/0030-a5d620685855.md",
+        "sessions/0018-a7d36d3469ff.md",
+        "sessions/0047-db17fabd2458.md",
+        "sessions/0017-62209128e7e9.md",
+        "sessions/0008-675647a34c73.md",
+        "sessions/0001-c1b1a807a5e4.md",
+        "sessions/0039-b0718c2020ba.md",
+        "sessions/0032-3b6f6f3e9d3a.md",
+        "sessions/0004-356bb49a3374.md"
+      ]
+    }
+  ],
+  "summary": {
+    "metricDenominator": "Successful answerable cases only; failed cases must be included separately before comparisons",
+    "cases": 3,
+    "failedCases": 0,
+    "answerable": 1,
+    "recallAt3": 1,
+    "recallAt12": 1,
+    "completeAt3": 1,
+    "completeAt12": 1,
+    "abstentionCases": 2,
+    "abstentionWithCandidates": 2,
+    "medianIngestMs": 33769.0995,
+    "medianWarmSearchMs": 2110.182458999996,
+    "medianWarmOutputBytes": 59548
+  },
+  "limitations": [
+    "Development pilot only; not answer-accuracy or full memory-system evaluation.",
+    "Vector requested with local default embeddings; reranking disabled; successful retrieval does not itself prove vector contributions.",
+    "Search timing includes CLI startup and SQLite setup on each call; not directly comparable with in-process Graphmory timings.",
+    "Candidates mapped only when Basic Memory result output exposes the generated session note path; unmapped results remain in candidateCount."
+  ]
+}

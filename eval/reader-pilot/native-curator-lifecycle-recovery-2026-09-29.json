@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "experiment": "native-curator-lifecycle-recovery",
+  "date": "2026-09-29",
+  "scope": "single synthetic acceptance run",
+  "overallStatus": "failed",
+  "package": {
+    "name": "graphmory",
+    "version": "0.5.0-rc.3"
+  },
+  "execution": {
+    "exitCode": 0,
+    "wallSeconds": 192.582,
+    "modelOrEvaluationRunByAuditor": false
+  },
+  "runtimeBinding": {
+    "nativeChildCount": 1,
+    "childRole": "graphmory_curator",
+    "childModel": "gpt-5.6-luna",
+    "childReasoningEffort": "low",
+    "spawnAgentType": "graphmory_curator",
+    "forkTurns": "none",
+    "modelOverride": null,
+    "sameChildReusedForFourSequentialTasks": true,
+    "bindingEvidence": "Host binding record; child session metadata confirms child identity and role, but does not repeat model or reasoning fields.",
+    "parentThreadId": "01a0ebb0-9960-7d81-9d7f-9c7cf8913724",
+    "childThreadId": "01a0ebb1-0da0-72e1-8872-3e934bf3478d",
+    "archivedInCodexApp": true
+  },
+  "tasks": [
+    {
+      "id": "approved-e2-update",
+      "outcome": "APPLIED",
+      "preflightBeforeFirstWrite": true,
+      "sourceRead": "verified",
+      "childPostcheck": {
+        "status": "valid",
+        "metadataOnly": true,
+        "checkedFields": [
+          "lifecycle.status",
+          "lifecycle.revalidate_when[0]"
+        ]
+      }
+    },
+    {
+      "id": "identical-patch-retry",
+      "outcome": "APPLIED/no-op",
+      "markdownFileCount": 5,
+      "finalMarkdownHashesMatchPostFirstApplySnapshot": true,
+      "duplicateMarkdownNote": false
+    },
+    {
+      "id": "missing-provenance",
+      "outcome": "BLOCKED",
+      "preflightError": "provenance must contain at least one evidence item",
+      "fullVaultFileMapMatchesBaseline": true,
+      "obsidianMetadataIncluded": true
+    },
+    {
+      "id": "unresolved-source-conflict",
+      "outcome": "TENSION",
+      "sourceRead": "quoted repair succeeded after unquoted path-splitting failure",
+      "conflictingValuesSeconds": [
+        30,
+        60
+      ],
+      "valueSelected": false,
+      "vaultWritten": false,
+      "fullVaultFileMapMatchesBaseline": true,
+      "obsidianMetadataIncluded": true
+    }
+  ],
+  "gates": {
+    "nativeChildRoleAndSpawnShape": "pass",
+    "preflightBeforeFirstDurableWrite": "pass",
+    "originalSourcesRead": "pass_with_repair",
+    "childLifecycleMetadataPostcheck": "pass_limited",
+    "parentIndependentInstalledCliPostcheck": {
+      "status": "pass_limited",
+      "performedAt": "root_after_run_closeout",
+      "exitCode": 0,
+      "valid": true,
+      "metadataOnly": true,
+      "checkedFields": [
+        "lifecycle.status",
+        "lifecycle.revalidate_when[0]"
+      ],
+      "presentInNativeLeadTrace": false
+    },
+    "sourceHashesUnchanged": {
+      "status": "pass",
+      "sourceFileCount": 4
+    },
+    "missingProvenanceVaultUnchanged": "pass",
+    "conflictVaultUnchanged": "pass",
+    "retryMarkdownHashesMatchSnapshot": "pass",
+    "lineagePreservation": {
+      "status": "failed",
+      "initialSuccessorBacklinkPresent": true,
+      "initialGraphAuditExcludedOrMissingCount": 1,
+      "successorBacklinkRemoved": true,
+      "predecessorForwardSupersededByLinkRemains": true,
+      "finalGraphAuditIssues": 0,
+      "finalCleanAuditProvesLineage": false
+    },
+    "retrySnapshotOrdering": {
+      "status": "pass",
+      "firstChildCompleteUtc": "2026-09-29T05:45:11.282Z",
+      "parentSnapshotCaptureUtc": "2026-09-29T05:45:21.477Z",
+      "retryDispatchUtc": "2026-09-29T05:45:30.371Z"
+    }
+  },
+  "auditLimits": [
+    "Persistence postcheck covers lifecycle status and event trigger only.",
+    "Full confidence, scope, provenance quality, factual authority, and supersession semantics are not established.",
+    "One synthetic development acceptance does not establish benchmark performance, cross-host reliability, or comparative cost and latency."
+  ],
+  "privacy": {
+    "rawRolloutsIncluded": false,
+    "privateAbsolutePathsIncluded": false,
+    "secretsIncluded": false
+  },
+  "cleanup": {
+    "exactTerminalSessionsArchived": true,
+    "archiveStateConfirmed": true,
+    "temporaryCopiesRemoved": true,
+    "globalArchivedRolloutsPreserved": true
+  }
+}

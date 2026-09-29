@@ -1,0 +1,140 @@
+{
+  "auditVersion": "post-review-error-analysis-v1",
+  "purpose": "Source-free diagnostic of the eight frozen disagreements; not a second scored review.",
+  "frozenResult": {
+    "reviewedCases": 24,
+    "exactAgreement": 16,
+    "accuracy": 0.6666666666666666,
+    "confusion": {
+      "human_yes_judge_yes": 4,
+      "human_yes_judge_no": 8,
+      "human_no_judge_no": 12,
+      "human_no_judge_yes": 0
+    },
+    "falseAcceptances": 0,
+    "falseAcceptanceDenominator": 12,
+    "unclear": 0
+  },
+  "integrity": {
+    "scoreChanged": false,
+    "labelsChanged": false,
+    "reviewRetried": false,
+    "casesInspected": 8,
+    "allDisagreementsHadHumanYesJudgeNoAndZeroAnnotatedSpans": true,
+    "evidenceScope": "Only the eight disagreements, their packet context, and their judge rationales were inspected."
+  },
+  "taxonomyCounts": {
+    "annotation_gap_candidate": 4,
+    "external_or_unstated_fact": 2,
+    "overstrict_inference_or_paraphrase": 1,
+    "unresolved": 1
+  },
+  "taskCounts": {
+    "QA": 3,
+    "Summary": 3,
+    "Data2txt": 2
+  },
+  "cases": [
+    {
+      "blindId": "e84a033c9a9a",
+      "taskType": "QA",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no",
+      "humanSpanCount": 0,
+      "primaryTaxonomy": "annotation_gap_candidate",
+      "mechanism": "unsupported cross-source detail transfer",
+      "confidence": "medium",
+      "sourceFreeAssessment": "Judge identified procedural specificity not directly established by the supplied evidence; plausible missed-span signal."
+    },
+    {
+      "blindId": "962ad3b83bc6",
+      "taskType": "QA",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no",
+      "humanSpanCount": 0,
+      "primaryTaxonomy": "external_or_unstated_fact",
+      "mechanism": "domain facts absent from supplied context",
+      "confidence": "medium",
+      "sourceFreeAssessment": "The flagged claims appear to rely on facts outside the packet; this is a plausible human annotation gap under the frozen binary reference."
+    },
+    {
+      "blindId": "eda3dcee2f47",
+      "taskType": "QA",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no",
+      "humanSpanCount": 0,
+      "primaryTaxonomy": "overstrict_inference_or_paraphrase",
+      "mechanism": "completion of an incomplete source phrase",
+      "confidence": "medium",
+      "sourceFreeAssessment": "The disagreement turns on a plausible lexical completion; a strict literal reading and a reasonable contextual inference differ."
+    },
+    {
+      "blindId": "8492cea31ab3",
+      "taskType": "Summary",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no",
+      "humanSpanCount": 0,
+      "primaryTaxonomy": "external_or_unstated_fact",
+      "mechanism": "event characterization not stated in supplied context",
+      "confidence": "medium",
+      "sourceFreeAssessment": "Judge flagged a more specific event description than the packet establishes; plausible missed-span signal."
+    },
+    {
+      "blindId": "3367b6997cd4",
+      "taskType": "Summary",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no",
+      "humanSpanCount": 0,
+      "primaryTaxonomy": "annotation_gap_candidate",
+      "mechanism": "attribution or epistemic-strengthening shift",
+      "confidence": "medium",
+      "sourceFreeAssessment": "The response appears to state more definitively a claim the source presents as attributed; adjudication is needed to determine whether the shift is material."
+    },
+    {
+      "blindId": "8d88e1dd3e2d",
+      "taskType": "Summary",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no",
+      "humanSpanCount": 0,
+      "primaryTaxonomy": "unresolved",
+      "mechanism": "paraphrase with attribution and scope ambiguity",
+      "confidence": "low",
+      "sourceFreeAssessment": "A close paraphrase is plausible, while the judge flags a change in actor/scope; neither interpretation should be treated as settled."
+    },
+    {
+      "blindId": "bb8bf40aa123",
+      "taskType": "Data2txt",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no",
+      "humanSpanCount": 0,
+      "primaryTaxonomy": "annotation_gap_candidate",
+      "mechanism": "unsupported catalog and frequency specificity",
+      "confidence": "medium",
+      "sourceFreeAssessment": "Judge flagged details and a quantitative claim not grounded by the provided records; plausible missed-span signal."
+    },
+    {
+      "blindId": "935e0ea6ae24",
+      "taskType": "Data2txt",
+      "expectedSourceSupport": "yes",
+      "observedSourceSupport": "no",
+      "humanSpanCount": 0,
+      "primaryTaxonomy": "annotation_gap_candidate",
+      "mechanism": "specificity beyond coarse structured attributes",
+      "confidence": "medium",
+      "sourceFreeAssessment": "Judge flagged stronger claims than the structured fields and reviews directly support; plausible missed-span signal."
+    }
+  ],
+  "interpretation": {
+    "probableAnnotationGapOrExternalFactCases": 6,
+    "overstrictInferenceOrParaphrasePlausibleCases": 1,
+    "unresolvedCases": 1,
+    "certainty": "Provisional case-level diagnoses only. No claim is made that the human annotations are wrong; independent human review is required.",
+    "scoringStatus": "This post-outcome analysis adds no scored evidence and does not change pilot-v1 outcomes."
+  },
+  "nextEvaluationDesign": [
+    "Keep pilot-v1 labels, reviewer output, and score immutable.",
+    "For diagnostic follow-up, have two independent human adjudicators, masked to both the judge result and the frozen labels, assess the eight cases against only their supplied prompt context and response; record claim-level support and attribution separately.",
+    "Resolve human adjudicator conflicts with a third reviewer and store the result as a separate diagnostic artifact, without overwriting pilot-v1 labels.",
+    "For any later calibration, preregister a fresh train-only sample with distinct source groups and dual human reference review, including a planned audit of no-span cases; do not tune this pilot from the same outcomes."
+  ]
+}

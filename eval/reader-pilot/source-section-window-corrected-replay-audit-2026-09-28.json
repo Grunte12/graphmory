@@ -1,0 +1,13 @@
+{
+  "protocol": "source-section-window-corrected-replay-audit-v1",
+  "resultArtifactSha256": "e393ba880686eeaf37a6dbbfbfb906f224f8d0032abe0249d3cd8fffffdc00ff",
+  "replayByteIdentical": true,
+  "cases": 1099,
+  "variants": 3,
+  "modelCalls": 0,
+  "holdoutRendered": false,
+  "priorCaseOrderUnchanged": true,
+  "priorSelectorOutputBytesAndVisibleIdsUnchanged": true,
+  "duplicateAnnotationCases": 1,
+  "fullSourceUniqueGoldAvailabilityVerified": true
+}

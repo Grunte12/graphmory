@@ -81,9 +81,9 @@ function cleanScalar(value) {
 
 const EXCLUDED_LIFECYCLES = new Set(["raw", "stale", "superseded", "archived", "deprecated"])
 
-export function isRetrievable(document, { includeNoncanonical = false } = {}) {
+export function isRetrievable(document, { includeNoncanonical = false, includeSuperseded = false } = {}) {
   const status = String(document.metadata?.status ?? document.metadata?.lifecycle ?? "current").toLowerCase()
-  if (!includeNoncanonical && EXCLUDED_LIFECYCLES.has(status)) return false
+  if (!includeNoncanonical && EXCLUDED_LIFECYCLES.has(status) && !(includeSuperseded && status === "superseded")) return false
   return true
 }
 
@@ -93,7 +93,7 @@ export function isAnswerCandidate(document) {
 
 export function governedRank(documents, query, method, options = {}) {
   const eligible = eligibleDocuments(documents, options)
-  const direct = rank(eligible, query, method).map((item) => ({ ...item, retrievalSource: "direct" }))
+  const direct = (options.rankImpl ?? rank)(eligible, query, method).map((item) => ({ ...item, retrievalSource: "direct" }))
   const withNavigation = options.followLinks === false
     ? direct
     : expandLinkedResults(direct, eligible, options.linkSeeds ?? 3, documents)
@@ -126,6 +126,7 @@ export function governedRank(documents, query, method, options = {}) {
 
 function eligibleDocuments(documents, options) {
   if (options.includeNoncanonical) return documents
+  if (options.includeSuperseded) return documents.filter((document) => isRetrievable(document, options))
   const cached = ELIGIBLE_CACHE.get(documents)
   if (cached) return cached
   const eligible = documents.filter((document) => isRetrievable(document, options))
@@ -221,6 +222,10 @@ export function splitMarkdownSections(document) {
     : document.markdown
   const lines = markdown.split(/\r?\n/)
   const sections = []
+  const metadata = Object.entries(document.metadata ?? {}).map(([key, value]) => `${key}: ${value}`).join("\n")
+  const pathTokens = retrievalTokens(document.id)
+  const titleTokens = retrievalTokens(document.title)
+  const metadataTokens = retrievalTokens(metadata)
   const headingStack = [{ level: 1, text: document.title }]
   let heading = document.title
   let body = []
@@ -228,7 +233,6 @@ export function splitMarkdownSections(document) {
   function flush() {
     const content = body.join("\n").trim()
     if (!content) return
-    const metadata = Object.entries(document.metadata ?? {}).map(([key, value]) => `${key}: ${value}`).join("\n")
     const headingTrail = headingStack.map((item) => item.text).join(" > ")
     const text = `${document.id}\n${document.title}\n${metadata}\n${headingTrail}\n${heading}\n${content}`
     sections.push({
@@ -240,9 +244,9 @@ export function splitMarkdownSections(document) {
       characters: content.length,
       markdown: content,
       fields: {
-        path: retrievalTokens(document.id),
-        title: retrievalTokens(document.title),
-        metadata: retrievalTokens(metadata),
+        path: [...pathTokens],
+        title: [...titleTokens],
+        metadata: [...metadataTokens],
         headings: retrievalTokens(headingTrail),
         body: retrievalTokens(content),
       },
@@ -387,23 +391,25 @@ export function bm25fRank(documents, query, {
     for (const index of indexes) candidateIndexes.add(index)
   }
 
+  const queryTerms = queryTokens.flatMap((token) => {
+    const containing = documentFrequency.get(token) ?? 0
+    return containing ? [{ token, idf: Math.log(1 + (documents.length - containing + 0.5) / (containing + 0.5)) }] : []
+  })
+
   return [...candidateIndexes]
     .map((index) => {
       const { document, counts } = prepared[index]
+      const normalizations = fieldNames.map((field) =>
+        1 - b + b * ((document.fields?.[field]?.length ?? 0) / Math.max(averages[field], 1)))
       let score = 0
-      for (const token of queryTokens) {
-        const containing = documentFrequency.get(token) ?? 0
-        if (!containing) continue
+      for (const { token, idf } of queryTerms) {
         let weightedFrequency = 0
-        for (const field of fieldNames) {
-          const tokens = document.fields?.[field] ?? []
+        for (let fieldIndex = 0; fieldIndex < fieldNames.length; fieldIndex++) {
+          const field = fieldNames[fieldIndex]
           const frequency = counts[field].get(token) ?? 0
           if (!frequency) continue
-          const averageLength = Math.max(averages[field], 1)
-          const lengthNormalization = 1 - b + b * (tokens.length / averageLength)
-          weightedFrequency += (fieldWeights[field] ?? 1) * (frequency / lengthNormalization)
+          weightedFrequency += (fieldWeights[field] ?? 1) * (frequency / normalizations[fieldIndex])
         }
-        const idf = Math.log(1 + (documents.length - containing + 0.5) / (containing + 0.5))
         score += idf * ((weightedFrequency * (k1 + 1)) / (weightedFrequency + k1))
       }
       return { ...document, score }

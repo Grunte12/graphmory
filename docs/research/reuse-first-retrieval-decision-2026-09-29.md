@@ -1,0 +1,24 @@
+# Reuse-first retrieval decision (development checkpoint)
+
+## Observed gap
+
+The managed Curator branch in `src/decision-recall.mjs` returns after the lexical `recallVaultLoop`; its `--semantic-expansion` flag is handled only by the decision-model branch. Thus the main Curator workflow does not use the existing local semantic lane. `src/semantic-recall.mjs` already provides BGE embeddings plus reciprocal-rank fusion (RRF), but embeds one truncated whole-note representation (`maxDocumentCharacters = 8000`). `src/retrieval.mjs` already provides title/path/metadata/heading-aware Markdown sections; `src/source-read.mjs` retains verified originals. These are reusable seams, not a reason to replace the vault or build a new database.
+
+The exposed LongMemEval-S native retrieval diagnostic has Graphmory and Basic Memory tied at complete annotated evidence @10 (12/12 answerable cases). It does not show a general semantic recall failure; therefore a new model or index must first earn its operational cost on an independently selected paraphrase/late-section/multi-hop cohort. The Graph-hard alias-gap has incomplete evidence @3 but available evidence deeper; this alone does not prove a neural retriever would help.
+
+## Existing research to compose, with transfer limits
+
+| Candidate | Reuse path | Published reason to test | Local cost / decision |
+| --- | --- | --- | --- |
+| Existing BGE + BM25F + RRF, using section representations and keeping original-note IDs | Reuse Transformers.js optional dependency, `splitMarkdownSections`, existing vector cache/RRF, managed pagination/source reader | [RRF, SIGIR 2009](https://research.google/pubs/reciprocal-rank-fusion-outperforms-condorcet-and-individual-rank-learning-methods/) establishes a simple rank-fusion method. [BEIR](https://arxiv.org/abs/2104.08663) finds BM25 a robust zero-shot baseline; it also shows strong neural methods can be computationally expensive. | One local encoder/index refresh, no query-time LLM or hosted vault exposure. **First candidate**, because it composes what Graphmory already ships; no benchmark result transfers automatically. |
+| SPLADE-v2 sparse expansion | Use a maintained [SPLADE implementation](https://github.com/naver/splade) rather than implementing its encoder | [SPLADE-v2](https://arxiv.org/abs/2109.10086) reports >9% nDCG@10 gain on TREC DL 2019 over its compared setup. | Model/index runtime plus ongoing re-encoding. Test only if simpler BGE hybrid still misses paraphrases; paper's percentage is not a Graphmory prediction. |
+| ColBERTv2/PLAID late interaction | Use maintained [PyLate](https://github.com/lightonai/pylate) with a section-to-original mapping | [ColBERTv2](https://arxiv.org/abs/2112.01488) reduces late-interaction index footprint by 6–10× relative to its predecessor while retaining benchmark quality. | Python/PyTorch and a multi-vector persistent index increase install, disk, RAM and warmup burden. Earn that burden with a demonstrated section-level miss first. |
+| Graph neighbor traversal / iterative follow-up | Reuse existing `buildNoteGraph` and adaptive retrieval rather than add generated triples | [IRCoT, ACL 2023](https://aclanthology.org/2023.acl-long.557/) motivates interleaved reasoning/retrieval on multi-hop QA; [HippoRAG](https://arxiv.org/abs/2405.14831) motivates graph-assisted multi-hop retrieval. | Existing Markdown links are cheap, but LongMemEval histories do not necessarily contain those links. Test separately on linked-note questions; no generic query-time model loop by default. |
+
+## One gated experiment before integration
+
+Freeze a source-disjoint evaluation cohort with **lexical misses or late-section evidence**, plus matched ordinary, abstention and linked-note controls. Keep originals, lifecycle filter, Curator/Lead, host, round cap and citation rules the same. Compare current managed lexical retrieval, a section-level BGE+BM25F RRF treatment, and native Basic Memory hybrid. Metrics: Complete Evidence@10 and complete evidence across pagination, supported-complete answer, citation support, abstention, index build/update seconds, index/model bytes, peak RSS, cold/warm p50/p95 end-to-end latency, model calls, and prompt/cache token usage. Record all failed attempts.
+
+**Stop bar:** reject the treatment on a source-integrity or lifecycle regression, or if any answerable case loses complete evidence that the control finds. To justify keeping the optional lane, it must recover at least two prespecified lexical-miss cases without reducing supported-complete answers on controls, and disclose its resource cost. Do not promote a default from this development cohort. A frozen source-disjoint holdout and matched full-workflow comparison are still required.
+
+This is an architecture checkpoint, not an implementation or positive result. No new retriever package is approved by the evidence above alone.

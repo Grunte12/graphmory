@@ -1,0 +1,365 @@
+{
+  "protocol": "locomo-live-development-attribution-v1",
+  "manifest": {
+    "protocol": "locomo-live-development-v1",
+    "datasetSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+    "selectionSeed": "graphmory-locomo-live-development-2026-09-28-v1",
+    "selectedIds": [
+      "conv-42:11",
+      "conv-50:196"
+    ],
+    "categories": [
+      1,
+      5
+    ],
+    "readerInputSha256": "bb542a87a72344f0d15628f19814f39b8f111da83aa8f951376bd2f49307b6df",
+    "labelsSha256": "bb05706a20cdda1cf21c8ad2d71dda31c0621e7ce3b2f0d721b838d2c8821196",
+    "sourceHashes": {
+      "scripts/prepare-locomo-live-development.mjs": "d6c5ba9c6be45ffe4887541abe9e5cee650e22922d48a43ce7f0c0f7efc76386",
+      "scripts/run-curator-paging-pilot.py": "acbf0744e259d8da9ec4fe325a4d9acf2914f70281a7908560506e2726ca5712",
+      "scripts/lib/locomo.mjs": "b5138a78a26663238e0b619b4d24d057819a4eb8a6cec45472e3b64aee536d2a",
+      "src/retrieval.mjs": "4a85f5662bbf44d05eaeacb386711f05641bb550193d84c3dd7402853c3991fe",
+      "src/memory-recall.mjs": "4f8765badf33121957f9d29c25cf0480c552606cfbb09676acf045c040bb703f",
+      "src/brain-sync.mjs": "5bc5af299b8f49caeb7d11cd2333f4a8d5723bcba44a919773b270110dc8f2da"
+    },
+    "note": "Two previously untried reader questions from distinct development conversations; category-5 score is a weak phrase check. No holdout conversation rendered."
+  },
+  "cases": [
+    {
+      "id": "conv-42:11",
+      "category": 1,
+      "question": "What is Joanna allergic to?",
+      "sourceCount": 29,
+      "goldPaths": [
+        "session_4.md",
+        "session_5.md",
+        "session_2.md"
+      ],
+      "sourceHashes": {
+        "session_1.md": "4c71689216f404d8dd242a494bef3f295e86b48447d0d8330b000eeae64ecd78",
+        "session_2.md": "a98a35e1f4cd01969898331c5c531ac2e2e6825a59a6b4b8b1b4625bf1a47187",
+        "session_3.md": "e6cd107043130b05b562aab18a2bac3c1568adedc2ea5a17f6927a2a9d52358e",
+        "session_4.md": "536994d76c5742b300a0c69741d3b2f426e7ba69235270d9a4fd0b70a0f02ff4",
+        "session_5.md": "fb66a762829f436f4024193814d14f97fea477ac0aa06526205d4ec991ed7acc",
+        "session_6.md": "4aab19d1fd42dd117a97ab6b082346023b37015ed5f2a5469775679d0f33b84f",
+        "session_7.md": "8050608ae644b46c242905e898e53bf4b7dfd6485ad300172a1e7c48f22824f5",
+        "session_8.md": "80ede5a7deabefb02cddfe0749bf16d724ad99b4807c53820b858b926d5d343a",
+        "session_9.md": "e149a149fa9182f1a9258977ef2f1cdc12c2089b57aaf445c50d9a5d36ba1e63",
+        "session_10.md": "482cecc40a018b1087dd58f3790e220d6f2247e4b24cf45d3dab1f79df75c85e",
+        "session_11.md": "c9f668d7201726d455d065906081bf10ea7d6d18350e324f661c2e9c9016734b",
+        "session_12.md": "7df2fbbb5231ef63164400e9243006939db24da665b9db2447e707179fd24128",
+        "session_13.md": "9c66086a8dcec0ec8b020554c4dcc3f4a43f5401689954232ccfc778eb38f0f8",
+        "session_14.md": "e1538c0f9057fa9b1031fc38f534c9cf2485701d808ce0bf411c580907fbbe0c",
+        "session_15.md": "89f3cc9e8782158cc6dac2315109bb96d0ebb3fd5610944821e9527ea351efbc",
+        "session_16.md": "df015d37568449c19d32630b6a167116d93db829af36f42aba037e3f3c294cae",
+        "session_17.md": "d8dd9bf8ffa915d32d5bdf884ae0c3823d909a88006ed757dcd7476868a67b64",
+        "session_18.md": "b5b85e7bcd454b8cccc28726265fdbf9f229b1954d108ff9cc77901d54749c6f",
+        "session_19.md": "0d48a58ab55a728818116abd6a751c6e1b11fcc094c9ac93f62e9088add6a31f",
+        "session_20.md": "fdd949896b47d34a69583f48c76ec4579e59f2e9120548d5ad59e031a68f8745",
+        "session_21.md": "2c41e924485b8240d69a33be419a73e73c9dd8b590759a4c84eb86c5b3d910ec",
+        "session_22.md": "2b8e47508b2f5f8833c01757dbafd36e8654beb2e8a715e2b4509474324639e9",
+        "session_23.md": "0d1ce9ad5dff354785cf3beb8c26495f531c10536a63915f6a10e329cc65a200",
+        "session_24.md": "727523ebc393df46d5a340930843ac19db8a589abbd738a14aece7c344f1abd8",
+        "session_25.md": "c7b25bd7c6cdc8de0ae6b03f177604efdaff35525461303a946fd87df3e54384",
+        "session_26.md": "433129934a4a40a16f8c230cf2669e1d4bcd88272c7e0e8eb2e1a9b232dbff5e",
+        "session_27.md": "afb3b49f4220f018f736a728541d7c58699bf854535a1a76bab892f278d5180a",
+        "session_28.md": "3a5d55fe22ea0a72b0dd8e02c0a79c9c96aa266709b466aa0324a1c1190abdcc",
+        "session_29.md": "6ebe91bb38de8cdf990677bbb80652334e92561ca0a15ebc2db1af563a305f18"
+      }
+    },
+    {
+      "id": "conv-50:196",
+      "category": 5,
+      "question": "What type of art has Dave been getting into lately?",
+      "sourceCount": 30,
+      "goldPaths": [
+        "session_28.md"
+      ],
+      "sourceHashes": {
+        "session_1.md": "c94230b9b58a699a949f6b0fca298283942d3f23f6c34d70fa3c47eb81f2e321",
+        "session_2.md": "7c67dd3eb4e525026916c0f53a65be8a126482f8cfe324a18383c5703aad5034",
+        "session_3.md": "22edc4e99cd0b830a8e066d5d430bd06a35d75f43525dd8c65755c8eb6c6cc41",
+        "session_4.md": "715e561968fdf9fad8ead161d9f7b768b75c276c13ec20001f348a736e14f3e1",
+        "session_5.md": "c7672be78f7b74733b4adbf945b5b929ac35578b20bcd2cfb97dfd5c8219fa38",
+        "session_6.md": "f1d1db15998a1ae18d5385aa638201fda07df6960676e228add15fea051261a3",
+        "session_7.md": "be1d244d9e1e5657a3e15ac9faa7955e62309b53d9271b6c33b68daccf35156b",
+        "session_8.md": "0369e2d179df96304d9d41c01f2a59ddb3946904c6fac766fca82bde1187412e",
+        "session_9.md": "cacbad53a38d60cb1111bff4e4b04489f209230e92339e2b1eec05266ac270e7",
+        "session_10.md": "fe7b3ae3fd9a685114f1ef1846bed596cde131c4bac0f0c9a19423a625c901de",
+        "session_11.md": "b94e1cb181b6668a27b25b86316ca00e01abb934a7a85102ef714fbff98d57c7",
+        "session_12.md": "c498e6066ccdd1988a2256c10d22af3a05e7361a60bc4dc77f1a54dafe68f94b",
+        "session_13.md": "b77422db4fbdb68c50ec27f1e1a89c4d8cb2b5362f4270ee3225c69b905cbe0b",
+        "session_14.md": "bf169d7a450b466283048c604e922fc0d1e6adc3dff528a6a2b30b9819991e3e",
+        "session_15.md": "f1f3dc1dd0c2a59deb8f609cff21a4c11438ed1d694fb4afda7b3d260fd90905",
+        "session_16.md": "889f29101f5dec5b1ea3a524797b96e7d2d8f27d2300dfdc7190fed128dddddf",
+        "session_17.md": "9314e7678e939cd176e724986ec1867e5f664b5d0e55d58cfaf085c5caf14eef",
+        "session_18.md": "87338c2320cd1f65fef25b3a8bcb9ec23859d78935bcf2f3b43f38ae5527c901",
+        "session_19.md": "d91eac37e4a5c8346cdb45b4ff4d24382b3390df6c373655a4b2b023743c52fc",
+        "session_20.md": "4160b5229e912579758235f3e57bf505265eb8e355a9108a8e9f03813d5d1fc9",
+        "session_21.md": "ed3d88bf2fdb076c78e937a5f19b412b9f5bd8c7558b4f2ad32cec4ce384a8aa",
+        "session_22.md": "c9ea4b75e61d0865f4ee70fc0bdbbae0e2cda28eb615dcb2ca8fbe351dd5a880",
+        "session_23.md": "8f59027b12e9f11e9e927e757514425eed5eadff8396dea62520f2e104947eff",
+        "session_24.md": "4943ca0ddfbfe26f8a52709c37a7d8ef992a2f0fc0df606ba218f58b71a6fdaa",
+        "session_25.md": "31e564f325f710c3685c25535c65b1ef51c7d5e8d1445f49904fc343646a56dc",
+        "session_26.md": "0422f6253c9306105ba83eb83ec947ce680d7da7290e5025938e7bf0b82bdb9f",
+        "session_27.md": "5dc2a2ea3184ede5f24ce6c2d375e0ca053fee8b25184e13e2c82e4169bf85e7",
+        "session_28.md": "0c415e8581b1bcd3bc36cdedde5ad90d46c72d5d1480d6568988d275eca4dd1d",
+        "session_29.md": "e2d79134071d0f9b789993a1af2e8a2f70cef66ef385a191bb36c72432ba2a27",
+        "session_30.md": "96d5cb3e5d03573e0164909a0a51f13168479f259694af478875743f3e3ffc25"
+      }
+    }
+  ],
+  "runs": [
+    {
+      "attempt": "cat1",
+      "id": "conv-42:11",
+      "complete": false,
+      "stopReason": "Host failed or used prohibited tools; preserve traces",
+      "model": "gpt-5.6-luna",
+      "leadModel": "gpt-6-sol",
+      "mode": "auto",
+      "maxRounds": 10,
+      "elapsedSeconds": 24.557,
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": 10,
+          "hasMore": true,
+          "paths": [
+            "session_5.md",
+            "session_2.md",
+            "session_24.md",
+            "session_28.md",
+            "session_4.md",
+            "session_1.md",
+            "session_9.md",
+            "session_3.md",
+            "session_15.md",
+            "session_25.md"
+          ],
+          "pageSha256": "294efc15ea762f578cfb97e1552983fba02232a0ece51280e540af79b31806a5"
+        }
+      ],
+      "sourceReads": [
+        {
+          "path": "session_2.md",
+          "sha256": "a98a35e1f4cd01969898331c5c531ac2e2e6825a59a6b4b8b1b4625bf1a47187",
+          "bytes": 3757
+        }
+      ],
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "elapsedSeconds": 10.774,
+          "promptBytes": 7979,
+          "promptSha256": "7d1be2d7bea7fe9825163f50e31933a9304749db0f5d16afc170e91967c3cbf4",
+          "usage": {
+            "input_tokens": 17342,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 54,
+            "reasoning_output_tokens": 23
+          },
+          "failed": false,
+          "failureKind": null
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "elapsedSeconds": 6.998,
+          "promptBytes": 11972,
+          "promptSha256": "f9dbaf9265dd42f39369574537459505c814531eb387dbc3cf216938cff9fbdf",
+          "usage": {
+            "input_tokens": 18444,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 71,
+            "reasoning_output_tokens": 21
+          },
+          "failed": false,
+          "failureKind": null
+        },
+        {
+          "stage": "lead",
+          "model": "gpt-6-sol",
+          "elapsedSeconds": 6.68,
+          "promptBytes": 514,
+          "promptSha256": "02be48fec7e835dd10a0210c86fc8eec985a6308b3134734c7f883adc002090a",
+          "usage": null,
+          "failed": true,
+          "failureKind": "unsupported-model"
+        }
+      ],
+      "brief": "Joanna is allergic to most reptiles and animals with fur. [session_2.md, Joanna (D2:23)]",
+      "answer": null,
+      "citations": null,
+      "citationProvenanceValid": null,
+      "runnerSha256": "acbf0744e259d8da9ec4fe325a4d9acf2914f70281a7908560506e2726ca5712",
+      "inputSha256": "bb542a87a72344f0d15628f19814f39b8f111da83aa8f951376bd2f49307b6df"
+    },
+    {
+      "attempt": "cat1-sol56",
+      "id": "conv-42:11",
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "model": "gpt-5.6-luna",
+      "leadModel": "gpt-5.6-sol",
+      "mode": "auto",
+      "maxRounds": 10,
+      "elapsedSeconds": 25.893,
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": 10,
+          "hasMore": true,
+          "paths": [
+            "session_5.md",
+            "session_2.md",
+            "session_24.md",
+            "session_28.md",
+            "session_4.md",
+            "session_1.md",
+            "session_9.md",
+            "session_3.md",
+            "session_15.md",
+            "session_25.md"
+          ],
+          "pageSha256": "294efc15ea762f578cfb97e1552983fba02232a0ece51280e540af79b31806a5"
+        }
+      ],
+      "sourceReads": [
+        {
+          "path": "session_2.md",
+          "sha256": "a98a35e1f4cd01969898331c5c531ac2e2e6825a59a6b4b8b1b4625bf1a47187",
+          "bytes": 3757
+        }
+      ],
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "elapsedSeconds": 9.577,
+          "promptBytes": 7979,
+          "promptSha256": "7d1be2d7bea7fe9825163f50e31933a9304749db0f5d16afc170e91967c3cbf4",
+          "usage": {
+            "input_tokens": 17346,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 54,
+            "reasoning_output_tokens": 23
+          },
+          "failed": false,
+          "failureKind": null
+        },
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "elapsedSeconds": 7.453,
+          "promptBytes": 11972,
+          "promptSha256": "f9dbaf9265dd42f39369574537459505c814531eb387dbc3cf216938cff9fbdf",
+          "usage": {
+            "input_tokens": 18448,
+            "cached_input_tokens": 14080,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 49,
+            "reasoning_output_tokens": 0
+          },
+          "failed": false,
+          "failureKind": null
+        },
+        {
+          "stage": "lead",
+          "model": "gpt-5.6-sol",
+          "elapsedSeconds": 8.744,
+          "promptBytes": 521,
+          "promptSha256": "710b887ce0f0f09823e35c2c02df3414c5fb64e467d988079c52f3b9e4ebb9bb",
+          "usage": {
+            "input_tokens": 16862,
+            "cached_input_tokens": 0,
+            "cache_write_input_tokens": 0,
+            "output_tokens": 34,
+            "reasoning_output_tokens": 0
+          },
+          "failed": false,
+          "failureKind": null
+        }
+      ],
+      "brief": "Joanna is allergic to most reptiles and animals with fur. (Source: session_2.md, Joanna D2:23.)",
+      "answer": "Joanna is allergic to most reptiles and animals with fur.",
+      "citations": [
+        "session_2.md"
+      ],
+      "citationProvenanceValid": true,
+      "runnerSha256": "acbf0744e259d8da9ec4fe325a4d9acf2914f70281a7908560506e2726ca5712",
+      "inputSha256": "bb542a87a72344f0d15628f19814f39b8f111da83aa8f951376bd2f49307b6df"
+    },
+    {
+      "attempt": "cat5-sol56",
+      "id": "conv-50:196",
+      "complete": false,
+      "stopReason": "Host failed or used prohibited tools; preserve traces",
+      "model": "gpt-5.6-luna",
+      "leadModel": "gpt-5.6-sol",
+      "mode": "auto",
+      "maxRounds": 10,
+      "elapsedSeconds": 7.353,
+      "pages": [
+        {
+          "offset": 0,
+          "nextOffset": 10,
+          "hasMore": true,
+          "paths": [
+            "session_25.md",
+            "session_27.md",
+            "session_28.md",
+            "session_14.md",
+            "session_6.md",
+            "session_18.md",
+            "session_10.md",
+            "session_29.md",
+            "session_5.md",
+            "session_30.md"
+          ],
+          "pageSha256": "ee856793c56282bfe034f9fdc2888269816463072005dbfb361347539e3b641f"
+        }
+      ],
+      "sourceReads": [],
+      "modelCalls": [
+        {
+          "stage": "curator",
+          "model": "gpt-5.6-luna",
+          "elapsedSeconds": 7.289,
+          "promptBytes": 9518,
+          "promptSha256": "22aea63e41bb52c9ab76d27868927e5a8dd9f9850e00de7ce1094844c9894c64",
+          "usage": null,
+          "failed": true,
+          "failureKind": "usage-limit"
+        }
+      ],
+      "brief": null,
+      "answer": null,
+      "citations": null,
+      "citationProvenanceValid": null,
+      "runnerSha256": "acbf0744e259d8da9ec4fe325a4d9acf2914f70281a7908560506e2726ca5712",
+      "inputSha256": "bb542a87a72344f0d15628f19814f39b8f111da83aa8f951376bd2f49307b6df"
+    }
+  ],
+  "officialFunctionBodyScore": {
+    "id": "conv-42:11",
+    "rawQaF1": 0.21590909090909088,
+    "sourceSha256": "8e3be5d57ff2ff9ec5cd05939592f468c5f3f1fd95d13e431932bdf6bf0fd6fd",
+    "limitations": [
+      "Category-specific token scoring, not semantic support/temporal correctness",
+      "Citations remain in raw predictions and can reduce F1",
+      "Selected development cases only; not a published full-split score"
+    ]
+  },
+  "independentSemanticReview": null,
+  "limitations": [
+    "Two exposed development questions; one complete answerable run and one host usage-limit failure",
+    "Gold paths and answer absent from model prompts; source preview delivery and verified reads recorded",
+    "Model host failure and official token F1 do not establish supported-complete success",
+    "No independent adjudication; no holdout or comparator workflow"
+  ]
+}

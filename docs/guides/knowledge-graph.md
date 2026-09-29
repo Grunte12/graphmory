@@ -47,7 +47,9 @@ graphmory graph-audit --vault /path/to/brain --agent
 graphmory recall-explore --vault /path/to/brain --query "What other notes are linked to Cedar?" --agent
 ```
 
-`graph-audit` is read-only. It reports counts, up to 20 unresolved/excluded/ambiguous references, up to 20 isolated notes, and 10 high-degree notes. Isolation is a review hint, not automatically an error; a standalone fact can be valid. External links are evidence references, not local graph edges. A hub is not automatically bad either.
+`graph-audit` is read-only. `issues` reports up to 20 unresolved/ambiguous references with totals in `issueCounts`. `excludedReferences` separately reports up to 20 links to existing loaded notes omitted from the current graph, with totals in `excludedCounts` (`scope` and `lifecycle:<status>`). A reference excluded for both reasons contributes to both counts. Exclusion is informational: preserve a valid history/evidence link instead of deleting it to clear the audit. Such targets remain outside current graph traversal; read the originals explicitly when inspecting history. The audit cannot establish filesystem-wide absence outside its loaded inventory.
+
+It also reports up to 20 isolated notes and 10 high-degree notes. Isolation is a review hint, not automatically an error; a standalone fact can be valid. External links are evidence references, not local graph edges. A hub is not automatically bad either.
 
 `recall-explore` remains optional. It starts from search and traverses at most two rounds for questions that explicitly ask about related notes, wikilinks, or a route through a shared index/MOC. It returns at most three results by default from a 12-note candidate budget. MOCs marked `canonical_memory: false` can act as bridges but do not occupy answer-evidence slots. Each traversed result includes a bounded trail with source, destination, direction, and relation. A backlink reverses traversal direction, not the asserted relationship. Existing search candidates can still act as bridges. The default autonomous traversal starts at the strongest seed; an evidence assessor can choose among up to three seeds.
 

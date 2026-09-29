@@ -1,0 +1,100 @@
+{
+  "protocol": "reader-repeat-classification-frozen-trace-v1",
+  "classifierSourceSha256": "c9dc1af9546cdc559282b191426b153e02857f1c61094da932e8f515c08ec45d",
+  "rows": [
+    {
+      "id": "conv-47:52",
+      "coveragePreviews": false,
+      "originalStopReason": "Invalid, unseen or repeated source request",
+      "reportSha256": "f846f49fae8ec4ffbf66aecd110093edffb1a0582215c1ec517def1f04b6b28c",
+      "lastCuratorTraceSha256": "1b63619413468b171b4f940cc7af187b939b22cef990ca372a3fdb4a440bbedf",
+      "requested": [
+        "session_13.md",
+        "session_20.md",
+        "session_23.md",
+        "session_21.md",
+        "session_7.md",
+        "session_4.md",
+        "session_6.md",
+        "session_1.md",
+        "session_28.md"
+      ],
+      "newClassifierAccepted": true,
+      "unique": [
+        "session_13.md",
+        "session_20.md",
+        "session_23.md",
+        "session_21.md",
+        "session_7.md",
+        "session_4.md",
+        "session_6.md",
+        "session_1.md",
+        "session_28.md"
+      ],
+      "new": [],
+      "reused": [
+        "session_13.md",
+        "session_20.md",
+        "session_23.md",
+        "session_21.md",
+        "session_7.md",
+        "session_4.md",
+        "session_6.md",
+        "session_1.md",
+        "session_28.md"
+      ],
+      "originalWorkflowComplete": false
+    },
+    {
+      "id": "conv-48:36",
+      "coveragePreviews": true,
+      "originalStopReason": "Invalid, unseen or repeated source request",
+      "reportSha256": "189d365ed95efa8ec2969aeae632581d911a9d86c9b36743be8919b846647dc0",
+      "lastCuratorTraceSha256": "986ede998fd8aceecc33202d521903fbea2efc2bce11621ab5a9fd8a52875ecb",
+      "requested": [
+        "session_12.md",
+        "session_11.md",
+        "session_8.md",
+        "session_9.md",
+        "session_3.md",
+        "session_16.md",
+        "session_10.md",
+        "session_17.md",
+        "session_14.md",
+        "session_5.md"
+      ],
+      "newClassifierAccepted": true,
+      "unique": [
+        "session_12.md",
+        "session_11.md",
+        "session_8.md",
+        "session_9.md",
+        "session_3.md",
+        "session_16.md",
+        "session_10.md",
+        "session_17.md",
+        "session_14.md",
+        "session_5.md"
+      ],
+      "new": [],
+      "reused": [
+        "session_12.md",
+        "session_11.md",
+        "session_8.md",
+        "session_9.md",
+        "session_3.md",
+        "session_16.md",
+        "session_10.md",
+        "session_17.md",
+        "session_14.md",
+        "session_5.md"
+      ],
+      "originalWorkflowComplete": false
+    }
+  ],
+  "limitations": [
+    "Only request classification is replayed, not any model generation or answer",
+    "Original workflows and official scores remain unchanged",
+    "No primary supported-complete or competitor acceptance evidence"
+  ]
+}

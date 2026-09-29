@@ -1,0 +1,22 @@
+{
+  "protocol": "matched-native-curator-two-family-development-v1",
+  "frozenBeforeGeneration": true,
+  "datasetSha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "mediatorSha256": "87086d92fe6082895551f855d517d37e3fd2658feeea69efc9afab66863a68d7",
+  "indexBuilderSha256": "4bf57b2f21478bcfe0262bc23c6fbaf88699b608068abf0be1a4b189125f05c1",
+  "cases": [
+    { "id": "945e3d21", "category": "knowledge-update", "readerInputSha256": "6bdf978429176b164fa31ac41a8192b39cafbe5e29522ed75d2f2deef73171d2", "order": ["basic-memory-hybrid", "graphmory-managed-auto"] },
+    { "id": "67e0d0f2", "category": "multi-session", "readerInputSha256": "92158cfc061a72d1411c021793bdd11e9d815d10baed0596f1ced55937bc074e", "order": ["graphmory-managed-auto", "basic-memory-hybrid"] }
+  ],
+  "historyOverlap": "No identical original Markdown bodies across the two selected cases",
+  "host": "Codex CLI, fresh ephemeral turns",
+  "curatorModel": "gpt-5.6-luna",
+  "leadModel": "gpt-5.6-luna",
+  "reasoningEffort": "low",
+  "maxCuratorRounds": 4,
+  "structuredCitations": true,
+  "allAttemptPolicy": "Count all four planned arms and infrastructure failures; no silent retries or replacement cases",
+  "manualReview": "Compare final answer to source prose and separate gold reference; mark support, completeness, attribution and citations distinctly; preserve disagreements",
+  "metrics": ["protocol completion", "full-source reads", "gold-source coverage", "answer reference agreement", "source-supported completeness", "citation provenance", "end-to-end seconds", "gross/cached/noncached input tokens", "output tokens", "native stdout bytes", "index construction seconds"],
+  "nonClaims": ["exposed development cases, not independent holdout", "two cases cannot establish noninferiority, superiority, p95 latency or billed cost", "native result counts and normalization differ"]
+}

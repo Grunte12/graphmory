@@ -1,0 +1,189 @@
+{
+  "suite": "basic-memory-local-vector-retrieval-pilot",
+  "competitor": "Basic Memory",
+  "version": "0.23.2",
+  "requestedSearchMode": "vector",
+  "rerankerEnabled": false,
+  "environment": "macOS arm64, Python 3.12.13, uv isolated venv; config/home per case",
+  "search": "Native bm tool search-notes plain query with --page-size 12 --json; semantic search enabled, explicit --vector; query format recorded separately; no keyword extraction.",
+  "ingestionAdaptation": "Same original Markdown inputs; native Basic Memory ingestion may add frontmatter and normalize formatting. Changed file counts and before/after hashes are recorded; post-ingest byte equality is not claimed.",
+  "install": {
+    "command": "uv pip install --python tmp/competitors/basic-memory/venv/bin/python --cache-dir tmp/competitors/uv-cache --prerelease=allow 'basic-memory==0.23.2'",
+    "venvBytes": 439029651,
+    "cacheBytes": 385652220
+  },
+  "queryFormat": "question-only",
+  "datasetSha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "selectedIds": [
+    "09ba9854_abs",
+    "a96c20ee_abs",
+    "50635ada"
+  ],
+  "cases": [
+    {
+      "id": "09ba9854_abs",
+      "category": "abstention",
+      "sessions": 50,
+      "duplicateSessionIds": 0,
+      "evidenceCount": null,
+      "recallAt3": null,
+      "recallAt12": null,
+      "completeAt3": null,
+      "completeAt12": null,
+      "candidates": 0,
+      "indexedFiles": 50,
+      "ingestMs": 4565.3076249999995,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 50,
+      "sourceBodyHash": "01ebbce4b2bbc59f6428e2edb8ad9beaf90f46d0d9a7c6e8cce8eb820e72d166",
+      "ingestedHash": "c3712a0da7302d6125705f59ddeec0dc1cbb2295eecfefa4fb9bb8a3387608bd",
+      "repeats": [
+        {
+          "elapsedMs": 7617.395417,
+          "outputBytes": 122,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 1964.139083,
+          "outputBytes": 122,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 1923.1870830000007,
+          "outputBytes": 122,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "a96c20ee_abs",
+      "category": "abstention",
+      "sessions": 53,
+      "duplicateSessionIds": 0,
+      "evidenceCount": null,
+      "recallAt3": null,
+      "recallAt12": null,
+      "completeAt3": null,
+      "completeAt12": null,
+      "candidates": 0,
+      "indexedFiles": 53,
+      "ingestMs": 4339.374790999998,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 53,
+      "sourceBodyHash": "eb14a1955013bc8d0a23e5d86fa10ffe836c8c28e55802af829bd68342527564",
+      "ingestedHash": "1b2b10125c49c944d229949497b5df5757fd0c4814786fea04dd90b57894fb09",
+      "repeats": [
+        {
+          "elapsedMs": 7045.739541999999,
+          "outputBytes": 122,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 2043.1678750000028,
+          "outputBytes": 122,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 2466.745375000006,
+          "outputBytes": 122,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    },
+    {
+      "id": "50635ada",
+      "category": "knowledge-update",
+      "sessions": 48,
+      "duplicateSessionIds": 0,
+      "evidenceCount": 2,
+      "recallAt3": 0,
+      "recallAt12": 0,
+      "completeAt3": false,
+      "completeAt12": false,
+      "candidates": 0,
+      "indexedFiles": 48,
+      "ingestMs": 4861.499250000001,
+      "knownItemSmoke": "passed",
+      "changedSourceFiles": 48,
+      "sourceBodyHash": "1c037776302d623c6d5e9ed0121e13912449b797e33d292c3f4c780c5e0bc1ea",
+      "ingestedHash": "515d2384d78e6a260f7f215ce7ab24a83050301ef7688991d2a4efbf722b9af4",
+      "repeats": [
+        {
+          "elapsedMs": 7632.174290999996,
+          "outputBytes": 122,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 2000.979207999997,
+          "outputBytes": 122,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        },
+        {
+          "elapsedMs": 2009.9422919999997,
+          "outputBytes": 122,
+          "rawRows": 0,
+          "uniqueSessions": 0,
+          "unmappedRows": 0,
+          "duplicateRows": 0,
+          "selectedSessionPaths": []
+        }
+      ],
+      "selectedSessionPaths": []
+    }
+  ],
+  "summary": {
+    "metricDenominator": "Successful answerable cases only; failed cases must be included separately before comparisons",
+    "cases": 3,
+    "failedCases": 0,
+    "answerable": 1,
+    "recallAt3": 0,
+    "recallAt12": 0,
+    "completeAt3": 0,
+    "completeAt12": 0,
+    "abstentionCases": 2,
+    "abstentionWithCandidates": 0,
+    "medianIngestMs": 4565.3076249999995,
+    "medianWarmSearchMs": 2009.9422919999997,
+    "medianWarmOutputBytes": 122
+  },
+  "limitations": [
+    "Development pilot only; not answer-accuracy or full memory-system evaluation.",
+    "Vector requested with local default embeddings; reranking disabled; successful retrieval does not itself prove vector contributions.",
+    "Search timing includes CLI startup and SQLite setup on each call; not directly comparable with in-process Graphmory timings.",
+    "Candidates mapped only when Basic Memory result output exposes the generated session note path; unmapped results remain in candidateCount."
+  ]
+}

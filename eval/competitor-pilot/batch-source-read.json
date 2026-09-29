@@ -1,0 +1,175 @@
+{
+  "notes": 20,
+  "repeats": 7,
+  "kind": "local-io-not-model-eval",
+  "rows": [
+    {
+      "repeat": 0,
+      "arm": "batch-cat",
+      "elapsedMs": 4.86,
+      "bytes": 49040,
+      "processes": 1,
+      "sourceParity": true
+    },
+    {
+      "repeat": 0,
+      "arm": "single-cli",
+      "elapsedMs": 1182.39,
+      "bytes": 52070,
+      "processes": 20,
+      "sourceParity": true
+    },
+    {
+      "repeat": 0,
+      "arm": "batch-cli",
+      "elapsedMs": 62.57,
+      "bytes": 51804,
+      "processes": 1,
+      "sourceParity": true
+    },
+    {
+      "repeat": 1,
+      "arm": "batch-cli",
+      "elapsedMs": 67.43,
+      "bytes": 51804,
+      "processes": 1,
+      "sourceParity": true
+    },
+    {
+      "repeat": 1,
+      "arm": "single-cli",
+      "elapsedMs": 1205.54,
+      "bytes": 52070,
+      "processes": 20,
+      "sourceParity": true
+    },
+    {
+      "repeat": 1,
+      "arm": "batch-cat",
+      "elapsedMs": 5.09,
+      "bytes": 49040,
+      "processes": 1,
+      "sourceParity": true
+    },
+    {
+      "repeat": 2,
+      "arm": "batch-cat",
+      "elapsedMs": 3.2,
+      "bytes": 49040,
+      "processes": 1,
+      "sourceParity": true
+    },
+    {
+      "repeat": 2,
+      "arm": "single-cli",
+      "elapsedMs": 1213.71,
+      "bytes": 52070,
+      "processes": 20,
+      "sourceParity": true
+    },
+    {
+      "repeat": 2,
+      "arm": "batch-cli",
+      "elapsedMs": 63.59,
+      "bytes": 51804,
+      "processes": 1,
+      "sourceParity": true
+    },
+    {
+      "repeat": 3,
+      "arm": "batch-cli",
+      "elapsedMs": 61.7,
+      "bytes": 51804,
+      "processes": 1,
+      "sourceParity": true
+    },
+    {
+      "repeat": 3,
+      "arm": "single-cli",
+      "elapsedMs": 1187.5,
+      "bytes": 52070,
+      "processes": 20,
+      "sourceParity": true
+    },
+    {
+      "repeat": 3,
+      "arm": "batch-cat",
+      "elapsedMs": 3.3,
+      "bytes": 49040,
+      "processes": 1,
+      "sourceParity": true
+    },
+    {
+      "repeat": 4,
+      "arm": "batch-cat",
+      "elapsedMs": 2.58,
+      "bytes": 49040,
+      "processes": 1,
+      "sourceParity": true
+    },
+    {
+      "repeat": 4,
+      "arm": "single-cli",
+      "elapsedMs": 1202.16,
+      "bytes": 52070,
+      "processes": 20,
+      "sourceParity": true
+    },
+    {
+      "repeat": 4,
+      "arm": "batch-cli",
+      "elapsedMs": 64.01,
+      "bytes": 51804,
+      "processes": 1,
+      "sourceParity": true
+    },
+    {
+      "repeat": 5,
+      "arm": "batch-cli",
+      "elapsedMs": 65.46,
+      "bytes": 51804,
+      "processes": 1,
+      "sourceParity": true
+    },
+    {
+      "repeat": 5,
+      "arm": "single-cli",
+      "elapsedMs": 1209.63,
+      "bytes": 52070,
+      "processes": 20,
+      "sourceParity": true
+    },
+    {
+      "repeat": 5,
+      "arm": "batch-cat",
+      "elapsedMs": 4.46,
+      "bytes": 49040,
+      "processes": 1,
+      "sourceParity": true
+    },
+    {
+      "repeat": 6,
+      "arm": "batch-cat",
+      "elapsedMs": 3.06,
+      "bytes": 49040,
+      "processes": 1,
+      "sourceParity": true
+    },
+    {
+      "repeat": 6,
+      "arm": "single-cli",
+      "elapsedMs": 1189.08,
+      "bytes": 52070,
+      "processes": 20,
+      "sourceParity": true
+    },
+    {
+      "repeat": 6,
+      "arm": "batch-cli",
+      "elapsedMs": 59.41,
+      "bytes": 51804,
+      "processes": 1,
+      "sourceParity": true
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "protocol": "source-section-window-development-screen-v1",
+  "frozenBeforeEvaluation": true,
+  "baselineCommit": "919b582",
+  "datasetSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "development": [
+    "conv-43",
+    "conv-42",
+    "conv-30",
+    "conv-48",
+    "conv-26",
+    "conv-47",
+    "conv-50"
+  ],
+  "holdoutNotRendered": [
+    "conv-41",
+    "conv-44",
+    "conv-49"
+  ],
+  "expectedCases": 1099,
+  "contextVariants": [
+    0,
+    1,
+    2
+  ],
+  "maximumMedianSelectedFraction": 0.8,
+  "sourceHashes": {
+    "scripts/eval-source-section-window.mjs": "c2119dc1aca81ec13dbe990abf0bca5533affda8be8a9bdee5c6ffb6fdd90766",
+    "scripts/lib/source-section-window.mjs": "07435b43eadc208805e4938ba23f46988fdb7959acec4fde917e12dbba6aca27",
+    "scripts/lib/locomo.mjs": "b5138a78a26663238e0b619b4d24d057819a4eb8a6cec45472e3b64aee536d2a",
+    "src/retrieval.mjs": "28f656a4bef7806d9a2a7690c2c31b7ad0732b894e05946e186286e05a4bc6c1"
+  },
+  "selection": "All body query-term matches with symmetric heading-section neighbors and parent context, no cap; no-match/stopword-only fallback full. Selector receives only original Markdown/query/context.",
+  "comparison": "Full immutable original histories versus hypothetical section windows over every original note. No retrieval ranking or autonomous source selection is measured.",
+  "promotion": "Zero gold-turn opportunity losses versus full originals across eligible development questions AND at least 20% median raw-byte reduction; pass only permits a frozen live trial, never default promotion.",
+  "metrics": [
+    "complete gold-turn opportunity",
+    "gold-turn recall",
+    "raw selected bytes",
+    "serialized excerpt bytes",
+    "exact source-range identity"
+  ],
+  "limitations": [
+    "Exposed development histories, not holdout",
+    "Heading identity measures full-turn availability, not answer support or autonomous use",
+    "All original notes selected for this source-compression diagnostic; not actual CLI retrieval/reader workflow",
+    "No category-5 scoring, no model calls, no end-to-end latency or provider-token/cost claims"
+  ],
+  "priorInvalidManifestSha256": "4a3980b80cefdd4f4a9be4a149e1fe34bbbc602cc13be5b5296c4cff427496d3",
+  "repair": "Count unique annotated evidence turn IDs; full-source baseline must expose all unique IDs. Preserve original invalid counts; selector/configuration/case set unchanged."
+}

@@ -1,26 +1,152 @@
 import { retrievalMethods } from "./runtime-config.mjs"
 import { createHash } from "node:crypto"
 import { loadVaultDocuments, recallVaultLoop } from "./memory-recall.mjs"
-import { recallVaultSemantic } from "./semantic-recall.mjs"
-import { isAnswerCandidate, splitMarkdownSections, tokenize } from "./retrieval.mjs"
+import { rankSemanticVectorLane, recallVaultSemantic } from "./semantic-recall.mjs"
+import { isAnswerCandidate, splitMarkdownSections, tokenize, rank } from "./retrieval.mjs"
+import { persistentIndexLocation, supportsNativeSqlite } from "./index-capability.mjs"
+import { readSourceNotes } from "./source-read.mjs"
 
 export async function managedRecall(vault, query, config, {
-  k = 3,
+  k = config.workflow === "curator" ? 10 : 3,
+  offset = 0,
   scope = "",
   semanticExpansion = false,
+  evidencePreview = false,
+  bundleBytes = 0,
+  adaptiveBundle = false,
+  matchedPreviews = false,
+  coveragePreviews = false,
+  includeSuperseded = false,
+  prefetchWideOriginals = false,
+  compactPrefetch = false,
+  modelCache = "",
+  semanticLaneImpl = rankSemanticVectorLane,
   semanticRecallImpl = recallVaultSemantic,
+  precomputedRankedLanes = [],
+  rankImpl,
+  indexCache = "",
+  onIndexFallback,
   fetchImpl = fetch,
 } = {}) {
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be 1–10")
+  if (!Number.isInteger(offset) || offset < 0) throw new Error("offset must be a non-negative integer")
+  if (!Number.isInteger(bundleBytes) || (bundleBytes !== 0 && (bundleBytes < 2000 || bundleBytes > 65536))) throw new Error("bundleBytes must be 0 or 2000–65536")
+  if (bundleBytes && adaptiveBundle) throw new Error("Choose bundleBytes or adaptiveBundle")
+  if (matchedPreviews && !adaptiveBundle) throw new Error("matchedPreviews requires adaptiveBundle")
+  if (coveragePreviews && !adaptiveBundle) throw new Error("coveragePreviews requires adaptiveBundle")
+  if (coveragePreviews && matchedPreviews) throw new Error("Choose coveragePreviews or matchedPreviews")
+  if (prefetchWideOriginals && (!adaptiveBundle || config.workflow !== "curator")) throw new Error("Original prefetch requires curator adaptiveBundle")
+  if (compactPrefetch && !prefetchWideOriginals) throw new Error("Compact prefetch requires original prefetch")
+  if (includeSuperseded && config.workflow !== "curator") throw new Error("Historical retrieval is supported only in curator mode")
+  if (bundleBytes && config.workflow !== "curator") throw new Error("Evidence bundles are supported only in curator mode")
+  if (adaptiveBundle && config.workflow !== "curator") throw new Error("Adaptive bundles are supported only in curator mode")
+  if (config.workflow !== "curator" && offset !== 0) throw new Error("offset is supported only in curator mode")
+  if (indexCache && config.workflow !== "curator") throw new Error("Index cache is supported only in curator mode")
+  if (indexCache && rankImpl) throw new Error("Choose indexCache or rankImpl")
   const limit = config.decision.maxCandidates
   const vaultDocuments = loadVaultDocuments(vault, { scope })
-  const initial = recallVaultLoop(vault, query, { k: 10, scope, perMethodLimit: limit, documents: vaultDocuments, methods: retrievalMethods(config.retrievalProfile) })
-  if (config.workflow === "curator") return {
-    query, workflow: "curator", curator: config.curator,
-    confidence: initial.confidence, retrievalConfidence: initial.confidence, needsExpansion: initial.needsExpansion, scanLimitReached: initial.scanLimitReached,
-    results: initial.results.slice(0, k).map(({ path, title, score, status }) => ({ path, title, score, status })),
-    nextSteps: initial.nextSteps.slice(0, 2),
+  let effectiveRankImpl = rankImpl
+  if (indexCache) {
+    // Resolve and reject an in-vault cache even when this Node version cannot load SQLite.
+    persistentIndexLocation(vault, scope, indexCache)
+    let fallbackReported = false
+    const fallback = (code) => {
+      if (fallbackReported) return
+      fallbackReported = true
+      onIndexFallback?.(code)
+    }
+    if (!supportsNativeSqlite()) fallback("NODE_SQLITE_UNAVAILABLE")
+    else {
+      try {
+        const { createPersistentRanker } = await import("./persistent-postings.mjs")
+        const cachedRank = createPersistentRanker(vault, scope, indexCache, vaultDocuments)
+        let disabled = false
+        effectiveRankImpl = (documents, search, method) => {
+          if (disabled || method !== "bm25f-focused-sections") return rank(documents, search, method)
+          try { return cachedRank(documents, search, method) }
+          catch { disabled = true; fallback("INDEX_QUERY_FAILED"); return rank(documents, search, method) }
+        }
+      } catch { fallback("INDEX_UNAVAILABLE") }
+    }
   }
+  const methods = retrievalMethods(config.retrievalProfile)
+  if (config.workflow === "curator") {
+    const semanticLane = semanticExpansion
+      ? await semanticLaneImpl(vault, query, {
+          documents: vaultDocuments, scope, includeSuperseded, answerCandidatesOnly: true, modelCache,
+        })
+      : null
+    const page = recallVaultLoop(vault, query, { k: bundleBytes || adaptiveBundle ? Math.max(1, vaultDocuments.length) : k, offset, scope,
+      perMethodLimit: vaultDocuments.length, shortlistLimit: limit, documents: vaultDocuments, methods, includeSuperseded,
+      precomputedRankedLanes: semanticLane ? [...precomputedRankedLanes, semanticLane] : precomputedRankedLanes,
+      rankImpl: effectiveRankImpl,
+      allowLargePage: Boolean(bundleBytes || adaptiveBundle) })
+    const adaptiveMode = adaptiveBundle ? chooseAdaptiveMode(query, page.results.slice(0, 10)) : null
+    const effectiveBundleBytes = bundleBytes || (adaptiveMode === "wide" ? 32000 : 0)
+    const documentsByPath = evidencePreview || bundleBytes || adaptiveBundle ? new Map(vaultDocuments.map((item) => [item.id, item])) : null
+    const results = []
+    let bundleUsedBytes = 0
+    for (const { path, title, score, status } of page.results) {
+      if (adaptiveMode === "focused" && results.length >= 10) break
+      const document = documentsByPath?.get(path)
+      const preview = document ? curatorEvidencePreview(document, query, {
+        matchedOnly: matchedPreviews && adaptiveMode === "wide", coverageMode: coveragePreviews,
+      }) : []
+      const incompletePreview = preview.length > 0 && (preview.some(item => item.truncated)
+        || preview.length < splitMarkdownSections(document).length)
+      const result = { path, title, score, status,
+        ...(preview.length ? { evidencePreview: preview } : {}),
+        ...(incompletePreview ? { sourceReadRequired: true } : {}),
+        ...((adaptiveBundle || evidencePreview || bundleBytes) && !preview.length ? { previewOmitted: true } : {}),
+      }
+      const bytes = Buffer.byteLength(JSON.stringify(result), "utf8")
+      if (effectiveBundleBytes && results.length && bundleUsedBytes + bytes > effectiveBundleBytes) break
+      results.push(result)
+      bundleUsedBytes += bytes
+    }
+    const hasMore = bundleBytes || adaptiveBundle ? offset + results.length < page.totalCandidates : page.hasMore
+    let prefetch = null, originalSources = null
+    if (prefetchWideOriginals) {
+      // This bounds eager transport only. Oversized originals remain available
+      // through normal reads; never shorten them or drop retrieval candidates.
+      const originalBytes = results.reduce((sum, result) => sum + Buffer.byteLength(documentsByPath.get(result.path)?.markdown ?? ""), 0)
+      const reason = adaptiveMode !== "wide" ? "focused-query" : offset !== 0 ? "continuation-page"
+        : hasMore ? "more-candidates" : page.scanLimitReached ? "scan-limit" : !results.length ? "empty-pool"
+        : originalBytes > 256000 ? "original-byte-budget" : null
+      prefetch = reason ? { status: "skipped", reason } : { status: "ready", coverage: "current-complete-candidate-page", semanticCompleteness: "not_assessed" }
+      if (!reason) {
+        originalSources = readSourceNotes(vault, results.map(result => result.path)).sources
+        if (originalSources.some(source => source.markdown !== documentsByPath.get(source.path)?.markdown)) throw new Error("Source changed during recall prefetch")
+      }
+    }
+    const returnedResults = compactPrefetch && prefetch?.status === "ready"
+      ? results.map(({ evidencePreview, sourceReadRequired, previewOmitted, ...result }) => result)
+      : results
+    if (compactPrefetch && prefetch?.status === "ready") prefetch = { ...prefetch, presentation: "originals-only" }
+    const nextSteps = page.nextSteps.slice(0, 2)
+    if (semanticLane && page.scanLimitReached) {
+      nextSteps.unshift("The scan limit was reached; semantic candidates cover only scanned notes.")
+      nextSteps.length = 2
+    }
+    return {
+      query, workflow: "curator", curator: config.curator,
+      ...(includeSuperseded ? { historicalCandidatesIncluded: true } : {}),
+      confidence: page.confidence, retrievalConfidence: page.confidence, needsExpansion: page.needsExpansion, scanLimitReached: page.scanLimitReached,
+      offset: page.offset, totalCandidates: page.totalCandidates, hasMore, nextOffset: hasMore ? offset + results.length : null,
+      ...(semanticLane ? {
+        expanded: true,
+        semanticModel: semanticLane.model,
+        candidateLanes: [...methods, semanticLane.method],
+      } : {}),
+      ...(effectiveBundleBytes ? { bundleBytes: effectiveBundleBytes, bundleUsedBytes } : {}),
+      ...(adaptiveMode ? { adaptiveMode } : {}),
+      ...(prefetch ? { prefetch } : {}),
+      ...(originalSources ? { originalSources } : {}),
+      results: returnedResults,
+      nextSteps,
+    }
+  }
+  const initial = recallVaultLoop(vault, query, { k: 10, scope, perMethodLimit: limit, documents: vaultDocuments, methods })
   if (config.workflow === "hosted-jev" && !config.decision.allowRemoteVaultContent) {
     throw new Error("Remote vault content is disabled. Enable it explicitly in `graphmory config` after reviewing the data flow.")
   }
@@ -81,6 +207,56 @@ export async function managedRecall(vault, query, config, {
     candidateCount: results.length,
     nextSteps: passing.length ? [] : ["No candidate passed the relevance gate. Narrow the scope or reformulate the query; optionally enable --semantic-expansion."],
   }
+}
+
+export function chooseAdaptiveMode(query, firstResults) {
+  const exhaustive = /\b(how many|how often|list|every|compare|differences|changes over time)\b|\ball (?:the )?(?:notes|documents|papers|projects|memories|sources|sessions|files|items|results|decisions|changes)\b|กี่|ทั้งหมด|เปรียบเทียบ/iu.test(query)
+  const signatures = firstResults.map((item) => tokenize(item.title).filter((term) => !/^\d+$/u.test(term)).join(" "))
+  const genericTitles = signatures.length >= 5 && new Set(signatures).size <= 2
+  return exhaustive || genericTitles ? "wide" : "focused"
+}
+
+const PREVIEW_STOPWORDS = new Set(["what", "when", "where", "which", "who", "whom", "whose", "how", "does", "did", "have", "has", "had", "with", "from", "that", "this", "there", "were", "been", "your", "mine", "about", "into", "the", "and", "for", "are", "was"])
+
+export function curatorEvidencePreview(document, query, { matchedOnly = false, coverageMode = false } = {}) {
+  const normalize = (term) => term.endsWith("ed") ? [term, term.slice(0, -2), term.slice(0, -1)] : [term]
+  const contentTerms = tokenize(query).filter((term) => term.length >= 3 && !PREVIEW_STOPWORDS.has(term))
+  if (coverageMode) {
+    const terms = new Set(contentTerms.filter(term => term !== "all"))
+    const sections = splitMarkdownSections(document).filter(section => section.title.includes(" > "))
+    if (!sections.length) return curatorEvidencePreview(document, query)
+    return sections.map((section, index) => {
+      const body = new Set(section.fields?.body ?? tokenize(section.markdown))
+      const heading = new Set(tokenize(section.title.split(" > ").at(-1)))
+      const bodyMatches = [...terms].filter(term => body.has(term)).length
+      const headingMatches = [...terms].filter(term => heading.has(term)).length
+      return { section, index, score: bodyMatches * 2 + headingMatches }
+    }).sort((a, b) => b.score - a.score || a.index - b.index).slice(0, 3)
+      .map(({ section }) => ({ heading: section.title, text: section.markdown.slice(0, 350),
+        ...(section.markdown.length > 350 ? { truncated: true } : {}) }))
+  }
+  const useMatchedOnly = matchedOnly && !/[\u0E00-\u0E7F]/u.test(query) && contentTerms.length > 0
+  const terms = new Set((useMatchedOnly ? contentTerms : tokenize(query)).flatMap(normalize))
+  const sections = splitMarkdownSections(document)
+  const ranked = sections.map((section, index) => {
+    const overlap = [...new Set((section.fields?.body ?? section.tokens).flatMap(normalize))].filter((term) => terms.has(term)).length
+    const userEvidence = /(?:^| > )user$/iu.test(section.title)
+    return { section, index, overlap, userEvidence }
+  })
+  const userTurns = ranked.filter((item) => item.userEvidence)
+  const pool = userTurns.length ? userTurns : ranked
+  if (useMatchedOnly) {
+    const threshold = contentTerms.length >= 3 ? 2 : 1
+    return [...pool].filter((item) => item.overlap >= threshold)
+      .sort((a, b) => b.overlap - a.overlap || a.index - b.index).slice(0, 3)
+      .map(({ section }) => ({ heading: section.title, text: section.markdown.slice(0, 350),
+        ...(section.markdown.length > 350 ? { truncated: true } : {}) }))
+  }
+  const first = pool[0]
+  const rankedMatches = [...pool].sort((a, b) => b.overlap - a.overlap || a.index - b.index)
+  const selected = [first, ...rankedMatches.filter((item) => item !== first).slice(0, 2)]
+  return selected.map(({ section }) => ({ heading: section.title, text: section.markdown.slice(0, 350),
+    ...(section.markdown.length > 350 ? { truncated: true } : {}) }))
 }
 
 async function rerankCandidates(candidates, documents, query, config, fetchImpl) {

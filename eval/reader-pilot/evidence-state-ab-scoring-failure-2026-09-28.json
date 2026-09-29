@@ -1,0 +1,9 @@
+{
+  "phase": "offline scoring after six completed workflows",
+  "error": "KeyError: answer on frozen category-5 labels",
+  "modelTrialsRerun": 0,
+  "frozenLabelsModified": false,
+  "repair": "Bind unused missing category-5 answer to empty string only in scorer input; unchanged scorer bodies and raw model predictions",
+  "originalSummaryAttempt": "v1",
+  "repairedSummaryAttempt": "v2"
+}

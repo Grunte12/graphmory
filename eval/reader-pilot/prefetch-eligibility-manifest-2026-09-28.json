@@ -1,0 +1,45 @@
+{
+  "protocol": "prefetch-development-eligibility-v1",
+  "frozenBeforeExecution": true,
+  "baselineCommit": "2f3c9e0",
+  "datasetSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "development": [
+    "conv-43",
+    "conv-42",
+    "conv-30",
+    "conv-48",
+    "conv-26",
+    "conv-47",
+    "conv-50"
+  ],
+  "holdoutNotRendered": [
+    "conv-41",
+    "conv-44",
+    "conv-49"
+  ],
+  "expectedQuestions": 1439,
+  "sourceHashes": {
+    "scripts/eval-prefetch-eligibility.mjs": "626059df867aae76d0fad8e7b4423ce4a54d78e08f10d981ba347c7a03614207",
+    "scripts/lib/locomo.mjs": "b5138a78a26663238e0b619b4d24d057819a4eb8a6cec45472e3b64aee536d2a",
+    "src/decision-recall.mjs": "c60fc5a91b7d97d27fb27ffe7cc1f936d0f15864128c48c57814165f360ebfef",
+    "src/memory-recall.mjs": "0fb19fa1c3c268b2cbd38b73ac8733ea6ff852a27d558c4fc3678de0f39593cd",
+    "src/retrieval.mjs": "28f656a4bef7806d9a2a7690c2c31b7ad0732b894e05946e186286e05a4bc6c1",
+    "src/source-read.mjs": "79e5bd5e93191f2c30a8127d300d74f64b8c893ec0321362efb3046791ba1ed6",
+    "src/runtime-config.mjs": "f6374cccc3aeca805f662195aba8c9873319a8bcb0f9a3bae47037d817907006"
+  },
+  "metrics": [
+    "ready rate and skip reasons",
+    "exact original content/order/hash parity",
+    "rank/page parity",
+    "gold path opportunity among answerable eligible questions",
+    "tool output bytes"
+  ],
+  "decision": "Do not claim prefetch quality or efficiency from eligibility. If ready is rare or complete gold paths fail, narrow or reject the feature; otherwise sample multiple source families for an answer-level frozen A/B.",
+  "limitations": [
+    "All LoCoMo development questions including adversarial; no sealed histories",
+    "In-process managedRecall, not end-to-end CLI/Curator or actual provider tokens",
+    "Gold paths measured after both tool outputs and never supplied to retrieval",
+    "Complete gold paths are evidence opportunity, not answer completeness or correctness",
+    "One source family of conversations; no competitor comparison or general vault frequency"
+  ]
+}

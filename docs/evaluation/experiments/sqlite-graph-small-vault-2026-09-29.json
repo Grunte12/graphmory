@@ -1,0 +1,44 @@
+{
+  "experiment": "sqlite-graph-small-vault-2026-09-29",
+  "status": "graph-parity-passed-small-vault-no-auto-index",
+  "protocol": "../sqlite-graph-small-vault-protocol-2026-09-29.md",
+  "environment": "macOS arm64, Node v24.18.0",
+  "graphFixture": {
+    "notes": 12,
+    "pairedFullResponseParity": "36/36",
+    "linkedAnswerObserved": true,
+    "indexBuildMs": 10.72,
+    "indexBytes": 20480,
+    "sourceSetSha256": "8523d2d80d44ec3eb41b0d58d3625f3ba4421a73f2b78ea298b4b129222ca78a"
+  },
+  "smallVault": {
+    "loadedNotes": 55,
+    "pairedFullResponseParity": "10/10",
+    "baselineP50Ms": 44.10,
+    "indexedP50Ms": 41.87,
+    "baselineP95Ms": 46.34,
+    "indexedP95Ms": 50.11,
+    "medianResponseBytesBothArms": 5997,
+    "baselineMedianEndRssBytes": 70156288,
+    "indexedMedianEndRssBytes": 66273280,
+    "indexBuildMs": 20.03,
+    "indexBytes": 196608,
+    "sourceSetSha256BeforeAndAfter": "659fcfac72e2a66639a9692fb15ddca2274b0176306a29cb325c6708a64015c6",
+    "noteContentOrReturnedPathsCommitted": false,
+    "temporaryIndexAndSymlinkRemoved": true
+  },
+  "rawLedgerSha256": "f9aa6b5eff6c47a5f393710bf0258a82a1a45711a98cb897d3422973c4da18d4",
+  "codeSha256": {
+    "retrieval": "f58817caaccbefd2e93716387ad82d63e0caf8880f792796607d8b938e6c18d4",
+    "memoryRecall": "65484bf268c83c96acaad7c6f12abb0504dd033fd09e253632a0a57c1b9ea903",
+    "managedRecall": "5d0ca83b33f5a1a09998e17e0efae379b6c5e17055aaeed5dde6067834a5f57d",
+    "eligibleRanker": "79504efd05e4b3fa804d35934fcb69a1249eab6fadaabc1fdfbdc96e3719a03a",
+    "worker": "19bfcd52723010ca0aa10840be9cea1ef6d621d9a3f46693726c4ffeed7c3bd8",
+    "evaluator": "d665538268290f649d6ed961c691c3edca423081c2515c704b9e51426d7aee7e"
+  },
+  "limits": [
+    "10 generic queries only; p95 estimate is noisy",
+    "No answer quality, independent holdout or competitor workflow",
+    "Node 24 experiment, product supports Node 20"
+  ]
+}

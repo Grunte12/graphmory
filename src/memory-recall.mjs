@@ -1,6 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
-import { governedRank, parseMarkdown, sectionFocusRerank } from "./retrieval.mjs"
+import { governedRank, isAnswerCandidate, isRetrievable, parseMarkdown, sectionFocusRerank } from "./retrieval.mjs"
 
 const SKIP_DIRECTORIES = new Set([".git", ".obsidian", ".memory-patch-harness", "node_modules"])
 const RAW_ROOTS = new Set(["00 inbox", "clippings"])
@@ -83,20 +83,28 @@ export function recallVault(vault, query, {
 export function recallVaultLoop(vault, query, {
   methods = ["bm25", "bm25f-focused-sections"],
   k = 3,
+  offset = 0,
   includeNoncanonical = false,
+  includeSuperseded = false,
   includeNavigation = false,
   includeRawPaths = false,
   maxFiles = 5000,
   scope = "",
   perMethodLimit = 8,
+  shortlistLimit = 0,
   rerank = false,
   documents: suppliedDocuments,
+  precomputedRankedLanes = [],
+  allowLargePage = false,
+  rankImpl,
 } = {}) {
   if (!query?.trim()) throw new Error("query is required")
-  if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be between 1 and 10")
+  if (!Number.isInteger(k) || k < 1 || k > (allowLargePage ? maxFiles : 10)) throw new Error(`k must be between 1 and ${allowLargePage ? maxFiles : 10}`)
+  if (!Number.isInteger(offset) || offset < 0) throw new Error("offset must be a non-negative integer")
   const documents = suppliedDocuments ?? loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
   const lanes = methods.map((method) => {
-    const retrieval = governedRank(documents, query, method, { includeNoncanonical, answerCandidatesOnly: !includeNavigation })
+    const retrieval = governedRank(documents, query, method, { includeNoncanonical, includeSuperseded,
+      answerCandidatesOnly: !includeNavigation, rankImpl })
     let laneResults = retrieval.results
     if (rerank) {
       laneResults = sectionFocusRerank(laneResults, query, documents)
@@ -109,17 +117,29 @@ export function recallVaultLoop(vault, query, {
       excluded: retrieval.excluded,
     }
   })
-  const fused = fuseRankedLanes(lanes)
-  const top = fused.slice(0, k)
-  const confidence = top.length === 0
+  const extraLanes = sanitizePrecomputedLanes(precomputedRankedLanes, documents, {
+    scope, includeNoncanonical, includeSuperseded, includeNavigation,
+  })
+  const rankedLanes = extraLanes.length ? [...lanes, ...extraLanes] : lanes
+  const all = fuseRankedLanes(rankedLanes)
+  // Preserve the previous first-page ordering; deeper lane results remain reachable.
+  const shortlist = shortlistLimit > 0 ? fuseRankedLanes(rankedLanes.map((lane) => ({ ...lane, results: lane.results.slice(0, shortlistLimit) }))).slice(0, 10) : []
+  const shortlistIds = new Set(shortlist.map((item) => item.id))
+  const fused = shortlistLimit > 0 ? [...shortlist, ...all.filter((item) => !shortlistIds.has(item.id))] : all
+  const top = fused.slice(offset, offset + k)
+  const confidence = fused.length === 0
     ? "none"
-    : lanes.some((lane) => lane.confidence === "bounded") || top[0].fusedScore >= 1
+    : lanes.some((lane) => lane.confidence === "bounded") || fused[0].fusedScore >= 1
       ? "bounded"
       : "low"
   return {
     query,
     methods,
     k,
+    offset,
+    totalCandidates: fused.length,
+    hasMore: offset + k < fused.length,
+    nextOffset: offset + k < fused.length ? offset + k : null,
     scanned: documents.length,
     scanLimitReached: documents.length >= maxFiles,
     excludedByLifecycle: Math.max(...lanes.map((lane) => lane.excluded), 0),
@@ -146,6 +166,37 @@ export function recallVaultLoop(vault, query, {
       lanes: item.lanes,
     })),
   }
+}
+
+function sanitizePrecomputedLanes(precomputedRankedLanes, documents, {
+  scope, includeNoncanonical, includeSuperseded, includeNavigation,
+}) {
+  if (!Array.isArray(precomputedRankedLanes)) throw new Error("precomputedRankedLanes must be an array")
+  if (!precomputedRankedLanes.length) return []
+
+  const governedDocuments = new Map(filterByScope(documents, scope)
+    .filter((document) => isRetrievable(document, { includeNoncanonical, includeSuperseded })
+      && (includeNavigation || isAnswerCandidate(document)))
+    .map((document) => [document.id, document]))
+  const sanitized = []
+  for (const lane of precomputedRankedLanes) {
+    if (!lane || typeof lane.method !== "string" || !Array.isArray(lane.results)) {
+      throw new Error("precomputed ranked lanes must include a method and results array")
+    }
+    const seen = new Set()
+    const results = []
+    for (const item of lane.results) {
+      const id = item?.id
+      if (typeof id !== "string" || seen.has(id)) continue
+      const document = governedDocuments.get(id)
+      if (!document) continue
+      seen.add(id)
+      // Never trust semantic-lane titles, statuses, or other note metadata.
+      results.push(document)
+    }
+    if (results.length) sanitized.push({ method: lane.method, results })
+  }
+  return sanitized
 }
 
 export function fuseRankedLanes(lanes, constant = 60) {

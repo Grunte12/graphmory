@@ -1,0 +1,58 @@
+{
+  "experiment": "sqlite-postings-prototype-2026-09-29",
+  "status": "development-screen-passed-not-production",
+  "protocol": "../sqlite-postings-prototype-protocol-2026-09-29.md",
+  "dataset": "SciFact exposed test, 5183 Markdown notes, 300 queries",
+  "environment": "macOS arm64, Node v24.18.0",
+  "treatment": "SQLite postings storage with unchanged Graphmory focused-section BM25F scoring",
+  "correctness": {
+    "screen500": "30/30 exact full-ranked original IDs and scores",
+    "fullCorpus": "300/300 exact full-ranked original IDs and scores",
+    "pairedColdCalls": "30/30 equal full-output hashes, 60/60 successful processes",
+    "officialBEIR": {
+      "version": "2.2.0",
+      "sameRunSha256": "14e3417d53c1a42f0d72493ee6379044b367d7e78accd911e62a2bad1e219ac8",
+      "ndcgAt10BothArms": 0.65311,
+      "recallAt10BothArms": 0.76633
+    }
+  },
+  "coldProcessLookup": {
+    "pairs": 30,
+    "baselineP50Ms": 763.21,
+    "sqliteP50Ms": 44.27,
+    "baselineP95Ms": 807.28,
+    "sqliteP95Ms": 62.67,
+    "baselineMedianEndRssBytes": 459276288,
+    "sqliteMedianEndRssBytes": 76316672,
+    "baselineMedianMaxRssRaw": 448512,
+    "sqliteMedianMaxRssRaw": 74544,
+    "osFileCache": "warm/uncontrolled",
+    "output": "complete full ranking JSON",
+    "agentWorkflowIncluded": false
+  },
+  "build": {
+    "fullCorpusWallMs": 2206.41,
+    "fullCorpusDbBytes": 16928768,
+    "smallCorpusWallMs": 707.29,
+    "smallCorpusDbBytes": 1638400
+  },
+  "rawLedgerSha256": {
+    "screen500": "788c08cdf1e55590f9a5aa4ce9f029329625224237301e9dd075cb51edb798e5",
+    "fullParity": "0f88698d99f840a053681f256509bfa9bfa9cdcd3fca294b63da5a95b5d5327f",
+    "coldPairs": "e91b97dfaa339a27afbf16a7db269c36e098d4e3cd9f1e7413b0fde4a4de66d9",
+    "officialScore": "8f4717912c9f9f1ab8b872b6b53e35efb9a71476aa9f5d9c9bf91598a77113ad"
+  },
+  "codeSha256": {
+    "retrieval": "28f656a4bef7806d9a2a7690c2c31b7ad0732b894e05946e186286e05a4bc6c1",
+    "prototype": "404013d4a9610f736991a67fb39e3656de39974db294315d3d31c73f13c85b3a",
+    "coldBenchmark": "45396f07040db587e2515844cfba42c71ae16e98319d07620e510e4dd8881eca"
+  },
+  "promotionBlockers": [
+    "Node 20 support or explicit engine decision",
+    "incremental mutation parity for add/edit/delete/rename",
+    "source freshness and scope/lifecycle invalidation",
+    "complete candidate pagination",
+    "paired end-to-end Curator/Lead answer and latency evaluation",
+    "independent holdout evaluation"
+  ]
+}

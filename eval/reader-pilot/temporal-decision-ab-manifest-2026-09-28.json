@@ -1,0 +1,21 @@
+{
+  "protocol": "curator-temporal-decision-development-ab-v1",
+  "frozenBeforeGeneration": true,
+  "datasetSha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "runnerSha256": "8ed33591626f34f341bacd9caea93e7ada81b72a8f9729d80ddca131a59402be",
+  "retrieval": "Graphmory recall-managed --auto --agent, unchanged between arms",
+  "models": {"curator": "gpt-5.6-luna", "lead": "gpt-5.6-luna", "reasoningEffort": "low"},
+  "maxCuratorRounds": 4,
+  "structuredCitations": true,
+  "arms": ["existing-instruction", "temporal-decision-instruction"],
+  "onlyIntendedDifference": "the Curator instruction on dated user updates and current versus previous state",
+  "cases": [
+    {"id": "945e3d21", "role": "current-state update failure", "readerInputSha256": "6bdf978429176b164fa31ac41a8192b39cafbe5e29522ed75d2f2deef73171d2", "order": ["existing-instruction", "temporal-decision-instruction"]},
+    {"id": "50635ada", "role": "previous-state control", "readerInputSha256": "c1feaf2fbd9f4a6932d9477fb30fad591c6fbae4a4d80e56591de84cfdc4a1c8", "order": ["temporal-decision-instruction", "existing-instruction"]}
+  ],
+  "sourceOverlap": "No identical original Markdown bodies between the two cases",
+  "plannedTrials": 4,
+  "primaryDiagnostic": "source-supported answer that resolves the requested current or previous state and cites the necessary original notes",
+  "secondaryDiagnostics": ["all model calls and failures", "gold-source reads", "reference agreement", "brief-to-lead fidelity", "wall time", "gross/cached/noncached input tokens", "output tokens", "native tool bytes"],
+  "nonClaims": ["exposed development cases only", "one generation per arm and case cannot establish general superiority or cost savings", "manual unblinded review is not calibrated semantic judging"]
+}

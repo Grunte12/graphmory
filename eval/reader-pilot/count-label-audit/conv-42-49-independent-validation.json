@@ -1,0 +1,10 @@
+{
+  "caseId": "conv-42:49",
+  "status": "valid",
+  "referenceCount": 2,
+  "countedEvents": 2,
+  "unresolvedEvents": 0,
+  "reviewedSessions": 29,
+  "totalSessions": 29,
+  "eligibleForStrictCountEval": true
+}

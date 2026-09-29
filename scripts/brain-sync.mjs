@@ -34,8 +34,13 @@ import { auditMemoryLifecycle } from "../src/memory-lifecycle-audit.mjs"
 import { writeFileAtomic, writeJsonAtomic } from "../src/atomic-write.mjs"
 import { loadRuntimeConfig, runtimeConfigPath, saveRuntimeConfig } from "../src/runtime-config.mjs"
 import { managedRecall } from "../src/decision-recall.mjs"
+import { readSourceNotes } from "../src/source-read.mjs"
+import { createSourceHandoff, readSourceHandoff } from "../src/source-handoff.mjs"
+import { createEvidenceCollection, collectEvidencePage, recordEvidenceSpan, summarizeEvidenceCollection } from "../src/evidence-collection.mjs"
 import { planDecisionCuration } from "../src/decision-curation.mjs"
 import { recallVaultAdaptive } from "../src/adaptive-recall.mjs"
+import { validateMemoryPatch } from "../src/contracts.mjs"
+import { verifyPatchPersistence } from "../src/patch-persistence.mjs"
 
 const args = process.argv.slice(2)
 const command = args[0]
@@ -50,10 +55,73 @@ function flag(name) {
   return rest.includes(name)
 }
 
+function validatePatchInput() {
+  const input = option("--input")
+  const emitInvalid = (errors, exitCode = 1) => {
+    console.log(JSON.stringify({ valid: false, schemaOnly: true, errors }))
+    process.exitCode = exitCode
+  }
+  if (!input) {
+    emitInvalid(["--input is required"], 2)
+    return
+  }
+
+  let contents
+  try {
+    contents = fs.readFileSync(path.resolve(input), "utf8")
+  } catch {
+    emitInvalid(["input file cannot be read"])
+    return
+  }
+
+  let value
+  try {
+    value = JSON.parse(contents)
+  } catch {
+    emitInvalid(["input file is not valid JSON"])
+    return
+  }
+
+  const result = validateMemoryPatch(value)
+  console.log(JSON.stringify({ valid: result.valid, schemaOnly: true, errors: result.errors }))
+  if (!result.valid) process.exitCode = 1
+}
+
+function verifyPatchPersistenceCommand() {
+  const input = option("--input")
+  const vault = option("--vault")
+  const notePath = option("--note")
+  const emitInvalid = (errors, exitCode = 1) => {
+    console.log(JSON.stringify({ valid: false, metadataOnly: true, checkedFields: [], errors }))
+    process.exitCode = exitCode
+  }
+  if (!input || !vault || !notePath) {
+    emitInvalid(["--vault, --input, and --note are required"], 2)
+    return
+  }
+
+  let patch
+  try {
+    patch = JSON.parse(fs.readFileSync(path.resolve(input), "utf8"))
+  } catch {
+    emitInvalid(["patch input cannot be read as valid JSON"])
+    return
+  }
+
+  const result = verifyPatchPersistence({ vault, patch, notePath })
+  console.log(JSON.stringify(result))
+  if (!result.valid) process.exitCode = 1
+}
+
 function usage(exitCode = 0) {
   const out = exitCode === 0 ? process.stdout : process.stderr
   out.write(`Graphmory brain sync\n\n`)
   out.write(`Usage:\n`)
+  out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --paths '<JSON array of relative Markdown paths>' (full sources, compact JSON)\n`)
+  out.write(`  node scripts/brain-sync.mjs source-handoff --vault <path> --paths '<JSON array of exact relative Markdown paths>' (metadata-only manifest; redirect output outside vault)\n`)
+  out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --manifest <handoff.json> (verify all paths/hashes before full originals)\n`)
+  out.write(`  recall-managed --auto --prefetch-wide-originals (experimental: attach full originals only on a complete wide first page)\n`)
+  out.write(`  recall-managed --auto --prefetch-wide-originals --compact-prefetch (experimental: omit previews duplicated by full originals)\n`)
   out.write(`  node scripts/brain-sync.mjs adoption-plan --vault <path> [--out <file>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs bootstrap --vault <path> --repo <owner/repo> [--create-remote]\n`)
   out.write(`  node scripts/brain-sync.mjs detect --vault <path> [--json]\n`)
@@ -65,9 +133,11 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs config [show] [--config <path>] [--json]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k 3] [--semantic-expansion] [--agent|--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--offset N] [--auto|--bundle] [--matched-previews|--coverage-previews with --auto] [--bundle-budget BYTES] [--evidence-preview] [--include-superseded] [--semantic-expansion] [--model-cache <path>] [--index-cache <directory>] [--agent|--json] (curator: adaptive or byte-budgeted evidence; decision: 3 results)\n`)
   out.write(`  node scripts/brain-sync.mjs recall-explore --vault <path> --query <text> [--scope <path>] [--k 3] [--agent|--json] (experimental)\n`)
   out.write(`  node scripts/brain-sync.mjs curate-plan --vault <path> --input <bundle.json> [--agent|--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs validate-patch --input <patch.json> [--agent|--json] (schema-only preflight; no vault access or writes)\n`)
+  out.write(`  node scripts/brain-sync.mjs verify-patch-persistence --vault <path> --input <patch.json> --note <relative.md> [--agent|--json] (read-only lifecycle metadata check)\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs lifecycle-audit --vault <path> [--json] [--out <file>]\n`)
   out.write(`  node scripts/brain-sync.mjs init --vault <path> --repo <owner/repo> [--create-remote]\n`)
@@ -826,22 +896,54 @@ async function configureRuntime() {
 }
 
 async function recallManaged() {
-  const report = await managedRecall(requireVault(), requiredOption("--query"), loadRuntimeConfig(runtimeConfigPath(option("--config"))), {
-    k: Number.parseInt(option("--k", "3"), 10),
+  const config = loadRuntimeConfig(runtimeConfigPath(option("--config")))
+  if (flag("--index-cache") && (!option("--index-cache") || option("--index-cache").startsWith("--"))) {
+    throw new Error("--index-cache requires a directory outside the vault")
+  }
+  if (flag("--bundle-budget") && !flag("--bundle")) throw new Error("--bundle-budget requires --bundle")
+  if (flag("--auto") && flag("--bundle")) throw new Error("Choose --auto or --bundle")
+  if (flag("--matched-previews") && !flag("--auto")) throw new Error("--matched-previews requires --auto")
+  if (flag("--coverage-previews") && !flag("--auto")) throw new Error("--coverage-previews requires --auto")
+  const report = await managedRecall(requireVault(), requiredOption("--query"), config, {
+    k: Number.parseInt(option("--k", config.workflow === "curator" ? "10" : "3"), 10),
+    offset: Number(option("--offset", "0")),
     scope: option("--scope", ""),
     semanticExpansion: flag("--semantic-expansion"),
+    modelCache: option("--model-cache", ""),
+    indexCache: option("--index-cache", ""),
+    onIndexFallback: (code) => process.stderr.write(`INDEX_FALLBACK ${code}\n`),
+    evidencePreview: flag("--evidence-preview"),
+    bundleBytes: flag("--bundle") ? Number(option("--bundle-budget", "32000")) : 0,
+    adaptiveBundle: flag("--auto"),
+    matchedPreviews: flag("--matched-previews"),
+    coveragePreviews: flag("--coverage-previews"),
+    includeSuperseded: flag("--include-superseded"),
+    prefetchWideOriginals: flag("--prefetch-wide-originals"),
+    compactPrefetch: flag("--compact-prefetch"),
   })
   if (flag("--agent")) console.log(JSON.stringify(report.evidencePacket || {
     workflow: report.workflow,
     retrievalConfidence: report.retrievalConfidence,
     needsExpansion: report.needsExpansion,
     scanLimitReached: report.scanLimitReached,
-    results: report.results.map(({ path, relevance, status }) => ({ path, ...(relevance === undefined ? {} : { relevance }), status })),
+    ...(report.workflow === "curator" ? { offset: report.offset, totalCandidates: report.totalCandidates, hasMore: report.hasMore, nextOffset: report.nextOffset } : {}),
+    ...(report.bundleBytes ? { bundleBytes: report.bundleBytes, bundleUsedBytes: report.bundleUsedBytes } : {}),
+    ...(report.adaptiveMode ? { adaptiveMode: report.adaptiveMode } : {}),
+    ...(report.historicalCandidatesIncluded ? { historicalCandidatesIncluded: true } : {}),
+    ...(report.prefetch ? { prefetch: report.prefetch } : {}),
+    ...(report.originalSources ? { originalSources: report.originalSources } : {}),
+    ...(report.expanded ? { expanded: true, semanticModel: report.semanticModel, candidateLanes: report.candidateLanes } : {}),
+    results: report.results.map(({ path, relevance, status, evidencePreview, sourceReadRequired, previewOmitted }) => ({ path, ...(relevance === undefined ? {} : { relevance }), status,
+      ...(evidencePreview ? { evidencePreview } : {}),
+      ...(sourceReadRequired ? { sourceReadRequired: true } : {}),
+      ...(previewOmitted ? { previewOmitted: true } : {}),
+    })),
   }))
   else if (flag("--json")) console.log(JSON.stringify(report, null, 2))
   else {
     console.log(`Managed recall: ${report.workflow}; ${report.confidence} retrieval confidence${report.decisionGate ? `; gate ${report.decisionGate}` : ""}`)
     for (const item of report.results) console.log(`- ${item.path} | ${item.title} | ${item.rankScore === undefined ? `relevance ${item.relevance ?? "curator review"}` : `rank score ${item.rankScore}`}`)
+    if (report.hasMore) console.log(`- More candidate paths: rerun with --offset ${report.nextOffset}`)
     for (const step of report.nextSteps) console.log(`- ${step}`)
   }
 }
@@ -1856,9 +1958,53 @@ try {
   else if (command === "recall") recall()
   else if (command === "recall-loop") recallLoop()
   else if (command === "recall-managed") await recallManaged()
+  else if (command === "source-handoff") {
+    if (!option("--vault") || !option("--paths")) throw new Error("source-handoff requires --vault and --paths")
+    console.log(JSON.stringify(createSourceHandoff(option("--vault"), JSON.parse(option("--paths")))))
+  }
+  else if (command === "read-notes") {
+    if (!option("--vault") || Boolean(option("--paths")) === Boolean(option("--manifest"))) {
+      throw new Error("read-notes requires --vault and exactly one of --paths or --manifest")
+    }
+    if (option("--manifest")) {
+      if (option("--collect-state") || option("--record-span")) {
+        throw new Error("--manifest cannot be combined with collection state or span recording")
+      }
+      console.log(JSON.stringify(readSourceHandoff(option("--vault"), JSON.parse(fs.readFileSync(option("--manifest"), "utf8")))))
+    } else {
+      const requestedPaths = JSON.parse(option("--paths"))
+      const statePath = option("--collect-state")
+      if (!statePath) console.log(JSON.stringify(readSourceNotes(option("--vault"), requestedPaths)))
+      else {
+        const initial = createEvidenceCollection({ vaultRoot: option("--vault"), paths: requestedPaths,
+          scopeLabel: option("--collection-scope") || "explicit source paths" })
+        if (fs.existsSync(statePath) && fs.lstatSync(statePath).isSymbolicLink()) throw new Error("Collection state must not be a symlink")
+        const state = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, "utf8")) : initial
+        if (state.snapshotId !== initial.snapshotId) throw new Error("Collection state does not match current source scope")
+        let result
+        if (option("--record-span")) {
+          recordEvidenceSpan(state, JSON.parse(option("--record-span")))
+          result = summarizeEvidenceCollection(state)
+        } else result = collectEvidencePage(state, { maxBytes: Number(option("--bundle-bytes") || 16000) })
+        const temporary = `${statePath}.${process.pid}.tmp`
+        let temporaryCreated = false
+        try {
+          fs.writeFileSync(temporary, JSON.stringify(state), { flag: "wx", mode: 0o600 })
+          temporaryCreated = true
+          fs.renameSync(temporary, statePath)
+        } catch (error) {
+          if (temporaryCreated && fs.existsSync(temporary)) fs.unlinkSync(temporary)
+          throw error
+        }
+        console.log(JSON.stringify(result))
+      }
+    }
+  }
   else if (command === "graph-audit") graphAudit()
   else if (command === "recall-explore") await recallExplore()
   else if (command === "curate-plan") await curatePlan()
+  else if (command === "validate-patch") validatePatchInput()
+  else if (command === "verify-patch-persistence") verifyPatchPersistenceCommand()
   else if (command === "config") await configureRuntime()
   else if (command === "recall-rerank") recallRerank()
   else if (command === "recall-semantic") await recallSemantic()

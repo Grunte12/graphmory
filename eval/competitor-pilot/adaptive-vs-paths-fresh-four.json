@@ -1,0 +1,225 @@
+{
+  "purpose": "Four fresh paired development cases: adaptive Graphmory evidence bundle versus path-only Graphmory",
+  "source": {
+    "dataset": "xiaowu0162/longmemeval-cleaned full-history small variant",
+    "revision": "98d7416c24c778c2fee6e6f3006e7a073259d48f",
+    "sha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442"
+  },
+  "selectionRule": "Manually selected two answerable and two abstention items after deterministic exclusion audit. Question IDs and labeled answer_session_ids disjoint from prior listed manifests and native/bundle-preview labels. Temporal cutoff validated for each case.",
+  "limitations": [
+    "Only four cases; not calibrated acceptance or evidence of superiority.",
+    "Broader conversational overlap across distinct LongMemEval question families may remain.",
+    "Question JSON contains only id, question text, and query date; gold answers and labels remain outside both workspaces.",
+    "Both arms receive byte-identical per-case Markdown notes."
+  ],
+  "cases": [
+    {
+      "id": "paths-0",
+      "sourceQuestionId": "681a1674",
+      "abstention": false,
+      "runnerHash": "f6cfbdef0c080c01ac72a0d19d756dc118922f5cf5701e8dfc334f87ccd4c097",
+      "sourceHash": "a096d7d6bbf49398f095e17ec784c63890e769b95ca8fc8ef89220021ef1f8ec",
+      "revision": "4f7d704394b8c25eadd525150d1ee9d22650079b",
+      "vaultHash": "beffe999c877efdf8090264e5eb5ec463f0b12bbb30a45f1343a9e197deb3c47",
+      "questionsHash": "5dfdd95109aa3cb0edae46429748f74f9400ac85d5b9cb3f58dc62852d5753ca",
+      "hostConfigHash": "a1ad5772b878a923e118c6367e69cb89213205fa00ee378c19dac6426d630b73",
+      "model": "openai/gpt-5.6-luna",
+      "hostVersion": "1.18.29",
+      "orderOffset": 0,
+      "rows": [
+        {
+          "arm": "adaptive",
+          "elapsedMs": 20538,
+          "toolCalls": 4,
+          "usage": {
+            "input": 27990,
+            "output": 439,
+            "cacheRead": 26624,
+            "cacheWrite": 0
+          },
+          "correctness": true,
+          "completeness": true,
+          "citationSourceSupport": true,
+          "safeAbstention": null,
+          "vaultUnchanged": true,
+          "terminationReason": "stop",
+          "failure": null
+        },
+        {
+          "arm": "path-only",
+          "elapsedMs": 23876,
+          "toolCalls": 6,
+          "usage": {
+            "input": 27388,
+            "output": 582,
+            "cacheRead": 20480,
+            "cacheWrite": 0
+          },
+          "correctness": true,
+          "completeness": true,
+          "citationSourceSupport": true,
+          "safeAbstention": null,
+          "vaultUnchanged": true,
+          "terminationReason": "stop",
+          "failure": null
+        }
+      ]
+    },
+    {
+      "id": "paths-1",
+      "sourceQuestionId": "gpt4_f49edff3",
+      "abstention": false,
+      "runnerHash": "f6cfbdef0c080c01ac72a0d19d756dc118922f5cf5701e8dfc334f87ccd4c097",
+      "sourceHash": "a096d7d6bbf49398f095e17ec784c63890e769b95ca8fc8ef89220021ef1f8ec",
+      "revision": "4f7d704394b8c25eadd525150d1ee9d22650079b",
+      "vaultHash": "87bfe0353e4230bd94585ce18b90a48f9bb74c77dfccfb86a2990b5ddafb57b9",
+      "questionsHash": "4a9a8e718b7d2fc2a2aed911601dc44ab1213c7b41f33df90fd8d27270780502",
+      "hostConfigHash": "a1ad5772b878a923e118c6367e69cb89213205fa00ee378c19dac6426d630b73",
+      "model": "openai/gpt-5.6-luna",
+      "hostVersion": "1.18.29",
+      "orderOffset": 1,
+      "rows": [
+        {
+          "arm": "path-only",
+          "elapsedMs": 44734,
+          "toolCalls": 10,
+          "usage": {
+            "input": 38550,
+            "output": 1555,
+            "cacheRead": 38400,
+            "cacheWrite": 0
+          },
+          "correctness": true,
+          "completeness": true,
+          "citationSourceSupport": true,
+          "safeAbstention": null,
+          "vaultUnchanged": true,
+          "terminationReason": "stop",
+          "failure": null
+        },
+        {
+          "arm": "adaptive",
+          "elapsedMs": 26703,
+          "toolCalls": 5,
+          "usage": {
+            "input": 24749,
+            "output": 740,
+            "cacheRead": 33280,
+            "cacheWrite": 0
+          },
+          "correctness": true,
+          "completeness": true,
+          "citationSourceSupport": true,
+          "safeAbstention": null,
+          "vaultUnchanged": true,
+          "terminationReason": "stop",
+          "failure": null
+        }
+      ]
+    },
+    {
+      "id": "paths-2",
+      "sourceQuestionId": "f4f1d8a4_abs",
+      "abstention": true,
+      "runnerHash": "f6cfbdef0c080c01ac72a0d19d756dc118922f5cf5701e8dfc334f87ccd4c097",
+      "sourceHash": "a096d7d6bbf49398f095e17ec784c63890e769b95ca8fc8ef89220021ef1f8ec",
+      "revision": "4f7d704394b8c25eadd525150d1ee9d22650079b",
+      "vaultHash": "f51144a080c81acd075a616c5c135cf21acf0b418b426e2668b39353721ee34f",
+      "questionsHash": "99b3057201d348fb0d1f3e7b2e3833a82cafc10ed57648748ac145fc3f46c25f",
+      "hostConfigHash": "a1ad5772b878a923e118c6367e69cb89213205fa00ee378c19dac6426d630b73",
+      "model": "openai/gpt-5.6-luna",
+      "hostVersion": "1.18.29",
+      "orderOffset": 0,
+      "rows": [
+        {
+          "arm": "adaptive",
+          "elapsedMs": 39284,
+          "toolCalls": 8,
+          "usage": {
+            "input": 33395,
+            "output": 874,
+            "cacheRead": 139776,
+            "cacheWrite": 0
+          },
+          "correctness": true,
+          "completeness": true,
+          "citationSourceSupport": false,
+          "safeAbstention": true,
+          "vaultUnchanged": true,
+          "terminationReason": "stop",
+          "failure": null
+        },
+        {
+          "arm": "path-only",
+          "elapsedMs": 51483,
+          "toolCalls": 13,
+          "usage": {
+            "input": 31425,
+            "output": 1500,
+            "cacheRead": 132096,
+            "cacheWrite": 0
+          },
+          "correctness": true,
+          "completeness": true,
+          "citationSourceSupport": true,
+          "safeAbstention": true,
+          "vaultUnchanged": true,
+          "terminationReason": "stop",
+          "failure": null
+        }
+      ]
+    },
+    {
+      "id": "paths-3",
+      "sourceQuestionId": "031748ae_abs",
+      "abstention": true,
+      "runnerHash": "f6cfbdef0c080c01ac72a0d19d756dc118922f5cf5701e8dfc334f87ccd4c097",
+      "sourceHash": "a096d7d6bbf49398f095e17ec784c63890e769b95ca8fc8ef89220021ef1f8ec",
+      "revision": "4f7d704394b8c25eadd525150d1ee9d22650079b",
+      "vaultHash": "49bae2ec0efa509068ff074c7e5c232bb70c06e2603f5982c307e0413dc5b295",
+      "questionsHash": "6ff480a3941cc0f2d2c61848c186dddf1fb20c9f109172fd27a50fef687d2674",
+      "hostConfigHash": "a1ad5772b878a923e118c6367e69cb89213205fa00ee378c19dac6426d630b73",
+      "model": "openai/gpt-5.6-luna",
+      "hostVersion": "1.18.29",
+      "orderOffset": 1,
+      "rows": [
+        {
+          "arm": "path-only",
+          "elapsedMs": 74755,
+          "toolCalls": 12,
+          "usage": {
+            "input": 26455,
+            "output": 1616,
+            "cacheRead": 153600,
+            "cacheWrite": 0
+          },
+          "correctness": true,
+          "completeness": true,
+          "citationSourceSupport": false,
+          "safeAbstention": true,
+          "vaultUnchanged": true,
+          "terminationReason": "stop",
+          "failure": null
+        },
+        {
+          "arm": "adaptive",
+          "elapsedMs": 30827,
+          "toolCalls": 6,
+          "usage": {
+            "input": 30595,
+            "output": 742,
+            "cacheRead": 72704,
+            "cacheWrite": 0
+          },
+          "correctness": true,
+          "completeness": true,
+          "citationSourceSupport": true,
+          "safeAbstention": true,
+          "vaultUnchanged": true,
+          "terminationReason": "stop",
+          "failure": null
+        }
+      ]
+    }
+  ]
+}

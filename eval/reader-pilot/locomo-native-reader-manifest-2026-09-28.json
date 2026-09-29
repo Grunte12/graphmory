@@ -1,0 +1,98 @@
+{
+  "protocol": "locomo-matched-native-reader-development-v1",
+  "frozenBeforeGeneration": true,
+  "datasetSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "selectionSeed": "graphmory-native-locomo-development-v1-2026-09-28",
+  "excludedPreviouslyGeneratedIds": [
+    "conv-26:142",
+    "conv-30:84",
+    "conv-42:19",
+    "conv-43:21",
+    "conv-47:52",
+    "conv-48:36"
+  ],
+  "cases": [
+    {
+      "id": "conv-42:62",
+      "category": 1,
+      "folder": "0",
+      "inputSha256": "aa412c0d399f93ef466292cefcb430e721e9f6d6ebc2524ceeb2fc736c77fc7f",
+      "labelsSha256": "b33437d032cc51bdeb6f3e95079cb20320b1417957ebb654ef74a44c14715ab7",
+      "sourceCount": 29,
+      "armOrder": [
+        "basic",
+        "graphmory"
+      ]
+    },
+    {
+      "id": "conv-50:14",
+      "category": 2,
+      "folder": "1",
+      "inputSha256": "dbba1f34a466812192a460edaa9f0c69fae44f00e4dcb2da23fc68a902d2468d",
+      "labelsSha256": "6d5af17367e82fc6b1d1c83098380d12173d5602b4529872219a645bfcee7297",
+      "sourceCount": 30,
+      "armOrder": [
+        "graphmory",
+        "basic"
+      ]
+    },
+    {
+      "id": "conv-43:185",
+      "category": 5,
+      "folder": "2",
+      "inputSha256": "897d9c688e2acaa12921162020594d3b14ac10641e1bae80bf1957fad75c3772",
+      "labelsSha256": "31f4233f30fd37840e5eb8a9bc68026ba848a6e054015f49e808d8acc11bc0df",
+      "sourceCount": 29,
+      "armOrder": [
+        "basic",
+        "graphmory"
+      ]
+    }
+  ],
+  "plannedTrials": 6,
+  "configuration": {
+    "curator": "gpt-5.6-luna",
+    "lead": "gpt-5.6-sol",
+    "reasoning": "low",
+    "mode": "auto",
+    "maxRounds": 10,
+    "maxInputBytes": 300000,
+    "structuredCitations": true,
+    "persistentCurator": false
+  },
+  "sourceHashes": {
+    "scripts/prepare-locomo-native-reader.mjs": "8d511e87cf37af8dbc9977e33b6893c68abdb3f35348b98df7ad1224ed0f087d",
+    "scripts/lib/locomo.mjs": "b5138a78a26663238e0b619b4d24d057819a4eb8a6cec45472e3b64aee536d2a",
+    "scripts/run-curator-paging-pilot.py": "8ed33591626f34f341bacd9caea93e7ada81b72a8f9729d80ddca131a59402be",
+    "scripts/prepare-basic-memory-live-index.py": "4bf57b2f21478bcfe0262bc23c6fbaf88699b608068abf0be1a4b189125f05c1",
+    "scripts/brain-sync.mjs": "e75ed971310c63db8cc2b184b22a9a1fcd1e4492a6bf1b3e06dc28b57db519fc",
+    "src/decision-recall.mjs": "89169fdbd15793427ad2e1891d286d522cb5ee840cecd105302dfe37677421fc",
+    "src/memory-recall.mjs": "0fb19fa1c3c268b2cbd38b73ac8733ea6ff852a27d558c4fc3678de0f39593cd",
+    "src/retrieval.mjs": "28f656a4bef7806d9a2a7690c2c31b7ad0732b894e05946e186286e05a4bc6c1",
+    "src/source-read.mjs": "79e5bd5e93191f2c30a8127d300d74f64b8c893ec0321362efb3046791ba1ed6"
+  },
+  "comparator": "Basic Memory 0.23.2 native search-notes --hybrid and read-note; native bge-small-en-v1.5 embeddings and FTS index verified before each case",
+  "scorerSha256": "8e3be5d57ff2ff9ec5cd05939592f468c5f3f1fd95d13e431932bdf6bf0fd6fd",
+  "metrics": [
+    "all-attempt workflow completion",
+    "raw pinned QA score",
+    "source support/completeness author review separately",
+    "gold-original reads",
+    "citations",
+    "host gross/cached/output usage",
+    "whole workflow seconds",
+    "native tool bytes and ingestion seconds"
+  ],
+  "failures": "Preserve all six planned trials; empty prediction for no emitted answer, separately zero operational-adjusted scores for failed workflows. Never replace a failed case.",
+  "holdoutNotRendered": [
+    "conv-41",
+    "conv-44",
+    "conv-49"
+  ],
+  "limitations": [
+    "Exposed development conversations, three questions; no powered noninferiority or superiority claim",
+    "New question IDs do not create source-disjoint holdout because development histories were previously evaluated",
+    "Native normalization, outputs and cache states differ; do not infer causal monetary cost savings",
+    "Pinned raw QA wrapper is not full official benchmark; support review is unblinded and uncalibrated"
+  ]
+}

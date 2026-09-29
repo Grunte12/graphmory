@@ -1,0 +1,33 @@
+{
+  "protocol": "synthetic-curator-history-choice-v1",
+  "frozenBeforeGeneration": true,
+  "repositoryCommit": "1680de4",
+  "runnerSha256": "886250d8265d6c29feea437b711cdcd2a3fdf2f608306e82061ec463ae5ab357",
+  "runtimeHashes": {
+    "src/retrieval.mjs": "28f656a4bef7806d9a2a7690c2c31b7ad0732b894e05946e186286e05a4bc6c1",
+    "src/memory-recall.mjs": "0fb19fa1c3c268b2cbd38b73ac8733ea6ff852a27d558c4fc3678de0f39593cd",
+    "src/decision-recall.mjs": "89169fdbd15793427ad2e1891d286d522cb5ee840cecd105302dfe37677421fc",
+    "scripts/brain-sync.mjs": "e75ed971310c63db8cc2b184b22a9a1fcd1e4492a6bf1b3e06dc28b57db519fc"
+  },
+  "model": "gpt-5.6-luna",
+  "reasoning": "low",
+  "caseOrder": ["current", "prior", "scope", "missing", "conflict", "attribution"],
+  "families": {"current": "base-policy", "prior": "base-policy", "scope": "scope", "missing": "missing", "conflict": "conflict", "attribution": "attribution"},
+  "arms": ["existing", "history-capable"],
+  "order": "Existing first at even zero-based case indices; history-capable first at odd indices.",
+  "plannedCalls": 18,
+  "plannedAnswerTrials": 12,
+  "routing": "One shared no-tool Luna choice per question, before seeing notes; treatment applies that choice and control omits the flag.",
+  "delivery": "Actual CLI retrieval and batched original reads of every delivered synthetic candidate; no model-driven source selection.",
+  "expectedRoute": {"current": false, "prior": true, "scope": false, "missing": true, "conflict": true, "attribution": true},
+  "expectedAnswers": {
+    "current": "PostgreSQL as current database",
+    "prior": "SQLite as the January state, not PostgreSQL",
+    "scope": "PostgreSQL for production, without substituting staging SQLite",
+    "missing": "Decline to name an unrecorded January database",
+    "conflict": "Report unresolved SQLite/MySQL conflict; do not pick either as settled",
+    "attribution": "SQLite user statement; MongoDB is an assistant suggestion, not adopted policy"
+  },
+  "screenGates": ["All 12 answer trials accounted for", "All six route choices match requested time", "No forbidden tools or source mutation", "No supplied-path citation violations", "Treatment does not lose a correct current/scope control", "Unblinded answer/source review records failures rather than keyword-only passes"],
+  "interpretation": "Synthetic development screen only; shared routing and automated complete reads prevent a full autonomous Curator/Lead or competitor claim. No official scorer or holdout is opened. Billing and cold-cache status remain unknown."
+}

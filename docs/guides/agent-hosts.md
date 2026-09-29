@@ -22,7 +22,7 @@ graphmory-setup --host codex
 graphmory-setup --host codex --apply
 ```
 
-Replace `codex` with `claude` or `cursor`. Codex defaults to `gpt-6-luna`; Claude Code defaults to `haiku`. Cursor requires `--model <model-id>` because `inherit` may use the lead model. Choose an ID available to your host and subscription. Use `--scope project --project <path>` for one workspace rather than the default user scope. Run this once per host you use. Restart a session if it does not see the new agent. The script installs the skill and a `graphmory_curator` (Codex) or `graphmory-curator` (Claude/Cursor) agent definition. It does not set up the vault or change existing global lead instructions.
+Replace `codex` with `claude` or `cursor`. Codex defaults to `gpt-6-luna`; Claude Code defaults to `haiku`. Cursor requires `--model <model-id>` because `inherit` may use the lead model. Choose an ID available to your host and subscription. Use `--scope project --project <path>` for one workspace rather than the default user scope. Run this once per host you use. Restart or start a fresh session if it does not see the new agent. For project-scoped Codex files, open the project as trusted in Codex; do not change global trust settings just for Graphmory. The script installs the skill and a `graphmory_curator` (Codex) or `graphmory-curator` (Claude/Cursor) agent definition. It does not set up the vault or change existing global lead instructions.
 
 | Host | User agent file | User skill directory |
 | --- | --- | --- |
@@ -66,7 +66,7 @@ graphmory config
 Then give the agent the vault path and this noninteractive call:
 
 ```sh
-graphmory recall-managed --vault "<vault-path>" --query "<question>" --k 3 --agent
+graphmory recall-managed --vault "<vault-path>" --query "<question>" --agent
 ```
 
 The result is one compact JSON line. The agent should open only relevant returned Markdown notes before answering, preserve provenance, and abstain when evidence is insufficient. Use `--scope` when the project or domain folder is known. See [managed retrieval](managed-retrieval.md) for the curator, hosted Jev, and local decision workflows. Hosted Jev needs explicit consent to send candidate excerpts; local decision needs a compatible server.
@@ -77,17 +77,25 @@ Add this instruction to your host's lead-agent guidance, then reload the host:
 
 > After completing and verifying a task, if durable knowledge should be saved, author a Memory Patch with evidence IDs and delegate its placement, duplicate/conflict check, and validation to the named Graphmory curator agent. The lead owns the claim. The curator returns `APPLIED`, `TENSION`, or `BLOCKED` with affected note paths. Ask the same curator for a compact Brain Brief when prior memory is needed. Do not spawn an unconfigured generic memory agent.
 
-If delegation is unavailable, the lead may follow the skill directly. Pinning Luna, Haiku, or another model is a host setting; Graphmory's `curator.model` is routing metadata and does not override the host's model. OpenCode requires its own adapter configuration.
+Verify that the host actually starts a child named `graphmory_curator`/`graphmory-curator` and that it reads the installed skill; an agent file on disk or a lead's claim that it delegated is not dispatch evidence. If the host does not expose named-agent dispatch, report that separately and use the skill directly only as a clearly labeled fallback. Pinning Luna, Haiku, or another model is a host setting; Graphmory's `curator.model` is routing metadata and does not override the host's model. OpenCode requires its own adapter configuration.
+
+For Codex CLI 0.146.0's V2 spawn schema, select `agent_type="graphmory_curator"` and `fork_turns="none"`, then send the task, vault path and patch/source paths explicitly. Omitting `fork_turns` uses full-history inheritance, which rejects an explicit named role; that fork inherits the parent's configuration instead of the configured cheap Curator. Do not pass the obsolete `fork_context` field to this V2 schema. Inspect the tool schema exposed by the user's host before selecting parameters; other versions can differ. See the [source-pinned dispatch diagnostic](../research/native-curator-dispatch-diagnostic-2026-09-29.md). A setup file alone does not prove native dispatch works.
+
+### Optional lifecycle reminder hooks
+
+Keep the short lead instruction above and the curator's skill/agent definition as the source of the workflow. A hook can restore a **brief reminder** when a session starts or its context is compacted; it should not run retrieval on every prompt or spawn a curator on every task. This avoids unrelated vault reads and repeated prompt tokens. For a local Codex installation, consider a `SessionStart` hook matching `startup|resume|compact` that emits one short instruction pointing to the named curator and vault configuration. Claude Code supports `SessionStart` hooks; Cursor supports `sessionStart` and `preCompact`, but their hook files and output schemas differ. Have the user's agent install a host-specific hook only after previewing its script and configuration. Hooks are optional because some hosts and remote sessions cannot run local scripts, and Codex asks users to review and trust new hooks. Keep the skill and lead instruction so Graphmory works without a hook. See the official [Codex](https://learn.chatgpt.com/docs/hooks), [Claude Code](https://code.claude.com/docs/en/hooks-guide), and [Cursor](https://prod.cursor.com/docs/hooks) documentation.
 
 For a Memory Patch, the lead agent supplies the claim, scope, and source IDs. The curator searches only likely destinations and checks current note contents before applying an edit. This second search is for placement and conflict detection, so it can reuse candidate paths found earlier but must not trust stale excerpts. Keep the curator's stable instructions ahead of the changing patch and excerpts to preserve any prompt caching the host/provider offers; compare reported cache usage and actual cost before claiming savings.
 
+The default curator workflow applies a verified patch through the host's normal file-editing tools, then checks links and lifecycle metadata. Do not call `curate-plan` in this workflow; it only produces advice for hosted Jev/local decision workflows and never writes notes. Use the [end-to-end smoke guide](curator-workflow-smoke.md) to verify actual native dispatch, bounded multi-hop recall, patch application, and lifecycle checks in a disposable vault.
+
 ## 5. Smoke check
 
-Use a disposable Markdown vault or a known existing vault in read-only recall mode:
+Use the [end-to-end smoke guide](curator-workflow-smoke.md) to exercise the real install and write workflow safely. For a quick read-only check, use a disposable Markdown vault:
 
 ```sh
 graphmory doctor --vault "<vault-path>" --json
-graphmory recall-managed --vault "<vault-path>" --query "<known-memory-question>" --k 3 --agent
+graphmory recall-managed --vault "<vault-path>" --query "<known-memory-question>" --agent
 ```
 
-Confirm the host invokes the CLI once, receives one JSON line, and reads only the returned notes it needs. Do not treat an empty result as permission to broaden into the full vault.
+Confirm the host invokes the CLI, receives the compact response, and reads only the returned notes it needs. Do not treat an empty result as permission to broaden into the full vault. Treat CLI installation, skill discovery, and native named-agent dispatch as separate checks.

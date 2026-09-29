@@ -1,0 +1,161 @@
+{
+  "protocol": "curator-paging-development-v1",
+  "id": "conv-43:21",
+  "question": "Which US cities does John mention visiting to Tim?",
+  "model": "gpt-5.6-luna",
+  "mode": "bundle",
+  "maxRounds": 3,
+  "maxInputBytes": 300000,
+  "runnerSha256": "4372a23b89b5b336248e673b003e0459192b8443865cf6759fccb85efac91a7a",
+  "inputSha256": "158c2c5cbb7d5ba36c0023c82a4223076f8d00ab14b00b534e6004fc56260fd2",
+  "modelCalls": [
+    {
+      "stage": "curator",
+      "elapsedSeconds": 11.315,
+      "promptBytes": 23916,
+      "promptSha256": "b1c001cc5954f1a828a920a958dec7dcd3570d226ed58cce7a574985387328c0",
+      "usage": {
+        "input_tokens": 21397,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 129,
+        "reasoning_output_tokens": 83
+      },
+      "failed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "curator",
+      "elapsedSeconds": 8.429,
+      "promptBytes": 37596,
+      "promptSha256": "e5a21e926a6dba187b70df45e7736084f469cbb5e778778eb4491d6498999659",
+      "usage": {
+        "input_tokens": 25008,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 139,
+        "reasoning_output_tokens": 48
+      },
+      "failed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "lead",
+      "elapsedSeconds": 7.826,
+      "promptBytes": 439,
+      "promptSha256": "35d2a65a372b42ecd3c8033f39b728bc48cff437acc968b4e3757479552945e8",
+      "usage": {
+        "input_tokens": 15410,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 59,
+        "reasoning_output_tokens": 0
+      },
+      "failed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "offset": 0,
+      "nextOffset": null,
+      "hasMore": false,
+      "paths": [
+        "session_3.md",
+        "session_20.md",
+        "session_8.md",
+        "session_24.md",
+        "session_14.md",
+        "session_11.md",
+        "session_12.md",
+        "session_2.md",
+        "session_1.md",
+        "session_15.md",
+        "session_9.md",
+        "session_29.md",
+        "session_16.md",
+        "session_19.md",
+        "session_17.md",
+        "session_27.md",
+        "session_25.md",
+        "session_26.md",
+        "session_5.md",
+        "session_4.md",
+        "session_22.md",
+        "session_13.md",
+        "session_23.md",
+        "session_10.md",
+        "session_28.md",
+        "session_6.md",
+        "session_18.md",
+        "session_21.md",
+        "session_7.md"
+      ],
+      "pageSha256": "add931b95f9feb9bb1bbec78f86f029840b99eec3d96b870cca6a2060c36af6b"
+    }
+  ],
+  "sourceReads": [
+    {
+      "path": "session_6.md",
+      "sha256": "a5000c40e190b2557a133697c0027583f109250eff21471fa2bfc1073b288e5b",
+      "bytes": 4603
+    },
+    {
+      "path": "session_7.md",
+      "sha256": "196d66e73aaf8f70989bc0f7214fee841bcb6e3308e8a3d7610d019bc59bd085",
+      "bytes": 3287
+    },
+    {
+      "path": "session_9.md",
+      "sha256": "a022bf49529703665c1386a062cfaf796cf22c2e161ef09bc3188342d92a6c37",
+      "bytes": 2540
+    },
+    {
+      "path": "session_10.md",
+      "sha256": "0ef6a8eef9bcd744f29b236311e0e2bb6097d26190afc6c1f080724a629615c7",
+      "bytes": 2261
+    }
+  ],
+  "brief": "John mentions visiting Chicago (session_6.md, D6:3) and New York City/NYC (session_9.md, D9:6\u201310; session_10.md, D10:1). He says he has not visited Universal Studios (session_10.md, D10:9\u201310).",
+  "answer": "John mentions visiting Chicago (session_6.md, D6:3) and New York City/NYC (session_9.md, D9:6\u201310; session_10.md, D10:1).",
+  "runComplete": true,
+  "stopReason": "curator-finalized",
+  "limitations": [
+    "One exposed development case; no quality acceptance or latency tail claim",
+    "No-tool boundary is checked in trace, not a proven filesystem isolation guarantee",
+    "No official answer scorer or independent calibrated semantic judge",
+    "Subscription bill allocation unknown; native token categories retained"
+  ],
+  "elapsedSeconds": 27.702,
+  "executionContext": {
+    "baselineCommit": "6c149d3852ef04eb19b30e39dd3e9c6964005b23",
+    "host": "Codex CLI",
+    "hostVersion": "0.146.0",
+    "runtimeHashes": {
+      "scripts/brain-sync.mjs": "10042aa96568345118d928d699c3d5d7e370404f9fe0a111cc4bd7a105f43b62",
+      "src/decision-recall.mjs": "ec5c8df19dc056c348920e59b0c28d18db686b59450d21238fdc54b32cebd5a8",
+      "src/memory-recall.mjs": "4f8765badf33121957f9d29c25cf0480c552606cfbb09676acf045c040bb703f",
+      "src/runtime-config.mjs": "f6374cccc3aeca805f662195aba8c9873319a8bcb0f9a3bae47037d817907006",
+      "src/retrieval.mjs": "4a85f5662bbf44d05eaeacb386711f05641bb550193d84c3dd7402853c3991fe",
+      "src/source-read.mjs": "79e5bd5e93191f2c30a8127d300d74f64b8c893ec0321362efb3046791ba1ed6"
+    },
+    "contextRecordedAfterRun": true
+  },
+  "review": {
+    "type": "unblinded diagnostic review by root, not independent semantic judge",
+    "observations": [
+      "Source request includes session_6.md (rank 26 in prior fusion retrieval) and final answer includes Chicago",
+      "Curator reads 4/29 supplied candidate sources; no autonomous pagination exercised because bundle supplies all paths at once",
+      "Seattle is absent from final answer and session_3.md was not read; original gold turn describes a future trip, so official agreement and strict temporal support must be evaluated separately",
+      "No other model/tool calls detected in accepted traces; source hashes unchanged"
+    ],
+    "officialAnswerScore": null,
+    "supportedCompleteVerdict": null
+  }
+}

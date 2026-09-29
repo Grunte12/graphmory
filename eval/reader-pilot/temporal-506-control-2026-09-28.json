@@ -1,0 +1,167 @@
+{
+  "protocol": "curator-paging-development-v4-tool-error-feedback",
+  "id": "50635ada",
+  "question": "What was my previous frequent flyer status on United Airlines before I got the current status?",
+  "retrieval": "graphmory-managed",
+  "indexedSourceHashes": null,
+  "model": "gpt-5.6-luna",
+  "leadModel": "gpt-5.6-luna",
+  "mode": "auto",
+  "maxRounds": 4,
+  "maxInputBytes": 300000,
+  "persistentCurator": false,
+  "compactFollowup": false,
+  "structuredCitations": true,
+  "coveragePreviews": false,
+  "temporalDecision": false,
+  "runnerSha256": "8ed33591626f34f341bacd9caea93e7ada81b72a8f9729d80ddca131a59402be",
+  "inputSha256": "c1feaf2fbd9f4a6932d9477fb30fad591c6fbae4a4d80e56591de84cfdc4a1c8",
+  "modelCalls": [
+    {
+      "stage": "curator",
+      "model": "gpt-5.6-luna",
+      "sessionResumed": false,
+      "elapsedSeconds": 7.919,
+      "promptBytes": 11351,
+      "promptSha256": "552f5b44dfb3f7f74f44bc9f9f578ca4e480f50d222e8f5e4f05153c8d8d9fe9",
+      "usage": {
+        "input_tokens": 17953,
+        "cached_input_tokens": 14080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 122,
+        "reasoning_output_tokens": 53
+      },
+      "failed": false,
+      "failureKind": null,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "curator",
+      "model": "gpt-5.6-luna",
+      "sessionResumed": false,
+      "elapsedSeconds": 8.434,
+      "promptBytes": 50339,
+      "promptSha256": "a2be6f7933d909b04ebd5e35ceb50e90d1bb13e2c094793f0d87c1893c98dfbc",
+      "usage": {
+        "input_tokens": 26976,
+        "cached_input_tokens": 14080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 155,
+        "reasoning_output_tokens": 59
+      },
+      "failed": false,
+      "failureKind": null,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "lead",
+      "model": "gpt-5.6-luna",
+      "sessionResumed": false,
+      "elapsedSeconds": 6.335,
+      "promptBytes": 846,
+      "promptSha256": "45ed3ab87ed031e5ca03b0dfdbf05c5c0d22bbd9b543a09dfe6c990cb4a0e781",
+      "usage": {
+        "input_tokens": 15497,
+        "cached_input_tokens": 14080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 49,
+        "reasoning_output_tokens": 0
+      },
+      "failed": false,
+      "failureKind": null,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "offset": 0,
+      "nextOffset": 10,
+      "hasMore": true,
+      "paths": [
+        "sessions/0019-6c2b91037340.md",
+        "sessions/0043-d04b7a0b0436.md",
+        "sessions/0046-2d15dfdcf811.md",
+        "sessions/0025-e5f63ace3337.md",
+        "sessions/0014-ddf5728d9ece.md",
+        "sessions/0033-7a98b0038373.md",
+        "sessions/0036-db35001a74e2.md",
+        "sessions/0034-04b79af95ba4.md",
+        "sessions/0039-b0718c2020ba.md",
+        "sessions/0002-086b1d90ae8c.md"
+      ],
+      "toolSeconds": 0.103,
+      "toolOutputBytes": 10142,
+      "pageSha256": "84ceab4ab64456522b00cd251b5925ab981ee1826fabbe50d4d3758e5b7359d1"
+    }
+  ],
+  "sourceReads": [
+    {
+      "path": "sessions/0019-6c2b91037340.md",
+      "sha256": "635958b496c1e77cd0aa1cf538dfd8f83d1056e9c8118731179611de5afaad82",
+      "bytes": 12564
+    },
+    {
+      "path": "sessions/0043-d04b7a0b0436.md",
+      "sha256": "003d9a1218f3d013c0feb01ca7cfe9c9f465311d7954a36859aad07a0b81cbc4",
+      "bytes": 12939
+    },
+    {
+      "path": "sessions/0046-2d15dfdcf811.md",
+      "sha256": "cf1c4787068b7adf61ff6e9b7e5d77541142cf896da5e9143bbf19c5c6a047bc",
+      "bytes": 12285
+    }
+  ],
+  "sourceToolCalls": [
+    {
+      "paths": [
+        "sessions/0019-6c2b91037340.md",
+        "sessions/0043-d04b7a0b0436.md",
+        "sessions/0046-2d15dfdcf811.md"
+      ],
+      "toolOutputBytes": 38877,
+      "toolSeconds": 0.056
+    }
+  ],
+  "sourceRequests": [
+    {
+      "turn": 0,
+      "requested": [
+        "sessions/0019-6c2b91037340.md",
+        "sessions/0043-d04b7a0b0436.md",
+        "sessions/0046-2d15dfdcf811.md"
+      ],
+      "new": [
+        "sessions/0019-6c2b91037340.md",
+        "sessions/0043-d04b7a0b0436.md",
+        "sessions/0046-2d15dfdcf811.md"
+      ],
+      "reused": []
+    }
+  ],
+  "sourceRequestErrors": [],
+  "brief": "Your previous United Airlines frequent-flyer status was Premier Silver. You said you had reached Premier Silver in September 2022, before later reporting that you had reached Premier Gold in May 2023. Sources: sessions/0019-6c2b91037340.md; sessions/0043-d04b7a0b0436.md",
+  "answer": "Premier Silver",
+  "runComplete": true,
+  "stopReason": "curator-finalized",
+  "limitations": [
+    "One exposed development case; no quality acceptance or latency tail claim",
+    "No-tool boundary is checked in trace, not a proven filesystem isolation guarantee",
+    "No official answer scorer or independent calibrated semantic judge",
+    "Subscription bill allocation unknown; native token categories retained"
+  ],
+  "citations": [
+    "sessions/0019-6c2b91037340.md",
+    "sessions/0043-d04b7a0b0436.md"
+  ],
+  "citationProvenanceValid": true,
+  "elapsedSeconds": 22.853
+}

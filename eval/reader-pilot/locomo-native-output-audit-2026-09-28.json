@@ -1,0 +1,88 @@
+{
+  "protocol": "native-candidate-output-replay-diagnostic-v1",
+  "id": "conv-42:62",
+  "rows": [
+    {
+      "page": 1,
+      "results": 10,
+      "replayAdaptedPageHash": "d7b88a8009529f585ff52ac097c44fa683eec5ad4dca719ba07a686eb5bd4889",
+      "matchesRecordedPage": true,
+      "resultKeys": [
+        "content",
+        "entity",
+        "entity_id",
+        "external_id",
+        "file_path",
+        "matched_chunk",
+        "metadata",
+        "permalink",
+        "score",
+        "title",
+        "type",
+        "updated_at"
+      ],
+      "stringFieldCharacters": {
+        "content": 32203,
+        "matched_chunk": 32002,
+        "text": 0,
+        "snippet": 0
+      }
+    },
+    {
+      "page": 2,
+      "results": 10,
+      "replayAdaptedPageHash": "aec5bd344217213d146d9e733c1c583cf4a02d4e7665d4f53f3df71e5dc2e6c2",
+      "matchesRecordedPage": true,
+      "resultKeys": [
+        "content",
+        "entity",
+        "entity_id",
+        "external_id",
+        "file_path",
+        "matched_chunk",
+        "metadata",
+        "permalink",
+        "score",
+        "title",
+        "type",
+        "updated_at"
+      ],
+      "stringFieldCharacters": {
+        "content": 32477,
+        "matched_chunk": 32598,
+        "text": 0,
+        "snippet": 0
+      }
+    },
+    {
+      "page": 3,
+      "results": 9,
+      "replayAdaptedPageHash": "a72e4f724239093023f2015cb8ac286757dbd362154b1bc337bc38e3eda0f731",
+      "matchesRecordedPage": true,
+      "resultKeys": [
+        "content",
+        "entity",
+        "entity_id",
+        "external_id",
+        "file_path",
+        "matched_chunk",
+        "metadata",
+        "permalink",
+        "score",
+        "title",
+        "type",
+        "updated_at"
+      ],
+      "stringFieldCharacters": {
+        "content": 24123,
+        "matched_chunk": 23877,
+        "text": 0,
+        "snippet": 0
+      }
+    }
+  ],
+  "limitations": [
+    "Post-outcome adapter audit; not a new scored answer trial",
+    "Native chunk/full-source formats differ from Graphmory previews; no semantic support claim"
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "experiment": "independent lifecycle metadata postcheck",
+  "date": "2026-09-29",
+  "method": "actual CLI on synthetic temporary Markdown files; no model invocation",
+  "cases": [
+    {
+      "name": "previous native omission pattern with extended lifecycle expectations",
+      "pass": true,
+      "exitCode": 1,
+      "result": {
+        "valid": false,
+        "metadataOnly": true,
+        "checkedFields": [
+          "lifecycle.status",
+          "lifecycle.revalidate_when[0]",
+          "lifecycle.revalidate_when[1]",
+          "lifecycle.valid_until"
+        ],
+        "errors": [
+          "lifecycle.revalidate_when[0] is missing from the note YAML list",
+          "lifecycle.revalidate_when[1] is missing from the note YAML list",
+          "lifecycle.valid_until is missing or differs in note metadata"
+        ]
+      },
+      "unchanged": true
+    },
+    {
+      "name": "reordered events plus extra",
+      "pass": true,
+      "exitCode": 0,
+      "result": {
+        "valid": true,
+        "metadataOnly": true,
+        "checkedFields": [
+          "lifecycle.status",
+          "lifecycle.revalidate_when[0]",
+          "lifecycle.revalidate_when[1]",
+          "lifecycle.valid_until"
+        ],
+        "errors": []
+      },
+      "unchanged": true
+    },
+    {
+      "name": "partial trigger loss",
+      "pass": true,
+      "exitCode": 1,
+      "result": {
+        "valid": false,
+        "metadataOnly": true,
+        "checkedFields": [
+          "lifecycle.status",
+          "lifecycle.revalidate_when[0]",
+          "lifecycle.revalidate_when[1]",
+          "lifecycle.valid_until"
+        ],
+        "errors": [
+          "lifecycle.revalidate_when[1] is missing from the note YAML list"
+        ]
+      },
+      "unchanged": true
+    },
+    {
+      "name": "date cannot replace events",
+      "pass": true,
+      "exitCode": 1,
+      "result": {
+        "valid": false,
+        "metadataOnly": true,
+        "checkedFields": [
+          "lifecycle.status",
+          "lifecycle.revalidate_when[0]",
+          "lifecycle.revalidate_when[1]",
+          "lifecycle.valid_until"
+        ],
+        "errors": [
+          "lifecycle.revalidate_when[0] is missing from the note YAML list",
+          "lifecycle.revalidate_when[1] is missing from the note YAML list"
+        ]
+      },
+      "unchanged": true
+    },
+    {
+      "name": "events cannot replace expiry",
+      "pass": true,
+      "exitCode": 1,
+      "result": {
+        "valid": false,
+        "metadataOnly": true,
+        "checkedFields": [
+          "lifecycle.status",
+          "lifecycle.revalidate_when[0]",
+          "lifecycle.revalidate_when[1]",
+          "lifecycle.valid_until"
+        ],
+        "errors": [
+          "lifecycle.valid_until is missing or differs in note metadata"
+        ]
+      },
+      "unchanged": true
+    },
+    {
+      "name": "path escape",
+      "pass": true,
+      "exitCode": 1,
+      "result": {
+        "valid": false,
+        "metadataOnly": true,
+        "checkedFields": [],
+        "errors": [
+          "note path is invalid or the note cannot be read safely"
+        ]
+      },
+      "unchanged": true
+    }
+  ],
+  "allPassed": true,
+  "metadataOnly": true,
+  "liveCuratorReplay": false,
+  "goalComplete": false,
+  "temporaryWorkspaceRemoved": true
+}

@@ -1,0 +1,231 @@
+{
+  "protocol": "support-judge-calibration-v1",
+  "packetSha256": "16cd3942d0b41f7705c5bafb981e082718512fa7033e4ac38e598d062220edbc",
+  "labelOrigin": "Author-constructed synthetic controls; sanity calibration, not independent human adjudication.",
+  "gate": {
+    "minimumExactPrimaryAgreement": 0.9,
+    "maximumFalseAcceptances": 0
+  },
+  "labels": [
+    {
+      "blindId": "1d7c913f5a11",
+      "family": "event-dedup",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "Repeated report is one event; anticipation is not rejection."
+    },
+    {
+      "blindId": "a20b8a66976f",
+      "family": "event-dedup",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "yes",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Counts repeated mention and prospective event as completed."
+    },
+    {
+      "blindId": "d21beee107c4",
+      "family": "current-update",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "Explicit latest update supersedes old value."
+    },
+    {
+      "blindId": "c04f26f3cb70",
+      "family": "current-update",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "yes",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Old citation exists but does not support current-state claim."
+    },
+    {
+      "blindId": "eaf904037c05",
+      "family": "historical-state",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "Prior value is explicitly requested."
+    },
+    {
+      "blindId": "5d68f02b8bea",
+      "family": "historical-state",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "yes",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Uses latest value for a historical question."
+    },
+    {
+      "blindId": "da05d7f6994e",
+      "family": "multi-hop-completeness",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "Both requested facts and supporting paths supplied."
+    },
+    {
+      "blindId": "daca7543a003",
+      "family": "multi-hop-completeness",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "no",
+        "citationCoverage": "yes",
+        "supportedComplete": "no"
+      },
+      "rationale": "True cited owner alone omits requested launch date."
+    },
+    {
+      "blindId": "b373e4b7af0e",
+      "family": "negation",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "Preserves explicit negation and current time."
+    },
+    {
+      "blindId": "4a63fbd87081",
+      "family": "negation",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "yes",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Contradicts explicit negation."
+    },
+    {
+      "blindId": "01bc31af5195",
+      "family": "scope",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "Correct project value."
+    },
+    {
+      "blindId": "d5fa67655c13",
+      "family": "scope",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "yes",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Value belongs to different project."
+    },
+    {
+      "blindId": "9c84f1e66c02",
+      "family": "missing-evidence",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "Safe explicit refusal; source confirms missing requested value."
+    },
+    {
+      "blindId": "39849d1c921a",
+      "family": "missing-evidence",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "yes",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Fabricates River fare using another trip."
+    },
+    {
+      "blindId": "82b761941a8f",
+      "family": "unresolved-conflict",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "Reports both unresolved values with both sources."
+    },
+    {
+      "blindId": "563b0212ef2a",
+      "family": "unresolved-conflict",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "yes",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Invents conflict resolution/confirmation."
+    },
+    {
+      "blindId": "dc0f3173db66",
+      "family": "citation-omission",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "Direct answer with source citation."
+    },
+    {
+      "blindId": "40d17fcf71be",
+      "family": "citation-omission",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Correct fact without provenance fails citation-required success."
+    },
+    {
+      "blindId": "a74a520a07ef",
+      "family": "unsupported-addition",
+      "expected": {
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      },
+      "rationale": "Only supported requested fact."
+    },
+    {
+      "blindId": "8aa11e642a71",
+      "family": "unsupported-addition",
+      "expected": {
+        "sourceSupport": "no",
+        "complete": "yes",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      },
+      "rationale": "Extra material deadline claim has no support."
+    }
+  ]
+}

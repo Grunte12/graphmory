@@ -1,0 +1,19 @@
+{
+  "protocol": "matched-native-curator-development-preflight-v1",
+  "frozenBeforeGeneration": true,
+  "caseId": "a40e080f",
+  "caseRole": "exposed LongMemEval development integration check",
+  "readerInputSha256": "2a9443a66b4e15fb302368776c848c9ef3964e9a02c76e42d2900de94a3c0ff0",
+  "mediatorSha256": "b7d17800b873909d19bd65a4b57f1eb796459acd6d65e190750b93b190a23dc9",
+  "arms": ["basic-memory-hybrid", "graphmory-managed-auto"],
+  "order": ["basic-memory-hybrid", "graphmory-managed-auto"],
+  "host": "Codex CLI fresh ephemeral curator turns",
+  "curatorModel": "gpt-5.6-luna",
+  "leadModel": "gpt-5.6-luna",
+  "reasoningEffort": "low",
+  "maxCuratorRounds": 3,
+  "structuredCitations": true,
+  "primaryCheck": "both arms complete the native retrieval, source-read and lead protocol without a runner or provenance error",
+  "diagnostics": ["answer and cited-source support by manual review", "source reads", "CLI pages", "whole-workflow wall time", "gross/cached/noncached input tokens", "output tokens", "prompt bytes", "tool output bytes", "failures"],
+  "nonClaims": ["one exposed case cannot establish general quality or latency superiority", "no independent holdout", "subscription token usage is not billed monetary cost"]
+}

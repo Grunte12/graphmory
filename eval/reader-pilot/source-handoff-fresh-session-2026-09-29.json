@@ -1,0 +1,55 @@
+{
+  "protocol": "graphmory-source-handoff-v1",
+  "date": "2026-09-29",
+  "case": "01-approved-supersession",
+  "dataset": "synthetic Helios E1/E2 fixture",
+  "scope": "single preregistered native development case",
+  "result": "passed_bounded_case",
+  "packageVersion": "0.5.0-rc.3",
+  "baselineCommit": "692d9a1292c2753079d7e3f7988034e1356ac1bf",
+  "models": {
+    "writeLead": "gpt-5.6-sol low",
+    "writeCurator": "gpt-5.6-luna low",
+    "readLead": "gpt-5.6-sol low",
+    "readCurator": "gpt-5.6-luna low"
+  },
+  "sessions": {
+    "writeLead": "01a0edca-cd7f-7002-b619-6e1c1ca4ad06",
+    "writeCurator": "01a0edcb-727c-7a40-9ba8-21975a603157",
+    "readLead": "01a0edcd-2699-7a52-856f-2838fc3f2a9f",
+    "readCurator": "01a0edcd-72ca-7fc1-907e-eda07ab53271"
+  },
+  "sourcePaths": [
+    "90 Evidence/Approval Record.md",
+    "01 Projects/Helios/Release Policy.md",
+    "01 Projects/Helios/Runbook.md"
+  ],
+  "gates": {
+    "offlineInstalledPackageAndRole": true,
+    "twoFreshParentAndNamedChildBindings": true,
+    "forkTurnsNoneBothSessions": true,
+    "metadataOnlyManifestExactThreePaths": true,
+    "noGuessedPathOrReadError": true,
+    "validPreflightBeforeWrite": true,
+    "manifestOriginalReadBeforeWrite": true,
+    "persistencePostcheckBeforeApplied": true,
+    "activeSuccessorSupportedQualifiersAndE2": true,
+    "supersededPredecessorPreservesE1AndBothLinks": true,
+    "sourceBytesUnchanged": true,
+    "graphIssuesZero": true,
+    "freshCurrentAndHistoricalRecall": true,
+    "sourceBackedAnswer": true,
+    "allVaultBytesUnchangedInFreshRead": true
+  },
+  "checks": { "testsPassed": 368, "testsFailed": 0, "npmRunCheck": "passed" },
+  "wallSeconds": { "writeLead": 125.583, "readLead": 66.507 },
+  "notTested": [
+    "unsupported-write refusal",
+    "equal-authority conflict",
+    "later candidate-page evidence continuation",
+    "graph-engine multi-hop trail",
+    "private vault",
+    "other hosts",
+    "official benchmark or matched comparator"
+  ]
+}

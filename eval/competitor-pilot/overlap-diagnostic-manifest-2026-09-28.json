@@ -1,0 +1,236 @@
+{
+  "purpose": "Prospectively frozen question-family transfer slice; public data, unseen in prior local evaluation JSON at freeze time",
+  "sourceSha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "selectionSeed": "graphmory-transfer-2026-09-28-v1",
+  "perCategory": 2,
+  "excludedPreviouslySeenFamilies": 214,
+  "excludedFiles": [
+    {
+      "path": "eval/competitor-pilot/adaptive-bundle-fresh-four.json",
+      "sha256": "d4c83dab72e428adc2c2ca4c81591679c5c4c9982fd5a19cdbdc6b5cb6bc3a77",
+      "matchedIds": 4,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/adaptive-vs-paths-fresh-four.json",
+      "sha256": "44c4c3aa9744960e1ced492167e2c896ff81020fb992df06fd808390a5d4db37",
+      "matchedIds": 4,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/graphmory-question-only.json",
+      "sha256": "ac5dc19c7ae0671959823b8c1cea5fb7bfe7f12bde1315932ceb38d51cdcb7fa",
+      "matchedIds": 88,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/graphmory-results.json",
+      "sha256": "80f00b9a8dfaf8686648c96aae786dc34d58c10aaab1eb12bbe41745723ea8b9",
+      "matchedIds": 88,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/holdout-manifest.json",
+      "sha256": "cc4894bdef5bc9c33a5ba6a86bf185a0c39aba94e0e0dddb6bc85d93fde503fe",
+      "matchedIds": 14,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/holdout-question-only.json",
+      "sha256": "c035ce6387f38ac0777207e7c47121d011b66ece376f27d9cc07c67d15d8a04a",
+      "matchedIds": 89,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/holdout-with-date.json",
+      "sha256": "dc958ee0f9330a8088dc7b7e94159a42290e64ca81c38dc401ab06963a9714ae",
+      "matchedIds": 89,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/hybrid-development-2026-09-28.json",
+      "sha256": "1132ddb4fbb64172eeb09d02cbb66c766c393a00baa9f73bcfb60f5545934bd7",
+      "matchedIds": 14,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/hybrid-diagnostic-2026-09-28.json",
+      "sha256": "d25292e762d1ec05b9b6de1e74859adc69290a90974ed5f55f6245b80cdd6f6b",
+      "matchedIds": 1,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/hybrid-indexed-fourteen-2026-09-28.json",
+      "sha256": "8738d299a3dfb4373ba86576eb7639b0a54049d0b6c078ab45e71d0dee3a2ccc",
+      "matchedIds": 14,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/hybrid-isolated-cache-2026-09-28.json",
+      "sha256": "35f9745b34efdb13667ee1fd61ac3ae15e0a6219ea714c3fadb48134794af713",
+      "matchedIds": 1,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/hybrid-preflight-2026-09-28.json",
+      "sha256": "11fa0308f2e77389406442c01dbc3e24a54b16367bac24c022b8f7db14654184",
+      "matchedIds": 1,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/matched-preview-fresh-five.json",
+      "sha256": "3070f03dbceca181a621cb0f243e3fc35309b07d922753bc587e8fab5f9e8a57",
+      "matchedIds": 5,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/native-reader-development.json",
+      "sha256": "ecc985ff7fb8d8b0d5e985cb9960ca1238a900284d544110a5a9914b1e435cf1",
+      "matchedIds": 2,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/native-results.json",
+      "sha256": "68b587d386aa268e4e881e7f8d3540e24f57440f45bd77a1f7f127eea3bceae0",
+      "matchedIds": 14,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/preview-development.json",
+      "sha256": "74c6c898745bafdeb6d80dd510906f5e150d7d98b159e6cae30634ec23058593",
+      "matchedIds": 2,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/preview-fresh-six.json",
+      "sha256": "7528bafa0e5be2d449bd91a611c4865c786567d2e71ece804beb12dbabf363df",
+      "matchedIds": 6,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/question-only-results.json",
+      "sha256": "d72d299edef483d9cdbf8ec17a9e0c3e0b7d9ccf1df1e3a591d079ef996af928",
+      "matchedIds": 14,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/vector-indexed-one-fixed-2026-09-28.json",
+      "sha256": "c929f3eb6fcb6ff4d9dcdc94c9be3ff73c26c05e5c5c93323e930e4bbf270ae4",
+      "matchedIds": 1,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/vector-indexed-one-preflight-2026-09-28.json",
+      "sha256": "c929f3eb6fcb6ff4d9dcdc94c9be3ff73c26c05e5c5c93323e930e4bbf270ae4",
+      "matchedIds": 1,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/vector-indexed-three-2026-09-28.json",
+      "sha256": "a57642af2ef4afc8906f23b29f952672e53d7d303ad7a5330e6773412e842143",
+      "matchedIds": 3,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/vector-three-preflight-2026-09-28.json",
+      "sha256": "1d1a7f7cbe65fb641596a617624d2eee93934a7eaaf2130348bde8e8b1009b28",
+      "matchedIds": 3,
+      "parsed": true
+    },
+    {
+      "path": "eval/competitor-pilot/vector-three-title-smoke-2026-09-28.json",
+      "sha256": "b84d3b0b273f2814fcf9837e23f48b2486fdeef7c6505471a236097fc8e3cb17",
+      "matchedIds": 3,
+      "parsed": true
+    },
+    {
+      "path": "eval/longmemeval/acceptance-v2.json",
+      "sha256": "efbeb111268778f960f008f17fd8000032c743fc54913470e9dce73ae2a293ea",
+      "matchedIds": 135,
+      "parsed": true
+    },
+    {
+      "path": "eval/longmemeval/development-v2.json",
+      "sha256": "423bf2d64e0b814b0f1c03ec823fabb76ae699feb92311fd3546d9da91fb7a7d",
+      "matchedIds": 136,
+      "parsed": true
+    },
+    {
+      "path": "eval/longmemeval/pilot-strict-time.json",
+      "sha256": "ee04b31d1da578053006fe546f94f6b94bb83d27f54269dcfed6cc1b169876ec",
+      "matchedIds": 90,
+      "parsed": true
+    },
+    {
+      "path": "eval/longmemeval/pilot.json",
+      "sha256": "9010d50b3d254f2aa1688d8f671350196f56f03b4db62e8f5361ec649a65c133",
+      "matchedIds": 88,
+      "parsed": true
+    },
+    {
+      "path": "eval/reader-pilot/longmemeval-abstention09-live-2026-09-28.json",
+      "sha256": "f79116d772f0a089a164fa4dbb14cc1eef329e0d6137eda88c5e8b2914dc305e",
+      "matchedIds": 1,
+      "parsed": true
+    },
+    {
+      "path": "eval/reader-pilot/longmemeval-cli-delivery-goldread-2026-09-28.json",
+      "sha256": "1737bb98846741de7b7c6b85b2c8e28564bbdc152a92c4f411078ede015e4de2",
+      "matchedIds": 14,
+      "parsed": true
+    },
+    {
+      "path": "eval/reader-pilot/longmemeval-cli-delivery-initial-2026-09-28.json",
+      "sha256": "17aedb816e0e24dcb3051e072dfba193370f3400487d9667f4c697b3ae1489d0",
+      "matchedIds": 14,
+      "parsed": true
+    },
+    {
+      "path": "eval/reader-pilot/longmemeval-cli-delivery-pagebytes-2026-09-28.json",
+      "sha256": "745bf2bcd0643e77a93d70dadca1b8076685d83a1ceac9ab15d4b719b1e99e49",
+      "matchedIds": 14,
+      "parsed": true
+    },
+    {
+      "path": "eval/reader-pilot/longmemeval-live-a40-2026-09-28.json",
+      "sha256": "b4cd7d4f6d37d07a03030c7e6091a002d39f3df9b914a2601cf0be77cccade4e",
+      "matchedIds": 1,
+      "parsed": true
+    },
+    {
+      "path": "eval/reader-pilot/longmemeval-live-a40-persistent-2026-09-28.json",
+      "sha256": "f11611c145449388d3a97447e236b7fc96145636571a6f4a0403ef763fb870c9",
+      "matchedIds": 1,
+      "parsed": true
+    },
+    {
+      "path": "eval/reader-pilot/longmemeval-live-multi-67-2026-09-28.json",
+      "sha256": "e8cc553678b782e0ccfa72c1cafea5be1a9f92e7b9ec7be63ae24219e62ceb34",
+      "matchedIds": 1,
+      "parsed": true
+    },
+    {
+      "path": "eval/reader-pilot/longmemeval-multi-structured-citations-2026-09-28.json",
+      "sha256": "65c140abf3b08572b376e803ed14061bd75566360f0e6112218a7c0b31cac325",
+      "matchedIds": 1,
+      "parsed": true
+    }
+  ],
+  "unavailableCategories": [
+    "abstention"
+  ],
+  "selectedIds": [
+    "c6853660",
+    "6071bd76",
+    "157a136e",
+    "2e6d26dc",
+    "cc539528",
+    "70b3e69b",
+    "0edc2aef",
+    "0a34ad58",
+    "58ef2f1c",
+    "a82c026e",
+    "gpt4_85da3956",
+    "gpt4_7ca326fa"
+  ]
+}

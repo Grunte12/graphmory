@@ -1,0 +1,165 @@
+{
+  "protocol": "support-judge-calibration-v1",
+  "reviews": [
+    {
+      "blindId": "a20b8a66976f",
+      "sourceSupport": "no",
+      "complete": "no",
+      "citationCoverage": "yes",
+      "supportedComplete": "no",
+      "rationale": "events.md records one rejection; later mention repeats it and feared outcome is not an actual rejection."
+    },
+    {
+      "blindId": "a74a520a07ef",
+      "sourceSupport": "yes",
+      "complete": "yes",
+      "citationCoverage": "yes",
+      "supportedComplete": "yes",
+      "rationale": "owner.md names Mira as Cedar owner."
+    },
+    {
+      "blindId": "da05d7f6994e",
+      "sourceSupport": "yes",
+      "complete": "yes",
+      "citationCoverage": "yes",
+      "supportedComplete": "yes",
+      "rationale": "owner.md names Mira; launch.md gives May 8."
+    },
+    {
+      "blindId": "5d68f02b8bea",
+      "sourceSupport": "no",
+      "complete": "no",
+      "citationCoverage": "yes",
+      "supportedComplete": "no",
+      "rationale": "old.md says the pre-update deadline was March 4; update.md describes the later April 9 deadline."
+    },
+    {
+      "blindId": "d5fa67655c13",
+      "sourceSupport": "no",
+      "complete": "no",
+      "citationCoverage": "yes",
+      "supportedComplete": "no",
+      "rationale": "north.md gives North budget as $12,000; south.md is about South."
+    },
+    {
+      "blindId": "d21beee107c4",
+      "sourceSupport": "yes",
+      "complete": "yes",
+      "citationCoverage": "yes",
+      "supportedComplete": "yes",
+      "rationale": "update.md gives the current Atlas deadline as April 9."
+    },
+    {
+      "blindId": "1d7c913f5a11",
+      "sourceSupport": "yes",
+      "complete": "yes",
+      "citationCoverage": "yes",
+      "supportedComplete": "yes",
+      "rationale": "events.md records one rejection; the repeat mention and feared future outcome are correctly excluded."
+    },
+    {
+      "blindId": "82b761941a8f",
+      "sourceSupport": "yes",
+      "complete": "yes",
+      "citationCoverage": "yes",
+      "supportedComplete": "yes",
+      "rationale": "a.md and b.md give conflicting Cove budgets and neither note supersedes the other."
+    },
+    {
+      "blindId": "b373e4b7af0e",
+      "sourceSupport": "yes",
+      "complete": "yes",
+      "citationCoverage": "yes",
+      "supportedComplete": "yes",
+      "rationale": "settings.md says Ember is not enabled; next-quarter enablement is only possible."
+    },
+    {
+      "blindId": "8aa11e642a71",
+      "sourceSupport": "no",
+      "complete": "no",
+      "citationCoverage": "yes",
+      "supportedComplete": "no",
+      "rationale": "owner.md says no deadline is recorded; July 1 is unsupported."
+    },
+    {
+      "blindId": "563b0212ef2a",
+      "sourceSupport": "no",
+      "complete": "no",
+      "citationCoverage": "yes",
+      "supportedComplete": "no",
+      "rationale": "b.md reports $8,000 but explicitly says it does not replace the conflicting $5,000 in a.md; confirmation is unsupported."
+    },
+    {
+      "blindId": "01bc31af5195",
+      "sourceSupport": "yes",
+      "complete": "yes",
+      "citationCoverage": "yes",
+      "supportedComplete": "yes",
+      "rationale": "north.md gives North budget as $12,000."
+    },
+    {
+      "blindId": "c04f26f3cb70",
+      "sourceSupport": "no",
+      "complete": "no",
+      "citationCoverage": "yes",
+      "supportedComplete": "no",
+      "rationale": "update.md changes the current deadline to April 9; March 4 is the superseded deadline in old.md."
+    },
+    {
+      "blindId": "daca7543a003",
+      "sourceSupport": "yes",
+      "complete": "no",
+      "citationCoverage": "yes",
+      "supportedComplete": "no",
+      "rationale": "owner.md supports Mira, but launch.md's May 8 launch date is omitted."
+    },
+    {
+      "blindId": "9c84f1e66c02",
+      "sourceSupport": "yes",
+      "complete": "yes",
+      "citationCoverage": "yes",
+      "supportedComplete": "yes",
+      "rationale": "river.md says the River train fare is not recorded; hill.md concerns a different trip."
+    },
+    {
+      "blindId": "dc0f3173db66",
+      "sourceSupport": "yes",
+      "complete": "yes",
+      "citationCoverage": "yes",
+      "supportedComplete": "yes",
+      "rationale": "owner.md names Mira as Cedar owner."
+    },
+    {
+      "blindId": "eaf904037c05",
+      "sourceSupport": "yes",
+      "complete": "yes",
+      "citationCoverage": "yes",
+      "supportedComplete": "yes",
+      "rationale": "old.md explicitly gives March 4 as the Atlas deadline before the January 20 update."
+    },
+    {
+      "blindId": "40d17fcf71be",
+      "sourceSupport": "yes",
+      "complete": "yes",
+      "citationCoverage": "no",
+      "supportedComplete": "no",
+      "rationale": "owner.md supports Mira, but no citation was provided."
+    },
+    {
+      "blindId": "39849d1c921a",
+      "sourceSupport": "no",
+      "complete": "no",
+      "citationCoverage": "no",
+      "supportedComplete": "no",
+      "rationale": "hill.md gives $40 for Hill; river.md says River fare is not recorded, and the River claim lacks supporting citation."
+    },
+    {
+      "blindId": "4a63fbd87081",
+      "sourceSupport": "no",
+      "complete": "no",
+      "citationCoverage": "yes",
+      "supportedComplete": "no",
+      "rationale": "settings.md says Ember is not enabled, directly contradicting the answer."
+    }
+  ]
+}

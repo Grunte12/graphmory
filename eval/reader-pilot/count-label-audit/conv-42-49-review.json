@@ -1,0 +1,30 @@
+{
+  "protocol": "locomo-count-label-audit-v1",
+  "caseId": "conv-42:49",
+  "manifestSha256": "b0b9e6055a9841a7ce4dad398455f1ee97c670099d36bb9604da880809e621dd",
+  "status": "provisional",
+  "reviewedSessions": [
+    "session_14.md",
+    "session_24.md"
+  ],
+  "events": [
+    {
+      "eventId": "first-screenplay-rejection",
+      "turnIds": [
+        "D14:1",
+        "D14:5"
+      ],
+      "classification": "counted",
+      "rationale": "D14:5 repeats the same rejection described at D14:1."
+    },
+    {
+      "eventId": "later-production-company-rejection",
+      "turnIds": [
+        "D24:12"
+      ],
+      "classification": "counted",
+      "rationale": "D24:12 describes another rejection."
+    }
+  ],
+  "rationale": "Two annotated events are supported, but not every session was semantically reviewed for other rejections."
+}

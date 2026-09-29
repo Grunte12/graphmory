@@ -1,0 +1,13 @@
+# Ranked-original three-arm runner preflight
+
+This is a workflow and integrity preflight, **not an answer-quality result**. No live model was called. The two LongMemEval-S histories were already exposed development cases; no holdout was opened.
+
+The six planned slots are Graphmory control, ranked-original transport, and native Basic Memory hybrid for each of `gpt4_d84a3211` and `67e0d0f2`, with rotated order. Both Basic Memory 0.23.2 indexes were built from the same source corpora and fully embedded their 48 and 52 original notes. The frozen private manifest is `/private/tmp/graphmory-ranked-three-arm-manifest-v1.json`, SHA-256 `a64a6d9a3f438adaf7ddc4131f3857d9faa66b3ef7443526c8592798f056e836`. It pins the dataset, reader inputs, Basic configs/index reports, code hashes, models, byte and round limits, and slot order. The verifier checked both source hash maps and indexed bodies before execution.
+
+The first fake-host run completed one slot, then failed the ranked slot with `Invalid lead citation provenance`; four slots were marked unattempted. This was a fixture defect: the fake Lead cited the alphabetically first verified path rather than the path named in the fake Curator brief. It also confirmed the runner now exits nonzero when a slot fails. The fixture was corrected without changing the frozen retrieval inputs or runner, then a **new** fake-host output directory was used. The second run completed all six slots; both native Basic search arms executed offline with the per-index embedding cache. Source-bearing traces and the fixture remain private under `/private/tmp/graphmory-ranked-three-arm-fake-v1` and `-v2`.
+
+The fake host returns only `transport fixture`, so it cannot measure supported-complete answers, citation support, model latency, token usage, or comparative cost. The six live-model calls remain unattempted. Do not promote the ranked transport or claim superiority based on this preflight. If live screening proceeds, preserve the exact manifest and planned slots, record failures and full-workflow metrics, then require independent source-disjoint confirmation before any default change.
+
+Repository verification first found an isolated Basic fixture setup error after the runner began executing Basic in its configured home: the test had named a home directory but never created it. The fixture now creates the configured state and home directories. This does not change any retrieval or model result.
+
+After that repair, `npm run check` passed and the focused Python collection suite passed 7/7. The required read-only personal-vault status command returned `SYNC_CONFIG_NOT_FOUND`; the vault was not changed.

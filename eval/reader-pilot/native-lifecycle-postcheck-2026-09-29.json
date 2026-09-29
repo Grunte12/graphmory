@@ -1,0 +1,42 @@
+{
+  "experiment": "native lifecycle postcheck single attempt",
+  "date": "2026-09-29",
+  "revision": "5ae87c6",
+  "installedPackage": {
+    "name": "graphmory",
+    "version": "0.5.0-rc.3",
+    "integrity": "sha512-2ARCUt5P9dWq6s0nHZ5ZDRltQBll6OZKd5SvTmCsHOHZV//msO2jRDNzQ+Pf+2Kmd2JJFyskYVY4+qIonkFE3A=="
+  },
+  "host": "Codex CLI",
+  "leadModel": "gpt-5.6-sol",
+  "leadReasoning": "low",
+  "configuredCuratorModel": "gpt-5.6-luna",
+  "execution": {
+    "exitCode": 0,
+    "wallSeconds": 19.197
+  },
+  "classification": "dispatch-unverified; no child created",
+  "childBindingCount": 0,
+  "leadReportedReason": "native graphmory_curator dispatch unavailable due agent-type/fork constraint",
+  "exactToolErrorVerified": false,
+  "leadResult": "BLOCKED \u2014 native `graphmory_curator` dispatch was unavailable due an agent-type/fork constraint. Per instruction, I stopped immediately. No files were changed.",
+  "livePersistenceGatePassed": false,
+  "vaultChecks": [
+    {
+      "case": "01-approved-supersession",
+      "allVaultBytesUnchanged": true
+    },
+    {
+      "case": "02-missing-provenance",
+      "allVaultBytesUnchanged": true
+    },
+    {
+      "case": "03-unresolved-current-conflict",
+      "allVaultBytesUnchanged": true
+    }
+  ],
+  "traceSha256": "70723d89d17bc69912eae7a5b593c1077b16e7c24fbba94a17f200d4a024f290",
+  "roleSha256": "a1c7d736bdaa929cb090e6cd6dcc4cef21e0069c0ebe57c0504b1820f3867ffe",
+  "goalComplete": false,
+  "temporaryWorkspaceRemoved": true
+}

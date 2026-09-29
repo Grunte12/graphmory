@@ -1,0 +1,53 @@
+{
+  "experiment": "sqlite-mutation-parity-2026-09-29",
+  "status": "synthetic-development-screen-passed-not-production",
+  "protocol": "../sqlite-mutation-parity-protocol-2026-09-29.md",
+  "dataset": "12-13 generic synthetic Markdown notes in six frozen states",
+  "environment": "macOS arm64, Node v24.18.0",
+  "operations": ["initial", "add", "edit-body-and-lifecycle", "delete", "rename-across-folders", "edit-renamed"],
+  "queriesPerState": 12,
+  "exactQueries": 72,
+  "exactQueriesPlanned": 72,
+  "fullRankAndScoreParity": true,
+  "pagination": {
+    "experimentalRawIndexPageSize": 3,
+    "broadCandidateCountsByState": [12, 13, 13, 12, 12, 12],
+    "everyCandidateReachable": true,
+    "duplicatePaths": 0
+  },
+  "stalePriorSourceRejectedWithoutDbChange": true,
+  "firstAttempt": {
+    "result": "failed on empty unpaged query",
+    "attempted": 11,
+    "repair": "allow an empty full result while still rejecting an explicit page with k < 1"
+  },
+  "postFixSciFact": {
+    "notes": 5183,
+    "queries": 300,
+    "fullRankAndScoreParity": "300/300",
+    "officialBEIRVersion": "2.2.0",
+    "runFilesIdentical": true,
+    "ndcgAt10BothArms": 0.65311,
+    "recallAt10BothArms": 0.76633
+  },
+  "rawLedgerSha256": {
+    "failedAttempt": "cba79a1694f5b14afc1f3468d9ea23fd5d8c4f078ecf2c3525750499df35c3ff",
+    "passingMutation": "01e477686b483b1d604ea25d3fe48088db34b8333018ab905b2f68f5fa3b5627",
+    "postFixSciFactParity": "d38a8607c7e0ebe07bece222bd5569ba1a2856d8f554085fe157b065787d3665",
+    "postFixBEIRManifest": "fe7c54267386e3df570bf97b3525a9fbe7d0a79b2d9ddde94692a05ffc0774b7",
+    "postFixOfficialScore": "17c28a5d8d385231861f536ce082ab6241db4193bba196bd15bf0459e500034e"
+  },
+  "codeSha256": {
+    "retrieval": "28f656a4bef7806d9a2a7690c2c31b7ad0732b894e05946e186286e05a4bc6c1",
+    "prototype": "f4e5c23243c5c77ac945476d95bf4ad1b2cd9d3f5eed3777e66ddfc9b9991a8d",
+    "updater": "1a0a3d9d52523d526fef1bc720ee49472bc683b7904b1f6539e53dc447551247",
+    "mutationEvaluator": "b2a891610ff497f629dc46796f4aa1f5437b4030aad62d178e3aebfc2c79484e"
+  },
+  "promotionBlockers": [
+    "Node 20 compatible runtime and automatic source freshness",
+    "scope/lifecycle and managed multi-lane parity",
+    "crash/concurrency safety",
+    "paired end-to-end Curator/Lead quality and latency",
+    "independent holdout"
+  ]
+}

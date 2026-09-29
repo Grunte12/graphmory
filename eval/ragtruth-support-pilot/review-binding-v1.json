@@ -1,0 +1,26 @@
+{
+  "protocol": "ragtruth-source-support-pilot-v1",
+  "hashes": {
+    "packet-v1.json": "9061010f708601a0b5bb14101ad7ee6aba231fef269578e3ffabe741b7317e8e",
+    "labels-v1.json": "7e15804e2aa3cc9df0851337907e72edde6ad3ba7bf57c32b09f25aa69e5d46f",
+    "manifest-v1.json": "38cad42da4af29f7bccd92fa1da631c275ccc5b6611d7b77815981713da77b45",
+    "review-v1.json": "caefa6b3eac35c4f2fad7d7a0eafb02f1b5d69621c2a6bdbe38356804245909a",
+    "score-v1.json": "eb1b9981399f92b2be94b83c1690066193e51a20de1c3194093b82ddbd0eba4c"
+  },
+  "reviewer": {
+    "model": "gpt-6-luna",
+    "reasoning": "max",
+    "host": "Codex collaboration subagent",
+    "reviews": 24,
+    "retries": 0,
+    "isolation": "Instruction-based; not filesystem enforced",
+    "tokenUsage": null,
+    "providerCost": null
+  },
+  "observation": {
+    "dispatchRecordedAt": "2026-09-28 12:44:56 UTC",
+    "completionObservedAt": "2026-09-28 12:53:13 UTC",
+    "wallObservationSeconds": 497,
+    "limitation": "Dispatch-to-observation wall interval; not generation or Graphmory retrieval latency"
+  }
+}

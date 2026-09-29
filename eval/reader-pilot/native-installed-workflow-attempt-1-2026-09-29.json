@@ -1,0 +1,40 @@
+{
+  "protocol": "native-installed-workflow-smoke-v1",
+  "attempt": 1,
+  "packageSha256": "25e6068b3e2fd0f270eb18a386e291523878aedba26dcfe4c516a6ec23d73b68",
+  "installedRoleSha256": "c12608771f1ffd3e89627cbdcd2ec9de7d01be8333ef26f2f3f145b5134c43d2",
+  "traceSha256": "01954a233833677bdfc6c716ce41e3396439d188b02019e01e22100f327e0edb",
+  "configuredLead": "gpt-5.6-sol",
+  "configuredCurator": "gpt-5.6-luna",
+  "nativeExitCode": 0,
+  "events": {
+    "thread.started": 1,
+    "turn.started": 1,
+    "item.completed": 2,
+    "turn.completed": 1
+  },
+  "itemTypes": {
+    "error": 1,
+    "agent_message": 1
+  },
+  "sourceNotesUnchanged": true,
+  "outcome": "incomplete-no-observed-native-dispatch",
+  "leadResult": {
+    "dispatch_status": "BLOCKED",
+    "curator_role": "graphmory_curator could not be dispatched because the available agent interface does not support the required custom agent_type or its pinned gpt-5.6-luna model; no generic worker was substituted",
+    "patch_status": "not_applied",
+    "changed_paths": [],
+    "multi_hop_answer": null,
+    "citations": [],
+    "lifecycle_status": "not_run",
+    "graph_status": "not_run",
+    "unresolved": [
+      "Required configured custom Curator dispatch capability is unavailable"
+    ],
+    "skills_used": []
+  },
+  "limitations": [
+    "Lead reported unavailable custom dispatch; no attempted dispatch tool call was observed. This does not independently prove a host capability limitation.",
+    "Installed files and doctor pass do not prove named-agent discovery or full lifecycle workflow."
+  ]
+}

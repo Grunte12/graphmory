@@ -1,0 +1,21 @@
+# Opt-in collection runner integration
+
+This is implementation verification, not a model benchmark or a quality win. It repairs the concrete failure in the [first CLI audit](collection-runner-audit-2026-09-28.md) and connects the existing experimental Curator runner to the original-evidence collector. Default runs retain their existing behavior.
+
+## Contract
+
+- `--source-index` gives each arm the same explicit original path/hash inventory. The Curator may request any original in that inventory. Basic Memory still uses its native hybrid index for retrieval; with this comparison flag, original reads use the same Graphmory `read-notes` CLI as the other arms. Indexed-body hashes remain checked separately.
+- `--collection-ledger` requires `--source-index`, uses the declared originals, maps complete original lines to candidate facts, verifies exact quoted spans through `--record-span`, then supplies the ledger to the existing Curator and Lead stages. Mapping a quote does not prove the candidate fact is true or that all relevant facts were extracted. Model prompts say so, and the report retains `semanticCompleteness: unverified`.
+- Page bytes derive from half of the common `--max-input-bytes` ceiling before a trial. Mapping calls are capped at `max_rounds - 1`, leaving one Curator synthesis call and the ordinary Lead call. An exhausted page, call or prompt budget stops before Lead with an explicit incomplete reason. No top-k evidence limit is used.
+- A line split across pages is reassembled from consecutive original fragments before mapping. The carry starts at the original byte/line cursor; it is never treated as a complete quotation prematurely. A single huge line that exceeds the common prompt budget stops explicitly.
+- Collection state is private to the trial. The source-bearing ledger and model traces stay in the private output directory. Reports record hashes, paths, page sizes, model usage and stop reasons; published evaluation notes contain no source text.
+
+## Verification and failures retained
+
+The first fixture failed: a valid 32-byte Markdown original yielded one rejected span and zero ledger entries because snake-case map fields were sent unchanged to a camel-case CLI API. After boundary normalization, the same actual CLI fixture yields `complete=true`, one verified span and one ledger entry. Further actual-CLI tests cover an early source with evidence followed by a source without evidence, a long factual line split across pages, and the shared source-index allowlist. A runner fixture uses a deliberately inadequate prompt budget and verifies `collection-map-input-byte-budget`, zero model calls and no Lead answer. A separate fake-host fixture runs the **existing runner** for Graphmory control, collection, and a Basic Memory protocol stub through Curator, original reads and Lead, producing the same cited fixture answer. The Basic stub tests the runner's original-read parity path; it is not a native Basic Memory quality run. These fake hosts test wiring and citation validation, not model quality, latency or cost. All **six** focused Python tests pass. The earlier exploratory `python -m unittest test/curator_collection_test.py` import invocation failed because the Python `test` directory is not a package; the direct test-file invocation succeeds. The temporary fixtures are removed after execution.
+
+`npm run check` exited 0 after these changes; its log is private at `/private/tmp/graphmory-check-collection-integration-2026-09-28.log`. A read-only status request on the user's Obsidian vault returned `SYNC_CONFIG_NOT_FOUND`; it did not change the vault.
+
+## Unverified and next gate
+
+No live model call or matched three-arm answer workflow was run. The eight fixed development candidate labels remain unqualified: a Luna full-history reviewer hit its usage limit before producing an audit. The packet source hashes were checked, but hash validity does not establish answer validity. Do not run the preregistered 24 workflows until full-history count and absence labels, arm access parity, and a frozen manifest have been verified. This integration by itself says nothing about end-to-end correctness, latency, token caching or cost advantage.

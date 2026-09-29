@@ -14,6 +14,8 @@ node scripts/eval-longmemeval.mjs --input tmp/datasets/longmemeval_s_cleaned.jso
 
 Basic Memory commands per isolated case: `bm project add pilot <notes> --local --default`, `bm reindex --search --project pilot`, and `bm tool search-notes <query> --project pilot --local --page-size 12 --json`. Environment disables semantic search and reranker, sets default search type text, isolates BASIC_MEMORY_CONFIG_DIR and XDG_CONFIG_HOME. This tests text search, not the default hybrid system. Official references: https://docs.basicmemory.com/local/cli-basics and https://docs.basicmemory.com/reference/mcp-tools-reference . Installed package version was verified with `bm --version`.
 
+For `--hybrid` or `--vector`, the evaluator uses `bm reindex --search --embeddings --project pilot` and requires its CLI summary to report at least one embedded entity and zero embedding errors for every case. It records model, index and embedded count. Reports from before this correction that requested `--hybrid` without embeddings are invalid semantic comparisons. The `--vector` option is a diagnostic of whether a real semantic index retrieves candidates; it is not a full Curator workflow.
+
 Native ingestion changes frontmatter/formatting; original inputs are identical across systems, resulting file hashes and changed file counts are recorded. Every case confirmed indexed note count and passed a known-item search. Results map only exact file_path fields; no unmapped rows or execution failures occurred. Twelve raw rows were requested; duplicates would be deduplicated without extra pages. Three searches per case were recorded. State was removed after each case.
 
 ## Audited results

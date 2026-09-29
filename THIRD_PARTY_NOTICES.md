@@ -36,3 +36,24 @@ The design was informed by:
   https://qdrant.tech/documentation/
 
 Names and links are provided for attribution and research traceability. They do not imply endorsement.
+
+## Vendored development evaluation skills
+
+`.agents/skills/{eval-audit,evaluate-rag,validate-evaluator,write-code-eval}/` contains
+unmodified instruction files from [AI Evals Course / evals-skills](https://github.com/ai-evals-course/evals-skills),
+revision `80d5f7b0127c7572ed9e9339937adbfd7240ffeb`, under Apache-2.0.
+The license is included at `.agents/skills/LICENSE.evals-skills`; file hashes
+and provenance are recorded in `.agents/skills/evals-skills-provenance.json`.
+These repository development skills are excluded from the npm package's
+explicit `files` list. They are separate from the original runtime and from
+the research inspirations listed above.
+
+## Vendored Context Engineering development skills
+
+`.agents/skills/{evaluation,tool-design}/` contains unmodified files from
+[Agent Skills for Context Engineering](https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering),
+revision `6dbe1a1d868eab51a3bc9011b0f55e2891513e40`, under MIT. The license and source hashes are retained in
+`.agents/skills/LICENSE.context-engineering` and
+`.agents/skills/context-engineering-provenance.json`. These development-only
+resources are excluded from the npm package. Bundled heuristic example scorers
+are guidance, not adopted benchmark implementations.

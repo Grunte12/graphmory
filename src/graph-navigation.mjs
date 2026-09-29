@@ -29,7 +29,10 @@ function* noteReferences(document) {
 
 // Derived navigation only. Ambiguous short names are deliberately not resolved.
 export function buildNoteGraph(documents, { scope = "" } = {}) {
-  const eligible = filterByScope(documents, scope).filter((document) => isRetrievable(document))
+  const inScope = filterByScope(documents, scope)
+  const inScopeIds = new Set(inScope.map((document) => document.id))
+  const eligible = inScope.filter((document) => isRetrievable(document))
+  const suppliedById = new Map(documents.map((document) => [document.id, document]))
   const byId = new Map(eligible.map((document) => [document.id, document]))
   const resolve = createNoteLinkResolver(documents.map((document) => ({ path: document.id, title: document.title, text: document.markdown })))
   const outgoing = new Map(eligible.map((document) => [document.id, new Set()]))
@@ -37,6 +40,8 @@ export function buildNoteGraph(documents, { scope = "" } = {}) {
   const edgeDetails = new Map()
   const issues = []
   const issueCounts = {}
+  const excludedReferences = []
+  const excludedCounts = {}
   let edges = 0
   let limitReached = false
   for (const document of eligible) {
@@ -52,10 +57,29 @@ export function buildNoteGraph(documents, { scope = "" } = {}) {
           ? reference.target.slice(1) : path.posix.join(path.posix.dirname(document.id), reference.target)) }
         : resolve(reference.target, document.id)
       const target = resolved.resolved ? resolved.path : null
-      if (!target || !byId.has(target)) {
-        const reason = !resolved.resolved ? resolved.reason : "excluded-or-missing"
+      const suppliedTarget = target ? suppliedById.get(target) : null
+      if (!resolved.resolved || !suppliedTarget) {
+        const reason = resolved.reason === "ambiguous" ? "ambiguous" : "unresolved"
         issueCounts[reason] = (issueCounts[reason] ?? 0) + 1
-        if (issues.length < 20) issues.push({ source: document.id, target: reference.target, relation: reference.relation, reason })
+        if (issues.length < 20) issues.push({ source: document.id, target: reference.target,
+          relation: reference.relation, kind: reference.kind, reason })
+        continue
+      }
+      if (!byId.has(target)) {
+        const reasons = []
+        if (!inScopeIds.has(target)) reasons.push("scope")
+        if (!isRetrievable(suppliedTarget)) {
+          const status = String(suppliedTarget.metadata?.status ?? suppliedTarget.metadata?.lifecycle ?? "current").toLowerCase()
+          reasons.push(`lifecycle:${status}`)
+        }
+        // The target came from the supplied inventory. Keep it out of traversal, but
+        // report why it was excluded separately from broken-reference issues.
+        if (reasons.length) {
+          for (const reason of reasons) excludedCounts[reason] = (excludedCounts[reason] ?? 0) + 1
+          if (excludedReferences.length < 20) excludedReferences.push({ source: document.id,
+            target: reference.target, relation: reference.relation, kind: reference.kind,
+            resolvedPath: target, reason: reasons.join("+") })
+        }
         continue
       }
       if (target === document.id) continue
@@ -70,7 +94,8 @@ export function buildNoteGraph(documents, { scope = "" } = {}) {
       edges++
     }
   }
-  return { byId, outgoing, incoming, edgeDetails, edges, limitReached, issues, issueCounts }
+  return { byId, outgoing, incoming, edgeDetails, edges, limitReached,
+    issues, issueCounts, excludedReferences, excludedCounts }
 }
 
 export function linkedNeighbors(graph, id, direction = "both") {
@@ -97,6 +122,8 @@ export function summarizeNoteGraph(documents, options = {}) {
   const hubs = [...graph.byId.keys()].map((id) => ({ path: id, outgoing: graph.outgoing.get(id).size, incoming: graph.incoming.get(id).size }))
     .sort((a, b) => b.outgoing + b.incoming - a.outgoing - a.incoming || a.path.localeCompare(b.path)).slice(0, 10)
   return { notes: graph.byId.size, edges: graph.edges, isolatedCount: isolated.length, isolated: isolated.slice(0, 20),
-    hubs, issueCounts: graph.issueCounts, issues: graph.issues, graphLimitReached: graph.limitReached,
+    hubs, issueCounts: graph.issueCounts, issues: graph.issues,
+    excludedCounts: graph.excludedCounts, excludedReferences: graph.excludedReferences,
+    graphLimitReached: graph.limitReached,
     scanLimitReached: documents.length >= 5000 }
 }

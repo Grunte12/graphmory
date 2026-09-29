@@ -1,0 +1,332 @@
+{
+  "protocol": "prefetch-three-arm-development-v1",
+  "manifestSha256": "5b6109695d28ce64b6dea154679d4c5700515f8e83dc9870d09cee8d8c323cf1",
+  "summarizerSha256": "532a65f6a685fe54a0b619cf9f4d87b14d9172669b8bda64045b616892951cc5",
+  "rawSummarySha256": "04cacb85b8e3af22249f60e7551879d595152a7bc5facf82cbc6e48427da1d1d",
+  "scorerSourceSha256": "8e3be5d57ff2ff9ec5cd05939592f468c5f3f1fd95d13e431932bdf6bf0fd6fd",
+  "blindPacketSha256": "ed25221730762aebe0e81fcff58c6f846c1657f34337ea03f89db3ec7710a3aa",
+  "indexBuilds": [
+    {
+      "id": "conv-26:40",
+      "exitCode": 0,
+      "version": "0.23.2",
+      "indexed": 19,
+      "embedded": 19,
+      "embeddingErrors": 0,
+      "embeddingModel": "FastEmbedEmbeddingProvider:bge-small-en-v1.5:384",
+      "indexSeconds": 14.112,
+      "normalizedFiles": 19
+    },
+    {
+      "id": "conv-47:8",
+      "exitCode": 0,
+      "version": "0.23.2",
+      "indexed": 31,
+      "embedded": 31,
+      "embeddingErrors": 0,
+      "embeddingModel": "FastEmbedEmbeddingProvider:bge-small-en-v1.5:384",
+      "indexSeconds": 14.232,
+      "normalizedFiles": 31
+    },
+    {
+      "id": "conv-50:18",
+      "exitCode": 0,
+      "version": "0.23.2",
+      "indexed": 30,
+      "embedded": 30,
+      "embeddingErrors": 0,
+      "embeddingModel": "FastEmbedEmbeddingProvider:bge-small-en-v1.5:384",
+      "indexSeconds": 15.495,
+      "normalizedFiles": 30
+    }
+  ],
+  "rows": [
+    {
+      "id": "conv-26:40",
+      "tool": "basic",
+      "trialIndex": 0,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "At least twice in 2023, though it is uncertain whether these were separate trips.",
+      "citations": [],
+      "citationIdentityValid": true,
+      "rawQaF1": 0.0,
+      "elapsedSeconds": 22.972,
+      "modelCalls": 2,
+      "originalReads": 0,
+      "goldOriginalsRead": 0,
+      "goldOriginals": 2,
+      "toolOutputBytes": 73644,
+      "observedUsage": {
+        "input_tokens": 51249,
+        "cached_input_tokens": 0,
+        "output_tokens": 297,
+        "reasoning_output_tokens": 152
+      },
+      "supportVerdict": {
+        "referenceAgreement": "unclear",
+        "sourceSupport": "unclear",
+        "complete": "unclear",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      }
+    },
+    {
+      "id": "conv-26:40",
+      "tool": "graph",
+      "trialIndex": 1,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "At least once in 2023, possibly twice; the exact number is not stated.",
+      "citations": [
+        "session_10.md"
+      ],
+      "citationIdentityValid": true,
+      "rawQaF1": 0.0,
+      "elapsedSeconds": 30.383,
+      "modelCalls": 3,
+      "originalReads": 1,
+      "goldOriginalsRead": 1,
+      "goldOriginals": 2,
+      "toolOutputBytes": 16556,
+      "observedUsage": {
+        "input_tokens": 57507,
+        "cached_input_tokens": 14080,
+        "output_tokens": 426,
+        "reasoning_output_tokens": 266
+      },
+      "supportVerdict": {
+        "referenceAgreement": "no",
+        "sourceSupport": "yes",
+        "complete": "no",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      }
+    },
+    {
+      "id": "conv-26:40",
+      "tool": "prefetch",
+      "trialIndex": 2,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "Melanie has gone to the beach 2 times in 2023.",
+      "citations": [
+        "session_6.md",
+        "session_10.md"
+      ],
+      "citationIdentityValid": true,
+      "rawQaF1": 0.19999999999999998,
+      "elapsedSeconds": 17.9,
+      "modelCalls": 2,
+      "originalReads": 19,
+      "goldOriginalsRead": 2,
+      "goldOriginals": 2,
+      "toolOutputBytes": 97065,
+      "observedUsage": {
+        "input_tokens": 57624,
+        "cached_input_tokens": 0,
+        "output_tokens": 250,
+        "reasoning_output_tokens": 138
+      },
+      "supportVerdict": {
+        "referenceAgreement": "yes",
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      }
+    },
+    {
+      "id": "conv-47:8",
+      "tool": "prefetch",
+      "trialIndex": 3,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "James has three pets, all dogs: Max, Daisy, and Ned.",
+      "citations": [
+        "session_31.md",
+        "session_15.md"
+      ],
+      "citationIdentityValid": true,
+      "rawQaF1": 0.4,
+      "elapsedSeconds": 17.06,
+      "modelCalls": 2,
+      "originalReads": 31,
+      "goldOriginalsRead": 2,
+      "goldOriginals": 2,
+      "toolOutputBytes": 132013,
+      "observedUsage": {
+        "input_tokens": 68567,
+        "cached_input_tokens": 29440,
+        "output_tokens": 147,
+        "reasoning_output_tokens": 26
+      },
+      "supportVerdict": {
+        "referenceAgreement": "yes",
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "yes",
+        "supportedComplete": "yes"
+      }
+    },
+    {
+      "id": "conv-47:8",
+      "tool": "basic",
+      "trialIndex": 4,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "3 pets (all dogs).",
+      "citations": [],
+      "citationIdentityValid": true,
+      "rawQaF1": 0.3333333333333333,
+      "elapsedSeconds": 17.409,
+      "modelCalls": 2,
+      "originalReads": 0,
+      "goldOriginalsRead": 0,
+      "goldOriginals": 2,
+      "toolOutputBytes": 74020,
+      "observedUsage": {
+        "input_tokens": 52279,
+        "cached_input_tokens": 14080,
+        "output_tokens": 111,
+        "reasoning_output_tokens": 40
+      },
+      "supportVerdict": {
+        "referenceAgreement": "yes",
+        "sourceSupport": "yes",
+        "complete": "yes",
+        "citationCoverage": "no",
+        "supportedComplete": "no"
+      }
+    },
+    {
+      "id": "conv-47:8",
+      "tool": "graph",
+      "trialIndex": 5,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "James has at least two pets.",
+      "citations": [
+        "session_5.md",
+        "session_14.md",
+        "session_21.md"
+      ],
+      "citationIdentityValid": true,
+      "rawQaF1": 0.0,
+      "elapsedSeconds": 30.528,
+      "modelCalls": 3,
+      "originalReads": 4,
+      "goldOriginalsRead": 1,
+      "goldOriginals": 2,
+      "toolOutputBytes": 21873,
+      "observedUsage": {
+        "input_tokens": 63346,
+        "cached_input_tokens": 8960,
+        "output_tokens": 325,
+        "reasoning_output_tokens": 166
+      },
+      "supportVerdict": {
+        "referenceAgreement": "no",
+        "sourceSupport": "yes",
+        "complete": "no",
+        "citationCoverage": "yes",
+        "supportedComplete": "no"
+      }
+    },
+    {
+      "id": "conv-50:18",
+      "tool": "graph",
+      "trialIndex": 6,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "Once explicitly. Calvin dealt with insurance twice, but only the car-accident instance explicitly involved paperwork.",
+      "citations": [
+        "session_9.md"
+      ],
+      "citationIdentityValid": true,
+      "rawQaF1": 0.0,
+      "elapsedSeconds": 25.214,
+      "modelCalls": 3,
+      "originalReads": 2,
+      "goldOriginalsRead": 2,
+      "goldOriginals": 2,
+      "toolOutputBytes": 26503,
+      "observedUsage": {
+        "input_tokens": 63191,
+        "cached_input_tokens": 0,
+        "output_tokens": 247,
+        "reasoning_output_tokens": 100
+      },
+      "supportVerdict": {
+        "referenceAgreement": "unclear",
+        "sourceSupport": "yes",
+        "complete": "unclear",
+        "citationCoverage": "no",
+        "supportedComplete": "unclear"
+      }
+    },
+    {
+      "id": "conv-50:18",
+      "tool": "prefetch",
+      "trialIndex": 7,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "Once.",
+      "citations": [
+        "session_9.md"
+      ],
+      "citationIdentityValid": true,
+      "rawQaF1": 0.0,
+      "elapsedSeconds": 21.601,
+      "modelCalls": 2,
+      "originalReads": 30,
+      "goldOriginalsRead": 2,
+      "goldOriginals": 2,
+      "toolOutputBytes": 135278,
+      "observedUsage": {
+        "input_tokens": 68393,
+        "cached_input_tokens": 14080,
+        "output_tokens": 163,
+        "reasoning_output_tokens": 46
+      },
+      "supportVerdict": {
+        "referenceAgreement": "unclear",
+        "sourceSupport": "yes",
+        "complete": "unclear",
+        "citationCoverage": "yes",
+        "supportedComplete": "unclear"
+      }
+    },
+    {
+      "id": "conv-50:18",
+      "tool": "basic",
+      "trialIndex": 8,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "Once, after his car accident.",
+      "citations": [],
+      "citationIdentityValid": true,
+      "rawQaF1": 0.0,
+      "elapsedSeconds": 20.995,
+      "modelCalls": 2,
+      "originalReads": 0,
+      "goldOriginalsRead": 0,
+      "goldOriginals": 2,
+      "toolOutputBytes": 70348,
+      "observedUsage": {
+        "input_tokens": 50583,
+        "cached_input_tokens": 29440,
+        "output_tokens": 122,
+        "reasoning_output_tokens": 33
+      },
+      "supportVerdict": {
+        "referenceAgreement": "unclear",
+        "sourceSupport": "yes",
+        "complete": "unclear",
+        "citationCoverage": "no",
+        "supportedComplete": "unclear"
+      }
+    }
+  ],
+  "reviewLimit": "single treatment-blind uncalibrated reviewer; development cases; source/reference ambiguity in conv-50:18 and possible distinct-trip ambiguity in conv-26:40"
+}

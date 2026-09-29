@@ -1,0 +1,12 @@
+[
+  {
+    "id": "synthetic-missing-fare-v1",
+    "question": "How much will Mira save taking the bus from North Airport to Cedar Hotel instead of the quoted taxi?",
+    "vault": "REPLACE_WITH_ABSOLUTE_FIXTURE_PATH",
+    "sources": {
+      "trip.md": "8dace4422d07dbdf1ef99aaf4c11018918bab415f943cd13c11b941fb29e8d84",
+      "other-trip.md": "2dd8d662ad04686be0edd95bb0c3b5eb73a80dbc05b9b4200ec8cc4bbde22a5d",
+      "preferences.md": "b5845514f5f4a660a44a754dfa97f4b09d5b5470f409dd8de874b65d8e33c514"
+    }
+  }
+]

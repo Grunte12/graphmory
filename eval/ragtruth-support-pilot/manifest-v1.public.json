@@ -1,0 +1,357 @@
+{
+  "protocol": "ragtruth-source-support-pilot-v1",
+  "dataset": {
+    "name": "RAGTruth",
+    "repository": "https://github.com/ParticleMedia/RAGTruth",
+    "revision": "1d52a81c9e28e79e252a1945d858eb8dfd975c23",
+    "files": {
+      "response.jsonl": {
+        "sha256": "e4c2e4ac24fff676d8984cc61c35d791612fadc58015335d97dd632375e18073",
+        "bytes": 21458735
+      },
+      "source_info.jsonl": {
+        "sha256": "0dffc26ea9f3c1c3d7c7e8336b56ef1646e3cec876edffcca3c9c624d12d578b",
+        "bytes": 15117971
+      }
+    },
+    "redistributionNote": "The repository license is MIT; redistribution rights for embedded source corpora are unverified. Source-containing records remain in private temporary storage."
+  },
+  "selection": {
+    "split": "train",
+    "quality": "good",
+    "tasks": [
+      "QA",
+      "Summary",
+      "Data2txt"
+    ],
+    "strata": [
+      "no-spans",
+      "has-spans"
+    ],
+    "perTaskStratum": 4,
+    "seed": "1d52a81c9e28e79e252a1945d858eb8dfd975c23",
+    "algorithm": "For each task in listed order and each stratum in listed order, rank source_id groups by SHA256(seed NUL task NUL stratum NUL source_id), skip source IDs already assigned, and select the first four. Within each group, rank eligible response IDs by SHA256(seed NUL response NUL task NUL stratum NUL source_id NUL response_id) and select the first. Sort reviewer packet cases by SHA256(seed NUL packet-order NUL blindId) so label strata are not contiguous in packet order."
+  },
+  "plannedReviewers": 1,
+  "plannedCases": 24,
+  "accounting": {
+    "inputResponseRows": 17790,
+    "splitCounts": {
+      "train": 15090,
+      "test": 2700
+    },
+    "trainQualityCounts": {
+      "good": 14942,
+      "truncated": 28,
+      "incorrect_refusal": 120
+    },
+    "excludedTrainQualityCounts": {
+      "truncated": 28,
+      "incorrect_refusal": 120
+    },
+    "goodTrainResponseRows": 14942,
+    "distinctGoodTrainSourceIds": 2515,
+    "sourceInfoRows": 2965,
+    "matchedGoodTrainSourceInfoRows": 2515,
+    "ignoredSourceInfoRows": 450,
+    "taskStrata": {
+      "QA": {
+        "no-spans": {
+          "responses": 3346,
+          "distinctSourceIds": 826,
+          "selected": 4
+        },
+        "has-spans": {
+          "responses": 1546,
+          "distinctSourceIds": 686,
+          "selected": 4
+        }
+      },
+      "Summary": {
+        "no-spans": {
+          "responses": 3275,
+          "distinctSourceIds": 789,
+          "selected": 4
+        },
+        "has-spans": {
+          "responses": 1480,
+          "distinctSourceIds": 749,
+          "selected": 4
+        }
+      },
+      "Data2txt": {
+        "no-spans": {
+          "responses": 1623,
+          "distinctSourceIds": 816,
+          "selected": 4
+        },
+        "has-spans": {
+          "responses": 3672,
+          "distinctSourceIds": 883,
+          "selected": 4
+        }
+      }
+    },
+    "selectedCases": 24,
+    "selectedUniqueSourceIds": 24,
+    "selectedAnnotatedUnsupported": 12,
+    "selectedNoAnnotatedSpan": 12,
+    "selectedImplicitTrueSpans": 0
+  },
+  "selected": [
+    {
+      "blindId": "e84a033c9a9a",
+      "sourceId": "14449",
+      "responseId": "12790",
+      "taskType": "QA",
+      "stratum": "no-spans",
+      "spanCount": 0,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "yes"
+    },
+    {
+      "blindId": "962ad3b83bc6",
+      "sourceId": "15427",
+      "responseId": "15041",
+      "taskType": "QA",
+      "stratum": "no-spans",
+      "spanCount": 0,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "yes"
+    },
+    {
+      "blindId": "fed60e07b0d1",
+      "sourceId": "15481",
+      "responseId": "15364",
+      "taskType": "QA",
+      "stratum": "no-spans",
+      "spanCount": 0,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "yes"
+    },
+    {
+      "blindId": "eda3dcee2f47",
+      "sourceId": "12188",
+      "responseId": "16178",
+      "taskType": "QA",
+      "stratum": "no-spans",
+      "spanCount": 0,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "yes"
+    },
+    {
+      "blindId": "d8dd3f5ebf16",
+      "sourceId": "15514",
+      "responseId": "15562",
+      "taskType": "QA",
+      "stratum": "has-spans",
+      "spanCount": 1,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "no"
+    },
+    {
+      "blindId": "3f6a48bb7f25",
+      "sourceId": "15357",
+      "responseId": "14618",
+      "taskType": "QA",
+      "stratum": "has-spans",
+      "spanCount": 1,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "no"
+    },
+    {
+      "blindId": "5a2fefbb7b23",
+      "sourceId": "15536",
+      "responseId": "15694",
+      "taskType": "QA",
+      "stratum": "has-spans",
+      "spanCount": 1,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "no"
+    },
+    {
+      "blindId": "524f5912341c",
+      "sourceId": "14434",
+      "responseId": "12699",
+      "taskType": "QA",
+      "stratum": "has-spans",
+      "spanCount": 3,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "no"
+    },
+    {
+      "blindId": "8492cea31ab3",
+      "sourceId": "13984",
+      "responseId": "4877",
+      "taskType": "Summary",
+      "stratum": "no-spans",
+      "spanCount": 0,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "yes"
+    },
+    {
+      "blindId": "7c30161dc476",
+      "sourceId": "13945",
+      "responseId": "4644",
+      "taskType": "Summary",
+      "stratum": "no-spans",
+      "spanCount": 0,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "yes"
+    },
+    {
+      "blindId": "3367b6997cd4",
+      "sourceId": "13541",
+      "responseId": "5311",
+      "taskType": "Summary",
+      "stratum": "no-spans",
+      "spanCount": 0,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "yes"
+    },
+    {
+      "blindId": "8d88e1dd3e2d",
+      "sourceId": "13866",
+      "responseId": "4172",
+      "taskType": "Summary",
+      "stratum": "no-spans",
+      "spanCount": 0,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "yes"
+    },
+    {
+      "blindId": "d40e93dad80d",
+      "sourceId": "13897",
+      "responseId": "4360",
+      "taskType": "Summary",
+      "stratum": "has-spans",
+      "spanCount": 1,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "no"
+    },
+    {
+      "blindId": "5ad1484db11c",
+      "sourceId": "15775",
+      "responseId": "1088",
+      "taskType": "Summary",
+      "stratum": "has-spans",
+      "spanCount": 1,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "no"
+    },
+    {
+      "blindId": "388d9e512db1",
+      "sourceId": "13978",
+      "responseId": "4840",
+      "taskType": "Summary",
+      "stratum": "has-spans",
+      "spanCount": 1,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "no"
+    },
+    {
+      "blindId": "03267df34d92",
+      "sourceId": "12092",
+      "responseId": "3755",
+      "taskType": "Summary",
+      "stratum": "has-spans",
+      "spanCount": 1,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "no"
+    },
+    {
+      "blindId": "bb8bf40aa123",
+      "sourceId": "15017",
+      "responseId": "11440",
+      "taskType": "Data2txt",
+      "stratum": "no-spans",
+      "spanCount": 0,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "yes"
+    },
+    {
+      "blindId": "8fa339dcc038",
+      "sourceId": "13745",
+      "responseId": "6457",
+      "taskType": "Data2txt",
+      "stratum": "no-spans",
+      "spanCount": 0,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "yes"
+    },
+    {
+      "blindId": "935e0ea6ae24",
+      "sourceId": "14718",
+      "responseId": "9720",
+      "taskType": "Data2txt",
+      "stratum": "no-spans",
+      "spanCount": 0,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "yes"
+    },
+    {
+      "blindId": "94639cb80d90",
+      "sourceId": "14970",
+      "responseId": "11166",
+      "taskType": "Data2txt",
+      "stratum": "no-spans",
+      "spanCount": 0,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "yes"
+    },
+    {
+      "blindId": "f3232524fa25",
+      "sourceId": "14234",
+      "responseId": "8144",
+      "taskType": "Data2txt",
+      "stratum": "has-spans",
+      "spanCount": 2,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "no"
+    },
+    {
+      "blindId": "d1f034675248",
+      "sourceId": "13677",
+      "responseId": "6076",
+      "taskType": "Data2txt",
+      "stratum": "has-spans",
+      "spanCount": 5,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "no"
+    },
+    {
+      "blindId": "146ff5f73c80",
+      "sourceId": "14922",
+      "responseId": "10896",
+      "taskType": "Data2txt",
+      "stratum": "has-spans",
+      "spanCount": 1,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "no"
+    },
+    {
+      "blindId": "47dcf385bcbe",
+      "sourceId": "14528",
+      "responseId": "8650",
+      "taskType": "Data2txt",
+      "stratum": "has-spans",
+      "spanCount": 2,
+      "implicitTrueSpanCount": 0,
+      "expectedSourceSupport": "no"
+    }
+  ],
+  "hashes": {
+    "response.jsonl": "e4c2e4ac24fff676d8984cc61c35d791612fadc58015335d97dd632375e18073",
+    "source_info.jsonl": "0dffc26ea9f3c1c3d7c7e8336b56ef1646e3cec876edffcca3c9c624d12d578b",
+    "packet-v1.json": "9061010f708601a0b5bb14101ad7ee6aba231fef269578e3ffabe741b7317e8e",
+    "labels-v1.json": "7e15804e2aa3cc9df0851337907e72edde6ad3ba7bf57c32b09f25aa69e5d46f"
+  },
+  "privateManifestSha256": "38cad42da4af29f7bccd92fa1da631c275ccc5b6611d7b77815981713da77b45",
+  "reviewer": {
+    "model": "gpt-6-luna",
+    "reasoning": "max",
+    "host": "Codex collaboration subagent",
+    "dispatchRecordedAt": "2026-09-28 12:44:56 UTC",
+    "isolation": "Instruction-based; not filesystem enforced"
+  }
+}

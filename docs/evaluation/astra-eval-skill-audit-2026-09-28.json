@@ -1,0 +1,80 @@
+{
+  "baselineFullEquality": true,
+  "runRows": 2198,
+  "sourceSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "runtimeHashes": {
+    "src/retrieval.mjs": "4a85f5662bbf44d05eaeacb386711f05641bb550193d84c3dd7402853c3991fe",
+    "src/memory-recall.mjs": "4f8765badf33121957f9d29c25cf0480c552606cfbb09676acf045c040bb703f",
+    "scripts/lib/locomo.mjs": "b5138a78a26663238e0b619b4d24d057819a4eb8a6cec45472e3b64aee536d2a",
+    "scripts/eval-locomo.mjs": "c697ccd84e9680ad3a1e53b5cb219a52cbb647ae2ea68d1b3c6c601f976ee25d"
+  },
+  "excluded": {
+    "unresolved-gold-turn": 6,
+    "adversarial-answer-eval-needed": 330,
+    "missing-evidence": 4
+  },
+  "metrics": {
+    "bm25": {
+      "all": {
+        "cases": 1099,
+        "complete": {
+          "at5": 878,
+          "at10": 962,
+          "at20": 1051,
+          "reachable": 1099
+        }
+      },
+      "category1": {
+        "cases": 180,
+        "complete": {
+          "at5": 49,
+          "at10": 85,
+          "at20": 149,
+          "reachable": 180
+        }
+      },
+      "multipleGoldSessions": {
+        "cases": 209,
+        "complete": {
+          "at5": 62,
+          "at10": 101,
+          "at20": 171,
+          "reachable": 209
+        }
+      },
+      "meanSessionRecallAt5": 0.848023455666768,
+      "meanGoldTurnWeightedSessionRecallAt5": 0.8488048297875413
+    },
+    "fusion": {
+      "all": {
+        "cases": 1099,
+        "complete": {
+          "at5": 886,
+          "at10": 978,
+          "at20": 1050,
+          "reachable": 1099
+        }
+      },
+      "category1": {
+        "cases": 180,
+        "complete": {
+          "at5": 53,
+          "at10": 96,
+          "at20": 146,
+          "reachable": 180
+        }
+      },
+      "multipleGoldSessions": {
+        "cases": 209,
+        "complete": {
+          "at5": 65,
+          "at10": 110,
+          "at20": 168,
+          "reachable": 209
+        }
+      },
+      "meanSessionRecallAt5": 0.8572324046391384,
+      "meanGoldTurnWeightedSessionRecallAt5": 0.8581740976645436
+    }
+  }
+}

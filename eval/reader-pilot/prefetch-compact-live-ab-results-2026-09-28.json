@@ -1,0 +1,136 @@
+{
+  "protocol": "prefetch-compact-live-development-ab-v1",
+  "manifestSha256": "ff42e79458ba0b764dae93c03ea91538406c99f9727f18e85533f93cde2e3379",
+  "rows": [
+    {
+      "id": "conv-42:49",
+      "arm": "full",
+      "index": 0,
+      "attempted": true,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "2 times.",
+      "brief": "Joanna\u2019s scripts have been explicitly rejected 2 times: one rejection from a major company ([session_14.md](session_14.md)) and another from a production company ([session_24.md](session_24.md)).",
+      "citations": [
+        "session_14.md",
+        "session_24.md"
+      ],
+      "citationIdentityValid": true,
+      "originalReads": 29,
+      "goldOriginalsRead": 2,
+      "goldOriginals": 2,
+      "elapsedSeconds": 16.514,
+      "modelCalls": 2,
+      "observedUsage": {
+        "input_tokens": 65571,
+        "cached_input_tokens": 14080,
+        "output_tokens": 159,
+        "reasoning_output_tokens": 58
+      },
+      "usageFullyObserved": true,
+      "cliOutputBytes": 121033,
+      "rawQaF1": 0.0,
+      "operationalAdjustedQaF1": 0.0
+    },
+    {
+      "id": "conv-42:49",
+      "arm": "compact",
+      "index": 1,
+      "attempted": true,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "2 times.",
+      "brief": "Joanna\u2019s scripts have been explicitly rejected 2 times: once by a major company (session_14.md, D14:1) and once by a production company (session_24.md, D24:12).",
+      "citations": [
+        "session_14.md",
+        "session_24.md"
+      ],
+      "citationIdentityValid": true,
+      "originalReads": 29,
+      "goldOriginalsRead": 2,
+      "goldOriginals": 2,
+      "elapsedSeconds": 18.601,
+      "modelCalls": 2,
+      "observedUsage": {
+        "input_tokens": 60629,
+        "cached_input_tokens": 15360,
+        "output_tokens": 161,
+        "reasoning_output_tokens": 61
+      },
+      "usageFullyObserved": true,
+      "cliOutputBytes": 102006,
+      "rawQaF1": 0.0,
+      "operationalAdjustedQaF1": 0.0
+    },
+    {
+      "id": "conv-50:47",
+      "arm": "compact",
+      "index": 2,
+      "attempted": true,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "Dave has attended 3 car shows.",
+      "brief": "Dave has attended 3 car shows: his first at age 10 with his dad (session_26.md), one mentioned in April 2023 (session_3.md), and one in October 2023 (session_22.md). Session_1.md mentions a car-focused event but does not explicitly call it a car show, so it is not counted.",
+      "citations": [
+        "session_26.md",
+        "session_3.md",
+        "session_22.md"
+      ],
+      "citationIdentityValid": true,
+      "originalReads": 30,
+      "goldOriginalsRead": 2,
+      "goldOriginals": 2,
+      "elapsedSeconds": 20.719,
+      "modelCalls": 2,
+      "observedUsage": {
+        "input_tokens": 62151,
+        "cached_input_tokens": 29440,
+        "output_tokens": 264,
+        "reasoning_output_tokens": 125
+      },
+      "usageFullyObserved": true,
+      "cliOutputBytes": 110365,
+      "rawQaF1": 0.0,
+      "operationalAdjustedQaF1": 0.0
+    },
+    {
+      "id": "conv-50:47",
+      "arm": "full",
+      "index": 3,
+      "attempted": true,
+      "complete": true,
+      "stopReason": "curator-finalized",
+      "answer": "Dave has attended 4 car shows.",
+      "brief": "Dave has attended 4 car shows: one event featuring classic cars (session_1.md), one the previous weekend (session_3.md), one the previous Friday (session_22.md), and his first car show at age 10 (session_26.md).",
+      "citations": [
+        "session_1.md",
+        "session_3.md",
+        "session_22.md",
+        "session_26.md"
+      ],
+      "citationIdentityValid": true,
+      "originalReads": 30,
+      "goldOriginalsRead": 2,
+      "goldOriginals": 2,
+      "elapsedSeconds": 23.677,
+      "modelCalls": 2,
+      "observedUsage": {
+        "input_tokens": 68057,
+        "cached_input_tokens": 15360,
+        "output_tokens": 386,
+        "reasoning_output_tokens": 262
+      },
+      "usageFullyObserved": true,
+      "cliOutputBytes": 133673,
+      "rawQaF1": 0.0,
+      "operationalAdjustedQaF1": 0.0
+    }
+  ],
+  "semanticReview": "pending source-blind assessment; official QA score is not evidence support",
+  "limits": [
+    "Two exposed development histories",
+    "One generation per arm",
+    "Order/cache effects",
+    "No billing or p95 estimate"
+  ]
+}

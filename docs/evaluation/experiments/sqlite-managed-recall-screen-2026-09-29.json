@@ -1,0 +1,32 @@
+{
+  "experiment": "sqlite-managed-recall-screen-2026-09-29",
+  "status": "stopped-on-first-correctness-failure",
+  "protocol": "../sqlite-managed-recall-protocol-2026-09-29.md",
+  "dataset": "SciFact exposed Markdown, first 5000 Graphmory-loaded notes",
+  "plannedQueries": 30,
+  "attemptedQueries": 1,
+  "failedQueries": 1,
+  "queryId": "1",
+  "querySha256": "1f2fcc021564497de2674fb06879f80c6f33b80adaa4e0a6ed0264ce2cb310a8",
+  "baselineOutputSha256": "875d0d8df814d74f65f475838e26d6165bd8381d7d81d245fdcbfc52de68ac72",
+  "sqliteLaneOutputSha256": "fc5ad4f235992f30d1f302b15bdd8efe1c609acf78b305245f911f4e8b0d02d9",
+  "dbSha256": "8c94cb246bc50ddb013c570d7b15ec7b7ef000bdf61697e1b0f6f75e92c3c7a3",
+  "preparedManifestSha256": "a19ebcaf399a898784997d5d31704672bc2380e66879eb388e0fdf803aadb71d",
+  "observedMismatch": {
+    "topLevelField": "results",
+    "resultCountBothArms": 10,
+    "titleDifferenceRanks": [6, 7, 9],
+    "otherResultFieldDifferences": 0,
+    "matchingPathsAndScores": true,
+    "cause": "precomputed-lane sanitizer uses loaded document title; direct focused BM25F returns section title"
+  },
+  "latencyComparisonPerformed": false,
+  "syntheticGovernanceComparisonPerformed": false,
+  "codeSha256": {
+    "managedRecall": "9bffb07b274a6bf2379a56905a04641804cbf863b521c50b3c4045e8945d035d",
+    "memoryRecall": "1d10342fa253745b98732bab1bf1d8e8fe95574c807ad062479ac538216cab36",
+    "retrieval": "28f656a4bef7806d9a2a7690c2c31b7ad0732b894e05946e186286e05a4bc6c1",
+    "experimentalArm": "252f785519d958cee1fa85c44bae89cf82fabbb39b6ed701c8744c6a79980359",
+    "sqlitePrototype": "f4e5c23243c5c77ac945476d95bf4ad1b2cd9d3f5eed3777e66ddfc9b9991a8d"
+  }
+}

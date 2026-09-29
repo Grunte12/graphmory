@@ -1,0 +1,55 @@
+{
+  "experiment": "sqlite-eligible-managed-2026-09-29",
+  "status": "development-screen-passed-not-production",
+  "protocol": "../sqlite-eligible-ranker-protocol-2026-09-29.md",
+  "environment": "macOS arm64, Node v24.18.0",
+  "syntheticFullResponseParity": "288/288",
+  "syntheticStates": 6,
+  "syntheticContexts": ["default", "include-superseded", "Projects", "Archive"],
+  "syntheticQueries": 12,
+  "staleSourceRejectedWithoutDbChange": true,
+  "sciFactExposedSubset": {
+    "loadedNotes": 5000,
+    "queries": 30,
+    "fullManagedResponseParity": "30/30",
+    "officialBEIRScoreApplicable": false
+  },
+  "pairedFreshProcess": {
+    "baselineP50Ms": 815.50,
+    "indexedP50Ms": 533.19,
+    "baselineP95Ms": 843.35,
+    "indexedP95Ms": 679.02,
+    "baselineMedianResponseBytes": 8727,
+    "indexedMedianResponseBytes": 8727,
+    "baselineMedianEndRssBytes": 496762880,
+    "indexedMedianEndRssBytes": 390348800,
+    "baselineMedianMaxRssRaw": 485120,
+    "indexedMedianMaxRssRaw": 381200,
+    "osFilesystemCache": "warm/uncontrolled",
+    "agentModelIncluded": false
+  },
+  "indexBuild": {
+    "wallMs": 2435.84,
+    "dbBytes": 16392192,
+    "dbSha256": "59cd470c757d9de371b0cbe8559f3058b7b630eb8a7e4719d7f6e0b25988f4bc"
+  },
+  "rawLedgerSha256": "d3f07c9b425ed7b523c6ac48de0de77a21db8d4313686ddada93f2e8be412c71",
+  "mutationFixtureLedgerSha256": "a9b81733ec8e894a47fd1772648c5aa61cf8eb3c0f81a674105a3e6674885a7f",
+  "preparedManifestSha256": "a19ebcaf399a898784997d5d31704672bc2380e66879eb388e0fdf803aadb71d",
+  "querySetSha256": "57cddbed64eb5ff2bce11ab6c6171e449cf139a3a70c887c5580c55ae04510db",
+  "codeSha256": {
+    "retrieval": "f58817caaccbefd2e93716387ad82d63e0caf8880f792796607d8b938e6c18d4",
+    "memoryRecall": "65484bf268c83c96acaad7c6f12abb0504dd033fd09e253632a0a57c1b9ea903",
+    "managedRecall": "5d0ca83b33f5a1a09998e17e0efae379b6c5e17055aaeed5dde6067834a5f57d",
+    "eligibleRanker": "79504efd05e4b3fa804d35934fcb69a1249eab6fadaabc1fdfbdc96e3719a03a",
+    "worker": "34f903993ce54e1b81ab887c9a5a805223c64f1d8293344df9fa9dd4bd6c7fde",
+    "evaluator": "196201349bd9c9ee7345e0ee5488355a2a1a121a546d92ed2e46b2dfa5e22b1c"
+  },
+  "promotionBlockers": [
+    "Node 20-compatible fallback and automatic index lifecycle",
+    "graph-link and additional source governance parity",
+    "Curator/Lead supported-complete answer and cost evaluation",
+    "independent holdout",
+    "matched comparator workflow"
+  ]
+}

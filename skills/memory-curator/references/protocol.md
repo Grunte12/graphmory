@@ -11,6 +11,10 @@ Require:
 - `provenance`
 - `confidence`
 - `suggested_type`
+- `lifecycle.status`
+- `lifecycle.revalidate_when`
+
+`lifecycle.valid_until` is optional and represents a separate date expiry. Preserve event-based `revalidate_when` conditions as a YAML list; a date does not satisfy an event trigger.
 
 Reject low-confidence patches unless the uncertainty itself is the durable fact being recorded.
 
@@ -40,7 +44,7 @@ Do not write a speculative note. Return the exact missing field or evidence.
 
 Return:
 
-- `relevant_memory`: 1-7 items with summary and path
+- `relevant_memory`: supported items with summary and path; keep concise, but include every material finding needed for the task
 - `constraints`
 - `watchouts`
 - `note_paths`

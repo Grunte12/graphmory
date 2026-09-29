@@ -1,0 +1,67 @@
+{
+  "protocol": "locomo-idempotent-targeted-development-v1",
+  "datasetSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "selectionSeed": "graphmory-locomo-preview-reader-ab-v1-2026-09-28",
+  "selectedIds": [
+    "conv-47:52",
+    "conv-48:36"
+  ],
+  "categories": [
+    2,
+    3
+  ],
+  "executionOrder": [
+    {
+      "id": "conv-47:52",
+      "caseIndex": 1,
+      "arm": "current"
+    },
+    {
+      "id": "conv-48:36",
+      "caseIndex": 2,
+      "arm": "coverage"
+    }
+  ],
+  "configuration": {
+    "mode": "auto",
+    "curator": "gpt-5.6-luna",
+    "lead": "gpt-5.6-sol",
+    "reasoning": "low",
+    "maxRounds": 10,
+    "maxInputBytes": 300000,
+    "structuredCitations": true,
+    "persistentCurator": false,
+    "compactFollowup": false
+  },
+  "readerInputSha256": "5ec29fd28748c4df2260e19ce9e03a6e746c2242e9c1397d5d2ed47f733b18f1",
+  "labelsSha256": "5e133685ec31c9317300d1b90711fc8ead35932c112c92f0b59d56fe0e643142",
+  "sourceHashes": {
+    "scripts/prepare-locomo-preview-reader-ab.mjs": "96b12bd43d265d524e5649361d6d4d799193d0755f82fb5c19d9156cbee68444",
+    "scripts/run-curator-paging-pilot.py": "c9dc1af9546cdc559282b191426b153e02857f1c61094da932e8f515c08ec45d",
+    "scripts/lib/locomo.mjs": "b5138a78a26663238e0b619b4d24d057819a4eb8a6cec45472e3b64aee536d2a",
+    "scripts/brain-sync.mjs": "218a90cd698432193b3e34ddc0243f66f250b3ad6b288703ee02a74478a9b527",
+    "src/decision-recall.mjs": "def78f97a4331e2167128bd904314a95fcf41ccb3f40e9a4e5ec6d733c1f9dba",
+    "src/retrieval.mjs": "4a85f5662bbf44d05eaeacb386711f05641bb550193d84c3dd7402853c3991fe",
+    "src/memory-recall.mjs": "4f8765badf33121957f9d29c25cf0480c552606cfbb09676acf045c040bb703f"
+  },
+  "holdoutNotRendered": [
+    "conv-41",
+    "conv-44",
+    "conv-49"
+  ],
+  "analysis": {
+    "officialScorer": "locomo-pinned-function-bodies-raw-qa-v1",
+    "operationalFailures": "Account for both planned targeted attempts, including failures; preserve original ten-trial results unchanged.",
+    "supportRubric": "For each answer: all requested reference facts covered, no unsupported claim, correct speaker/scope/time/negation, traceable delivered sources; abstain when evidence missing. Independent blinded adjudication required before primary acceptance.",
+    "efficiency": "Do not infer causal latency/cost from retries: cache, source selection, prompts and mediator differ.",
+    "promotion": "No production promotion or primary quality acceptance from targeted exposed-case retries."
+  },
+  "limitations": [
+    "Two exposed failed workflows chosen by prior failure, no powered or independent quality inference",
+    "Citation verifier and read contract both changed since original A/B; no single-variable causal comparison",
+    "Frozen economic limits remain ten rounds and 300,000 prompt bytes; repeat reads can still exhaust them",
+    "No holdout or matched competitor answer workflow"
+  ],
+  "parentPreparationSha256": "efd530e9fc1920bbd3296025d6004d5d362a17ead7a16b9cdf10b1626698774c",
+  "selectionReason": "Both workflows halted on entirely already-read requests in the prior frozen ten-trial development A/B. Targeted regression diagnostic, not a fresh sample."
+}

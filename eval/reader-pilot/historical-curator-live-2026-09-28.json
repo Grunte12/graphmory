@@ -1,0 +1,1071 @@
+{
+  "protocol": "synthetic-curator-history-choice-v1",
+  "model": "gpt-5.6-luna",
+  "reasoning": "low",
+  "runnerSha256": "886250d8265d6c29feea437b711cdcd2a3fdf2f608306e82061ec463ae5ab357",
+  "plannedCases": 6,
+  "plannedCalls": 18,
+  "calls": [
+    {
+      "id": "current:route",
+      "elapsedSeconds": 10.993887749995338,
+      "promptBytes": 420,
+      "promptSha256": "3a20105597595fe0b1a262e179fdd91befd05b9188ad6d68379c438e2405f243",
+      "usage": {
+        "input_tokens": 15418,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 18,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "include_superseded": false
+      }
+    },
+    {
+      "id": "current:existing",
+      "elapsedSeconds": 8.76440637500491,
+      "promptBytes": 635,
+      "promptSha256": "3d39ccd40d9ca098643fd10665b4b17ccbf54dda578e9e017ddbf0093dd0208d",
+      "usage": {
+        "input_tokens": 15509,
+        "cached_input_tokens": 14080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 34,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "answer": "Cedar storage policy currently uses PostgreSQL. [current.md]",
+        "citations": [
+          "current.md"
+        ]
+      }
+    },
+    {
+      "id": "current:history-capable",
+      "elapsedSeconds": 9.44976154199685,
+      "promptBytes": 635,
+      "promptSha256": "3d39ccd40d9ca098643fd10665b4b17ccbf54dda578e9e017ddbf0093dd0208d",
+      "usage": {
+        "input_tokens": 15509,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 34,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "answer": "Cedar storage policy currently uses PostgreSQL. [current.md]",
+        "citations": [
+          "current.md"
+        ]
+      }
+    },
+    {
+      "id": "prior:route",
+      "elapsedSeconds": 14.417936332989484,
+      "promptBytes": 445,
+      "promptSha256": "8367f9d92df4a3efff93757af1ce62f24cc19c02024b08f558e7363fdf8845d5",
+      "usage": {
+        "input_tokens": 15404,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 18,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "include_superseded": true
+      }
+    },
+    {
+      "id": "prior:history-capable",
+      "elapsedSeconds": 10.899120291986037,
+      "promptBytes": 911,
+      "promptSha256": "c26affbd1bad3937a7f575b7735a4a861b5ce0a1d58fdefe7f43a0632f5bf69f",
+      "usage": {
+        "input_tokens": 15621,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 42,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "answer": "Cedar storage policy used SQLite in January, before the March change. [prior.md](prior.md)",
+        "citations": [
+          "prior.md"
+        ]
+      }
+    },
+    {
+      "id": "prior:existing",
+      "elapsedSeconds": 10.337320499995258,
+      "promptBytes": 660,
+      "promptSha256": "ecb11ee3fef5d3d130f5b1fb760fe624cc250eef2056d98cd02b954b79b5246f",
+      "usage": {
+        "input_tokens": 15515,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 68,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "answer": "The January database is unresolved in the supplied source. The source only states that Cedar storage policy used PostgreSQL as of March 1, 2025; it does not identify the database used in January. Source: `current.md`",
+        "citations": [
+          "current.md"
+        ]
+      }
+    },
+    {
+      "id": "scope:route",
+      "elapsedSeconds": 7.092777625017334,
+      "promptBytes": 435,
+      "promptSha256": "a2084445099c4cccd9b682e31a1e8a4b1562b22d7cceebb31353cc78802b20a8",
+      "usage": {
+        "input_tokens": 15400,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 18,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "include_superseded": false
+      }
+    },
+    {
+      "id": "scope:existing",
+      "elapsedSeconds": 6.670690792001551,
+      "promptBytes": 917,
+      "promptSha256": "407a13332cabb6697cf82f828c4970f6e2c3998d23e767fd8269832ec8406612",
+      "usage": {
+        "input_tokens": 15607,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 30,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "answer": "The Cedar production storage policy currently uses PostgreSQL.",
+        "citations": [
+          "production.md"
+        ]
+      }
+    },
+    {
+      "id": "scope:history-capable",
+      "elapsedSeconds": 7.359868792002089,
+      "promptBytes": 917,
+      "promptSha256": "407a13332cabb6697cf82f828c4970f6e2c3998d23e767fd8269832ec8406612",
+      "usage": {
+        "input_tokens": 15607,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 30,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "answer": "The Cedar production storage policy currently uses PostgreSQL.",
+        "citations": [
+          "production.md"
+        ]
+      }
+    },
+    {
+      "id": "missing:route",
+      "elapsedSeconds": 10.022915624984307,
+      "promptBytes": 434,
+      "promptSha256": "dad08b8a7addf73a1bda9b26090a40bc508771fba8412a00bbe7c2c57a1a3a3a",
+      "usage": {
+        "input_tokens": 15402,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 18,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "include_superseded": true
+      }
+    },
+    {
+      "id": "missing:history-capable",
+      "elapsedSeconds": 6.742999042005977,
+      "promptBytes": 927,
+      "promptSha256": "5939b3fddb01473b09874edb6089337bfebab56b6a9c15911c93eff0ebc13cb0",
+      "usage": {
+        "input_tokens": 15619,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 40,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "answer": "The database used in January was not recorded, so its value is unresolved. [prior.md]",
+        "citations": [
+          "prior.md"
+        ]
+      }
+    },
+    {
+      "id": "missing:existing",
+      "elapsedSeconds": 9.469625500001712,
+      "promptBytes": 649,
+      "promptSha256": "44c6e0d164efb4fd37b649338e9e8f79e9b00f92e2bae8df0e15a522bccae02c",
+      "usage": {
+        "input_tokens": 15513,
+        "cached_input_tokens": 14080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 59,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "answer": "The January database is unresolved. The supplied source only states that Cedar storage policy used PostgreSQL on 2025-03-01, in March\u2014not January. Source: `current.md`",
+        "citations": [
+          "current.md"
+        ]
+      }
+    },
+    {
+      "id": "conflict:route",
+      "elapsedSeconds": 9.602080750017194,
+      "promptBytes": 434,
+      "promptSha256": "dad08b8a7addf73a1bda9b26090a40bc508771fba8412a00bbe7c2c57a1a3a3a",
+      "usage": {
+        "input_tokens": 15402,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 18,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "include_superseded": true
+      }
+    },
+    {
+      "id": "conflict:existing",
+      "elapsedSeconds": 9.12385429200367,
+      "promptBytes": 649,
+      "promptSha256": "44c6e0d164efb4fd37b649338e9e8f79e9b00f92e2bae8df0e15a522bccae02c",
+      "usage": {
+        "input_tokens": 15513,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 61,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "answer": "The January database is unresolved. The supplied source only states that Cedar storage policy used PostgreSQL on 2025-03-01, not what it used in January. Source: `current.md`",
+        "citations": [
+          "current.md"
+        ]
+      }
+    },
+    {
+      "id": "conflict:history-capable",
+      "elapsedSeconds": 11.648402958991937,
+      "promptBytes": 1202,
+      "promptSha256": "fd0a3a49564bfca3ce30563ade91d5a8e3bceee17012b33b9607b0b0e1a3e795",
+      "usage": {
+        "input_tokens": 15721,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 62,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "answer": "The January database is unresolved: one source says SQLite and another says MySQL, and both record \u201cNo resolution recorded.\u201d Sources: `prior-a.md`, `prior-b.md`.",
+        "citations": [
+          "prior-a.md",
+          "prior-b.md"
+        ]
+      }
+    },
+    {
+      "id": "attribution:route",
+      "elapsedSeconds": 9.996041875012452,
+      "promptBytes": 448,
+      "promptSha256": "6348bd7461afe94fa37eb13a57b0367ed1efabeb8a74f2d92af4f659fb451147",
+      "usage": {
+        "input_tokens": 15405,
+        "cached_input_tokens": 15104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 43,
+        "reasoning_output_tokens": 23
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "include_superseded": true
+      }
+    },
+    {
+      "id": "attribution:history-capable",
+      "elapsedSeconds": 9.908988582988968,
+      "promptBytes": 980,
+      "promptSha256": "ce384d994f96f8c6ad42637e7414b7e8e9a2d08f3ca4860c7ae1c153333f39b8",
+      "usage": {
+        "input_tokens": 15626,
+        "cached_input_tokens": 14080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 39,
+        "reasoning_output_tokens": 0
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "answer": "The user said Cedar storage policy used SQLite in January, before March. [prior.md]",
+        "citations": [
+          "prior.md"
+        ]
+      }
+    },
+    {
+      "id": "attribution:existing",
+      "elapsedSeconds": 11.086534624977503,
+      "promptBytes": 663,
+      "promptSha256": "6a89eda37b1c2a12037c528c94cd0c5cf3e12b42eec564dde8ff77581c311140",
+      "usage": {
+        "input_tokens": 15516,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 87,
+        "reasoning_output_tokens": 26
+      },
+      "forbiddenTool": false,
+      "failed": false,
+      "response": {
+        "answer": "The January database is unresolved. The supplied source only says that Cedar storage policy used PostgreSQL on 2025-03-01, not what it used in January. [current.md]",
+        "citations": [
+          "current.md"
+        ]
+      }
+    }
+  ],
+  "rows": [
+    {
+      "id": "current",
+      "arm": "existing",
+      "question": "What database does Cedar storage policy currently use?",
+      "route": {
+        "include_superseded": false
+      },
+      "runComplete": true,
+      "historicalApplied": false,
+      "retrieval": {
+        "workflow": "curator",
+        "retrievalConfidence": "bounded",
+        "needsExpansion": false,
+        "scanLimitReached": false,
+        "offset": 0,
+        "totalCandidates": 1,
+        "hasMore": false,
+        "nextOffset": null,
+        "adaptiveMode": "focused",
+        "results": [
+          {
+            "path": "current.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar storage policy now uses PostgreSQL."
+              }
+            ]
+          }
+        ]
+      },
+      "sourcePaths": [
+        "current.md"
+      ],
+      "sourceHashes": {
+        "current.md": "bb352ab78b272e5a475f0287d784737226b0c8d7ef6a0a0ee3b14f230541f683"
+      },
+      "toolSeconds": 0.0926466669770889,
+      "toolStdoutBytes": 655,
+      "response": {
+        "answer": "Cedar storage policy currently uses PostgreSQL. [current.md]",
+        "citations": [
+          "current.md"
+        ]
+      },
+      "stopReason": "completed",
+      "citationIdentityValid": true,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "current",
+      "arm": "history-capable",
+      "question": "What database does Cedar storage policy currently use?",
+      "route": {
+        "include_superseded": false
+      },
+      "runComplete": true,
+      "historicalApplied": false,
+      "retrieval": {
+        "workflow": "curator",
+        "retrievalConfidence": "bounded",
+        "needsExpansion": false,
+        "scanLimitReached": false,
+        "offset": 0,
+        "totalCandidates": 1,
+        "hasMore": false,
+        "nextOffset": null,
+        "adaptiveMode": "focused",
+        "results": [
+          {
+            "path": "current.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar storage policy now uses PostgreSQL."
+              }
+            ]
+          }
+        ]
+      },
+      "sourcePaths": [
+        "current.md"
+      ],
+      "sourceHashes": {
+        "current.md": "bb352ab78b272e5a475f0287d784737226b0c8d7ef6a0a0ee3b14f230541f683"
+      },
+      "toolSeconds": 0.1051234999904409,
+      "toolStdoutBytes": 655,
+      "response": {
+        "answer": "Cedar storage policy currently uses PostgreSQL. [current.md]",
+        "citations": [
+          "current.md"
+        ]
+      },
+      "stopReason": "completed",
+      "citationIdentityValid": true,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "prior",
+      "arm": "history-capable",
+      "question": "What database did Cedar storage policy use in January, before the March change?",
+      "route": {
+        "include_superseded": true
+      },
+      "runComplete": true,
+      "historicalApplied": true,
+      "retrieval": {
+        "workflow": "curator",
+        "retrievalConfidence": "bounded",
+        "needsExpansion": false,
+        "scanLimitReached": false,
+        "offset": 0,
+        "totalCandidates": 2,
+        "hasMore": false,
+        "nextOffset": null,
+        "adaptiveMode": "focused",
+        "historicalCandidatesIncluded": true,
+        "results": [
+          {
+            "path": "current.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar storage policy now uses PostgreSQL."
+              }
+            ]
+          },
+          {
+            "path": "prior.md",
+            "status": "superseded",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-01-01\n\nCedar storage policy used SQLite."
+              }
+            ]
+          }
+        ]
+      },
+      "sourcePaths": [
+        "current.md",
+        "prior.md"
+      ],
+      "sourceHashes": {
+        "current.md": "bb352ab78b272e5a475f0287d784737226b0c8d7ef6a0a0ee3b14f230541f683",
+        "prior.md": "d1738a1a4cba3bda9de2e3efcc477c8882cc9c3327e8483168b1f5aee43ef26d"
+      },
+      "toolSeconds": 0.09765229100594297,
+      "toolStdoutBytes": 1115,
+      "response": {
+        "answer": "Cedar storage policy used SQLite in January, before the March change. [prior.md](prior.md)",
+        "citations": [
+          "prior.md"
+        ]
+      },
+      "stopReason": "completed",
+      "citationIdentityValid": true,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "prior",
+      "arm": "existing",
+      "question": "What database did Cedar storage policy use in January, before the March change?",
+      "route": {
+        "include_superseded": true
+      },
+      "runComplete": true,
+      "historicalApplied": false,
+      "retrieval": {
+        "workflow": "curator",
+        "retrievalConfidence": "bounded",
+        "needsExpansion": false,
+        "scanLimitReached": false,
+        "offset": 0,
+        "totalCandidates": 1,
+        "hasMore": false,
+        "nextOffset": null,
+        "adaptiveMode": "focused",
+        "results": [
+          {
+            "path": "current.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar storage policy now uses PostgreSQL."
+              }
+            ]
+          }
+        ]
+      },
+      "sourcePaths": [
+        "current.md"
+      ],
+      "sourceHashes": {
+        "current.md": "bb352ab78b272e5a475f0287d784737226b0c8d7ef6a0a0ee3b14f230541f683"
+      },
+      "toolSeconds": 0.09844208299182355,
+      "toolStdoutBytes": 655,
+      "response": {
+        "answer": "The January database is unresolved in the supplied source. The source only states that Cedar storage policy used PostgreSQL as of March 1, 2025; it does not identify the database used in January. Source: `current.md`",
+        "citations": [
+          "current.md"
+        ]
+      },
+      "stopReason": "completed",
+      "citationIdentityValid": true,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "scope",
+      "arm": "existing",
+      "question": "What database does the Cedar production storage policy currently use?",
+      "route": {
+        "include_superseded": false
+      },
+      "runComplete": true,
+      "historicalApplied": false,
+      "retrieval": {
+        "workflow": "curator",
+        "retrievalConfidence": "bounded",
+        "needsExpansion": false,
+        "scanLimitReached": false,
+        "offset": 0,
+        "totalCandidates": 2,
+        "hasMore": false,
+        "nextOffset": null,
+        "adaptiveMode": "focused",
+        "results": [
+          {
+            "path": "production.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar production storage policy uses PostgreSQL."
+              }
+            ]
+          },
+          {
+            "path": "staging.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar staging storage policy uses SQLite."
+              }
+            ]
+          }
+        ]
+      },
+      "sourcePaths": [
+        "production.md",
+        "staging.md"
+      ],
+      "sourceHashes": {
+        "production.md": "6ae21db4e1267903a83daacd61387a567b823c593c4f12487635a892d116f96e",
+        "staging.md": "e8ad4263c9e567ef4041461df3dc52cd801d9c57179b3663f35cb21651bf71ca"
+      },
+      "toolSeconds": 0.08067995801684447,
+      "toolStdoutBytes": 1111,
+      "response": {
+        "answer": "The Cedar production storage policy currently uses PostgreSQL.",
+        "citations": [
+          "production.md"
+        ]
+      },
+      "stopReason": "completed",
+      "citationIdentityValid": true,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "scope",
+      "arm": "history-capable",
+      "question": "What database does the Cedar production storage policy currently use?",
+      "route": {
+        "include_superseded": false
+      },
+      "runComplete": true,
+      "historicalApplied": false,
+      "retrieval": {
+        "workflow": "curator",
+        "retrievalConfidence": "bounded",
+        "needsExpansion": false,
+        "scanLimitReached": false,
+        "offset": 0,
+        "totalCandidates": 2,
+        "hasMore": false,
+        "nextOffset": null,
+        "adaptiveMode": "focused",
+        "results": [
+          {
+            "path": "production.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar production storage policy uses PostgreSQL."
+              }
+            ]
+          },
+          {
+            "path": "staging.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar staging storage policy uses SQLite."
+              }
+            ]
+          }
+        ]
+      },
+      "sourcePaths": [
+        "production.md",
+        "staging.md"
+      ],
+      "sourceHashes": {
+        "production.md": "6ae21db4e1267903a83daacd61387a567b823c593c4f12487635a892d116f96e",
+        "staging.md": "e8ad4263c9e567ef4041461df3dc52cd801d9c57179b3663f35cb21651bf71ca"
+      },
+      "toolSeconds": 0.09328658401500434,
+      "toolStdoutBytes": 1111,
+      "response": {
+        "answer": "The Cedar production storage policy currently uses PostgreSQL.",
+        "citations": [
+          "production.md"
+        ]
+      },
+      "stopReason": "completed",
+      "citationIdentityValid": true,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "missing",
+      "arm": "history-capable",
+      "question": "What database did Cedar storage policy use in January, before March?",
+      "route": {
+        "include_superseded": true
+      },
+      "runComplete": true,
+      "historicalApplied": true,
+      "retrieval": {
+        "workflow": "curator",
+        "retrievalConfidence": "bounded",
+        "needsExpansion": false,
+        "scanLimitReached": false,
+        "offset": 0,
+        "totalCandidates": 2,
+        "hasMore": false,
+        "nextOffset": null,
+        "adaptiveMode": "focused",
+        "historicalCandidatesIncluded": true,
+        "results": [
+          {
+            "path": "current.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar storage policy now uses PostgreSQL."
+              }
+            ]
+          },
+          {
+            "path": "prior.md",
+            "status": "superseded",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-01-01\n\nThe previous Cedar storage policy database was not recorded."
+              }
+            ]
+          }
+        ]
+      },
+      "sourcePaths": [
+        "current.md",
+        "prior.md"
+      ],
+      "sourceHashes": {
+        "current.md": "bb352ab78b272e5a475f0287d784737226b0c8d7ef6a0a0ee3b14f230541f683",
+        "prior.md": "e489982b1af272bce0e60042d1bfd1140ba2e582a283c4e40969a6d1e1d836c1"
+      },
+      "toolSeconds": 0.09706912498222664,
+      "toolStdoutBytes": 1169,
+      "response": {
+        "answer": "The database used in January was not recorded, so its value is unresolved. [prior.md]",
+        "citations": [
+          "prior.md"
+        ]
+      },
+      "stopReason": "completed",
+      "citationIdentityValid": true,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "missing",
+      "arm": "existing",
+      "question": "What database did Cedar storage policy use in January, before March?",
+      "route": {
+        "include_superseded": true
+      },
+      "runComplete": true,
+      "historicalApplied": false,
+      "retrieval": {
+        "workflow": "curator",
+        "retrievalConfidence": "bounded",
+        "needsExpansion": false,
+        "scanLimitReached": false,
+        "offset": 0,
+        "totalCandidates": 1,
+        "hasMore": false,
+        "nextOffset": null,
+        "adaptiveMode": "focused",
+        "results": [
+          {
+            "path": "current.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar storage policy now uses PostgreSQL."
+              }
+            ]
+          }
+        ]
+      },
+      "sourcePaths": [
+        "current.md"
+      ],
+      "sourceHashes": {
+        "current.md": "bb352ab78b272e5a475f0287d784737226b0c8d7ef6a0a0ee3b14f230541f683"
+      },
+      "toolSeconds": 0.09692583300056867,
+      "toolStdoutBytes": 655,
+      "response": {
+        "answer": "The January database is unresolved. The supplied source only states that Cedar storage policy used PostgreSQL on 2025-03-01, in March\u2014not January. Source: `current.md`",
+        "citations": [
+          "current.md"
+        ]
+      },
+      "stopReason": "completed",
+      "citationIdentityValid": true,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "conflict",
+      "arm": "existing",
+      "question": "What database did Cedar storage policy use in January, before March?",
+      "route": {
+        "include_superseded": true
+      },
+      "runComplete": true,
+      "historicalApplied": false,
+      "retrieval": {
+        "workflow": "curator",
+        "retrievalConfidence": "bounded",
+        "needsExpansion": false,
+        "scanLimitReached": false,
+        "offset": 0,
+        "totalCandidates": 1,
+        "hasMore": false,
+        "nextOffset": null,
+        "adaptiveMode": "focused",
+        "results": [
+          {
+            "path": "current.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar storage policy now uses PostgreSQL."
+              }
+            ]
+          }
+        ]
+      },
+      "sourcePaths": [
+        "current.md"
+      ],
+      "sourceHashes": {
+        "current.md": "bb352ab78b272e5a475f0287d784737226b0c8d7ef6a0a0ee3b14f230541f683"
+      },
+      "toolSeconds": 0.10977183302748017,
+      "toolStdoutBytes": 655,
+      "response": {
+        "answer": "The January database is unresolved. The supplied source only states that Cedar storage policy used PostgreSQL on 2025-03-01, not what it used in January. Source: `current.md`",
+        "citations": [
+          "current.md"
+        ]
+      },
+      "stopReason": "completed",
+      "citationIdentityValid": true,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "conflict",
+      "arm": "history-capable",
+      "question": "What database did Cedar storage policy use in January, before March?",
+      "route": {
+        "include_superseded": true
+      },
+      "runComplete": true,
+      "historicalApplied": true,
+      "retrieval": {
+        "workflow": "curator",
+        "retrievalConfidence": "low",
+        "needsExpansion": true,
+        "scanLimitReached": false,
+        "offset": 0,
+        "totalCandidates": 3,
+        "hasMore": false,
+        "nextOffset": null,
+        "adaptiveMode": "focused",
+        "historicalCandidatesIncluded": true,
+        "results": [
+          {
+            "path": "current.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar storage policy now uses PostgreSQL."
+              }
+            ]
+          },
+          {
+            "path": "prior-a.md",
+            "status": "superseded",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-01-01\n\nCedar storage policy uses SQLite. No resolution recorded."
+              }
+            ]
+          },
+          {
+            "path": "prior-b.md",
+            "status": "superseded",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-01-01\n\nCedar storage policy uses MySQL. No resolution recorded."
+              }
+            ]
+          }
+        ]
+      },
+      "sourcePaths": [
+        "current.md",
+        "prior-a.md",
+        "prior-b.md"
+      ],
+      "sourceHashes": {
+        "current.md": "bb352ab78b272e5a475f0287d784737226b0c8d7ef6a0a0ee3b14f230541f683",
+        "prior-a.md": "03fa10797d2c8a77be088e436a893ea9348d13ca0564c42078a57115e3dea3f0",
+        "prior-b.md": "fc5d575dd93771bfa2434afbead5066a4e7ba6651429da00d034af629f059967"
+      },
+      "toolSeconds": 0.08272162498906255,
+      "toolStdoutBytes": 1636,
+      "response": {
+        "answer": "The January database is unresolved: one source says SQLite and another says MySQL, and both record \u201cNo resolution recorded.\u201d Sources: `prior-a.md`, `prior-b.md`.",
+        "citations": [
+          "prior-a.md",
+          "prior-b.md"
+        ]
+      },
+      "stopReason": "completed",
+      "citationIdentityValid": true,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "attribution",
+      "arm": "history-capable",
+      "question": "What database did the user say Cedar storage policy used in January, before March?",
+      "route": {
+        "include_superseded": true
+      },
+      "runComplete": true,
+      "historicalApplied": true,
+      "retrieval": {
+        "workflow": "curator",
+        "retrievalConfidence": "bounded",
+        "needsExpansion": false,
+        "scanLimitReached": false,
+        "offset": 0,
+        "totalCandidates": 2,
+        "hasMore": false,
+        "nextOffset": null,
+        "adaptiveMode": "focused",
+        "historicalCandidatesIncluded": true,
+        "results": [
+          {
+            "path": "prior.md",
+            "status": "superseded",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy > user",
+                "text": "Cedar storage policy uses SQLite."
+              }
+            ],
+            "sourceReadRequired": true
+          },
+          {
+            "path": "current.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar storage policy now uses PostgreSQL."
+              }
+            ]
+          }
+        ]
+      },
+      "sourcePaths": [
+        "prior.md",
+        "current.md"
+      ],
+      "sourceHashes": {
+        "prior.md": "45b918246a63edc36413dcde1dff32a964fde194e4ad383412c260e15dffd458",
+        "current.md": "bb352ab78b272e5a475f0287d784737226b0c8d7ef6a0a0ee3b14f230541f683"
+      },
+      "toolSeconds": 0.08562074997462332,
+      "toolStdoutBytes": 1194,
+      "response": {
+        "answer": "The user said Cedar storage policy used SQLite in January, before March. [prior.md]",
+        "citations": [
+          "prior.md"
+        ]
+      },
+      "stopReason": "completed",
+      "citationIdentityValid": true,
+      "sourcesUnchanged": true
+    },
+    {
+      "id": "attribution",
+      "arm": "existing",
+      "question": "What database did the user say Cedar storage policy used in January, before March?",
+      "route": {
+        "include_superseded": true
+      },
+      "runComplete": true,
+      "historicalApplied": false,
+      "retrieval": {
+        "workflow": "curator",
+        "retrievalConfidence": "bounded",
+        "needsExpansion": false,
+        "scanLimitReached": false,
+        "offset": 0,
+        "totalCandidates": 1,
+        "hasMore": false,
+        "nextOffset": null,
+        "adaptiveMode": "focused",
+        "results": [
+          {
+            "path": "current.md",
+            "status": "active",
+            "evidencePreview": [
+              {
+                "heading": "Cedar storage policy - Cedar storage policy",
+                "text": "Date: 2025-03-01\n\nCedar storage policy now uses PostgreSQL."
+              }
+            ]
+          }
+        ]
+      },
+      "sourcePaths": [
+        "current.md"
+      ],
+      "sourceHashes": {
+        "current.md": "bb352ab78b272e5a475f0287d784737226b0c8d7ef6a0a0ee3b14f230541f683"
+      },
+      "toolSeconds": 0.08947050001006573,
+      "toolStdoutBytes": 655,
+      "response": {
+        "answer": "The January database is unresolved. The supplied source only says that Cedar storage policy used PostgreSQL on 2025-03-01, not what it used in January. [current.md]",
+        "citations": [
+          "current.md"
+        ]
+      },
+      "stopReason": "completed",
+      "citationIdentityValid": true,
+      "sourcesUnchanged": true
+    }
+  ],
+  "runComplete": true,
+  "limitations": [
+    "Synthetic development; six questions from five source families",
+    "Shared route decision precedes paired answer calls; not independent routing per arm",
+    "Evaluator reads every delivered candidate original; autonomous source selection unmeasured",
+    "No Lead agent, official answer scorer or independently calibrated semantic judge",
+    "Fresh sessions do not guarantee cold cache; billing unknown"
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "protocol": "curator-paging-development-v2-boolean-continuation",
+  "id": "09ba9854_abs",
+  "question": "How much will I save by taking the bus from the airport to my hotel instead of a taxi?",
+  "model": "gpt-5.6-luna",
+  "mode": "auto",
+  "maxRounds": 4,
+  "maxInputBytes": 300000,
+  "persistentCurator": false,
+  "compactFollowup": false,
+  "structuredCitations": true,
+  "runnerSha256": "f222e2b8fe42311f5c78918eafa14cc2a5ccf8072852bf720394e3cbcb0c7499",
+  "inputSha256": "9f95f1f9d1b8922511f5c18b7adc7c9213498dce668c62da5417f494dc67d596",
+  "modelCalls": [
+    {
+      "stage": "curator",
+      "sessionResumed": false,
+      "elapsedSeconds": 6.159,
+      "promptBytes": 32171,
+      "promptSha256": "aa32b3997dba0a4b32f18451d95941f9ca4d07d17a3ad1a2b83bbe976d47e379",
+      "usage": {
+        "input_tokens": 22963,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 66,
+        "reasoning_output_tokens": 27
+      },
+      "failed": false,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "curator",
+      "sessionResumed": false,
+      "elapsedSeconds": 6.285,
+      "promptBytes": 43377,
+      "promptSha256": "1896b5c427295ca74d884bb0007376b35b202ba0d50a36d00505496bd8de5a95",
+      "usage": {
+        "input_tokens": 25602,
+        "cached_input_tokens": 14080,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 130,
+        "reasoning_output_tokens": 57
+      },
+      "failed": false,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    },
+    {
+      "stage": "lead",
+      "sessionResumed": false,
+      "elapsedSeconds": 4.552,
+      "promptBytes": 666,
+      "promptSha256": "cea2fa4143a0090281104ea06cac987ecc2f1eb28f7ca474c054522e73e5dce4",
+      "usage": {
+        "input_tokens": 15435,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 37,
+        "reasoning_output_tokens": 0
+      },
+      "failed": false,
+      "sessionIdentityFailed": false,
+      "warnings": [
+        "Skill descriptions were shortened to fit the 2% skills context budget. Codex can still see every skill, but some descriptions are shorter. Disable unused skills or plugins to leave more room for the rest."
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "offset": 0,
+      "nextOffset": 32,
+      "hasMore": true,
+      "paths": [
+        "sessions/0006-74b40853759b.md",
+        "sessions/0033-67233b2982aa.md",
+        "sessions/0031-3376b238ea96.md",
+        "sessions/0024-af1f61c95c51.md",
+        "sessions/0026-38496097e37b.md",
+        "sessions/0018-335e219873ed.md",
+        "sessions/0017-98af5d912a78.md",
+        "sessions/0032-1ba154600e2c.md",
+        "sessions/0041-1e881a9b2a2f.md",
+        "sessions/0020-0a19ba38aa70.md",
+        "sessions/0008-75f32d1e6833.md",
+        "sessions/0030-97ea6ae5f012.md",
+        "sessions/0015-cd5a734d367c.md",
+        "sessions/0035-da92723d17d1.md",
+        "sessions/0023-19f764e20b96.md",
+        "sessions/0028-fb2284bde3c1.md",
+        "sessions/0036-10cb60850f8d.md",
+        "sessions/0050-9707510d97ca.md",
+        "sessions/0010-819f9f1e885f.md",
+        "sessions/0009-d92ab9bd5c3a.md",
+        "sessions/0029-8f5992ddd031.md",
+        "sessions/0003-8d906598c255.md",
+        "sessions/0022-05b884b064a7.md",
+        "sessions/0038-0be7233ebfa0.md",
+        "sessions/0045-afc3d0a8631e.md",
+        "sessions/0042-3072e146ee65.md",
+        "sessions/0013-0034f4b11829.md",
+        "sessions/0025-30dff0ed57b0.md",
+        "sessions/0021-a5f321e5b233.md",
+        "sessions/0037-85b75a340eaa.md",
+        "sessions/0043-d04ba982db89.md",
+        "sessions/0027-f40ec7d96072.md"
+      ],
+      "pageSha256": "96fa5ad4c3e8f172ebd66a14f32421ec9bf27a1e240d55db012da6cb664bab47"
+    }
+  ],
+  "sourceReads": [
+    {
+      "path": "sessions/0006-74b40853759b.md",
+      "sha256": "7ff5fd8c44a627c170da5e5cfd54708ea8b2aa1271f4ce79981620cceb9c4234",
+      "bytes": 10800
+    }
+  ],
+  "brief": "You\u2019d save approximately $40\u2013$50: the taxi was estimated at about $60, while the airport bus was estimated at $10\u2013$20. [Source: sessions/0006-74b40853759b.md]",
+  "answer": "Approximately $40\u2013$50.",
+  "runComplete": true,
+  "stopReason": "curator-finalized",
+  "limitations": [
+    "One exposed development case; no quality acceptance or latency tail claim",
+    "No-tool boundary is checked in trace, not a proven filesystem isolation guarantee",
+    "No official answer scorer or independent calibrated semantic judge",
+    "Subscription bill allocation unknown; native token categories retained"
+  ],
+  "citations": [
+    "sessions/0006-74b40853759b.md"
+  ],
+  "citationProvenanceValid": true,
+  "elapsedSeconds": 17.135
+}

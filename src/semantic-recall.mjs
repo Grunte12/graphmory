@@ -2,8 +2,8 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import { createHash } from "node:crypto"
-import { governedRank, isRetrievable } from "./retrieval.mjs"
-import { loadVaultDocuments } from "./memory-recall.mjs"
+import { governedRank, isAnswerCandidate, isRetrievable } from "./retrieval.mjs"
+import { filterByScope, loadVaultDocuments } from "./memory-recall.mjs"
 import { writeJsonAtomic } from "./atomic-write.mjs"
 
 const DEFAULT_MODEL = "Xenova/bge-small-en-v1.5"
@@ -26,17 +26,10 @@ export async function recallVaultSemantic(vault, query, {
   if (!Number.isInteger(maxFiles) || maxFiles < 1) throw new Error("maxFiles must be positive")
 
   const documents = loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
-  const eligible = documents.filter((document) => isRetrievable(document, { includeNoncanonical }))
-  const embed = await loadEmbeddingPipeline(model, modelCache)
-  const vectorById = await cachedDocumentVectors(eligible, embed, {
-    vault, scope, model, modelCache, maxDocumentCharacters,
+  const vectorLane = await rankSemanticVectorLane(vault, query, {
+    documents, scope, includeNoncanonical, model, modelCache, maxDocumentCharacters,
   })
-  const queryOutput = await embed(query, { pooling: "mean", normalize: true })
-  const queryVector = queryOutput.tolist()[0]
-
-  const vectorResults = eligible
-    .map((document) => ({ ...document, score: dot(queryVector, vectorById.get(document.id)), retrievalSource: "semantic-vector" }))
-    .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
+  const vectorResults = vectorLane.results
 
   const sparse = governedRank(documents, query, "bm25f-sections", { includeNoncanonical }).results
   const fused = reciprocalRankFuse([
@@ -70,6 +63,44 @@ export async function recallVaultSemantic(vault, query, {
       status: item.metadata?.status ?? item.metadata?.lifecycle ?? "current",
       lanes: item.lanes,
     })),
+  }
+}
+
+export async function rankSemanticVectorLane(vault, query, {
+  documents: suppliedDocuments,
+  scope = "",
+  includeNoncanonical = false,
+  includeSuperseded = false,
+  answerCandidatesOnly = false,
+  includeRawPaths = false,
+  maxFiles = 5000,
+  model = DEFAULT_MODEL,
+  modelCache = "",
+  maxDocumentCharacters = 8000,
+} = {}) {
+  if (!query?.trim()) throw new Error("query is required")
+  if (!Number.isInteger(maxFiles) || maxFiles < 1) throw new Error("maxFiles must be positive")
+
+  const loaded = suppliedDocuments ?? loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
+  const documents = filterByScope(loaded, scope)
+  const eligible = documents.filter((document) => isRetrievable(document, { includeNoncanonical, includeSuperseded })
+    && (!answerCandidatesOnly || isAnswerCandidate(document)))
+  const embed = await loadEmbeddingPipeline(model, modelCache)
+  const vectorById = await cachedDocumentVectors(eligible, embed, {
+    vault, scope, model, modelCache, maxDocumentCharacters,
+  })
+  const queryOutput = await embed(query, { pooling: "mean", normalize: true })
+  const queryVector = queryOutput.tolist()[0]
+  const results = eligible
+    .map((document) => ({ ...document, score: dot(queryVector, vectorById.get(document.id)), retrievalSource: "semantic-vector" }))
+    .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
+
+  return {
+    method: "semantic-vector",
+    model,
+    scanned: loaded.length,
+    scanLimitReached: loaded.length >= maxFiles,
+    results,
   }
 }
 

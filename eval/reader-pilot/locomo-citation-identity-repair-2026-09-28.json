@@ -1,0 +1,76 @@
+{
+  "protocol": "citation-identity-frozen-trace-replay-v1",
+  "validatorSourceSha256": "f9a6f07814951ca7d1d46725ab6eb5ac88c3aa27e1034c29d0c82b589b4e410c",
+  "rows": [
+    {
+      "id": "conv-42:19",
+      "arm": "current",
+      "citationCount": 2,
+      "oldIdentityAccepted": false,
+      "newIdentityAccepted": true,
+      "originalComplete": false
+    },
+    {
+      "id": "conv-42:19",
+      "arm": "coverage",
+      "citationCount": 2,
+      "oldIdentityAccepted": false,
+      "newIdentityAccepted": true,
+      "originalComplete": false
+    },
+    {
+      "id": "conv-47:52",
+      "arm": "coverage",
+      "citationCount": 1,
+      "oldIdentityAccepted": true,
+      "newIdentityAccepted": true,
+      "originalComplete": true
+    },
+    {
+      "id": "conv-48:36",
+      "arm": "current",
+      "citationCount": 0,
+      "oldIdentityAccepted": true,
+      "newIdentityAccepted": true,
+      "originalComplete": true
+    },
+    {
+      "id": "conv-26:142",
+      "arm": "coverage",
+      "citationCount": 12,
+      "oldIdentityAccepted": true,
+      "newIdentityAccepted": true,
+      "originalComplete": true
+    },
+    {
+      "id": "conv-26:142",
+      "arm": "current",
+      "citationCount": 5,
+      "oldIdentityAccepted": true,
+      "newIdentityAccepted": true,
+      "originalComplete": true
+    },
+    {
+      "id": "conv-30:84",
+      "arm": "current",
+      "citationCount": 1,
+      "oldIdentityAccepted": true,
+      "newIdentityAccepted": true,
+      "originalComplete": true
+    },
+    {
+      "id": "conv-30:84",
+      "arm": "coverage",
+      "citationCount": 1,
+      "oldIdentityAccepted": true,
+      "newIdentityAccepted": true,
+      "originalComplete": true
+    }
+  ],
+  "falseRejectionsResolved": 2,
+  "limitations": [
+    "Offline citation identity only; original operational outcomes remain unchanged",
+    "Empty citation lists are vacuous identity passes, not evidence support",
+    "No live model retry or independent semantic verdict"
+  ]
+}

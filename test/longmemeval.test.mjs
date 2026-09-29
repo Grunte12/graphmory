@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { benchmarkDate, prepareCase, selectCases, validateCase } from '../scripts/lib/longmemeval.mjs'
+import { benchmarkDate, prepareCase, selectCases, selectSourceDisjointCases, validateCase } from '../scripts/lib/longmemeval.mjs'
 const fixture = () => ({question_id:'q1',question_type:'multi-session',question:'Where?',question_date:'2024/02/03 (Sat) 12:00',answer:'SECRET_LABEL',
   haystack_session_ids:['later','earlier'],haystack_dates:['2024/02/02 (Fri) 12:00','2024/02/01 (Thu) 12:00'],
   haystack_sessions:[[{role:'user',content:'Latest fact',has_answer:true,answer:'SECRET_LABEL'}],[{role:'assistant',content:'Earlier fact'}]],answer_session_ids:['later']})
@@ -31,6 +31,25 @@ test('selection is independent of input order and abstention is stratified',()=>
  assert.deepEqual(selectCases(inputs).map(x=>x.question_id),selectCases([...inputs].reverse()).map(x=>x.question_id))
  assert.equal(selectCases(inputs).filter(x=>x.question_id.endsWith('_abs')).length,2)
  assert.throws(()=>selectCases([inputs[0],inputs[0]]),/Duplicate question/)
+})
+
+test('transfer selection rejects shared source sessions, including across categories',()=>{
+ const items=[
+  {question_id:'a1',question_type:'one',haystack_session_ids:['shared']},
+  {question_id:'a2',question_type:'one',haystack_session_ids:['shared']},
+  {question_id:'a3',question_type:'one',haystack_session_ids:['unique-a']},
+  {question_id:'b1',question_type:'two',haystack_session_ids:['unique-b']},
+  {question_id:'b2',question_type:'two',haystack_session_ids:['unique-c']},
+  {question_id:'c1',question_type:'three',haystack_session_ids:['forbidden']},
+  {question_id:'c2',question_type:'three',haystack_session_ids:['unique-d']},
+ ]
+ const result=selectSourceDisjointCases(items,2,'frozen',new Set(['forbidden']))
+ assert.deepEqual(result.selected.map(x=>x.question_id),selectSourceDisjointCases([...items].reverse(),2,'frozen',new Set(['forbidden'])).selected.map(x=>x.question_id))
+ assert.equal(result.selected.length,4)
+ assert.deepEqual(result.unavailableCategories,['three'])
+ const sessions=result.selected.flatMap(x=>x.haystack_session_ids)
+ assert.equal(new Set(sessions).size,sessions.length)
+ assert.ok(!sessions.includes('forbidden'))
 })
 
 test('upstream exporter verifies source identity and removes gold labels', async()=>{

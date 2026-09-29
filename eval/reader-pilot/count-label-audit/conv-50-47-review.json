@@ -1,0 +1,47 @@
+{
+  "protocol": "locomo-count-label-audit-v1",
+  "caseId": "conv-50:47",
+  "manifestSha256": "8e0af4277da6ebae1532ee098c9769ffca179269bd8edfc85be3c11e086a083b",
+  "status": "invalid",
+  "reviewedSessions": [
+    "session_1.md",
+    "session_3.md",
+    "session_22.md",
+    "session_26.md"
+  ],
+  "events": [
+    {
+      "eventId": "childhood-first-car-show",
+      "turnIds": [
+        "D26:6"
+      ],
+      "classification": "counted",
+      "rationale": "Explicit first car show at age ten."
+    },
+    {
+      "eventId": "april-2023-car-show",
+      "turnIds": [
+        "D3:12"
+      ],
+      "classification": "counted",
+      "rationale": "Explicit car show last weekend in April 2023."
+    },
+    {
+      "eventId": "october-2023-car-show",
+      "turnIds": [
+        "D22:1"
+      ],
+      "classification": "counted",
+      "rationale": "Explicit car show last Friday in October 2023."
+    },
+    {
+      "eventId": "march-2023-car-event",
+      "turnIds": [
+        "D1:2"
+      ],
+      "classification": "candidate",
+      "rationale": "Separate classic-car event; exact event type is not explicit."
+    }
+  ],
+  "rationale": "Three explicit distinct car shows already exceed the upstream reference of two; March event could be a fourth."
+}
