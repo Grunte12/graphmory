@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "experiment": "graph-history-repair",
+  "date": "2026-09-29",
+  "evidenceClass": "synthetic_development_acceptance",
+  "overallStatus": "functional_pass_with_protocol_deviation",
+  "acceptancePassed": false,
+  "reason": "First original read guessed nonexistent filenames; child repaired the read and completed, contrary to the preregistered stop-on-tool-failure instruction. Required post-state passed; strict execution protocol did not.",
+  "baseline": "334ee5e7b6c508a541ded7d37bddf1d8e9a99f7c",
+  "package": {
+    "filename": "graphmory-0.5.0-rc.3.tgz",
+    "integrity": "sha512-mGwZMMjB52u6Dj2c6dUfnJ5kYZ2M9v7hA5OcwryNbT3v9l0Hv5/fQw+EzcaDN9zb3yR7N8IeWgGIELj281g/kQ==",
+    "shasum": "83a3740398740238ff7175858264a49124af54d2"
+  },
+  "sourceHashes": {
+    "src/graph-navigation.mjs": "3c76352b0b7b39d2390944e36e5bad271d09b46a0eddd9666df2924378309e7b",
+    "scripts/brain-sync.mjs": "5135152e6e392fea91fa14b835b3266bda174f7afbaad602218eb0b42246036a",
+    "scripts/setup-curator-agent.mjs": "42368f76c28d574559558e005d05cc2adf0964e60a47259b76ebb90a61d04b61",
+    "skills/memory-curator/SKILL.md": "f3bf735d6b21c1f98f7afdd320935f69b2b32fdf7b2fde5adca3c93f66da1973",
+    "scripts/prepare-native-curator-smoke.mjs": "614432fda3394228b8184198cf78e7e474c4d827943729f9f0c9aab630059076",
+    "docs/evaluation/graph-history-repair-protocol-2026-09-29.md": "495088faa62c033d7cf98666aecc27480bc8ad8c995e9b6b554e871ee1832fce"
+  },
+  "diffSha256AtPack": "7a2a7cce1eb3130fe33589983744563904e3bd930359f5ed53a51885f2ec7a80",
+  "promptSha256": "73e53b5a1e0e116f7b6ded71ef44880404f2447fcfc46f0b912a2642332c4ce5",
+  "execution": {
+    "exitCode": 0,
+    "wallSeconds": 155.791
+  },
+  "runtimeBinding": {
+    "leadModel": "gpt-5.6-sol",
+    "leadReasoning": "low",
+    "curatorModel": "gpt-5.6-luna",
+    "curatorReasoning": "low",
+    "curatorRole": "graphmory_curator",
+    "parentThreadId": "01a0ed8a-2cbf-7113-a15a-551e9131486f",
+    "childThreadId": "01a0ed8a-a19e-7bf0-aee8-339da4f25a0a"
+  },
+  "launchReview": {
+    "firstAttempt": "automatic_review_deadline_before_process_start",
+    "retriedOnce": true,
+    "executedModelRuns": 1
+  },
+  "deterministicInstalledCliChecks": {
+    "historyIsInformational": true,
+    "missingEvidenceStillIssue": true,
+    "existingHistoricalPathResolved": true,
+    "currentOmitsOld": true,
+    "explicitHistoryFindsOld": true,
+    "auditRecallReadOnly": true
+  },
+  "physicalChecks": {
+    "sourceImmutable": true,
+    "backwardHistoryLink": true,
+    "forwardReplacementLink": true,
+    "oldClaimAndE1Retained": true,
+    "approvedClaimAndE2Retained": true,
+    "oldSuperseded": true,
+    "newActive": true,
+    "runbookCurrentLink": true,
+    "eventTriggerRetained": true,
+    "retryBytesIdentical": true,
+    "noDuplicateNote": true,
+    "postcheck": true,
+    "historyDiagnosticInformational": true,
+    "noBrokenLinkIssues": true,
+    "currentOmitsOld": true,
+    "explicitHistoryFindsOld": true
+  },
+  "traceChecks": {
+    "namedRuntimeBinding": true,
+    "spawnFreshContext": true,
+    "twoTerminalChildTasks": true,
+    "preflightOutputBeforeWrite": true,
+    "successfulOriginalReadBeforeWrite": true,
+    "postcheckBeforeFirstCompletion": true,
+    "snapshotBetweenTask1AndRetry": true,
+    "noCuratePlanCall": true
+  },
+  "traceTimesUtc": {
+    "firstChildCompletion": "2026-09-29T14:22:33.824Z",
+    "snapshotCapture": "2026-09-29T14:22:41.231Z",
+    "retryDispatch": "2026-09-29T14:22:50.141Z",
+    "secondChildCompletion": "2026-09-29T14:23:16.791Z"
+  },
+  "readError": {
+    "type": "ENOENT",
+    "cause": "guessed filenames instead of exact source/target paths",
+    "failedBeforeAnyWrite": true,
+    "successfulRepairBeforeWrite": true,
+    "repair": "bounded file listing followed by read-notes with correct JSON paths",
+    "protocolDeviation": true
+  },
+  "audit": {
+    "brokenIssues": {},
+    "excludedCounts": {
+      "lifecycle:superseded": 1
+    },
+    "excludedReferences": [
+      {
+        "source": "01 Projects/Helios/Independent Approval Policy.md",
+        "target": "Release Policy",
+        "relation": "links_to",
+        "kind": "wiki",
+        "resolvedPath": "01 Projects/Helios/Release Policy.md",
+        "reason": "lifecycle:superseded"
+      }
+    ],
+    "lifecycleSummary": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "info": 0,
+      "total": 0
+    },
+    "metadataPostcheck": {
+      "valid": true,
+      "metadataOnly": true,
+      "checkedFields": [
+        "lifecycle.status",
+        "lifecycle.revalidate_when[0]"
+      ],
+      "errors": []
+    }
+  },
+  "currentPaths": [
+    "01 Projects/Helios/Independent Approval Policy.md",
+    "01 Projects/Helios/Runbook.md",
+    "01 Projects/Helios/Index.md"
+  ],
+  "historicalPaths": [
+    "01 Projects/Helios/Independent Approval Policy.md",
+    "01 Projects/Helios/Release Policy.md",
+    "01 Projects/Helios/Runbook.md",
+    "01 Projects/Helios/Index.md"
+  ],
+  "finalMarkdownHashes": {
+    "90 Evidence/Approval Record.md": "2caa7da57607194be21036ef91e80a20a745afc12c32c1a00aa2f17686ba98b2",
+    "01 Projects/Helios/Runbook.md": "70c1a6e51d2d974c8c11b7e7d98956fcd51e7669f6bfd22edf250345bc842fb5",
+    "01 Projects/Helios/Index.md": "fe74711065fff3cb0cab5a848da6489407ead77ddc3459655f3f607522f056cb",
+    "01 Projects/Helios/Independent Approval Policy.md": "c089c60dd9d4c76fa90515f04c2b51e6277b9ad0ad7d54e91883849ea7c38aa4",
+    "01 Projects/Helios/Release Policy.md": "5e3079c920e7421b6522a05634b6bdf124d23b8b3b1f04397ba6ebcf08af2479"
+  },
+  "limits": [
+    "Single known development fixture; bundled graph/guidance changes, no causal isolation.",
+    "No fresh-session recall, general pagination, cross-host success, official benchmark or comparator result.",
+    "Metadata postcheck does not verify semantic support/authority/full patch persistence.",
+    "Wall time observed for traceability only; no latency/cost comparison or cache claim."
+  ],
+  "privacy": {
+    "rawRolloutsIncluded": false,
+    "privatePathsIncluded": false,
+    "secretsIncluded": false
+  },
+  "cleanup": {
+    "exactTerminalSessionsArchived": true,
+    "archiveStateConfirmed": true,
+    "temporaryRootRemoved": true,
+    "globalArchivedRolloutsPreserved": true
+  }
+}

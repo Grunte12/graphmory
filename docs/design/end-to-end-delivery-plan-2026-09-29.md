@@ -98,7 +98,11 @@ After this gate, resume latency/cost/cache experiments, matched tool comparisons
 
 ## Immediate next work
 
-Phase 0 native evidence closeout is recorded, including the failed lineage gate and the independent limited postcheck. Start Phase 1 graph/history repair next. Defer benchmark expansion, new embedding/reranking models, provider cache tuning and comparator installations until the default end-to-end acceptance sequence is complete.
+Phase 0 native evidence closeout is recorded, including the failed lineage gate and the independent limited postcheck. The Phase 1 implementation and its open native execution gap are documented below; next connect the complete Phase 2 workflow. Defer benchmark expansion, new embedding/reranking models, provider cache tuning and comparator installations until the default end-to-end acceptance sequence is complete.
+
+### Phase 1 follow-up
+
+The [graph/history repair report](../evaluation/graph-history-repair-2026-09-29.md) records the implemented diagnostic fix, 367 passing tests, six installed CLI checks and preserved bidirectional history/retry identity in one native scenario. Native execution had a recovered guessed-path read error and violated that trial's strict stop-on-tool-failure instruction, so it is not full protocol acceptance. Keep this gap open during Phase 2: ground exact source paths, declare safe recovery rules before running, then verify the complete write → new-session → recall flow and later-page evidence. Do not rerun the same narrow scenario merely to remove the error from its record.
 
 ### Goal bookkeeping
 

@@ -23,6 +23,14 @@ In curator mode, each call returns up to ten candidate **paths**, not ten full M
 
 For an explicit question about a previous state, add `--include-superseded` to `recall-managed`. It admits superseded notes without admitting raw, stale, archived, or deprecated notes. Keep it off for current-state questions. Read the originals and compare attribution, dates, and scope; inclusion alone does not prove a historical claim.
 
+Read selected originals with the tool's JSON-array path argument, including filenames containing spaces:
+
+```sh
+graphmory read-notes --vault "<vault-path>" --paths '["01 Projects/Example/Policy.md", "90 Evidence/Approval Record.md"]'
+```
+
+This returns original Markdown with paths and hashes. Use the exact returned vault-relative paths; do not iterate over whitespace-split shell output. Read only the originals relevant to the task and check any read errors before making a claim or editing.
+
 For a question that compares two known projects, retrieve within each project scope and page through the candidate paths as needed. Check that evidence supports both sides. Inspect relevant lines, cite all notes needed for the comparison, and say when one side has no supporting note. Do not choose a note merely because it ranks first.
 
 ## Recall
@@ -39,11 +47,13 @@ For questions about implementation, runtime behavior, or provider configuration,
 1. Require a complete lead-authored Memory Patch, including claim, rationale, scope, provenance, confidence, type, and lifecycle. Read `references/protocol.md` for the required fields and outcomes.
 2. Materialize the lead-authored patch as a JSON file outside the vault and run `graphmory validate-patch --input "<patch.json>" --agent` before editing. Stop as `BLOCKED` if validation fails. This is schema validation only: it does not establish factual support, user authorization, or that a requested lifecycle transition is supported.
 3. Open the cited original evidence and current target notes. Verify that the evidence supports the claim; a ranked candidate or link is not evidence by itself. Confirm explicit user authorization before changing policy or superseding prior memory.
-4. Find the strongest existing canonical note. In curator mode, apply the supported patch with the host's normal Edit/Write tools, preserving its meaning, source IDs, and prior evidence. Write each `lifecycle.revalidate_when` event as an item in the canonical note's YAML `revalidate_when` list. Keep optional `valid_until` as its own date field; a date expiry does not replace an event trigger. Keep historical notes; mark a replacement as `superseded` and link it to the active replacement only when the evidence and explicit authorization support that transition.
+4. Find the strongest existing canonical note. In curator mode, apply the supported patch with the host's normal Edit/Write tools, preserving its meaning, source IDs, and prior evidence. Write each `lifecycle.revalidate_when` event as an item in the canonical note's YAML `revalidate_when` list. Keep optional `valid_until` as its own date field; a date expiry does not replace an event trigger. Keep historical notes; mark the predecessor as `superseded` and link it to the active replacement only when the evidence and explicit authorization support that transition. Preserve the replacement's explicit link back to its predecessor so the original decision remains inspectable.
 5. Preserve disagreement. If the patch does not resolve a conflict with active memory, return `TENSION` rather than silently overwriting either position. If provenance or scope is missing, return `BLOCKED` with the smallest missing item.
 6. After a write, run `graphmory verify-patch-persistence --vault "<vault>" --input "<patch.json>" --note "<canonical-note.md>" --agent`. If it reports missing lifecycle metadata, repair only that metadata and rerun; if still invalid, return `BLOCKED` with the missing field names. This read-only check verifies metadata persistence only. It does not verify factual support, authorization, claim meaning, or supersession.
 7. Then run `graphmory graph-audit --vault "<vault>" --json` and `graphmory lifecycle-audit --vault "<vault>" --json`. The lifecycle audit is date-oriented and may emit informational `revalidation-mentioned-without-date` findings for event triggers; report those separately. Repair supported link/lifecycle metadata issues without changing claim meaning; report remaining findings.
 8. Return `APPLIED`, `TENSION`, or `BLOCKED` with the affected paths and provenance status.
+
+Graph audit separates unresolved/ambiguous references (`issues`) from references to existing notes excluded from the current navigation graph (`excludedReferences`, counted by `excludedCounts`). Exclusion for lifecycle or scope is informational, not a broken-link finding or authority to delete a history/evidence link. Open the original target when needed and preserve supported lineage; never remove valid links merely to produce a clean audit. Audit counts cover the loaded inventory and can be incomplete when scan limits are reached.
 
 `validate-patch` returns only `{valid, schemaOnly, errors}` JSON and never accesses the vault. Its result does not attest that evidence supports a claim or authorize an edit.
 
