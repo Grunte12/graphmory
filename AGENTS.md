@@ -35,6 +35,7 @@ Graphmory adds a durable Markdown memory layer for coding agents. The tool repo 
 
 ## Local Development Handoff
 
+- Current delivery priority: follow `docs/design/end-to-end-delivery-plan-2026-09-29.md`. Complete the default end-to-end workflow and its integration gates before new latency/cost tuning or expanded competitor benchmarks. Preserve historical failures and scores.
 - If `docs/development-handoff-obsidian-database.md` exists, read it before continuing local resolver, schema-audit, or real-vault validation work.
 - The handoff may contain private local paths and unreleased observations. Do not stage, commit, push, publish, or sync it without explicit user approval.
 - Public tests, fixtures, examples, and documentation must remain synthetic and generic.

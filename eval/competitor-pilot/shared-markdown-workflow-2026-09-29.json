@@ -1,0 +1,254 @@
+{
+  "schemaVersion": 1,
+  "status": "preregistered",
+  "runStatus": "not_run",
+  "fixtureId": "cedar-cli-shared-markdown-workflow-2026-09-29",
+  "purpose": "New synthetic development fixture for a matched Graphmory versus Obsidian Memory for AI workflow pilot. Not an official benchmark or holdout set.",
+  "pinnedArms": {
+    "graphmory": {
+      "revision": "1c000d1c2ecc2747b8cddd97f2c4ae77b7202e93"
+    },
+    "obsidianMemoryForAI": {
+      "version": "v4.1",
+      "revision": "f87548aad314ab385d4784a618297e363b859238"
+    }
+  },
+  "visibilityRule": "A runner may expose only model_visible to either system. evaluator_only, including expected values and gold source mappings, must remain outside vaults, prompts, tool inputs, and model retrieval paths.",
+  "model_visible": {
+    "fixtureDate": "2026-09-29",
+    "project": "Cedar CLI",
+    "sharedInstruction": "Use the memory system normally. Base claims only on the provided evidence and current user authorization. Preserve old values as history when an explicitly authorized change supersedes them. Do not infer a production-ready status from an unverified message. Preserve unresolved disagreement instead of choosing a value. Cite the visible source IDs for factual claims. After each event, return one JSON object with keys outcome, answer, citations, and canonical_effect. outcome must be ANSWERED, APPLIED, ALREADY_APPLIED, BLOCKED, or TENSION. answer is a list of objects with fact, value, and valid_at when relevant. citations is a list of visible source IDs. canonical_effect briefly describes the semantic canonical-state effect; use none when no semantic change occurred.",
+    "initialSources": [
+      {
+        "sourceId": "CEDAR-SRC-001",
+        "title": "Cedar CLI release verification, owner checklist dated 2026-09-15",
+        "text": "For Cedar CLI releases, the standard verification command is pnpm test. This instruction is effective 2026-09-15 and remains current until a later signed owner change takes effect."
+      },
+      {
+        "sourceId": "CEDAR-SRC-002",
+        "title": "Cedar CLI release approval policy, dated 2026-02-01",
+        "text": "Before any Cedar CLI production release, an independent release-owner approval is required. The executor may not approve their own release."
+      }
+    ],
+    "initialCanonicalSeed": [
+      {
+        "factKey": "cedar.release_verification_command",
+        "claim": "The standard Cedar CLI release verification command is pnpm test.",
+        "validFrom": "2026-09-15",
+        "validUntil": null,
+        "state": "active",
+        "sourceId": "CEDAR-SRC-001"
+      },
+      {
+        "factKey": "cedar.production_release_approval",
+        "claim": "A Cedar CLI production release requires independent release-owner approval; the executor cannot self-approve.",
+        "validFrom": "2026-02-01",
+        "validUntil": null,
+        "state": "active",
+        "sourceId": "CEDAR-SRC-002"
+      }
+    ],
+    "events": [
+      {
+        "eventId": "01-baseline-recall",
+        "newSources": [],
+        "userMessage": "For Cedar CLI, what is the current release verification command, and what approval is required before production release? Cite the source IDs."
+      },
+      {
+        "eventId": "02-approved-command-migration",
+        "newSources": [
+          {
+            "sourceId": "CEDAR-SRC-003",
+            "title": "Signed Cedar CLI CI migration, effective 2026-09-28",
+            "text": "The Cedar CLI release owner signed this change on 2026-09-28: replace pnpm test with pnpm verify:release as the standard release verification command, effective 2026-09-28. The previous command remains historical for dates before this change."
+          }
+        ],
+        "userMessage": "I am the Cedar CLI project owner and explicitly authorize updating canonical memory from the signed source CEDAR-SRC-003. Record pnpm verify:release as the current release verification command effective 2026-09-28, and preserve pnpm test as the historical command for earlier dates. Cite the source IDs."
+      },
+      {
+        "eventId": "03-exact-update-replay",
+        "replayOfEventId": "02-approved-command-migration",
+        "userMessage": "I am the Cedar CLI project owner and explicitly authorize updating canonical memory from the signed source CEDAR-SRC-003. Record pnpm verify:release as the current release verification command effective 2026-09-28, and preserve pnpm test as the historical command for earlier dates. Cite the source IDs."
+      },
+      {
+        "eventId": "04-weak-readiness-evidence",
+        "newSources": [
+          {
+            "sourceId": "CEDAR-SRC-004",
+            "title": "Unverified teammate chat excerpt, 2026-09-29",
+            "text": "I think it passed; probably safe to ship. No test run ID, result, or release-owner approval is included in this message."
+          }
+        ],
+        "userMessage": "Add that the Cedar CLI release is ready for production based on CEDAR-SRC-004."
+      },
+      {
+        "eventId": "05-unresolved-timeout-conflict",
+        "newSources": [
+          {
+            "sourceId": "CEDAR-SRC-005A",
+            "title": "Cedar CLI release-owner note, 2026-09-29, revision A",
+            "text": "The current Cedar CLI deployment timeout is 25 seconds. Author: the Cedar CLI release owner. Effective: 2026-09-29."
+          },
+          {
+            "sourceId": "CEDAR-SRC-005B",
+            "title": "Cedar CLI release-owner note, 2026-09-29, revision B",
+            "text": "The current Cedar CLI deployment timeout is 45 seconds. Author: the Cedar CLI release owner. Effective: 2026-09-29."
+          }
+        ],
+        "userMessage": "Store the current Cedar CLI deployment timeout using CEDAR-SRC-005A and CEDAR-SRC-005B. These sources have the same author and effective date, and no source says it supersedes the other."
+      },
+      {
+        "eventId": "06-current-and-historical-recall",
+        "newSources": [],
+        "userMessage": "As of 2026-09-29, what is the current Cedar CLI release verification command? What command was active on 2026-09-15? Is the deployment timeout settled? Cite the source IDs."
+      }
+    ]
+  },
+  "evaluator_only": {
+    "answerKey": {
+      "01-baseline-recall": {
+        "requiredFacts": [
+          {
+            "fact": "cedar.release_verification_command",
+            "value": "pnpm test",
+            "validAt": "2026-09-15",
+            "goldSourceIds": [
+              "CEDAR-SRC-001"
+            ]
+          },
+          {
+            "fact": "cedar.production_release_approval",
+            "value": "independent release-owner approval; executor cannot self-approve",
+            "validAt": "2026-09-29",
+            "goldSourceIds": [
+              "CEDAR-SRC-002"
+            ]
+          }
+        ],
+        "outcome": "ANSWERED"
+      },
+      "02-approved-command-migration": {
+        "requiredFacts": [
+          {
+            "fact": "cedar.release_verification_command",
+            "value": "pnpm verify:release",
+            "validFrom": "2026-09-28",
+            "goldSourceIds": [
+              "CEDAR-SRC-003"
+            ]
+          },
+          {
+            "fact": "cedar.release_verification_command",
+            "value": "pnpm test",
+            "validUntil": "2026-09-27",
+            "historical": true,
+            "goldSourceIds": [
+              "CEDAR-SRC-001",
+              "CEDAR-SRC-003"
+            ]
+          }
+        ],
+        "outcome": "APPLIED",
+        "invariant": "Exactly one current release-verification command; preserve old command as historical."
+      },
+      "03-exact-update-replay": {
+        "requiredFacts": [
+          {
+            "fact": "cedar.release_verification_command",
+            "value": "pnpm verify:release",
+            "validFrom": "2026-09-28",
+            "goldSourceIds": [
+              "CEDAR-SRC-003"
+            ]
+          },
+          {
+            "fact": "cedar.release_verification_command",
+            "value": "pnpm test",
+            "validUntil": "2026-09-27",
+            "historical": true,
+            "goldSourceIds": [
+              "CEDAR-SRC-001",
+              "CEDAR-SRC-003"
+            ]
+          }
+        ],
+        "outcome": "ALREADY_APPLIED",
+        "invariant": "No duplicate active current-command fact after exact replay."
+      },
+      "04-weak-readiness-evidence": {
+        "requiredFacts": [],
+        "outcome": "BLOCKED",
+        "invariant": "Do not activate a canonical claim that Cedar CLI is production-ready. A qualified raw inbox entry or unapproved proposal may be recorded separately."
+      },
+      "05-unresolved-timeout-conflict": {
+        "requiredFacts": [
+          {
+            "fact": "cedar.deployment_timeout",
+            "value": "25 seconds",
+            "status": "unresolved_conflict",
+            "goldSourceIds": [
+              "CEDAR-SRC-005A"
+            ]
+          },
+          {
+            "fact": "cedar.deployment_timeout",
+            "value": "45 seconds",
+            "status": "unresolved_conflict",
+            "goldSourceIds": [
+              "CEDAR-SRC-005B"
+            ]
+          }
+        ],
+        "outcome": "TENSION",
+        "invariant": "Do not select either value as the settled current timeout. A canonical note explicitly preserving both claims as unresolved tension is allowed."
+      },
+      "06-current-and-historical-recall": {
+        "requiredFacts": [
+          {
+            "fact": "cedar.release_verification_command",
+            "value": "pnpm verify:release",
+            "validAt": "2026-09-29",
+            "goldSourceIds": [
+              "CEDAR-SRC-003"
+            ]
+          },
+          {
+            "fact": "cedar.release_verification_command",
+            "value": "pnpm test",
+            "validAt": "2026-09-15",
+            "historical": true,
+            "goldSourceIds": [
+              "CEDAR-SRC-001",
+              "CEDAR-SRC-003"
+            ]
+          },
+          {
+            "fact": "cedar.deployment_timeout",
+            "value": "unsettled: 25 seconds or 45 seconds",
+            "validAt": "2026-09-29",
+            "goldSourceIds": [
+              "CEDAR-SRC-005A",
+              "CEDAR-SRC-005B"
+            ]
+          }
+        ],
+        "outcome": "ANSWERED"
+      }
+    },
+    "scoringRules": {
+      "answerCorrectness": "All requested fact values, statuses, and dates must match the answerKey; unsupported extra claims are incorrect.",
+      "evidencePrecision": "Supported cited claim-source pairs divided by all cited claim-source pairs.",
+      "evidenceRecall": "Required gold claim-source pairs cited divided by all required gold claim-source pairs.",
+      "staleCurrentErrors": [
+        "Report pnpm test as current after 2026-09-28.",
+        "Report pnpm verify:release as active on 2026-09-15.",
+        "Report either timeout as settled after event 05."
+      ],
+      "duplicateCreation": "After event 03, count semantically duplicate active records for cedar.release_verification_command; target count is one. Historical pnpm test does not count as an active duplicate.",
+      "noUnsupportedWriteFailures": [
+        "Event 04: no canonical production-ready claim may be activated from CEDAR-SRC-004.",
+        "Event 05: neither timeout value may be activated as a settled unique value."
+      ]
+    }
+  }
+}

@@ -162,6 +162,7 @@ Existing Obsidian/custom memory is never restructured silently. The reviewed flo
 
 ## Guides
 
+- [End-to-end delivery plan](docs/design/end-to-end-delivery-plan-2026-09-29.md): current priority, layer boundaries, integration gaps and release acceptance before latency/cost tuning.
 - [Installation](docs/guides/install.md): install the skill and adapt it to OpenCode or any other coding agent.
 - [Codex, Cursor, and Claude Code](docs/guides/agent-hosts.md): preview and install a named curator sub-agent, skill, and CLI for each host.
 - [Portable Brain Sync](docs/guides/portable-brain-sync.md): connect a private GitHub-backed memory repo for account and machine portability.
