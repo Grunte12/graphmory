@@ -104,6 +104,8 @@ Phase 0 native evidence closeout is recorded, including the failed lineage gate 
 
 The [graph/history repair report](../evaluation/graph-history-repair-2026-09-29.md) records the implemented diagnostic fix, 367 passing tests, six installed CLI checks and preserved bidirectional history/retry identity in one native scenario. Native execution had a recovered guessed-path read error and violated that trial's strict stop-on-tool-failure instruction, so it is not full protocol acceptance. Keep this gap open during Phase 2: ground exact source paths, declare safe recovery rules before running, then verify the complete write → new-session → recall flow and later-page evidence. Do not rerun the same narrow scenario merely to remove the error from its record.
 
+The [exact source handoff and fresh-session report](../evaluation/source-handoff-fresh-session-2026-09-29.md) records one passing native synthetic write → new-session → recall with actual named Luna Curator dispatch, source identity checks, immutable evidence and read-only subsequent recall. This closes the specific guessed-source-path handoff gap for that case; it does not close the unsupported-write, equal-authority conflict, later-page continuation, graph-engine trail or other-host Phase 2 gates. Stop for user review after this bounded bundle.
+
 ### Goal bookkeeping
 
 This is the authoritative revised execution plan. The available goal tools can read the active objective or change its status, but cannot edit an unfinished objective. Do not falsely mark the old goal complete to replace its text. The work remains active under this user-authorized priority change.

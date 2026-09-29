@@ -35,6 +35,7 @@ import { writeFileAtomic, writeJsonAtomic } from "../src/atomic-write.mjs"
 import { loadRuntimeConfig, runtimeConfigPath, saveRuntimeConfig } from "../src/runtime-config.mjs"
 import { managedRecall } from "../src/decision-recall.mjs"
 import { readSourceNotes } from "../src/source-read.mjs"
+import { createSourceHandoff, readSourceHandoff } from "../src/source-handoff.mjs"
 import { createEvidenceCollection, collectEvidencePage, recordEvidenceSpan, summarizeEvidenceCollection } from "../src/evidence-collection.mjs"
 import { planDecisionCuration } from "../src/decision-curation.mjs"
 import { recallVaultAdaptive } from "../src/adaptive-recall.mjs"
@@ -117,6 +118,8 @@ function usage(exitCode = 0) {
   out.write(`Graphmory brain sync\n\n`)
   out.write(`Usage:\n`)
   out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --paths '<JSON array of relative Markdown paths>' (full sources, compact JSON)\n`)
+  out.write(`  node scripts/brain-sync.mjs source-handoff --vault <path> --paths '<JSON array of exact relative Markdown paths>' (metadata-only manifest; redirect output outside vault)\n`)
+  out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --manifest <handoff.json> (verify all paths/hashes before full originals)\n`)
   out.write(`  recall-managed --auto --prefetch-wide-originals (experimental: attach full originals only on a complete wide first page)\n`)
   out.write(`  recall-managed --auto --prefetch-wide-originals --compact-prefetch (experimental: omit previews duplicated by full originals)\n`)
   out.write(`  node scripts/brain-sync.mjs adoption-plan --vault <path> [--out <file>] [--json]\n`)
@@ -1955,33 +1958,46 @@ try {
   else if (command === "recall") recall()
   else if (command === "recall-loop") recallLoop()
   else if (command === "recall-managed") await recallManaged()
+  else if (command === "source-handoff") {
+    if (!option("--vault") || !option("--paths")) throw new Error("source-handoff requires --vault and --paths")
+    console.log(JSON.stringify(createSourceHandoff(option("--vault"), JSON.parse(option("--paths")))))
+  }
   else if (command === "read-notes") {
-    if (!option("--vault") || !option("--paths")) throw new Error("read-notes requires --vault and --paths")
-    const requestedPaths = JSON.parse(option("--paths"))
-    const statePath = option("--collect-state")
-    if (!statePath) console.log(JSON.stringify(readSourceNotes(option("--vault"), requestedPaths)))
-    else {
-      const initial = createEvidenceCollection({ vaultRoot: option("--vault"), paths: requestedPaths,
-        scopeLabel: option("--collection-scope") || "explicit source paths" })
-      if (fs.existsSync(statePath) && fs.lstatSync(statePath).isSymbolicLink()) throw new Error("Collection state must not be a symlink")
-      const state = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, "utf8")) : initial
-      if (state.snapshotId !== initial.snapshotId) throw new Error("Collection state does not match current source scope")
-      let result
-      if (option("--record-span")) {
-        recordEvidenceSpan(state, JSON.parse(option("--record-span")))
-        result = summarizeEvidenceCollection(state)
-      } else result = collectEvidencePage(state, { maxBytes: Number(option("--bundle-bytes") || 16000) })
-      const temporary = `${statePath}.${process.pid}.tmp`
-      let temporaryCreated = false
-      try {
-        fs.writeFileSync(temporary, JSON.stringify(state), { flag: "wx", mode: 0o600 })
-        temporaryCreated = true
-        fs.renameSync(temporary, statePath)
-      } catch (error) {
-        if (temporaryCreated && fs.existsSync(temporary)) fs.unlinkSync(temporary)
-        throw error
+    if (!option("--vault") || Boolean(option("--paths")) === Boolean(option("--manifest"))) {
+      throw new Error("read-notes requires --vault and exactly one of --paths or --manifest")
+    }
+    if (option("--manifest")) {
+      if (option("--collect-state") || option("--record-span")) {
+        throw new Error("--manifest cannot be combined with collection state or span recording")
       }
-      console.log(JSON.stringify(result))
+      console.log(JSON.stringify(readSourceHandoff(option("--vault"), JSON.parse(fs.readFileSync(option("--manifest"), "utf8")))))
+    } else {
+      const requestedPaths = JSON.parse(option("--paths"))
+      const statePath = option("--collect-state")
+      if (!statePath) console.log(JSON.stringify(readSourceNotes(option("--vault"), requestedPaths)))
+      else {
+        const initial = createEvidenceCollection({ vaultRoot: option("--vault"), paths: requestedPaths,
+          scopeLabel: option("--collection-scope") || "explicit source paths" })
+        if (fs.existsSync(statePath) && fs.lstatSync(statePath).isSymbolicLink()) throw new Error("Collection state must not be a symlink")
+        const state = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, "utf8")) : initial
+        if (state.snapshotId !== initial.snapshotId) throw new Error("Collection state does not match current source scope")
+        let result
+        if (option("--record-span")) {
+          recordEvidenceSpan(state, JSON.parse(option("--record-span")))
+          result = summarizeEvidenceCollection(state)
+        } else result = collectEvidencePage(state, { maxBytes: Number(option("--bundle-bytes") || 16000) })
+        const temporary = `${statePath}.${process.pid}.tmp`
+        let temporaryCreated = false
+        try {
+          fs.writeFileSync(temporary, JSON.stringify(state), { flag: "wx", mode: 0o600 })
+          temporaryCreated = true
+          fs.renameSync(temporary, statePath)
+        } catch (error) {
+          if (temporaryCreated && fs.existsSync(temporary)) fs.unlinkSync(temporary)
+          throw error
+        }
+        console.log(JSON.stringify(result))
+      }
     }
   }
   else if (command === "graph-audit") graphAudit()

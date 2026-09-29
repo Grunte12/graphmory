@@ -31,6 +31,15 @@ graphmory read-notes --vault "<vault-path>" --paths '["01 Projects/Example/Polic
 
 This returns original Markdown with paths and hashes. Use the exact returned vault-relative paths; do not iterate over whitespace-split shell output. Read only the originals relevant to the task and check any read errors before making a claim or editing.
 
+For a consolidation handoff, the Lead may provide an exact-path source manifest **outside the vault**:
+
+```sh
+graphmory source-handoff --vault "<vault-path>" --paths '["90 Evidence/Approval Record.md", "01 Projects/Example/Runbook.md"]' > "<handoff.json>"
+graphmory read-notes --vault "<vault-path>" --manifest "<handoff.json>"
+```
+
+The manifest has paths, hashes and byte counts, not note bodies. Treat section IDs such as `#E2` as anchors **inside** the named file, never as new filenames. The Lead must select exact paths from known vault paths, not infer them from free-text provenance. Before writing, read every source/target named in the handoff, check hashes and claim support, and stop if any read or hash check fails. If no manifest is supplied, resolve candidate paths through Graphmory and confirm them before a write. Never guess a filename.
+
 For a question that compares two known projects, retrieve within each project scope and page through the candidate paths as needed. Check that evidence supports both sides. Inspect relevant lines, cite all notes needed for the comparison, and say when one side has no supporting note. Do not choose a note merely because it ranks first.
 
 ## Recall

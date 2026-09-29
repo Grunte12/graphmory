@@ -132,6 +132,23 @@ path fails the entire request. Hashes identify originals and do not validate
 the meaning of a claim. A host's existing batched file-read tool is also fine;
 this command is useful when separate source envelopes are needed.
 
+For a Lead → Curator consolidation handoff, the Lead can freeze exact source
+and target file identity without sending note bodies in the handoff:
+
+```sh
+graphmory source-handoff --vault <path> --paths '["90 Evidence/Approval Record.md","01 Projects/Example/Runbook.md"]' > <handoff-outside-vault.json>
+graphmory read-notes --vault <path> --manifest <handoff-outside-vault.json>
+```
+
+The second command verifies the vault and every named file's SHA-256/byte count
+before returning any original content. A changed, missing or unsafe file
+blocks the complete read. Give the Curator the manifest path and patch path;
+it must read and verify the actual originals before editing. The Lead selects
+paths from exact discovered results. Evidence anchors such as `#E1` and `#E2`
+refer to sections within a named Markdown file, never separate file names.
+This handoff proves file identity only; it does not prove semantic support or
+authorize the proposed memory change.
+
 ### Experimental section coverage previews
 
 In curator mode, `recall-managed --auto --coverage-previews --agent` selects up to three nested sections by query overlap in body and heading, skipping the root metadata section. It changes preview selection only; read originals when evidence is incomplete and continue pagination using `nextOffset`. Notes without nested sections keep the existing preview. This option cannot be combined with `--matched-previews`.
