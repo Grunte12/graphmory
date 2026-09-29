@@ -38,6 +38,7 @@ import { readSourceNotes } from "../src/source-read.mjs"
 import { createEvidenceCollection, collectEvidencePage, recordEvidenceSpan, summarizeEvidenceCollection } from "../src/evidence-collection.mjs"
 import { planDecisionCuration } from "../src/decision-curation.mjs"
 import { recallVaultAdaptive } from "../src/adaptive-recall.mjs"
+import { validateMemoryPatch } from "../src/contracts.mjs"
 
 const args = process.argv.slice(2)
 const command = args[0]
@@ -50,6 +51,38 @@ function option(name, fallback) {
 
 function flag(name) {
   return rest.includes(name)
+}
+
+function validatePatchInput() {
+  const input = option("--input")
+  const emitInvalid = (errors, exitCode = 1) => {
+    console.log(JSON.stringify({ valid: false, schemaOnly: true, errors }))
+    process.exitCode = exitCode
+  }
+  if (!input) {
+    emitInvalid(["--input is required"], 2)
+    return
+  }
+
+  let contents
+  try {
+    contents = fs.readFileSync(path.resolve(input), "utf8")
+  } catch {
+    emitInvalid(["input file cannot be read"])
+    return
+  }
+
+  let value
+  try {
+    value = JSON.parse(contents)
+  } catch {
+    emitInvalid(["input file is not valid JSON"])
+    return
+  }
+
+  const result = validateMemoryPatch(value)
+  console.log(JSON.stringify({ valid: result.valid, schemaOnly: true, errors: result.errors }))
+  if (!result.valid) process.exitCode = 1
 }
 
 function usage(exitCode = 0) {
@@ -73,6 +106,7 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--offset N] [--auto|--bundle] [--matched-previews|--coverage-previews with --auto] [--bundle-budget BYTES] [--evidence-preview] [--include-superseded] [--semantic-expansion] [--model-cache <path>] [--index-cache <directory>] [--agent|--json] (curator: adaptive or byte-budgeted evidence; decision: 3 results)\n`)
   out.write(`  node scripts/brain-sync.mjs recall-explore --vault <path> --query <text> [--scope <path>] [--k 3] [--agent|--json] (experimental)\n`)
   out.write(`  node scripts/brain-sync.mjs curate-plan --vault <path> --input <bundle.json> [--agent|--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs validate-patch --input <patch.json> [--agent|--json] (schema-only preflight; no vault access or writes)\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs lifecycle-audit --vault <path> [--json] [--out <file>]\n`)
   out.write(`  node scripts/brain-sync.mjs init --vault <path> --repo <owner/repo> [--create-remote]\n`)
@@ -1925,6 +1959,7 @@ try {
   else if (command === "graph-audit") graphAudit()
   else if (command === "recall-explore") await recallExplore()
   else if (command === "curate-plan") await curatePlan()
+  else if (command === "validate-patch") validatePatchInput()
   else if (command === "config") await configureRuntime()
   else if (command === "recall-rerank") recallRerank()
   else if (command === "recall-semantic") await recallSemantic()

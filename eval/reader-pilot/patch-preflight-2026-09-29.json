@@ -1,0 +1,43 @@
+{
+  "kind": "deterministic-cli-integration",
+  "cases": [
+    {
+      "case": "valid",
+      "exitCode": 0,
+      "schemaOnly": true,
+      "privateSentinelNotEchoed": true,
+      "valid": true
+    },
+    {
+      "case": "missing-provenance",
+      "exitCode": 1,
+      "schemaOnly": true,
+      "privateSentinelNotEchoed": true,
+      "valid": false
+    },
+    {
+      "case": "malformed-json",
+      "exitCode": 1,
+      "schemaOnly": true,
+      "privateSentinelNotEchoed": true,
+      "valid": false
+    },
+    {
+      "case": "missing-file",
+      "exitCode": 1,
+      "schemaOnly": true,
+      "privateSentinelNotEchoed": true,
+      "valid": false
+    },
+    {
+      "case": "missing-input",
+      "exitCode": 2,
+      "schemaOnly": true,
+      "privateSentinelNotEchoed": true,
+      "valid": false
+    }
+  ],
+  "syntheticVaultUnchanged": true,
+  "nativeCuratorPreflightObserved": false,
+  "limits": "Schema-only; not fact checking or authorization enforcement."
+}

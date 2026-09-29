@@ -132,6 +132,14 @@ Ask the lead to author and pass this bounded patch to `graphmory_curator`:
 }
 ```
 
+Save that JSON as `"$SMOKE_ROOT/patch.json"` outside the vault and run the schema preflight before dispatching the edit:
+
+```sh
+graphmory validate-patch --input "$SMOKE_ROOT/patch.json" --agent
+```
+
+Proceed only when it returns `valid: true`. This checks the patch shape only; it does not verify evidence, authorization, or lifecycle meaning. The lead still must explicitly authorize the E2 policy update and the named supersession below.
+
 When delegating, the lead must say: “The synthetic user explicitly authorizes the E2 policy update and superseding only `01 Projects/Release/Old approval rule.md`. Preserve the E0/E1 evidence records.” The curator should open the E2 source and both target notes, apply the patch with the host's normal file-editing tools, retain E1, mark the old rule superseded with a replacement link, and return `APPLIED` with paths. In this default curator workflow it should not call `curate-plan`; that command is for hosted Jev/local decision workflows and does not edit notes.
 
 Then verify the resulting files and reports:

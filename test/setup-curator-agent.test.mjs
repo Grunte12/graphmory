@@ -28,6 +28,8 @@ test("curator setup previews, installs host definitions, and refuses overwrite",
       const definition = fs.readFileSync(agentFile, "utf8")
       assert.match(definition, new RegExp(model))
       assert.match(definition, /Memory Patch/)
+      assert.match(definition, /validate-patch --input/)
+      assert.match(definition, /schema only/)
       assert.match(definition, /host's normal file-editing tools/)
       assert.match(definition, /do not call curate-plan/)
       assert.match(definition, /graph-audit/)
