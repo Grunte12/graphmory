@@ -76,6 +76,23 @@ async function prepare(root, paths = makeCorpus(root)) {
   return { ...result, paths, output }
 }
 
+async function assertRejectsAndClosesReadStreams(run, expected, expectedStreamCount) {
+  const streams = []
+  const createReadStream = fs.createReadStream
+  fs.createReadStream = function (...args) {
+    const stream = createReadStream.apply(this, args)
+    streams.push(stream)
+    return stream
+  }
+  try {
+    await assert.rejects(run, expected)
+  } finally {
+    fs.createReadStream = createReadStream
+  }
+  assert.equal(streams.length, expectedStreamCount)
+  assert.ok(streams.every(stream => stream.closed), 'preparer rejection waits for every input stream to close')
+}
+
 function perfectReview(labels) {
   return {
     protocol: labels.protocol,
@@ -144,17 +161,20 @@ test('preparer fails closed on missing joins, unknown annotation labels and bad 
   const missingJoin = makeCorpus(path.join(root, 'missing-join'))
   const sourceRows = fs.readFileSync(missingJoin.sourceInfoPath, 'utf8').trimEnd().split('\n')
   fs.writeFileSync(missingJoin.sourceInfoPath, sourceRows.slice(1).join('\n') + '\n')
-  await assert.rejects(prepare(path.join(root, 'missing-join'), missingJoin), /Missing source-info join/)
+  await assertRejectsAndClosesReadStreams(
+    () => prepare(path.join(root, 'missing-join'), missingJoin), /Missing source-info join/, 2)
 
   const unknownLabel = makeCorpus(path.join(root, 'unknown-label'), record => {
     if (record.labels.length) record.labels[0].label_type = 'Unreviewed Label'
   })
-  await assert.rejects(prepare(path.join(root, 'unknown-label'), unknownLabel), /Invalid human annotation span/)
+  await assertRejectsAndClosesReadStreams(
+    () => prepare(path.join(root, 'unknown-label'), unknownLabel), /Invalid human annotation span/, 1)
 
   const badOffset = makeCorpus(path.join(root, 'bad-offset'), record => {
     if (record.labels.length) record.labels[0].start++
   })
-  await assert.rejects(prepare(path.join(root, 'bad-offset'), badOffset), /offset\/text mismatch/)
+  await assertRejectsAndClosesReadStreams(
+    () => prepare(path.join(root, 'bad-offset'), badOffset), /offset\/text mismatch/, 1)
 })
 
 test('support-only scorer counts unclear as nonagreement and enforces false acceptance gate', async t => {

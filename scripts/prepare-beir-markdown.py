@@ -70,8 +70,11 @@ def main():
         markdown = ('# ' + title + '\n\n' if title else '') + body + '\n'
         target = vault / relative
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(markdown, encoding='utf-8')
-        source_hashes[relative] = sha256(markdown.encode())
+        # Preserve the exact bytes identified by the manifest on every host.
+        # Text-mode Windows newline conversion otherwise breaks source hashes.
+        markdown_bytes = markdown.encode('utf-8')
+        target.write_bytes(markdown_bytes)
+        source_hashes[relative] = sha256(markdown_bytes)
         mapping[doc_id] = relative
     cases = [dict(id=query_id, category=args.dataset + '-' + args.split,
                   query=questions[query_id]['text'],

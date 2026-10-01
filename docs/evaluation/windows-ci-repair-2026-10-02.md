@@ -13,6 +13,12 @@ Commit `b752aa5` was pushed after local code, installed-package, native Luna and
 
 Focused checkpoint/evidence-collection tests and six BEIR/native-summary/RAGTruth tests pass locally. The first local release-gate attempt reached package checks but failed writing the preexisting global npm cache. It was rerun using a private temporary cache; no ownership or user-cache changes were made. Private original job results/logs and focused repair logs are retained under `outputs/graphmory-push-eval-20261002/verification/`.
 
+## Second CI result and final repairs
+
+[Run 36913743650](https://github.com/Grunte12/graphmory/actions/runs/36913743650) for `f6f22be` passed the mock-host, checkpoint and evidence-collection repairs, both Linux gates and all install smokes. Windows retained one BEIR failure on Node 22 and that failure plus RAGTruth cleanup on Node 20; the run remains failed.
+
+BEIR text-mode Markdown output changed LF to CRLF on Windows while its manifest hashed LF bytes. The preparer now writes the exact UTF-8 bytes it hashes. A regression compares the stored source bytes directly with the manifest hash; source-drift refusal is preserved. RAGTruth exception paths in streaming parsing now close the readline interface, destroy the underlying file stream and await its close event before returning. Both response and source-info loops use that helper, so invalid-row errors cannot leave a file handle for fixture cleanup to race. A regression observes actual backing streams closed before rejection.
+
 ## Outcome
 
 Local `npm run release:gate` passes all three gates (unit/schema/core evals, report artifact contracts and 140-file package dry-run). GitHub matrix verification of the repair remains pending. The earlier native run and its frozen installed archive remain independent of these test-harness changes.

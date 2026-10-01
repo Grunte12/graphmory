@@ -20,6 +20,21 @@ const sha256 = bytes => createHash('sha256').update(bytes).digest('hex')
 const hashOrder = value => sha256(Buffer.from(value, 'utf8'))
 const utf8Bytes = text => Buffer.byteLength(text, 'utf8')
 
+async function* readLines(filePath) {
+  const input = fs.createReadStream(filePath)
+  const lines = readline.createInterface({ input, crlfDelay: Infinity })
+  try {
+    for await (const line of lines) yield line
+  } finally {
+    lines.close()
+    if (!input.closed) {
+      const closed = new Promise(resolve => input.once('close', resolve))
+      input.destroy()
+      await closed
+    }
+  }
+}
+
 function requirePrivatePath(filePath, privateRoot, { mustExist = true } = {}) {
   const root = fs.realpathSync(privateRoot)
   const resolved = path.resolve(filePath)
@@ -190,8 +205,7 @@ export async function prepareRagTruthSupportPilot({
   const rejectedQuality = Object.create(null)
   const responseRows = []
   let inputResponseRows = 0
-  const responseLines = readline.createInterface({ input: fs.createReadStream(responseFile), crlfDelay: Infinity })
-  for await (const line of responseLines) {
+  for await (const line of readLines(responseFile)) {
     inputResponseRows++
     if (!line.trim()) throw new Error(`Empty response JSONL row at line ${inputResponseRows}`)
     let split
@@ -219,8 +233,7 @@ export async function prepareRagTruthSupportPilot({
   const sourceInfoById = new Map()
   let sourceInfoRows = 0
   let ignoredSourceInfoRows = 0
-  const sourceLines = readline.createInterface({ input: fs.createReadStream(sourceInfoFile), crlfDelay: Infinity })
-  for await (const line of sourceLines) {
+  for await (const line of readLines(sourceInfoFile)) {
     sourceInfoRows++
     if (!line.trim()) throw new Error(`Empty source-info JSONL row at line ${sourceInfoRows}`)
     let sourceId

@@ -30,6 +30,10 @@ with zipfile.ZipFile(sys.argv[1],'w') as z:
     assert.deepEqual(cases[0].relevant, ['docs/doc-1.md'])
     assert.equal(cases[0].id, 'q-1')
     assert.equal(readNormalizedText(path.join(out, 'vault/docs/doc-1.md')), '# Deployment\n\nAda reverses the release.\n')
+    const manifest = JSON.parse(fs.readFileSync(path.join(out, 'manifest.json'), 'utf8'))
+    const sourceBytes = fs.readFileSync(path.join(out, 'vault/docs/doc-1.md'))
+    assert.equal(sourceBytes.toString('utf8'), '# Deployment\n\nAda reverses the release.\n')
+    assert.equal(createHash('sha256').update(sourceBytes).digest('hex'), manifest.vaultSourceHashes['docs/doc-1.md'])
     assert.notEqual(spawnSync(pythonExecutable, args).status, 0)
     const driftOut = path.join(dir, 'drift')
     const driftArgs = [...args]
