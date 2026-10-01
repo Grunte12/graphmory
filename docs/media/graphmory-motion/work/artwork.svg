@@ -1,0 +1,57 @@
+<svg data-hf-id="hf-mkd8" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" aria-label="Graphmory conceptual workflow: shared Markdown graph, hybrid retrieval, cited Brief and governed update">
+<defs data-hf-id="hf-mh0t"><pattern data-hf-id="hf-g1ls" id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><circle data-hf-id="hf-7i0r" cx="1" cy="1" r="1.4" fill="#d6d4cf" /></pattern></defs>
+<rect data-hf-id="hf-qqhz" width="1920" height="1080" fill="url(#grid)" />
+<path data-hf-id="hf-7adf" class="rule" d="M80 140H1840M80 960H1840" />
+<text data-hf-id="hf-n717" x="80" y="98" class="label">Graphmory</text><circle data-hf-id="hf-lng4" class="dot" cx="1820" cy="88" r="10" />
+<text data-hf-id="hf-849z" x="80" y="1018" class="small">SHARED MARKDOWN MEMORY</text><text data-hf-id="hf-hjz8" x="1460" y="1018" class="small">Conceptual workflow</text>
+<g data-hf-id="hf-do6b" id="s1">
+ <text data-hf-id="hf-ku02" x="80" y="222" class="big">One brain. Many agents.</text>
+ <g data-hf-id="hf-8467" id="agentA"><rect data-hf-id="hf-7nmx" class="paper" x="100" y="342" width="350" height="200" rx="16" /><circle data-hf-id="hf-ghn9" class="dot" cx="137" cy="380" r="9" /><text data-hf-id="hf-raqr" x="166" y="390" class="label">Codex</text><path data-hf-id="hf-j3nt" class="noteLine" d="M139 438H347M139 480H287" /><path data-hf-id="hf-k7fq" class="line" d="M394 458l15 14-15 14" /></g>
+ <g data-hf-id="hf-zgac" id="agentB"><rect data-hf-id="hf-uapw" class="paper" x="100" y="642" width="350" height="200" rx="16" /><circle data-hf-id="hf-hb90" class="dot" cx="137" cy="680" r="9" /><text data-hf-id="hf-0h1c" x="166" y="690" class="label">OpenCode</text><path data-hf-id="hf-398p" class="noteLine" d="M139 738H347M139 780H287" /><path data-hf-id="hf-n5zh" class="line" d="M394 758l15 14-15 14" /></g>
+ <g data-hf-id="hf-dadn" id="brainGraph">
+ <path data-hf-id="hf-9c9h" class="muteline" d="M760 370L1050 300L1260 530L1530 350L1670 660L1420 820L1260 530L1040 790L760 370M1050 300L1040 790M760 370L690 680L1040 790M1530 350L1420 820" />
+ <circle data-hf-id="hf-i3y9" class="node" cx="760" cy="370" r="34" /><circle data-hf-id="hf-dxpd" class="node" cx="1050" cy="300" r="34" /><circle data-hf-id="hf-vl73" class="node" cx="1530" cy="350" r="34" /><circle data-hf-id="hf-s1u4" class="node" cx="1670" cy="660" r="34" /><circle data-hf-id="hf-u48z" class="node" cx="1420" cy="820" r="34" /><circle data-hf-id="hf-853f" class="node" cx="1040" cy="790" r="34" /><circle data-hf-id="hf-5co5" class="node" cx="690" cy="680" r="34" />
+ <g data-hf-id="hf-2z7e" id="centralNote"><rect data-hf-id="hf-0ia5" class="paper" x="1095" y="400" width="330" height="250" rx="12" /><path data-hf-id="hf-fii9" class="orange" d="M1135 454H1300" /><text data-hf-id="hf-przp" x="1135" y="508" class="label">Markdown</text><path data-hf-id="hf-f2e8" class="noteLine" d="M1135 554H1384M1135 597H1339" /></g>
+ <text data-hf-id="hf-sjl3" x="699" y="308" class="small">Projects</text><text data-hf-id="hf-lvni" x="1433" y="295" class="small">Decisions</text><text data-hf-id="hf-nkaq" x="1565" y="732" class="small">Evidence</text><text data-hf-id="hf-8x94" x="928" y="863" class="small">History</text>
+ </g>
+ <path data-hf-id="hf-czew" id="share1" class="orange" d="M450 442C610 442 550 525 1095 525" /><path data-hf-id="hf-92oq" id="share2" class="orange" d="M450 742C615 742 510 580 1095 580" />
+ <circle data-hf-id="hf-l83y" id="packet1" class="dot" cx="450" cy="442" r="13" /><circle data-hf-id="hf-yd68" id="packet2" class="dot" cx="450" cy="742" r="13" />
+</g>
+<g data-hf-id="hf-50ag" id="s2">
+ <text data-hf-id="hf-hhvy" x="80" y="222" class="big">Find the original.</text>
+ <g data-hf-id="hf-x709" id="query"><rect data-hf-id="hf-39r8" class="paper" x="100" y="440" width="340" height="210" rx="16" /><circle data-hf-id="hf-gaou" class="line" cx="164" cy="498" r="23" /><path data-hf-id="hf-afmb" class="line" d="M180 516l22 22" /><text data-hf-id="hf-xkt3" x="135" y="585" class="label">Visual QA?</text></g>
+ <g data-hf-id="hf-7a98" id="lanes"><path data-hf-id="hf-gf2r" class="muteline" d="M440 545L545 545L545 350L1190 350L1190 545L1320 545M545 545H1320M545 545L545 740L1190 740L1190 545" />
+ <g data-hf-id="hf-cp2c" id="keyword"><rect data-hf-id="hf-u9lx" class="paper" x="670" y="291" width="360" height="118" rx="14" /><text data-hf-id="hf-c1wo" x="741" y="363" class="label">Keyword</text><path data-hf-id="hf-frg2" class="orange" d="M697 379H719" /></g>
+ <g data-hf-id="hf-9d7f" id="semantic"><rect data-hf-id="hf-gq3r" class="paper" x="670" y="486" width="360" height="118" rx="14" /><text data-hf-id="hf-i0ui" x="733" y="558" class="label">Semantic</text><path data-hf-id="hf-dnsd" class="orange" d="M697 574H719" /></g>
+ <g data-hf-id="hf-lo5x" id="graph"><rect data-hf-id="hf-q2gi" class="paper" x="670" y="681" width="360" height="118" rx="14" /><text data-hf-id="hf-v5yn" x="739" y="753" class="label">Graph</text><circle data-hf-id="hf-54yb" class="dot" cx="701" cy="735" r="8" /></g>
+ </g>
+ <g data-hf-id="hf-ukyp" id="candidates"><rect data-hf-id="hf-554l" class="soft" x="1374" y="310" width="355" height="350" rx="14" /><rect data-hf-id="hf-sthk" class="paper" x="1350" y="335" width="355" height="350" rx="14" /><rect data-hf-id="hf-4z6j" id="selectedBorder" class="paper" x="1320" y="365" width="355" height="350" rx="14" />
+ <text data-hf-id="hf-xsg9" x="1352" y="425" class="small">Original note</text><text data-hf-id="hf-jqkv" x="1352" y="482" class="label">visual-</text><text data-hf-id="hf-9s73" x="1352" y="526" class="label">verification.md</text><path data-hf-id="hf-kaqq" class="noteLine" d="M1352 573H1640M1352 612H1573M1352 651H1610" /></g>
+ <path data-hf-id="hf-ttfw" id="sourceLink" class="line" d="M1500 715V785" /><g data-hf-id="hf-h0fs" id="source"><rect data-hf-id="hf-y1di" class="paper" x="1320" y="785" width="355" height="110" rx="10" /><text data-hf-id="hf-bewf" x="1355" y="855" class="label">report.json</text></g>
+ <circle data-hf-id="hf-ugow" id="keyPulse" class="dot" cx="440" cy="545" r="13" /><circle data-hf-id="hf-joic" id="semPulse" class="dot" cx="440" cy="545" r="13" /><circle data-hf-id="hf-7of5" id="graphPulse" class="dot" cx="440" cy="545" r="13" />
+</g>
+<g data-hf-id="hf-5ry9" id="s3">
+ <text data-hf-id="hf-n6w2" x="80" y="222" class="big">Keep the evidence.</text>
+ <g data-hf-id="hf-6j49" id="originals"><rect data-hf-id="hf-jz71" class="soft" x="146" y="348" width="395" height="340" rx="12" /><rect data-hf-id="hf-gfud" class="paper" x="115" y="380" width="395" height="340" rx="12" /><text data-hf-id="hf-hjos" x="150" y="440" class="small">Original Markdown</text><text data-hf-id="hf-d86g" x="150" y="501" class="label">visual-verification.md</text><path data-hf-id="hf-th00" class="noteLine" d="M150 548H470M150 593H438M150 638H458" />
+ <path data-hf-id="hf-ril8" class="line" d="M306 720V800" /><rect data-hf-id="hf-r1ty" class="paper" x="145" y="800" width="330" height="90" rx="10" /><text data-hf-id="hf-lwve" x="180" y="858" class="small">Evidence · report.json</text></g>
+ <path data-hf-id="hf-wtxy" id="readEdge" class="orange" d="M510 540H745" />
+ <g data-hf-id="hf-svdb" id="curator"><circle data-hf-id="hf-7a9x" class="paper" cx="850" cy="540" r="105" /><path data-hf-id="hf-w21e" class="line" d="M803 527l32 32 62-66" /><text data-hf-id="hf-7hw1" x="790" y="710" class="label">Curator</text><text data-hf-id="hf-bxt0" x="754" y="755" class="small">Cheap sub-agent</text></g>
+ <path data-hf-id="hf-55nl" id="briefEdge" class="orange" d="M955 540H1120" />
+ <g data-hf-id="hf-b585" id="brief"><rect data-hf-id="hf-0t98" class="paper" x="1120" y="374" width="385" height="346" rx="14" /><text data-hf-id="hf-4d2k" x="1153" y="438" class="label">Brain Brief</text><path data-hf-id="hf-ztpg" class="noteLine" d="M1153 491H1467M1153 537H1410" /><rect data-hf-id="hf-1k3c" class="soft" x="1153" y="585" width="320" height="92" rx="8" /><text data-hf-id="hf-to0v" x="1174" y="620" class="small">UI owner handles</text><text data-hf-id="hf-vzwb" x="1174" y="656" class="small">visual QA [1]</text></g>
+ <path data-hf-id="hf-4nby" id="citation" class="line" d="M1307 720V838H475" />
+ <g data-hf-id="hf-c4v9" id="lead"><rect data-hf-id="hf-jl10" class="paper" x="1600" y="435" width="210" height="210" rx="16" /><text data-hf-id="hf-fpjs" x="1650" y="528" class="label">Lead</text><path data-hf-id="hf-ehmt" class="line" d="M1650 570H1756" /></g>
+ <path data-hf-id="hf-u4tu" id="returnEdge" class="orange" d="M1505 540H1600" /><circle data-hf-id="hf-cqct" id="briefPacket" class="dot" cx="510" cy="540" r="13" />
+</g>
+<g data-hf-id="hf-uwgm" id="s4">
+ <text data-hf-id="hf-47d9" x="80" y="222" class="big">Memory stays current.</text>
+ <g data-hf-id="hf-wugz" id="patch"><rect data-hf-id="hf-2tx8" class="paper" x="100" y="414" width="300" height="222" rx="12" /><text data-hf-id="hf-7xtt" x="134" y="478" class="label">Memory Patch</text><path data-hf-id="hf-q0r2" class="noteLine" d="M134 533H366M134 580H327" /><text data-hf-id="hf-pnf2" x="120" y="705" class="small">Lead-authored</text></g>
+ <g data-hf-id="hf-w1f0" id="checks"><path data-hf-id="hf-906e" class="line" d="M400 525H620V390H938M620 525V685H938" /><circle data-hf-id="hf-y34s" class="node" cx="620" cy="525" r="63" /><path data-hf-id="hf-j40f" class="line" d="M591 522l20 23 42-47" /><text data-hf-id="hf-r47y" x="488" y="819" class="small">Prepare · Edit · Verify</text></g>
+ <g data-hf-id="hf-pu32" id="oldNote"><rect data-hf-id="hf-bbgc" class="paper" x="938" y="297" width="300" height="190" rx="12" /><text data-hf-id="hf-m8ot" x="978" y="357" class="label">Previous note</text><path data-hf-id="hf-tfbs" class="noteLine" d="M978 401H1190M978 440H1150" /></g>
+ <path data-hf-id="hf-5tyg" id="supersedes" class="line" d="M1088 487V588" /><text data-hf-id="hf-e7l5" id="historyLabel" x="1115" y="550" class="small">superseded by</text>
+ <g data-hf-id="hf-3cg3" id="newNote"><rect data-hf-id="hf-hfje" class="paper" x="938" y="588" width="300" height="205" rx="12" /><text data-hf-id="hf-jwns" x="978" y="657" class="label">Current note</text><path data-hf-id="hf-xozx" class="noteLine" d="M978 700H1190M978 746H1150" /></g>
+ <g data-hf-id="hf-0fzl" id="receipt"><circle data-hf-id="hf-o325" class="dot" cx="1280" cy="777" r="41" /><path data-hf-id="hf-wa64" d="M1260 775l14 15 29-30" fill="none" stroke="#2d3142" stroke-width="5" /><text data-hf-id="hf-krrl" x="1296" y="853" class="small">Saved receipt</text></g>
+ <path data-hf-id="hf-yqjh" id="laterEdge" class="orange" d="M1238 685H1500V500" /><g data-hf-id="hf-hi6r" id="later"><rect data-hf-id="hf-buqc" class="paper" x="1420" y="323" width="365" height="178" rx="14" /><text data-hf-id="hf-2q8d" x="1461" y="385" class="label">Another agent</text><path data-hf-id="hf-y4vd" class="noteLine" d="M1461 430H1740" /><text data-hf-id="hf-ahuw" x="1472" y="563" class="small">Later session</text></g>
+ <circle data-hf-id="hf-uqov" id="laterPacket" class="dot" cx="1238" cy="685" r="13" />
+</g>
+<g data-hf-id="hf-te94" id="outro"><rect data-hf-id="hf-cejs" x="80" y="155" width="1050" height="120" fill="#f5f5f5" /><text data-hf-id="hf-0a1v" x="80" y="229" class="big">Graphmory</text><text data-hf-id="hf-580m" x="405" y="225" class="label">One brain. Many agents.</text></g>
+</svg>

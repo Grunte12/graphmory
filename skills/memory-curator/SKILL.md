@@ -13,10 +13,10 @@ Read `references/protocol.md` before applying a Memory Patch. Read `references/n
 
 ## CLI recall
 
-When `mph` is on PATH and the vault path is known, start with a compact machine-readable lookup:
+When `graphmory` is on PATH and the vault path is known, start with a compact machine-readable lookup. Prefer this canonical command: a legacy `mph` alias may point to an older installation.
 
 ```sh
-mph recall-managed --vault "<vault-path>" --query "<question>" --agent
+graphmory recall-managed --vault "<vault-path>" --query "<question>" --agent
 ```
 
 In curator mode, each call returns up to ten candidate **paths**, not ten full Markdown notes. Pass `--scope "<known-project-or-domain-path>"` when the scope is known. Inspect headings and relevant sections of returned notes. If evidence is incomplete and `hasMore` is true, call the same query and scope again with `--offset <nextOffset>`; continue until evidence is sufficient or `hasMore` is false. Keep track of inspected paths so you do not reread them. There is no fixed total candidate count for the curator. If `scanLimitReached` is true, do not claim the vault was fully searched. The scores rank candidates; they do not establish that a claim is true or current. If candidates are exhausted without sufficient evidence, reformulate the query or use an appropriate alternate retrieval lane; abstain if evidence is still missing. Never dump the full vault into agent context. Use `mph config` in a terminal for human setup; do not run its interactive menu in an agent loop.
@@ -30,6 +30,8 @@ graphmory read-notes --vault "<vault-path>" --paths '["01 Projects/Example/Polic
 ```
 
 This returns original Markdown with paths and hashes. Use the exact returned vault-relative paths; do not iterate over whitespace-split shell output. Read only the originals relevant to the task and check any read errors before making a claim or editing. Agent-facing content routes check checkpoint authority before reading and again before returning results. If a read is blocked or its authority changes during the read, discard its output and do not use candidate paths or prior assembled results as current memory.
+
+If the host truncates a single-line JSON response, add `--pretty` to `read-notes`. This changes whitespace only and preserves full originals, paths and hashes. Read fewer notes per call if a source itself exceeds the host's output limit; continue until the necessary evidence is covered. Do not generate shell parsers merely to reformat CLI output.
 
 After `CURATION_PENDING`, do not bypass the block with raw filesystem tools, direct low-level readers, another CLI route, or a changed state root. The CLI check does not sandbox the host's native filesystem tools, so the role and Lead must keep the same state root for every call. Only an explicitly operation-bound recovery read is allowed for repair:
 

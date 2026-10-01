@@ -242,7 +242,7 @@ function usage(exitCode = 0) {
   out.write(`Usage:\n`)
   out.write(`  node scripts/brain-sync.mjs summary sources --vault <path> --paths '<JSON array>' (summary source fingerprints; no note writes)\n`)
   out.write(`  node scripts/brain-sync.mjs summary check --vault <path> --note <summary.md> (source freshness; no semantic truth claim)\n`)
-  out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --paths '<JSON array of relative Markdown paths>' (full sources, compact JSON)\n`)
+  out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --paths '<JSON array of relative Markdown paths>' [--pretty] (full sources; --pretty splits JSON fields across lines)\n`)
   out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --paths '<JSON array of exact paths>' --purpose recovery --operation <pending-id> (repair-only, non-authoritative)\n`)
   out.write(`  node scripts/brain-sync.mjs source-handoff --vault <path> --paths '<JSON array of exact relative Markdown paths>' [--out <file outside vault>] (metadata-only manifest)\n`)
   out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --manifest <handoff.json> (verify all paths/hashes before full originals)\n`)
@@ -1364,13 +1364,13 @@ function readNotesCommand({ deferPublish }) {
     if (option("--collect-state") || option("--record-span")) {
       throw new Error("--manifest cannot be combined with collection state or span recording")
     }
-    console.log(JSON.stringify(readSourceHandoff(option("--vault"), JSON.parse(fs.readFileSync(option("--manifest"), "utf8")))))
+    console.log(JSON.stringify(readSourceHandoff(option("--vault"), JSON.parse(fs.readFileSync(option("--manifest"), "utf8"))), null, flag("--pretty") ? 2 : undefined))
     return
   }
   const requestedPaths = JSON.parse(option("--paths"))
   const statePath = option("--collect-state")
   if (!statePath) {
-    console.log(JSON.stringify(readSourceNotes(option("--vault"), requestedPaths)))
+    console.log(JSON.stringify(readSourceNotes(option("--vault"), requestedPaths), null, flag("--pretty") ? 2 : undefined))
     return
   }
   const initial = createEvidenceCollection({ vaultRoot: option("--vault"), paths: requestedPaths,

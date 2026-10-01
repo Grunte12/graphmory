@@ -25,21 +25,17 @@ Long-running agents need durable memory, but saving every conversation creates n
 
 ## Architecture
 
-```mermaid
-flowchart LR
-  E[Verified evidence] --> O[Lead agent]
-  O -->|Memory Patch in curator mode| C[Memory curator]
-  C -->|APPLIED| W[Canonical Markdown wiki]
-  C -->|TENSION| T[Contradiction retained]
-  C -->|BLOCKED| B[Missing meaning or evidence]
-  W --> RCL[Bounded retrieval]
-  RCL --> C
-  RCL --> J[Jev or local decision engine]
-  C -->|Brain Brief| O
-  J -->|EvidencePacket| O
-  R[Raw evidence] -. provenance .-> W
-  W -. derived .-> D[Search, graph, HTML, reports]
-```
+![Graphmory architecture: Codex or OpenCode delegates to a named Curator, which uses the CLI for hybrid search, original Markdown reads and guarded memory updates.](docs/assets/graphmory-architecture.svg)
+
+[Open the editable architecture diagram](docs/assets/graphmory-architecture.html).
+
+### See the workflow
+
+[![Animated Graphmory workflow: shared notes, hybrid retrieval, cited Brief and lifecycle updates.](docs/assets/graphmory-workflow-preview.gif)](docs/assets/graphmory-workflow.mp4)
+
+[Watch the 20-second MP4](docs/assets/graphmory-workflow.mp4) · [Editable FFmpeg source and storyboard](docs/media/graphmory-motion/README.md). This is a conceptual visualization of the CLI/Markdown workflow. Frames are drawn locally and encoded with FFmpeg; no HyperFrames runtime is required.
+
+The default workflow uses a small host sub-agent as Curator. The local CLI combines keyword, semantic and authored graph retrieval; the Curator reads original notes and sends the lead a short cited brief. Pagination allows more related notes when needed, with no fixed total note cap. For updates, the lead supplies supported meaning, the Curator prepares and edits, and the CLI verifies the saved state before issuing a receipt.
 
 Raw evidence is the immutable evidentiary source of truth. Markdown is canonical operational memory: an agent-maintained synthesis that must remain traceable to evidence. Search indexes, knowledge graphs, and generated reports are rebuildable derived views. In Jev/local mode, durable patch placement remains lead-owned; automatic note placement is still planned.
 
@@ -165,6 +161,7 @@ Existing Obsidian/custom memory is never restructured silently. The reviewed flo
 
 ## Guides
 
+- [Host installation acceptance and media report](docs/evaluation/host-install-and-readme-2026-10-02.md): actual Codex/OpenCode child verification, failures found, fixes and test boundaries.
 - [End-to-end delivery plan](docs/design/end-to-end-delivery-plan-2026-09-29.md): current priority, layer boundaries, integration gaps and release acceptance before latency/cost tuning.
 - [Installation](docs/guides/install.md): install the skill and adapt it to OpenCode or any other coding agent.
 - [Codex, Cursor, and Claude Code](docs/guides/agent-hosts.md): preview and install a named curator sub-agent, skill, and CLI for each host.

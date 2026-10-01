@@ -7,11 +7,11 @@ The same `graphmory` CLI and `memory-curator` skill work across hosts that can r
 From a checkout of this repository with Node.js 20 or newer:
 
 ```sh
-npm install -g --omit=optional .
+npm install -g .
 graphmory doctor --json
 ```
 
-The npm package is not published yet. `npm install -g --omit=optional .` may link this checkout and leaves out the optional local embedding dependency; normal retrieval needs no model download. Keep the checkout in place while using this local install. A future registry release can remove the clone step. If a global install is undesirable, keep the checkout and call `node /absolute/path/to/graphmory/scripts/brain-sync.mjs` wherever this guide says `graphmory`.
+The npm package is not published yet. `npm install -g .` may link this checkout; keep it in place. Recommended hybrid retrieval requires the optional Transformers dependency and an initial local BGE model download. `--omit=optional` supports explicit lexical diagnostics only; it does not complete hybrid setup. A future registry release can remove the clone step. If a global install is undesirable, keep the checkout and call `node /absolute/path/to/graphmory/scripts/brain-sync.mjs` wherever this guide says `graphmory`.
 
 ## 2. Install the curator agent and skill
 
@@ -23,6 +23,8 @@ graphmory-setup --host codex --apply
 ```
 
 Replace `codex` with `claude` or `cursor`. Codex defaults to `gpt-6-luna`; Claude Code defaults to `haiku`. Cursor requires `--model <model-id>` because `inherit` may use the lead model. Choose an ID available to your host and subscription. Use `--scope project --project <path>` for one workspace rather than the default user scope. Run this once per host you use. Restart or start a fresh session if it does not see the new agent. For project-scoped Codex files, open the project as trusted in Codex; do not change global trust settings just for Graphmory. The script installs the skill and a `graphmory_curator` (Codex) or `graphmory-curator` (Claude/Cursor) agent definition. It does not set up the vault or change existing global lead instructions.
+
+Model catalog visibility does not prove account support. If the host rejects the default, preview setup with an explicitly supported inexpensive model, such as `--model gpt-5.6-luna`, before applying. Verify an actual child run; do not silently fall back to the lead model.
 
 | Host | User agent file | User skill directory |
 | --- | --- | --- |

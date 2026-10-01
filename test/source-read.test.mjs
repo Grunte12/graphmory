@@ -29,6 +29,11 @@ test("batch source reads preserve full originals and enforce vault boundaries", 
       "--paths", '["one.md","two.md"]'], { encoding: "utf8" })
     assert.equal(result.status, 0, result.stderr)
     assert.deepEqual(JSON.parse(result.stdout), output)
+    const pretty = spawnSync(process.execPath, ["scripts/brain-sync.mjs", "read-notes", "--vault", vault,
+      "--paths", '["one.md","two.md"]', "--pretty"], { encoding: "utf8" })
+    assert.equal(pretty.status, 0, pretty.stderr)
+    assert.ok(pretty.stdout.split("\n").length > result.stdout.split("\n").length)
+    assert.deepEqual(JSON.parse(pretty.stdout), output, "formatting must preserve full originals and their hashes")
     assert.equal(fs.readFileSync(path.join(vault, "one.md"), "utf8"), markdown)
   } finally { fs.rmSync(dir, { recursive: true, force: true }) }
 })
