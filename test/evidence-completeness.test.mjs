@@ -4,7 +4,8 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import { managedRecall } from "../src/decision-recall.mjs"
-import { DEFAULT_RUNTIME_CONFIG } from "../src/runtime-config.mjs"
+import { DEFAULT_RUNTIME_CONFIG as HYBRID_RUNTIME_CONFIG } from "../src/runtime-config.mjs"
+const DEFAULT_RUNTIME_CONFIG = { ...HYBRID_RUNTIME_CONFIG, retrievalMode: "lexical" }
 import { spawnSync } from "node:child_process"
 
 test("truncated previews require inspection while omitted previews describe presentation", async () => {
@@ -21,7 +22,7 @@ test("truncated previews require inspection while omitted previews describe pres
     assert.equal(owner.evidencePreview, undefined)
     assert.equal(owner.sourceReadRequired, undefined)
     assert.equal(owner.previewOmitted, true)
-    const cli = spawnSync(process.execPath, ["scripts/brain-sync.mjs", "recall-managed", "--vault", vault,
+    const cli = spawnSync(process.execPath, ["scripts/brain-sync.mjs", "recall-managed", "--retrieval-mode", "lexical", "--vault", vault,
       "--query", "Compare all Orion owners and deadlines", "--auto", "--matched-previews", "--agent"], { encoding: "utf8" })
     assert.equal(cli.status, 0, cli.stderr)
     const compactOwner = JSON.parse(cli.stdout).results.find((item) => item.path === "owner.md")

@@ -1,0 +1,14 @@
+{
+  "summary_path": "Summaries/release-approval.md",
+  "summary_markdown": "---\nmemory_kind: summary\nstatus: active\nevidence_for:\n  - Reference/release-approval-policy.md\nsummary_sources:\n  - ca768670b40584a42da757a9ec3f51cfeebcbb08acff46814598eec00af7a453 Reference/release-approval-policy.md\n---\n# Release approval\n\nProduction releases require approval from the service owner and an independent reviewer.\n",
+  "sources": [
+    {
+      "path": "Reference/release-approval-policy.md",
+      "markdown": "---\nstatus: active\n---\n# Release approval policy\n\nProduction releases require approval from the service owner and an independent reviewer.\n"
+    }
+  ],
+  "expected_freshness": {
+    "status": "fresh",
+    "reasons": []
+  }
+}

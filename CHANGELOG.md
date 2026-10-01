@@ -9,7 +9,50 @@ This project follows a lightweight changelog format inspired by Keep a Changelog
 - Renamed the product, GitHub repository, npm package, and primary CLI command to Graphmory. Kept `memory-patch-harness`, `mph`, and existing vault metadata paths as compatibility interfaces.
 - Added curator, hosted Jev, and local decision workflows with compact managed retrieval. Jev/local evidence goes directly to the lead agent without a curator sub-agent.
 - Added Vercel AI Gateway as a TypeSafe-compatible Jev route, a local reranker workflow with distinct raw rank scores, and a managed retrieval eval runner. Benchmarked the local vault without writing notes; see `docs/evaluation/managed-modes-2026-09-23.md`.
-- Fixed graph expansion for section-ranked notes, switched managed recall to a measured two-lane sparse default, and cached semantic vectors by note content outside the vault. Semantic search remains an optional escalation pending independent labels.
+- Fixed graph expansion for section-ranked notes, switched managed recall to a measured two-lane sparse default, and cached semantic vectors by note content outside the vault. This earlier sparse-only experiment is superseded by the rc.6 hybrid Curator setup below; independent generalization remains unproven.
+
+## 0.5.0-rc.6 - 2026-10-02
+
+- New Curator setups combine keyword, local semantic embeddings and authored graph navigation. Legacy configs remain explicit compatibility paths; missing semantic support blocks hybrid instead of silently downgrading.
+- Semantic indexing uses overlapping Markdown-section windows with per-note output, source-content invalidation, and an outside-vault rebuildable cache. No vector server is added.
+- Evidence-linked summaries carry tool-generated source fingerprints. Changed/missing/inactive sources, stale transitive summaries and dependency cycles prevent normal summary reuse. New summary source/check commands remain read-only and checkpoint guarded.
+- Checkpoint finish applies approved predecessor lifecycle fields deterministically after successor/binding preflight; existing conflicting replacement metadata still blocks. Full verification and receipts remain mandatory.
+- Installed named Luna tests pass approved lifecycle update, summary creation and fresh-session hybrid recall. Source revision invalidates summaries; pending CLI content routes refuse reads. Code checks and scope limits are recorded in `docs/evaluation/push-eval-2026-10-02.md`; broader host/MVP acceptance and competitor comparisons remain separate.
+- Lifecycle auditing masks non-prose examples for stale/conflict language while preserving real metadata/prose findings.
+
+## 0.5.0-rc.5 - 2026-10-01
+
+### Fixed
+
+- Lifecycle auditing distinguishes narrowly verified references to superseded history, including prior/previous/earlier rule and policy wording, from a note's own stale claim. Exact reciprocal links and complete relationship context are required; broken or ambiguous chains retain findings.
+- Bare or negated decision keywords no longer satisfy a tension note's affirmative decision-path check.
+- Agent-facing content reads share checkpoint authority checks before retrieval/provider work and before output. Pending operations block ordinary original reads as well as managed recall; retained operation records detect state changes during a read.
+- Completion failures identify affected finding paths and kinds without printing note bodies.
+- Curator setup and workflow guidance distinguish an explicitly authorized new target from a missing required original, and require checkpoint preparation before creating that target.
+
+### Added
+
+- Operation-bound `read-notes --purpose recovery --operation <id>` for non-authoritative repair reads, with exact path bindings, source-drift handling and current target hashes.
+
+### Scope
+
+- Correctness repair candidate. Installed acceptance and preserved failures are tracked in repository evaluation reports. The CLI is a cooperative workflow boundary, not native filesystem isolation or an atomic multi-file publication mechanism. Use one fixed state root; other hosts, deliberate root substitution and concurrent state cleanup remain outside this trial's guarantees.
+
+## 0.5.0-rc.4 - 2026-10-01
+
+### Added
+
+- Full patch rendering and opt-in persistence verification covering claim, scope, provenance, optional fields, and declared predecessor links.
+- Private curation checkpoints with declared targets, immutable source hashes, discoverable interrupted operations, strict completion receipts, exact replay checks, and explicitly reviewed target restoration.
+- Default managed-recall blocking while a curation operation remains unresolved, plus an installed-skill workflow and trial guide.
+
+### Fixed
+
+- Date-only and timestamp expiry boundaries now share strict parsing between retrieval and lifecycle audit; warmed retrieval eligibility updates when notes expire.
+
+### Scope
+
+- Release candidate for a local Codex Curator trial. Source evidence and user authorization remain agent responsibilities. Multi-file native edits use recovery checkpoints rather than an atomic vault transaction; optional engines and other hosts require their own acceptance runs.
 
 ## 0.5.0-rc.3 - 2026-07-06
 

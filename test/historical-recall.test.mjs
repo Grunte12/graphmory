@@ -6,7 +6,8 @@ import test from "node:test"
 import { spawnSync } from "node:child_process"
 import { governedRank, parseMarkdown } from "../src/retrieval.mjs"
 import { managedRecall } from "../src/decision-recall.mjs"
-import { DEFAULT_RUNTIME_CONFIG, saveRuntimeConfig } from "../src/runtime-config.mjs"
+import { DEFAULT_RUNTIME_CONFIG as HYBRID_RUNTIME_CONFIG, saveRuntimeConfig } from "../src/runtime-config.mjs"
+const DEFAULT_RUNTIME_CONFIG = { ...HYBRID_RUNTIME_CONFIG, retrievalMode: "lexical" }
 
 test("historical lookup does not contaminate cached current eligibility or admit unsafe lifecycle states", () => {
   const docs = ["active", "superseded", "raw", "stale", "archived", "deprecated"].map(status =>
@@ -27,7 +28,7 @@ test("actual CLI historical pages preserve scope, source status, continuation an
     const config = path.join(vault, "runtime.json")
     saveRuntimeConfig(config, DEFAULT_RUNTIME_CONFIG)
     const call = (historical, offset = 0) => {
-      const r = spawnSync(process.execPath, ["scripts/brain-sync.mjs", "recall-managed", "--vault", vault, "--query", "Cedar storage policy", "--scope", "Cedar", "--config", config, "--offset", String(offset), "--agent", ...(historical ? ["--include-superseded"] : [])], { encoding: "utf8" })
+      const r = spawnSync(process.execPath, ["scripts/brain-sync.mjs", "recall-managed", "--retrieval-mode", "lexical", "--vault", vault, "--query", "Cedar storage policy", "--scope", "Cedar", "--config", config, "--offset", String(offset), "--agent", ...(historical ? ["--include-superseded"] : [])], { encoding: "utf8" })
       assert.equal(r.status, 0, r.stderr)
       return JSON.parse(r.stdout)
     }

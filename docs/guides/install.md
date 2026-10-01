@@ -4,6 +4,10 @@ Graphmory is file-first. For Codex, Cursor, and Claude Code, its setup script ca
 
 For Codex, Cursor, or Claude Code, follow the [cross-host setup guide](agent-hosts.md). The steps below describe the existing OpenCode installer and vault setup.
 
+For the guarded local Curator workflow, see [the trial guide](trial-mvp.md). A newer CLI does not update an existing installed role automatically; preview and review the skill/role upgrade rather than overwrite personal settings.
+
+The candidate CLI blocks agent-facing content reads while checkpoint state is pending or unreadable and checks authority again before returning output. This does not sandbox native filesystem tools. After a block, do not use those tools or switch state roots to produce a current answer. Keep one state root across sessions; use the exact-operation recovery read only to repair that operation.
+
 ## Where installation instructions live
 
 - [README Quick Start](../../README.md#quick-start) is the first path for a person arriving from GitHub; its agent-guided setup is recommended.
@@ -12,7 +16,7 @@ For Codex, Cursor, or Claude Code, follow the [cross-host setup guide](agent-hos
 - [Generic agent install guide](../../adapters/generic-agent/INSTALL.md) is the checklist for a coding agent doing setup for someone.
 - [AGENTS.md](../../AGENTS.md) guides agents working in this repository; [`memory-curator/SKILL.md`](../../skills/memory-curator/SKILL.md) defines curator behavior after installation. Neither is a substitute for installing the CLI.
 
-For now, clone the GitHub repository and run `npm install -g --omit=optional .` from it. A fork is needed only if you intend to maintain your own changes. The npm registry package name is not published yet, so `npm install -g graphmory` is a future distribution path, not a current command.
+For now, clone the GitHub repository and run `npm install -g .` from it. A fork is needed only if you intend to maintain your own changes. The npm registry package name is not published yet, so `npm install -g graphmory` is a future distribution path, not a current command.
 
 ## Requirements
 

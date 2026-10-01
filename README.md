@@ -45,6 +45,9 @@ Raw evidence is the immutable evidentiary source of truth. Markdown is canonical
 
 ## Quick Start
 
+For the guarded local Curator release candidate, follow [the trial workflow](docs/guides/trial-mvp.md). It adds full saved-field verification and discoverable write recovery; readiness depends on actual installed/native acceptance.
+
+
 Requirements: Node.js 20 or newer and Git. The npm package is not published yet, so install from this GitHub checkout. You do not need to fork it to use it.
 
 For the easiest setup, ask your coding agent: **“Install Graphmory from this repository. Follow `adapters/generic-agent/INSTALL.md`. Ask me for missing choices using your question UI, including where and how to organize my Obsidian vault. Then verify CLI, vault, skill discovery, and curator dispatch.”** The agent can adapt the files to its own host and machine. See the [minimal vault architecture](docs/guides/vault-setup.md); GitHub sync is optional.
@@ -54,7 +57,7 @@ The commands below are a manual path for Codex. `graphmory-setup` is a helper fo
 ```sh
 git clone https://github.com/Grunte12/graphmory.git
 cd graphmory
-npm install -g --omit=optional .
+npm install -g .
 graphmory doctor --json
 graphmory-setup --host codex
 graphmory-setup --host codex --apply
@@ -62,7 +65,7 @@ graphmory-setup --host codex --apply
 
 Keep the checkout after `npm install -g .`: npm may link a local folder rather than copy it. The first `graphmory-setup` call previews the agent path, skill path, and model; `--apply` installs them. Use `--host claude` for Claude Code. For Cursor, use `--host cursor --model <supported-small-model-id>`. The recommended curator workflow uses the CLI, skill, and named agent together; copying `SKILL.md` alone does not install the CLI. Follow the [host setup guide](docs/guides/agent-hosts.md) to select a vault and add the short lead-agent instruction. The installer will not overwrite existing agent or skill files.
 
-OpenCode uses its [separate adapter](docs/guides/install.md#opencode-adapter). Contributors who edit or evaluate Graphmory should keep a checkout; ordinary users do not need a fork. When an npm release is published, `npm install -g --omit=optional graphmory` can replace the clone and local install steps. Do not use that registry command before a release exists.
+OpenCode uses its [separate adapter](docs/guides/install.md#opencode-adapter). Contributors who edit or evaluate Graphmory should keep a checkout; ordinary users do not need a fork. When an npm release is published, `npm install -g graphmory` can replace the clone and local install steps. Do not use that registry command before a release exists.
 
 The package name, GitHub repository, and primary CLI command are `graphmory`. Existing `memory-patch-harness` and `mph` commands remain as compatibility aliases. Existing vault metadata under `.memory-patch-harness/` remains readable without migration.
 
@@ -132,7 +135,7 @@ npm install @huggingface/transformers
 node scripts/brain-sync.mjs recall-semantic --vault "C:\path\to\your\BrainVault" --query "what did we decide about sync?" --scope "02 Projects/example" --json
 ```
 
-`recall-semantic` uses a local Transformers.js embedding model and fuses semantic results with BM25F. It is an escalation path, not the default: first-run model download and indexing cost are higher, and Markdown remains the canonical memory truth.
+`recall-managed` in new Curator setups combines keyword, local BGE embeddings and authored graph paths. Model download/indexing happens on first use; reusable vectors stay outside the Markdown vault. `recall-semantic` remains a diagnostic command. Missing embedding support produces an explicit BLOCKED result. Legacy configs retain lexical behavior until migrated. See [hybrid retrieval and reusable summaries](docs/guides/hybrid-summary.md).
 
 When a frozen retrieval eval misses, generate a bounded curation plan instead of manually rereading the vault:
 

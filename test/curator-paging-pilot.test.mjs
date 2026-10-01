@@ -96,7 +96,7 @@ function runFixture(mode, extraArgs = []) {
     fs.writeFileSync(bm, `#!${process.execPath}\nconst args=process.argv.slice(2);if(args[0]==='--version')process.stdout.write('Basic Memory version: 0.23.2\\n');else if(args[0]==='tool'&&args[1]==='search-notes')process.stdout.write(JSON.stringify({results:[{file_path:'note.md',content:'The fixture owner is Ada.',matched_chunk:'Ada owns the fixture'}],has_more:false,current_page:1,page_size:10,total:1,total_is_exact:true}));else if(args[0]==='tool'&&args[1]==='read-note')process.stdout.write(JSON.stringify({file_path:'note.md',content:'# Fixture\\n## Fact\\nThe fixture owner is Ada.\\n'}));else process.exit(9);`, { mode: 0o700 })
     fs.writeFileSync(path.join(dir, 'basic.json'), JSON.stringify({ exe: bm, state: path.join(native, 'state'), home: path.join(native, 'home'), notes, project: 'pilot' }))
   }
-  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), '--model', 'gpt-5.6-luna', '--lead-model', 'gpt-5.6-sol', ...extraArgs, ...(mode === 'basic' ? ['--basic-config', path.join(dir, 'basic.json')] : []), ...(['persistent', 'changed-session', 'compact-repeat'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : []), ...(['citation', 'bad-citation'].includes(mode) ? ['--structured-citations'] : [])], {
+  const child = spawnSync('python3', [runner, '--retrieval-mode', 'lexical', '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), '--model', 'gpt-5.6-luna', '--lead-model', 'gpt-5.6-sol', ...extraArgs, ...(mode === 'basic' ? ['--basic-config', path.join(dir, 'basic.json')] : []), ...(['persistent', 'changed-session', 'compact-repeat'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : []), ...(['citation', 'bad-citation'].includes(mode) ? ['--structured-citations'] : [])], {
     encoding: 'utf8', timeout: 10000,
     env: { ...process.env, PATH: bin + path.delimiter + process.env.PATH, PAGING_TEST_MODE: mode, PAGING_TEST_COUNTER: path.join(dir, 'counter') },
   })
@@ -104,7 +104,7 @@ function runFixture(mode, extraArgs = []) {
   let exactGraphToolBytes = null
   if (mode === 'valid') {
     const cli = new URL('../scripts/brain-sync.mjs', import.meta.url).pathname
-    const search = spawnSync(process.execPath, [cli, 'recall-managed', '--vault', vault, '--query', 'Who owns the fixture?', '--agent', '--offset', '0', '--bundle'], { encoding: 'utf8' })
+    const search = spawnSync(process.execPath, [cli, 'recall-managed', '--retrieval-mode', 'lexical', '--vault', vault, '--query', 'Who owns the fixture?', '--agent', '--offset', '0', '--bundle'], { encoding: 'utf8' })
     const read = spawnSync(process.execPath, [cli, 'read-notes', '--vault', vault, '--paths', '["note.md"]'], { encoding: 'utf8' })
     assert.equal(search.status, 0, search.stderr)
     assert.equal(read.status, 0, read.stderr)

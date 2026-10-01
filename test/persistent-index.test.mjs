@@ -7,7 +7,8 @@ import { spawn } from "node:child_process"
 import { createHash } from "node:crypto"
 import { managedRecall } from "../src/decision-recall.mjs"
 import { persistentIndexLocation, supportsNativeSqlite } from "../src/index-capability.mjs"
-import { DEFAULT_RUNTIME_CONFIG } from "../src/runtime-config.mjs"
+import { DEFAULT_RUNTIME_CONFIG as HYBRID_RUNTIME_CONFIG } from "../src/runtime-config.mjs"
+const DEFAULT_RUNTIME_CONFIG = { ...HYBRID_RUNTIME_CONFIG, retrievalMode: "lexical" }
 
 test("opt-in cache follows Markdown changes and falls back on corruption", { skip: !supportsNativeSqlite() }, async (t) => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-cache-lifecycle-"))
@@ -75,7 +76,7 @@ test("busy index falls back with current evidence and concurrent cold calls agre
   fs.writeFileSync(configFile, JSON.stringify(DEFAULT_RUNTIME_CONFIG))
   const run = () => new Promise((resolve, reject) => {
     const child = spawn(process.execPath, [new URL("../scripts/brain-sync.mjs", import.meta.url).pathname,
-      "recall-managed", "--vault", vault, "--query", "violet rendezvous", "--config", configFile,
+      "recall-managed", "--retrieval-mode", "lexical", "--vault", vault, "--query", "violet rendezvous", "--config", configFile,
       "--index-cache", cache, "--json"])
     let stdout = "", stderr = ""
     child.stdout.on("data", chunk => { stdout += chunk })

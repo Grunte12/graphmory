@@ -73,4 +73,4 @@ Before promotion, freeze and counterbalance a multi-conversation development rea
 
 ## Repository verification
 
-`npm run check` passed 287/287 tests, example validation and configured deterministic eval gates; `git diff --check` passed. Focused preview, pagination and pilot tests passed 26/26. The required Obsidian status command returned `SYNC_CONFIG_NOT_FOUND` at `/Users/grunte/Obsidian`; no vault mutation was performed. These checks do not close live semantic or competitor acceptance gates.
+`npm run check` passed 287/287 tests, example validation and configured deterministic eval gates; `git diff --check` passed. Focused preview, pagination and pilot tests passed 26/26. The required Obsidian status command returned `SYNC_CONFIG_NOT_FOUND` at the local user vault (machine-specific path redacted for package portability); no vault mutation was performed. These checks do not close live semantic or competitor acceptance gates.

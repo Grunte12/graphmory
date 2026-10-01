@@ -5,6 +5,7 @@ import { createHash } from "node:crypto"
 import { governedRank, isAnswerCandidate, isRetrievable } from "./retrieval.mjs"
 import { filterByScope, loadVaultDocuments } from "./memory-recall.mjs"
 import { writeJsonAtomic } from "./atomic-write.mjs"
+import { persistentIndexLocation } from "./index-capability.mjs"
 
 const DEFAULT_MODEL = "Xenova/bge-small-en-v1.5"
 const PIPELINES = new Map()
@@ -20,6 +21,7 @@ export async function recallVaultSemantic(vault, query, {
   maxDocumentCharacters = 8000,
   sparseLimit = 20,
   vectorLimit = 20,
+  beforeCacheWrite,
 } = {}) {
   if (!query?.trim()) throw new Error("query is required")
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be between 1 and 10")
@@ -27,7 +29,7 @@ export async function recallVaultSemantic(vault, query, {
 
   const documents = loadVaultDocuments(vault, { includeRawPaths, maxFiles, scope })
   const vectorLane = await rankSemanticVectorLane(vault, query, {
-    documents, scope, includeNoncanonical, model, modelCache, maxDocumentCharacters,
+    documents, scope, includeNoncanonical, model, modelCache, maxDocumentCharacters, beforeCacheWrite,
   })
   const vectorResults = vectorLane.results
 
@@ -77,6 +79,9 @@ export async function rankSemanticVectorLane(vault, query, {
   model = DEFAULT_MODEL,
   modelCache = "",
   maxDocumentCharacters = 8000,
+  embedImpl,
+  minimumSimilarity = 0.3,
+  beforeCacheWrite,
 } = {}) {
   if (!query?.trim()) throw new Error("query is required")
   if (!Number.isInteger(maxFiles) || maxFiles < 1) throw new Error("maxFiles must be positive")
@@ -85,23 +90,83 @@ export async function rankSemanticVectorLane(vault, query, {
   const documents = filterByScope(loaded, scope)
   const eligible = documents.filter((document) => isRetrievable(document, { includeNoncanonical, includeSuperseded })
     && (!answerCandidatesOnly || isAnswerCandidate(document)))
-  const embed = await loadEmbeddingPipeline(model, modelCache)
-  const vectorById = await cachedDocumentVectors(eligible, embed, {
-    vault, scope, model, modelCache, maxDocumentCharacters,
+  // Validate before pipeline initialization, which may itself download model files.
+  persistentIndexLocation(vault, scope, modelCache || path.join(os.homedir(), ".cache", "graphmory", "semantic"))
+  if (!Number.isFinite(minimumSimilarity) || minimumSimilarity < -1 || minimumSimilarity > 1) throw new Error("minimumSimilarity must be -1–1")
+  const embed = embedImpl ?? await loadEmbeddingPipeline(model, modelCache)
+  const vectorById = await cachedDocumentWindowVectors(eligible, embed, {
+    vault, scope, model, modelCache, beforeCacheWrite,
   })
   const queryOutput = await embed(query, { pooling: "mean", normalize: true })
   const queryVector = queryOutput.tolist()[0]
   const results = eligible
-    .map((document) => ({ ...document, score: dot(queryVector, vectorById.get(document.id)), retrievalSource: "semantic-vector" }))
+    .map((document) => ({ ...document, score: Math.max(...vectorById.get(document.id).map(vector => dot(queryVector, vector))), retrievalSource: "semantic-vector" }))
+    .filter(document => Number.isFinite(document.score) && document.score >= minimumSimilarity)
     .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
 
   return {
     method: "semantic-vector",
     model,
+    minimumSimilarity,
     scanned: loaded.length,
     scanLimitReached: loaded.length >= maxFiles,
     results,
   }
+}
+
+// Internal embedding windows improve full-note coverage; retrieval still returns note paths.
+export function semanticWindows(document, windowCharacters = 1200) {
+  const prefix = `title: ${document.title}\npath: ${document.id}\n`
+  const windows = []
+  const step = windowCharacters - 200
+  const sections = document.markdown.split(/(?=^#{1,6}\s)/mu)
+  for (const section of sections) {
+    if (!section.trim()) continue
+    for (let offset = 0; offset < section.length || !windows.length; offset += step) {
+      windows.push(prefix + section.slice(offset, offset + windowCharacters))
+      if (offset + windowCharacters >= section.length) break
+    }
+  }
+  if (!windows.length) windows.push(prefix)
+  return windows
+}
+
+export async function cachedDocumentWindowVectors(documents, embed, { vault, scope = "", model, modelCache = "", beforeCacheWrite } = {}) {
+  const directory = modelCache || path.join(os.homedir(), ".cache", "graphmory", "semantic")
+  persistentIndexLocation(vault, scope, directory) // Resolve ancestors and prohibit canonical-vault writes.
+  const cacheId = createHash("sha256").update(`${path.resolve(vault)}\0${scope}\0${model}\0windows-v2`).digest("hex")
+  const file = path.join(directory, "graphmory-vectors", `${cacheId}.json`)
+  let prior = {}
+  try {
+    const parsed = JSON.parse(fs.readFileSync(file, "utf8"))
+    if (parsed.version === 2 && parsed.model === model) prior = parsed.vectors ?? {}
+  } catch (error) { if (error.code !== "ENOENT" && !(error instanceof SyntaxError)) throw error }
+  const vectors = Object.create(null)
+  let changed = Object.keys(prior).length !== documents.length
+  for (const document of documents) {
+    const texts = semanticWindows(document)
+    const digest = createHash("sha256").update(JSON.stringify(texts)).digest("hex")
+    const cached = prior[document.id]
+    const valid = cached?.digest === digest && Array.isArray(cached.windows) && cached.windows.length === texts.length
+      && cached.windows.every(vector => Array.isArray(vector) && vector.length > 0 && vector.every(Number.isFinite))
+    if (valid) { vectors[document.id] = cached; continue }
+    changed = true
+    const windows = []
+    for (let offset = 0; offset < texts.length; offset += 16) {
+      const batch = texts.slice(offset, offset + 16)
+      const output = (await embed(batch, { pooling: "mean", normalize: true })).tolist()
+      if (output.length !== batch.length || output.some(vector => !Array.isArray(vector) || !vector.length || !vector.every(Number.isFinite))) throw new Error("Invalid embedding window vectors")
+      windows.push(...output)
+    }
+    vectors[document.id] = { digest, windows }
+  }
+  if (changed) {
+    beforeCacheWrite?.()
+    fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 })
+    writeJsonAtomic(file, { version: 2, model, vectors })
+    fs.chmodSync(file, 0o600)
+  }
+  return new Map(documents.map(document => [document.id, vectors[document.id].windows]))
 }
 
 export function semanticConfidence(results) {
@@ -134,16 +199,17 @@ async function loadEmbeddingPipeline(model, modelCache) {
   const key = `${model}\0${modelCache}`
   if (!PIPELINES.has(key)) PIPELINES.set(key, (async () => {
     const transformers = await loadTransformers()
-    if (modelCache) transformers.env.cacheDir = modelCache
-    return transformers.pipeline("feature-extraction", model)
+    transformers.env.cacheDir = modelCache || path.join(os.homedir(), ".cache", "graphmory", "semantic")
+    return transformers.pipeline("feature-extraction", model, { dtype: "fp32" })
   })())
   try { return await PIPELINES.get(key) } catch (error) { PIPELINES.delete(key); throw error }
 }
 
 export async function cachedDocumentVectors(documents, embed, {
-  vault, scope = "", model, modelCache = "", maxDocumentCharacters = 8000,
+  vault, scope = "", model, modelCache = "", maxDocumentCharacters = 8000, beforeCacheWrite,
 } = {}) {
   const directory = modelCache || path.join(os.homedir(), ".cache", "graphmory", "semantic")
+  persistentIndexLocation(vault, scope, directory)
   const cacheId = createHash("sha256").update(`${path.resolve(vault)}\0${scope}\0${model}\0${maxDocumentCharacters}`).digest("hex")
   const file = path.join(directory, "graphmory-vectors", `${cacheId}.json`)
   let prior = {}
@@ -171,6 +237,7 @@ export async function cachedDocumentVectors(documents, embed, {
     batch.forEach((item, index) => { vectors[item.id] = { digest: item.digest, vector: batchVectors[index] } })
   }
   if (pending.length || Object.keys(prior).length !== documents.length) {
+    beforeCacheWrite?.()
     fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 })
     writeJsonAtomic(file, { version: 1, model, maxDocumentCharacters, vectors })
     fs.chmodSync(file, 0o600)
@@ -185,6 +252,7 @@ function semanticText(document, maxCharacters) {
 }
 
 function dot(a, b) {
+  if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) throw new Error("Embedding vector dimensions differ")
   let value = 0
   for (let index = 0; index < a.length; index += 1) value += a[index] * b[index]
   return value

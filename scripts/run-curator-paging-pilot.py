@@ -18,6 +18,7 @@ parser.add_argument('--case-index', type=int, default=0)
 parser.add_argument('--model', default='gpt-5.6-luna')
 parser.add_argument('--lead-model')
 parser.add_argument('--mode', choices=['auto', 'bundle'], default='bundle')
+parser.add_argument('--retrieval-mode', choices=['hybrid', 'lexical'], default='hybrid')
 parser.add_argument('--max-rounds', type=int, default=3)
 parser.add_argument('--max-input-bytes', type=int, default=300000)
 parser.add_argument('--persistent-curator', action='store_true')
@@ -166,7 +167,7 @@ def retrieval(offset):
         page = {'offset': offset, 'nextOffset': offset + 10 if native['has_more'] else None,
                 'hasMore': native['has_more'], 'results': [{**row, 'path': row['file_path']} for row in native['results']]}
     else:
-        page, output_bytes, tool_seconds = command_json(['node', str(cli), 'recall-managed', '--vault', str(vault), '--query', case['question'],
+        page, output_bytes, tool_seconds = command_json(['node', str(cli), 'recall-managed', '--retrieval-mode', args.retrieval_mode, '--vault', str(vault), '--query', case['question'],
                                                          '--agent', '--offset', str(offset), '--' + args.mode] +
                                                         (['--coverage-previews'] if args.coverage_previews else []) +
                                                         (['--prefetch-wide-originals'] if args.prefetch_wide_originals else []) +

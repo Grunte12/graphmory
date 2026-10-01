@@ -282,7 +282,7 @@ function incrementalUpdate(dbFile, documents, sectionsById, metadata) {
   }
 }
 
-function ensureIndex(dbFile, documents, sectionsById, expected) {
+function ensureIndex(dbFile, documents, sectionsById, expected, beforeWrite) {
   const metadata = metadataFor(expected)
   let fileExists = false
   try {
@@ -293,16 +293,19 @@ function ensureIndex(dbFile, documents, sectionsById, expected) {
     if (error.code !== 'ENOENT') throw error
   }
   if (!fileExists) {
+    beforeWrite?.()
     buildAtomic(dbFile, documents, sectionsById, metadata)
     return
   }
 
   try {
+    beforeWrite?.()
     if (incrementalUpdate(dbFile, documents, sectionsById, metadata)) return
   } catch (error) {
     if (isBusy(error) || !/(?:not a database|database disk image is malformed|no such table|JSON)/iu.test(String(error.message))) throw error
     // A malformed or obsolete database is replaced from the current loaded Markdown.
   }
+  beforeWrite?.()
   buildAtomic(dbFile, documents, sectionsById, metadata)
 }
 
@@ -373,7 +376,7 @@ function rankFromIndex(dbFile, documents, sectionsById, expected, query) {
  * Build or transactionally refresh the opt-in persistent cache from Markdown
  * already loaded by the caller. The returned scorer is synchronous like rank().
  */
-export function createPersistentRanker(vault, scope, cacheDirectory, vaultDocuments) {
+export function createPersistentRanker(vault, scope, cacheDirectory, vaultDocuments, { beforeWrite } = {}) {
   if (!Array.isArray(vaultDocuments)) throw new Error('INDEX_INVALID_DOCUMENT_SET')
   const canonicalVault = fs.realpathSync(vault)
   const normalizedScope = String(scope ?? '')
@@ -393,7 +396,7 @@ export function createPersistentRanker(vault, scope, cacheDirectory, vaultDocume
   }
   const unlock = acquireLock(directory)
   try {
-    ensureIndex(dbFile, vaultDocuments, sectionsById, expected)
+    ensureIndex(dbFile, vaultDocuments, sectionsById, expected, beforeWrite)
   } finally {
     unlock()
   }

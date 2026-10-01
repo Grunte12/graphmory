@@ -7,7 +7,9 @@ import { createHash } from 'node:crypto'
 import { performance } from 'node:perf_hooks'
 import { spawnSync } from 'node:child_process'
 import { managedRecall } from '../src/decision-recall.mjs'
-import { DEFAULT_RUNTIME_CONFIG } from '../src/runtime-config.mjs'
+import { DEFAULT_RUNTIME_CONFIG as HYBRID_RUNTIME_CONFIG } from '../src/runtime-config.mjs'
+// Freeze this historical semantic-expansion experiment's lexical baseline.
+const DEFAULT_RUNTIME_CONFIG = { ...HYBRID_RUNTIME_CONFIG, retrievalMode: 'lexical' }
 
 const args = process.argv.slice(2)
 const option = name => args[args.indexOf(name) + 1]

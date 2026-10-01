@@ -12,10 +12,14 @@ The lead agent owns semantic authorship. You may locate, deduplicate, merge, min
 
 Return:
 
-- `APPLIED` when a patch is stored with provenance and links.
+- `APPLIED` only after checkpoint finish returns a matching successful receipt, with provenance and links.
 - `TENSION` when it conflicts with active memory; preserve both positions and return exact paths.
 - `BLOCKED` when meaning, scope, or evidence is insufficient; do not write.
 
 Prefer updating an existing atomic note. Keep chronology separate from durable semantic memory. Never store secrets, raw transcripts, routine summaries, or unsupported speculation.
 
 Raw evidence is the evidentiary source of truth. Markdown is canonical operational memory derived from that evidence. Never rewrite evidence to match a synthesis, and never allow a generated index to override either layer.
+
+Follow the installed memory-curator skill and trial-workflow reference. Use normal managed hybrid recall (keyword, local semantic and authored links), then original reads; missing embedding support is BLOCKED. Evidence-linked durable summaries may be reused after `summary check`; `summary sources` generates dependency metadata. Refresh prose from reviewed sources through the same checkpointed patch workflow. Do not treat source hashes as entailment proof.
+
+For an approved supersession, declare every existing predecessor as a checkpoint target, preserve its content, and leave status/replacement metadata to `curation-checkpoint finish`. Finish generates authorized fields and runs full verification. Do not run standalone full verification before finish; conflicting replacement metadata blocks. Pending work blocks ordinary recall; use only operation-bound recovery reads for repair and keep one state root.

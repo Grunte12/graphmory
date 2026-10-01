@@ -1,0 +1,5 @@
+# Uppercase path and installed-role alignment — 2026-10-02
+
+Final integration review found two issues: a vault containing an unrelated uppercase `.MD` file could fail summary normalization, and the generated host role still requested standalone full verification before finish generated predecessor metadata. Summary normalization now preserves uppercase Markdown extensions; the installed role and OpenCode instructions leave predecessor fields to finish and use its full verifier. Focused tests passed; the earlier role test failure (an audit-label assertion) is retained with its corrected rerun.
+
+Ran the real BGE screen again under `outputs/graphmory-hybrid-summary-20261002/real-bge-06/` to capture final runtime hashes after the path safety fix. Results remain lexical Recall@5 0.4167/MRR@10 0.5000 and hybrid Recall@5 1.0000/MRR@10 0.9167 on the same small synthetic fixture. This is a concrete integration regression check, not independent quality evidence. The next native role run must use the updated installed definition.

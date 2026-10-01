@@ -5,7 +5,8 @@ import os from 'node:os'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { managedRecall } from '../src/decision-recall.mjs'
-import { DEFAULT_RUNTIME_CONFIG } from '../src/runtime-config.mjs'
+import { DEFAULT_RUNTIME_CONFIG as HYBRID_RUNTIME_CONFIG } from '../src/runtime-config.mjs'
+const DEFAULT_RUNTIME_CONFIG = { ...HYBRID_RUNTIME_CONFIG, retrievalMode: 'lexical' }
 import { readSourceNotes } from '../src/source-read.mjs'
 
 test('prefetch keeps complete canonical scoped originals and CLI parity; defaults and narrow pages stay selective', async () => {
@@ -30,7 +31,7 @@ test('prefetch keeps complete canonical scoped originals and CLI parity; default
     assert.deepEqual(compact.results.map(row => row.path), eager.results.map(row => row.path))
     assert.ok(eager.results.some(row => row.evidencePreview))
     assert.ok(compact.results.every(row => !('evidencePreview' in row) && !('sourceReadRequired' in row)))
-    const cli = spawnSync(process.execPath, ['scripts/brain-sync.mjs', 'recall-managed', '--vault', vault,
+    const cli = spawnSync(process.execPath, ['scripts/brain-sync.mjs', 'recall-managed', '--retrieval-mode', 'lexical', '--vault', vault,
       '--query', 'List all memory evidence', '--scope', 'project', '--auto', '--agent', '--prefetch-wide-originals'], { encoding: 'utf8' })
     assert.equal(cli.status, 0, cli.stderr)
     assert.deepEqual(JSON.parse(cli.stdout).originalSources, eager.originalSources)

@@ -4,7 +4,8 @@ import os from "node:os"
 import path from "node:path"
 import test from "node:test"
 import { planDecisionCuration } from "../src/decision-curation.mjs"
-import { DEFAULT_RUNTIME_CONFIG } from "../src/runtime-config.mjs"
+import { DEFAULT_RUNTIME_CONFIG as HYBRID_RUNTIME_CONFIG } from "../src/runtime-config.mjs"
+const DEFAULT_RUNTIME_CONFIG = { ...HYBRID_RUNTIME_CONFIG, retrievalMode: "lexical" }
 
 function fixture() {
   const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-curate-"))

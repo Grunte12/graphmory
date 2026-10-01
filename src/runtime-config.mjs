@@ -6,6 +6,7 @@ import { writeJsonAtomic } from "./atomic-write.mjs"
 export const DEFAULT_RUNTIME_CONFIG = Object.freeze({
   version: 1,
   workflow: "curator",
+  retrievalMode: "hybrid",
   curator: { provider: "openai", model: "gpt-6-luna" },
   decision: {
     model: "jev-latest",
@@ -38,6 +39,7 @@ export function validateRuntimeConfig(value) {
     if (typeof value.curator?.[key] !== "string" || !value.curator[key].trim()) throw new Error(`curator.${key} is required`)
   }
   retrievalMethods(value.retrievalProfile)
+  if (value.retrievalMode !== undefined && !["hybrid", "lexical"].includes(value.retrievalMode)) throw new Error("retrievalMode must be hybrid or lexical")
   const decision = value.decision
   if (typeof decision?.model !== "string" || !decision.model.trim()) throw new Error("decision.model is required")
   if (typeof decision?.apiKeyEnv !== "string" || !/^[A-Z_][A-Z0-9_]*$/u.test(decision.apiKeyEnv)) throw new Error("decision.apiKeyEnv must name an environment variable")

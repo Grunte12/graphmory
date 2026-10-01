@@ -40,3 +40,11 @@ Every canonical note should contain:
 - links to related or conflicting notes.
 
 Mark stale or superseded knowledge explicitly. Do not erase history required to explain current decisions.
+
+## Guarded patch records
+
+For the default trial workflow, generate the exact note projection with `graphmory render-patch --input <patch.json>`. The renderer includes operational frontmatter and one `graphmory-patch-record:v1` block. Its digest binds the full schema-valid patch, including claim, applicability, provenance, confidence, and lifecycle fields. JSON scalar rows preserve exact strings and array order; optional-field presence is explicit. Do not hand-edit these rows or copy the block inside a quote or code fence.
+
+Add project-map, related-note, and evidence links outside the owned block. When an approved replacement supersedes an earlier note, preserve that earlier record as history and declare it as an existing checkpoint target. Leave predecessor status/replacement metadata to checkpoint finish, which generates it deterministically from the approved patch and canonical successor path. The replacement must retain every declared predecessor path.
+
+Use successful bound checkpoint finish for completion; it applies authorized predecessor metadata and runs full persistence verification. Standalone `verify-patch-persistence --full` remains diagnostic and can fail before finish has generated lifecycle fields. The legacy metadata-only check does not prove that the full patch survived. Verification checks representation; the Curator must still inspect original evidence and authority before writing. See [the trial workflow](trial-workflow.md).
