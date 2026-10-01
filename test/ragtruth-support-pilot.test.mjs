@@ -89,7 +89,7 @@ function perfectReview(labels) {
 
 test('preparer freezes 24 balanced, distinct source groups and keeps the reviewer packet blind', async t => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'graphmory-ragtruth-pilot-'))
-  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }))
   const first = await prepare(root)
   const packetBytes = fs.readFileSync(first.packetPath)
   const labelsBytes = fs.readFileSync(first.labelsPath)
@@ -139,7 +139,7 @@ test('preparer freezes 24 balanced, distinct source groups and keeps the reviewe
 
 test('preparer fails closed on missing joins, unknown annotation labels and bad offsets', async t => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'graphmory-ragtruth-invalid-'))
-  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }))
 
   const missingJoin = makeCorpus(path.join(root, 'missing-join'))
   const sourceRows = fs.readFileSync(missingJoin.sourceInfoPath, 'utf8').trimEnd().split('\n')
@@ -159,7 +159,7 @@ test('preparer fails closed on missing joins, unknown annotation labels and bad 
 
 test('support-only scorer counts unclear as nonagreement and enforces false acceptance gate', async t => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'graphmory-ragtruth-score-'))
-  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }))
   const frozen = await prepare(root)
   const packetBytes = fs.readFileSync(frozen.packetPath)
   const labels = JSON.parse(fs.readFileSync(frozen.labelsPath))
@@ -195,7 +195,7 @@ test('support-only scorer counts unclear as nonagreement and enforces false acce
 
 test('manifest rejects packet, labels and raw source drift before scoring', async t => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'graphmory-ragtruth-manifest-'))
-  t.after(() => fs.rmSync(root, { recursive: true, force: true }))
+  t.after(() => fs.rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }))
   const frozen = await prepare(root)
   const packetBytes = fs.readFileSync(frozen.packetPath)
   const labelsBytes = fs.readFileSync(frozen.labelsPath)

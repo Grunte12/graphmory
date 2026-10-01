@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process"
 function trial(t, { mutate = false, labels = false, basicMemory = false, graphPaths = false, graphAutoPaths = false, graphPreviewControl = false, graphAutoControl = false, graphMatchedControl = false, wrongVersion = false, noAnswer = false, partial = false, orderOffset = 0 } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-host-test-"))
   t.after(() => fs.rmSync(root, { recursive: true, force: true }))
-  for (const dir of ["bin", "config", "workspace/vault"]) fs.mkdirSync(path.join(root, dir), { recursive: true })
+  for (const dir of ["config", "workspace/vault"]) fs.mkdirSync(path.join(root, dir), { recursive: true })
   fs.writeFileSync(path.join(root, "workspace/vault/note.md"), "original evidence")
   fs.writeFileSync(path.join(root, "config/opencode.json"), JSON.stringify({ model: "openai/gpt-5.6-luna" }))
   const questions = [{ id: "first", question: "First?" }, { id: "second", question: "Second?" }]
@@ -22,23 +22,30 @@ ${mutate ? `fs.writeFileSync(${JSON.stringify(path.join(root, "workspace/vault/n
 ${noAnswer ? `console.log(JSON.stringify({type:'tool_use',part:{tool:'bash',state:{status:'error',error:'permission rejected'}}}));` : `console.log(JSON.stringify({type:'text',part:{text:'test answer'}}));`}
 console.log(JSON.stringify({type:'step_finish',part:{reason:${JSON.stringify(partial ? 'tool-calls' : 'stop')},tokens:{input:10,output:2,cache:{read:5,write:0}}}}));
 }`
-  fs.writeFileSync(path.join(root, "bin/opencode"), fake, { mode: 0o700 })
+  const fakeHost = path.join(root, "fake-opencode.mjs")
+  fs.writeFileSync(fakeHost, fake.replace(`#!${process.execPath}\n`, ""))
   const controlArgs = ["--order-offset", String(orderOffset)]
+  let fakeBasicMemoryCommand = null
   if (graphPaths) controlArgs.push("--control", "graphmory-paths", "--graph-preview")
   if (graphAutoPaths) controlArgs.push("--control", "graphmory-paths", "--graph-auto")
   if (graphPreviewControl) controlArgs.push("--control", "graphmory-preview", "--graph-bundle")
   if (graphAutoControl) controlArgs.push("--control", "graphmory-preview", "--graph-auto")
   if (graphMatchedControl) controlArgs.push("--control", "graphmory-auto", "--graph-auto", "--graph-matched-previews")
   if (basicMemory) {
-    const exe = path.join(root, "bin/bm")
-    fs.writeFileSync(exe, `#!${process.execPath}\nconsole.log('Basic Memory version: ${wrongVersion ? "0.99.0" : "0.23.2"}');`, { mode: 0o700 })
+    const exe = process.execPath
+    const fakeBasicMemory = path.join(root, "fake-basic-memory.mjs")
+    fs.writeFileSync(fakeBasicMemory, `console.log('Basic Memory version: ${wrongVersion ? "0.99.0" : "0.23.2"}');`)
     const config = path.join(root, "basic-memory.json")
     fs.writeFileSync(config, JSON.stringify({ exe, state: path.join(root, "state"), home: path.join(root, "home"), notes: path.join(root, "workspace/vault"), project: "test" }))
     controlArgs.push("--control", "basic-memory-text", "--control-config", config)
+    fakeBasicMemoryCommand = JSON.stringify([process.execPath, fakeBasicMemory])
   }
   const report = path.join(root, "report.json")
+  const env = { ...process.env, XDG_CONFIG_HOME: path.join(root, "config"),
+    GRAPHMORY_TEST_OPENCODE_COMMAND: JSON.stringify([process.execPath, fakeHost]) }
+  if (fakeBasicMemoryCommand) env.GRAPHMORY_TEST_BASIC_MEMORY_COMMAND = fakeBasicMemoryCommand
   const result = spawnSync(process.execPath, ["scripts/eval-host-usage.mjs", "--workspace", path.join(root, "workspace"), "--out", report, "--questions", path.join(root, "questions.json"), "--repeats", "1", ...controlArgs], {
-    encoding: "utf8", env: { ...process.env, PATH: `${path.join(root, "bin")}:${process.env.PATH}`, XDG_CONFIG_HOME: path.join(root, "config") },
+    encoding: "utf8", env,
   })
   return { result, report }
 }

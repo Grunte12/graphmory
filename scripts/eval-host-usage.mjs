@@ -25,6 +25,17 @@ const suite = args.includes("--questions") ? JSON.parse(fs.readFileSync(path.res
 if (!Array.isArray(suite) || !suite.length || suite.some((item) => !/^[a-z0-9-]+$/.test(item.id) || (item.date !== undefined && typeof item.date !== "string") || typeof item.question !== "string" || !item.question.trim() || Object.keys(item).some((key) => !["id", "question", "date"].includes(key))) || new Set(suite.map((item) => item.id)).size !== suite.length) throw new Error("Questions must have unique safe IDs and question text only; keep gold labels separate")
 const control = args.includes("--control") ? option("--control") : "plain"
 if (!["plain", "basic-memory-text", "graphmory-paths", "graphmory-preview", "graphmory-auto"].includes(control)) throw new Error("Control must be plain, basic-memory-text, graphmory-paths, graphmory-preview, or graphmory-auto")
+const commandPrefix = (envName, fallback) => {
+  if (!process.env[envName]) return fallback
+  const value = JSON.parse(process.env[envName])
+  if (!Array.isArray(value) || value.length === 0 || value.some((item) => typeof item !== "string" || !item)) {
+    throw new Error(`${envName} must be a JSON array of non-empty strings`)
+  }
+  return value
+}
+const opencodeCommand = commandPrefix("GRAPHMORY_TEST_OPENCODE_COMMAND", ["opencode"])
+const basicMemoryCommand = commandPrefix("GRAPHMORY_TEST_BASIC_MEMORY_COMMAND", null)
+const spawnCommand = (prefix, args, options) => spawnSync(prefix[0], [...prefix.slice(1), ...args], options)
 const graphPreview = args.includes("--graph-preview")
 const graphBundle = args.includes("--graph-bundle")
 const graphAuto = args.includes("--graph-auto")
@@ -45,7 +56,7 @@ if (control === "basic-memory-text") {
   const env = { ...process.env, BASIC_MEMORY_CONFIG_DIR: basicMemory.state, BASIC_MEMORY_HOME: basicMemory.notes,
     XDG_CONFIG_HOME: basicMemory.home, BASIC_MEMORY_AUTO_UPDATE: "false", BASIC_MEMORY_SEMANTIC_SEARCH_ENABLED: "false",
     BASIC_MEMORY_DEFAULT_SEARCH_TYPE: "text", BASIC_MEMORY_RERANKER_ENABLED: "false" }
-  const version = spawnSync(basicMemory.exe, ["--version"], { env, encoding: "utf8" })
+  const version = spawnCommand(basicMemoryCommand ?? [basicMemory.exe], ["--version"], { env, encoding: "utf8" })
   if (version.status !== 0 || version.stdout.trim() !== "Basic Memory version: 0.23.2") throw new Error("Basic Memory version must be pinned to 0.23.2")
 }
 const orderOffset = args.includes("--order-offset") ? Number(option("--order-offset")) : 0
@@ -71,10 +82,12 @@ const configRoot = process.env.XDG_CONFIG_HOME
 if (!configRoot) throw new Error("Use an isolated XDG_CONFIG_HOME for the evaluation")
 const hostConfig = JSON.parse(fs.readFileSync(path.join(configRoot, "opencode.json"), "utf8"))
 if ((hostConfig.agent?.paired_eval?.model ?? hostConfig.model) !== "openai/gpt-5.6-luna") throw new Error("Paired evaluator model must match the recorded model")
-const metadata = { control, orderOffset, graphPreview, graphBundle, graphAuto, graphMatchedPreviews, controlConfigHash: basicMemory ? digest(JSON.stringify(basicMemory)) : null,
+const metadata = { control, orderOffset, graphPreview, graphBundle, graphAuto, graphMatchedPreviews,
+  opencodeCommand, basicMemoryCommand: basicMemory ? (basicMemoryCommand ?? [basicMemory.exe]) : null,
+  controlConfigHash: basicMemory ? digest(JSON.stringify(basicMemory)) : null,
   indexedNotesHash: basicMemory ? snapshot(basicMemory.notes) : null,
   competitorVersion: basicMemory ? "0.23.2" : null,
-  runnerHash: digest(fs.readFileSync(new URL(import.meta.url))), sourceHash: digest(snapshot(path.resolve("src")) + digest(fs.readFileSync(cli))), model: "openai/gpt-5.6-luna", host: "OpenCode", hostVersion: spawnSync("opencode", ["--version"], { encoding: "utf8" }).stdout.trim(),
+  runnerHash: digest(fs.readFileSync(new URL(import.meta.url))), sourceHash: digest(snapshot(path.resolve("src")) + digest(fs.readFileSync(cli))), model: "openai/gpt-5.6-luna", host: "OpenCode", hostVersion: spawnCommand(opencodeCommand, ["--version"], { encoding: "utf8" }).stdout.trim(),
   revision: spawnSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).stdout.trim(),
   questionsHash: digest(JSON.stringify(suite)), vaultHash: baselineVault, runtimeHash: digest(fs.readFileSync(runtime)),
   hostConfigHash: digest(fs.readFileSync(path.join(configRoot, "opencode.json"))), repeats,
@@ -85,7 +98,7 @@ for (const [questionIndex, { id, question, date }] of suite.entries()) {
   for (let repeat = 0; repeat < repeats; repeat++) {
     const order = (repeat + questionIndex + orderOffset) % 2 ? [control, "graphmory"] : ["graphmory", control]
     for (const arm of order) {
-      const nativeSearch = basicMemory ? `env BASIC_MEMORY_CONFIG_DIR=${shellQuote(basicMemory.state)} BASIC_MEMORY_HOME=${shellQuote(basicMemory.notes)} XDG_CONFIG_HOME=${shellQuote(basicMemory.home)} BASIC_MEMORY_AUTO_UPDATE=false BASIC_MEMORY_SEMANTIC_SEARCH_ENABLED=false BASIC_MEMORY_DEFAULT_SEARCH_TYPE=text BASIC_MEMORY_RERANKER_ENABLED=false ${shellQuote(basicMemory.exe)} tool search-notes ${shellQuote(question)} --project ${shellQuote(basicMemory.project)} --local --page-size 10 --json` : null
+      const nativeSearch = basicMemory ? `env BASIC_MEMORY_CONFIG_DIR=${shellQuote(basicMemory.state)} BASIC_MEMORY_HOME=${shellQuote(basicMemory.notes)} XDG_CONFIG_HOME=${shellQuote(basicMemory.home)} BASIC_MEMORY_AUTO_UPDATE=false BASIC_MEMORY_SEMANTIC_SEARCH_ENABLED=false BASIC_MEMORY_DEFAULT_SEARCH_TYPE=text BASIC_MEMORY_RERANKER_ENABLED=false ${(basicMemoryCommand ?? [basicMemory.exe]).map(shellQuote).join(" ")} tool search-notes ${shellQuote(question)} --project ${shellQuote(basicMemory.project)} --local --page-size 10 --json` : null
       const strategy = arm === "graphmory"
         ? `Start with node ${shellQuote(cli)} recall-managed --vault ${shellQuote(vault)} --config ${shellQuote(runtime)} --query ${shellQuote(question)} --agent${graphAuto ? ` --auto${graphMatchedPreviews ? " --matched-previews" : ""}` : graphBundle ? " --bundle" : graphPreview ? " --evidence-preview" : ""}. ${graphAuto || graphBundle || graphPreview ? "Use previews to triage candidates, but inspect original source notes when needed for support or completeness. " : ""}Follow pagination if evidence is missing; read relevant source notes.`
         : arm === "graphmory-paths"
@@ -99,7 +112,7 @@ for (const [questionIndex, { id, question, date }] of suite.entries()) {
           : "Use ordinary file search and read to find relevant evidence in ./vault. Do not use Graphmory commands."
       const prompt = `Run every shell command with workdir ${shellQuote(workspace)}. Never use its parent directory as workdir.\n${strategy}\nQuestion: ${question}${date ? `\nReference date: ${date}` : ""}\nOnly inspect ./vault and the stated retrieval command. Reply with supported facts and exact note paths; do not edit any files.`
       const start = performance.now()
-      const child = spawnSync("opencode", ["run", "--pure", "--agent", "paired_eval", "--format", "json", "--dir", workspace, prompt], {
+      const child = spawnCommand(opencodeCommand, ["run", "--pure", "--agent", "paired_eval", "--format", "json", "--dir", workspace, prompt], {
         encoding: "utf8", timeout: 120000, maxBuffer: 8 * 1024 * 1024,
       })
       const elapsedMs = performance.now() - start

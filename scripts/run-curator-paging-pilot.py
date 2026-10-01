@@ -35,6 +35,17 @@ parser.add_argument('--collection-ledger', action='store_true', help='Experiment
 parser.add_argument('--collection-pack-prompts', action='store_true', help='Pack line-safe original collection fragments into exact byte-bounded map prompts')
 parser.add_argument('--ranked-originals', action='store_true', help='Experimental byte-bounded original prefetch in current retrieval rank order')
 args = parser.parse_args()
+
+def command_prefix(variable, fallback):
+    raw = os.environ.get(variable)
+    if raw is None:
+        return fallback
+    value = json.loads(raw)
+    if not isinstance(value, list) or not value or any(not isinstance(item, str) or not item for item in value):
+        raise RuntimeError(f'{variable} must be a JSON array of non-empty strings')
+    return value
+
+codex_prefix = command_prefix('GRAPHMORY_TEST_CODEX_COMMAND', ['codex'])
 lead_model = args.lead_model or args.model
 if not 1 <= args.max_rounds <= 10 or args.max_input_bytes < 1000:
     raise RuntimeError('Invalid economic/protocol budget')
@@ -83,7 +94,8 @@ if args.basic_config:
                      BASIC_MEMORY_RERANKER_ENABLED='false',
                      FASTEMBED_CACHE_PATH=str(pathlib.Path(basic['state']) / 'fastembed_cache'),
                      HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1')
-    version = subprocess.run([basic['exe'], '--version'], env=basic_env, cwd=basic['home'],
+    basic_memory_prefix = command_prefix('GRAPHMORY_TEST_BASIC_MEMORY_COMMAND', [basic['exe']])
+    version = subprocess.run([*basic_memory_prefix, '--version'], env=basic_env, cwd=basic['home'],
                              capture_output=True, text=True, timeout=30)
     if version.returncode or version.stdout.strip() != 'Basic Memory version: 0.23.2':
         raise RuntimeError('Basic Memory version mismatch')
@@ -146,7 +158,8 @@ def command_json(command):
 
 def native_json(command):
     started = time.monotonic()
-    child = subprocess.run([basic['exe'], *command], env=basic_env, cwd=basic['home'],
+    prefix = command_prefix('GRAPHMORY_TEST_BASIC_MEMORY_COMMAND', [basic['exe']])
+    child = subprocess.run([*prefix, *command], env=basic_env, cwd=basic['home'],
                            text=True, capture_output=True, timeout=120)
     if child.returncode:
         raise RuntimeError('Basic Memory CLI failed')
@@ -195,11 +208,11 @@ def generate(prompt, stage, schema):
     start = time.monotonic()
     resumed = stage == 'curator' and args.persistent_curator and curator_session is not None
     if resumed:
-        command = ['codex', 'exec', 'resume', '--ignore-user-config', '--skip-git-repo-check',
+        command = [*codex_prefix, 'exec', 'resume', '--ignore-user-config', '--skip-git-repo-check',
                    '-m', stage_model, '-c', 'model_reasoning_effort="low"',
                    '--output-schema', str(schema_file), '--json', curator_session, '-']
     else:
-        command = ['codex', 'exec', '--ignore-user-config', '--skip-git-repo-check',
+        command = [*codex_prefix, 'exec', '--ignore-user-config', '--skip-git-repo-check',
                    '-C', str(workspace), '-s', 'read-only', '-m', stage_model,
                    '-c', 'model_reasoning_effort="low"', '--output-schema', str(schema_file), '--json', '-']
         if stage != 'curator' or not args.persistent_curator:
