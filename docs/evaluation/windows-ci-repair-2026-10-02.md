@@ -21,4 +21,4 @@ BEIR text-mode Markdown output changed LF to CRLF on Windows while its manifest 
 
 ## Outcome
 
-Local `npm run release:gate` passes all three gates (unit/schema/core evals, report artifact contracts and 140-file package dry-run). GitHub matrix verification of the repair remains pending. The earlier native run and its frozen installed archive remain independent of these test-harness changes.
+Local `npm run release:gate` passes all three gates (unit/schema/core evals, report artifact contracts and 140-file package dry-run). [Final CI run 36914603192](https://github.com/Grunte12/graphmory/actions/runs/36914603192) for `c2f9813` passed **all eight jobs**: Linux/Windows release gates and install smokes on Node 20/22. This is the observed verification of both repair commits. The two prior failed runs remain retained. The earlier native run and its frozen installed archive remain independent of these test-harness changes.
