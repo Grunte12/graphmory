@@ -20,3 +20,5 @@ python3 work/render.py --font-sans /path/to/sans.ttf --font-serif /path/to/serif
 `--proof` captures every scene and transition. The MP4's first frame is replaced by the settled poster at 13.8 seconds, preserving exactly 600 frames and 20-second timing. Source geometry is a conceptual visualization of the CLI/Markdown workflow, not a recording of a Graphmory GUI.
 
 See [credits](CREDITS.md), [storyboard](brag-plan.md) and [share copy](share-copy.txt).
+
+Official platform logos illustrate host examples; actions use original line animation. See [CREDITS.md](CREDITS.md) for provenance and tested-host boundaries.

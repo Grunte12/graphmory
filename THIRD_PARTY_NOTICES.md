@@ -57,3 +57,7 @@ revision `6dbe1a1d868eab51a3bc9011b0f55e2891513e40`, under MIT. The license and 
 `.agents/skills/context-engineering-provenance.json`. These development-only
 resources are excluded from the npm package. Bundled heuristic example scorers
 are guidance, not adopted benchmark implementations.
+
+## Platform logos in promotional media
+
+`docs/media/graphmory-motion/work/logos/` contains proportionally resized official Cursor, OpenAI Codex, OpenCode, Antigravity and DeepSeek logo assets. These marks remain the property of their respective owners and are excluded from Graphmory’s MIT grant. Source links and derivations are recorded in [media credits](docs/media/graphmory-motion/CREDITS.md). Their illustrative appearance does not imply endorsement or verified integration with every depicted platform.

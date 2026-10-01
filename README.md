@@ -25,15 +25,15 @@ Long-running agents need durable memory, but saving every conversation creates n
 
 ## Architecture
 
-![Graphmory architecture: Codex or OpenCode delegates to a named Curator, which uses the CLI for hybrid search, original Markdown reads and guarded memory updates.](docs/assets/graphmory-architecture.svg)
+![Graphmory architecture: a coding agent delegates to a named Curator, which uses the CLI for hybrid search, original Markdown reads and guarded memory updates.](docs/assets/graphmory-architecture.svg)
 
 [Open the editable architecture diagram](docs/assets/graphmory-architecture.html).
 
 ### See the workflow
 
-[![Animated Graphmory workflow: shared notes, hybrid retrieval, cited Brief and lifecycle updates.](docs/assets/graphmory-workflow-preview.gif)](docs/assets/graphmory-workflow.mp4)
+[![Animated Graphmory workflow: coding harness examples share notes through hybrid retrieval, cited Briefs and lifecycle updates.](docs/assets/graphmory-workflow-preview.gif)](docs/assets/graphmory-workflow.mp4)
 
-[Watch the 20-second MP4](docs/assets/graphmory-workflow.mp4) · [Editable FFmpeg source and storyboard](docs/media/graphmory-motion/README.md). This is a conceptual visualization of the CLI/Markdown workflow. Frames are drawn locally and encoded with FFmpeg; no HyperFrames runtime is required.
+[Watch the 20-second MP4](docs/assets/graphmory-workflow.mp4) · [Editable FFmpeg source and storyboard](docs/media/graphmory-motion/README.md). This is a conceptual visualization of the CLI/Markdown workflow. Frames are drawn locally and encoded with FFmpeg; no HyperFrames runtime is required. Platform logos are illustrative examples; native dispatch was verified on Codex and OpenCode.
 
 The default workflow uses a small host sub-agent as Curator. The local CLI combines keyword, semantic and authored graph retrieval; the Curator reads original notes and sends the lead a short cited brief. Pagination allows more related notes when needed, with no fixed total note cap. For updates, the lead supplies supported meaning, the Curator prepares and edits, and the CLI verifies the saved state before issuing a receipt.
 

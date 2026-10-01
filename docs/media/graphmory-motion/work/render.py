@@ -25,19 +25,19 @@ CLASSES = {
  'big': {'font-size':'64','font':'serif'},
  'label': {'font-size':'32'},
 }
-ENTER = {'agentA':(.05,-50,0),'agentB':(.38,-50,0),'brainGraph':(.12,0,16),
+ENTER = {'agentA':(.05,-50,0),'agentB':(.25,-50,0),'agentC':(.45,-50,0),'agentD':(.65,-50,0),'agentE':(.9,-50,0),'brainGraph':(.12,0,16),
  'keyword':(4.25,0,24),'semantic':(4.45,0,24),'graph':(4.65,0,24),
  'candidates':(5.2,60,0),'source':(8.4,0,35),
  'originals':(10.05,-32,0),'curator':(10.3,0,24),'brief':(11.5,-45,0),
  'lead':(12.6,40,0),'patch':(15.05,-30,0),'checks':(15.3,0,24),
  'oldNote':(15.5,0,24),'newNote':(16.05,0,48),'historyLabel':(17.1,0,24),
  'receipt':(17.5,0,24),'later':(17.7,40,0),'outro':(18.9,0,8)}
-DRAW = {'share1':(.65,1),'share2':(1.1,1),'sourceLink':(8.15,.7),
+DRAW = {'hostBus':(.4,1.1),'share1':(1.1,1),'share2':(1.5,1),'sourceLink':(8.15,.7),
  'readEdge':(10.6,.7),'briefEdge':(11.4,.7),'citation':(12.1,1),
  'returnEdge':(13.1,.45),'supersedes':(16.9,.5),'laterEdge':(18.05,.7)}
 PULSES = {
- 'packet1':(.75,1.2,[(0,0),(160,0),(345,83),(645,83)]),
- 'packet2':(1.2,1.2,[(0,0),(160,0),(345,-162),(645,-162)]),
+ 'packet1':(1.2,1.2,[(0,0),(170,0),(250,70),(565,70)]),
+ 'packet2':(1.65,1.2,[(0,0),(170,0),(250,-95),(565,-95)]),
  'keyPulse':(4.6,1.8,[(0,0),(105,0),(105,-195),(750,-195),(750,0),(880,0)]),
  'semPulse':(5.2,1.6,[(0,0),(360,0),(750,0),(880,0)]),
  'graphPulse':(5.8,1.8,[(0,0),(105,0),(105,195),(750,195),(750,0),(880,0)]),
@@ -111,6 +111,14 @@ for x in range(1,W,48):
  for y in range(1,H,48):grid.ellipse((x-1,y-1,x+1,y+1),fill='#d6d4cf')
 
 
+@functools.lru_cache(maxsize=None)
+def logo_asset(href, width, height):
+ path=(HERE/href).resolve()
+ if not path.is_relative_to((HERE/'logos').resolve()):raise ValueError('Logo must be a local asset')
+ im=Image.open(path).convert('RGBA')
+ im.thumbnail((width,height),Image.Resampling.LANCZOS)
+ return im
+
 def frame(t):
  image=BASE.copy();draw=ImageDraw.Draw(image)
  def paint(el,opacity=1,ox=0,oy=0):
@@ -142,7 +150,13 @@ def frame(t):
    if not start<=t<=start+duration+.12:return
    u=clamp((t-start)/duration);dx,dy=travel(points,u);ox+=dx;oy+=dy
    if t>start+duration:fill=color(st.get('fill'),opacity*(1-(t-start-duration)/.12))
-  if tag=='rect':
+  if tag=='image':
+   w,h=int(a['width']),int(a['height']);logo=logo_asset(a['href'],w,h)
+   x=round(float(a.get('x',0))+ox+(w-logo.width)/2)
+   y=round(float(a.get('y',0))+oy+(h-logo.height)/2)
+   alpha=logo.getchannel('A').point(lambda v:round(v*opacity))
+   image.paste(logo,(x,y),alpha)
+  elif tag=='rect':
    if st.get('fill','').startswith('url('):return
    x=float(a.get('x',0))+ox;y=float(a.get('y',0))+oy
    box=(x,y,x+float(a['width']),y+float(a['height']))
