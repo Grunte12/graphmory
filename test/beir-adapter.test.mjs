@@ -6,11 +6,14 @@ import path from 'node:path'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 
+const pythonExecutable = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3')
+const readNormalizedText = file => fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n')
+
 test('BEIR rendering preserves IDs/labels and refuses archive drift or output overwrite', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'graphmory-beir-'))
   try {
     const archive = path.join(dir, 'fixture.zip')
-    const build = spawnSync('python3', ['-c', `import zipfile,json,sys
+    const build = spawnSync(pythonExecutable, ['-c', `import zipfile,json,sys
 with zipfile.ZipFile(sys.argv[1],'w') as z:
  z.writestr('fixture/corpus.jsonl',json.dumps({'_id':'doc-1','title':'Deployment','text':'Ada reverses the release.'})+'\\n')
  z.writestr('fixture/queries.jsonl',json.dumps({'_id':'q-1','text':'Who reverses the release?'})+'\\n')
@@ -21,18 +24,22 @@ with zipfile.ZipFile(sys.argv[1],'w') as z:
     const out = path.join(dir, 'prepared')
     const args = ['scripts/prepare-beir-markdown.py', '--zip', archive, '--expected-sha256', hash,
       '--dataset', 'fixture', '--split', 'test', '--out', out]
-    const render = spawnSync('python3', args, { encoding: 'utf8' })
+    const render = spawnSync(pythonExecutable, args, { encoding: 'utf8' })
     assert.equal(render.status, 0, render.stderr)
     const cases = JSON.parse(fs.readFileSync(path.join(out, 'queries.json')))
     assert.deepEqual(cases[0].relevant, ['docs/doc-1.md'])
     assert.equal(cases[0].id, 'q-1')
-    assert.equal(fs.readFileSync(path.join(out, 'vault/docs/doc-1.md'), 'utf8'), '# Deployment\n\nAda reverses the release.\n')
-    assert.notEqual(spawnSync('python3', args).status, 0)
+    assert.equal(readNormalizedText(path.join(out, 'vault/docs/doc-1.md')), '# Deployment\n\nAda reverses the release.\n')
+    const manifest = JSON.parse(fs.readFileSync(path.join(out, 'manifest.json'), 'utf8'))
+    const sourceBytes = fs.readFileSync(path.join(out, 'vault/docs/doc-1.md'))
+    assert.equal(sourceBytes.toString('utf8'), '# Deployment\n\nAda reverses the release.\n')
+    assert.equal(createHash('sha256').update(sourceBytes).digest('hex'), manifest.vaultSourceHashes['docs/doc-1.md'])
+    assert.notEqual(spawnSync(pythonExecutable, args).status, 0)
     const driftOut = path.join(dir, 'drift')
     const driftArgs = [...args]
     driftArgs[driftArgs.indexOf('--expected-sha256') + 1] = '0'.repeat(64)
     driftArgs[driftArgs.indexOf('--out') + 1] = driftOut
-    assert.notEqual(spawnSync('python3', driftArgs).status, 0)
+    assert.notEqual(spawnSync(pythonExecutable, driftArgs).status, 0)
     assert.equal(fs.existsSync(driftOut), false)
     const runs = path.join(dir, 'runs')
     const exported = spawnSync(process.execPath, ['scripts/export-beir-lexical-runs.mjs', '--prepared', out, '--out', runs], { encoding: 'utf8' })

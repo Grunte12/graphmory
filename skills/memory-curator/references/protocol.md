@@ -26,13 +26,13 @@ Raw evidence is immutable or independently verifiable evidentiary truth. The Mar
 
 Use when evidence supports the patch and no unresolved conflict prevents canonical storage.
 
-Return changed paths, links added, and provenance retained.
+Return the verified completion receipt, changed paths, links added and provenance retained. APPLIED requires full persistence and successful checkpoint finish; schema or metadata agreement alone is insufficient.
 
 ### TENSION
 
 Use when the patch disagrees with active memory.
 
-Do not overwrite either position. Link both from a tension note and return exact paths.
+Do not overwrite either position. Return the conflicting paths and missing decision without writes in the default trial. Create a tension note only when separately authorized as a supported patch through the same checkpoint workflow.
 
 ### BLOCKED
 

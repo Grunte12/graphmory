@@ -105,7 +105,9 @@ test('existing read-notes CLI resumes private collection state and refuses chang
   assert.equal(first.status, 0, first.stderr)
   assert.equal(JSON.parse(first.stdout).hasMore, true)
   assert.ok(Buffer.byteLength(first.stdout) <= 751)
-  assert.equal(fs.statSync(stateFile).mode & 0o777, 0o600)
+  // Windows stat mode does not represent NTFS access controls. Content,
+  // continuation and changed-source refusal below still run on every host.
+  if (process.platform !== 'win32') assert.equal(fs.statSync(stateFile).mode & 0o777, 0o600)
   let more = true, pages = 1
   while (more) {
     const result = run()

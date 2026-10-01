@@ -12,7 +12,7 @@ Graphmory adds a durable Markdown memory layer for coding agents. The tool repo 
 2. Read `docs/guides/install.md` for full installation steps.
 3. Follow the [agent-guided setup](adapters/generic-agent/INSTALL.md#agent-guided-setup): inspect the host and machine, ask the user for missing choices, and keep those answers in the conversation. For Codex, Cursor, or Claude Code, the optional helper can preview and write the named curator agent after the host format and model are confirmed:
    ```sh
-   npm install -g --omit=optional .
+   npm install -g .
    graphmory-setup --host codex
    graphmory-setup --host codex --apply
    ```
@@ -161,14 +161,9 @@ node <harness-path>/scripts/brain-sync.mjs curation-recommend --report "<eval-re
 
 Use the report to classify whether the miss is buried gold, missing scope, no candidates, or vocabulary/gold ambiguity. Apply clearly reversible curator improvements such as adding non-sensitive aliases, frontmatter hints, or MOC links when the evidence is explicit and the target note is unambiguous. Ask before meaning-changing rewrites, grouped-gold changes, note moves, deletions, or conflict resolution.
 
-If frozen evals still show paraphrase or vocabulary misses after scope and curation review, use optional semantic recall as an escalation lane:
+New Curator configuration uses keyword, local semantic and authored graph navigation together in `recall-managed`. Install normally (including optional embedding dependencies), and allow the initial BGE model download during setup. Model files and rebuildable vectors belong outside the vault. No separate vector database or embedding API is required. If the backend is missing, hybrid recall returns BLOCKED instead of silently downgrading. Older configs without `retrievalMode` retain lexical behavior; choose hybrid in `graphmory config`, or pass `--retrieval-mode hybrid` explicitly. `--retrieval-mode lexical` is for compatibility/diagnostics, not the recommended new setup.
 
-```sh
-npm install @huggingface/transformers
-node <harness-path>/scripts/brain-sync.mjs recall-semantic --vault "<vault-path>" --query "<task-specific memory question>" --scope "<known project-or-domain path>" --json
-```
-
-Semantic recall is not the default install path. Do not install optional dependencies in a shared/public project without user approval, do not treat generated embeddings as canonical memory, and do not skip Markdown curation just because semantic search found a match.
+Curator-maintained summaries may reuse supported synthesis across agents. Run `summary sources --vault <path> --paths '<JSON array>'` to generate source fingerprints and evidence links, preserve these fields alongside the summary, and use `summary check --vault <path> --note <path>` before direct reuse. Default recall excludes summaries with changed, missing, inactive or stale transitive sources. Freshness proves source identity, not semantic support. Preserve originals and use the checkpointed write flow for summary creation/refresh; do not rewrite hashes without reviewing the changed evidence.
 
 ## Human Judgment Gates
 

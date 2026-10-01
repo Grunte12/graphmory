@@ -1,9 +1,20 @@
 import fs from "node:fs"
 import path from "node:path"
 import { governedRank, isAnswerCandidate, isRetrievable, parseMarkdown, sectionFocusRerank } from "./retrieval.mjs"
+import { applySummaryFreshness } from "./summary-memory.mjs"
+import { readSourceNotes } from "./source-read.mjs"
 
 const SKIP_DIRECTORIES = new Set([".git", ".obsidian", ".memory-patch-harness", "node_modules"])
 const RAW_ROOTS = new Set(["00 inbox", "clippings"])
+
+function isSummaryDocument(document) {
+  return String(document.metadata?.memory_kind ?? "").trim().toLowerCase() === "summary"
+}
+
+function applyRawPathStatus(document) {
+  if (!RAW_ROOTS.has(document.id.split("/")[0].toLowerCase())) return document
+  return { ...document, metadata: { ...document.metadata, status: document.metadata.status ?? "raw" } }
+}
 
 export function loadVaultDocuments(vault, { includeRawPaths = false, maxFiles = 5000, scope = "" } = {}) {
   const root = path.resolve(vault)
@@ -37,7 +48,28 @@ export function loadVaultDocuments(vault, { includeRawPaths = false, maxFiles = 
       if (documents.length >= maxFiles) break
     }
   }
-  return documents.sort((a, b) => a.id.localeCompare(b.id))
+  documents.sort((a, b) => a.id.localeCompare(b.id))
+  if (!documents.some(isSummaryDocument)) return documents
+  // Load only named dependencies outside the candidate scope, not the whole vault.
+  const dependencyDocuments = new Map(documents.map(document => [document.id, document]))
+  const queue = [...documents]
+  for (let cursor = 0; cursor < queue.length && dependencyDocuments.size < maxFiles; cursor++) {
+    const document = queue[cursor]
+    if (!isSummaryDocument(document)) continue
+    const entries = document.metadata.summary_sources
+    for (const entry of Array.isArray(entries) ? entries : []) {
+      const match = String(entry).match(/^[a-f0-9]{64} (.+)$/u)
+      if (!match || dependencyDocuments.has(match[1]) || dependencyDocuments.size >= maxFiles) continue
+      try {
+        const source = readSourceNotes(root, [match[1]]).sources[0]
+        const dependency = applyRawPathStatus(parseMarkdown(source.path, source.markdown))
+        dependencyDocuments.set(dependency.id, dependency)
+        queue.push(dependency)
+      } catch { /* Missing/unsafe dependencies mark the summary stale. */ }
+    }
+  }
+  const refreshed = new Map(applySummaryFreshness([...dependencyDocuments.values()]).documents.map(document => [document.id, document]))
+  return documents.map(document => refreshed.get(document.id))
 }
 
 export function recallVault(vault, query, {

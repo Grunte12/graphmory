@@ -7,11 +7,11 @@ The same `graphmory` CLI and `memory-curator` skill work across hosts that can r
 From a checkout of this repository with Node.js 20 or newer:
 
 ```sh
-npm install -g --omit=optional .
+npm install -g .
 graphmory doctor --json
 ```
 
-The npm package is not published yet. `npm install -g --omit=optional .` may link this checkout and leaves out the optional local embedding dependency; normal retrieval needs no model download. Keep the checkout in place while using this local install. A future registry release can remove the clone step. If a global install is undesirable, keep the checkout and call `node /absolute/path/to/graphmory/scripts/brain-sync.mjs` wherever this guide says `graphmory`.
+The npm package is not published yet. `npm install -g .` may link this checkout; keep it in place. Recommended hybrid retrieval requires the optional Transformers dependency and an initial local BGE model download. `--omit=optional` supports explicit lexical diagnostics only; it does not complete hybrid setup. A future registry release can remove the clone step. If a global install is undesirable, keep the checkout and call `node /absolute/path/to/graphmory/scripts/brain-sync.mjs` wherever this guide says `graphmory`.
 
 ## 2. Install the curator agent and skill
 
@@ -23,6 +23,8 @@ graphmory-setup --host codex --apply
 ```
 
 Replace `codex` with `claude` or `cursor`. Codex defaults to `gpt-6-luna`; Claude Code defaults to `haiku`. Cursor requires `--model <model-id>` because `inherit` may use the lead model. Choose an ID available to your host and subscription. Use `--scope project --project <path>` for one workspace rather than the default user scope. Run this once per host you use. Restart or start a fresh session if it does not see the new agent. For project-scoped Codex files, open the project as trusted in Codex; do not change global trust settings just for Graphmory. The script installs the skill and a `graphmory_curator` (Codex) or `graphmory-curator` (Claude/Cursor) agent definition. It does not set up the vault or change existing global lead instructions.
+
+Model catalog visibility does not prove account support. If the host rejects the default, preview setup with an explicitly supported inexpensive model, such as `--model gpt-5.6-luna`, before applying. Verify an actual child run; do not silently fall back to the lead model.
 
 | Host | User agent file | User skill directory |
 | --- | --- | --- |
@@ -87,7 +89,7 @@ Keep the short lead instruction above and the curator's skill/agent definition a
 
 For a Memory Patch, the lead agent supplies the claim, scope, and source IDs. The curator searches only likely destinations and checks current note contents before applying an edit. This second search is for placement and conflict detection, so it can reuse candidate paths found earlier but must not trust stale excerpts. Keep the curator's stable instructions ahead of the changing patch and excerpts to preserve any prompt caching the host/provider offers; compare reported cache usage and actual cost before claiming savings.
 
-The default curator workflow applies a verified patch through the host's normal file-editing tools, then checks links and lifecycle metadata. Do not call `curate-plan` in this workflow; it only produces advice for hosted Jev/local decision workflows and never writes notes. Use the [end-to-end smoke guide](curator-workflow-smoke.md) to verify actual native dispatch, bounded multi-hop recall, patch application, and lifecycle checks in a disposable vault.
+The default trial Curator prepares a private checkpoint, applies a supported patch through the host's normal file-editing tools, then requires full persistence and verified completion. Follow the [local trial workflow](trial-mvp.md); interrupted work remains discoverable and blocks agent-facing content routes. After BLOCKED, native filesystem tools are not sandboxed by the CLI: the Lead and Curator must not use them or another route to assemble an authoritative answer. Keep one state root across sessions. The exact-operation recovery read is for repair only and is tagged recovery-only. Do not call `curate-plan` in this workflow; it only produces advice for hosted Jev/local decision workflows and never writes notes. Use the [end-to-end smoke guide](curator-workflow-smoke.md) to verify actual native dispatch, bounded multi-hop recall, patch application, and lifecycle checks in a disposable vault.
 
 ## 5. Smoke check
 

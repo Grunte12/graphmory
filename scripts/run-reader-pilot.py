@@ -6,6 +6,7 @@ import json
 import pathlib
 import subprocess
 import time
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input', required=True)
@@ -13,6 +14,17 @@ parser.add_argument('--out', required=True)
 parser.add_argument('--model', default='gpt-5.6-luna')
 parser.add_argument('--cases', type=int, default=1, choices=[1, 2])
 args = parser.parse_args()
+
+def command_prefix(variable, fallback):
+    raw = os.environ.get(variable)
+    if raw is None:
+        return fallback
+    value = json.loads(raw)
+    if not isinstance(value, list) or not value or any(not isinstance(item, str) or not item for item in value):
+        raise RuntimeError(f'{variable} must be a JSON array of non-empty strings')
+    return value
+
+codex_prefix = command_prefix('GRAPHMORY_TEST_CODEX_COMMAND', ['codex'])
 source = pathlib.Path(args.input).resolve()
 out = pathlib.Path(args.out).resolve()
 if out.exists():
@@ -54,7 +66,7 @@ def save():
 
 def call(qid, arm, prompt):
     start = time.monotonic()
-    command = ['codex', 'exec', '--ignore-user-config', '--ephemeral', '--skip-git-repo-check',
+    command = [*codex_prefix, 'exec', '--ignore-user-config', '--ephemeral', '--skip-git-repo-check',
                '-C', str(workspace), '-s', 'read-only', '-m', args.model,
                '-c', 'model_reasoning_effort="low"', '--output-schema', str(workspace / 'schema.json'), '--json', '-']
     try:

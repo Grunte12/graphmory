@@ -4,6 +4,10 @@ Graphmory is file-first. For Codex, Cursor, and Claude Code, its setup script ca
 
 For Codex, Cursor, or Claude Code, follow the [cross-host setup guide](agent-hosts.md). The steps below describe the existing OpenCode installer and vault setup.
 
+For the guarded local Curator workflow, see [the trial guide](trial-mvp.md). A newer CLI does not update an existing installed role automatically; preview and review the skill/role upgrade rather than overwrite personal settings.
+
+The candidate CLI blocks agent-facing content reads while checkpoint state is pending or unreadable and checks authority again before returning output. This does not sandbox native filesystem tools. After a block, do not use those tools or switch state roots to produce a current answer. Keep one state root across sessions; use the exact-operation recovery read only to repair that operation.
+
 ## Where installation instructions live
 
 - [README Quick Start](../../README.md#quick-start) is the first path for a person arriving from GitHub; its agent-guided setup is recommended.
@@ -12,7 +16,7 @@ For Codex, Cursor, or Claude Code, follow the [cross-host setup guide](agent-hos
 - [Generic agent install guide](../../adapters/generic-agent/INSTALL.md) is the checklist for a coding agent doing setup for someone.
 - [AGENTS.md](../../AGENTS.md) guides agents working in this repository; [`memory-curator/SKILL.md`](../../skills/memory-curator/SKILL.md) defines curator behavior after installation. Neither is a substitute for installing the CLI.
 
-For now, clone the GitHub repository and run `npm install -g --omit=optional .` from it. A fork is needed only if you intend to maintain your own changes. The npm registry package name is not published yet, so `npm install -g graphmory` is a future distribution path, not a current command.
+For now, clone the GitHub repository and run `npm install -g .` from it. A fork is needed only if you intend to maintain your own changes. The npm registry package name is not published yet, so `npm install -g graphmory` is a future distribution path, not a current command.
 
 ## Requirements
 
@@ -79,6 +83,8 @@ The memory repo should contain only curated Markdown memory and temporary inbox 
 
 ## OpenCode Adapter
 
+Install the shared `graphmory` CLI with `npm install -g .` first, including its optional embedding dependency. The file-copy installer copies runtime sources and launchers, **not** `node_modules`. Prefer the global `graphmory` command for normal hybrid recall; a copied launcher needs its own resolvable Transformers dependency. Verify hybrid recall as well as `doctor`, which does not prove embeddings are installed. Keep the checkout when the global install is linked to it.
+
 After the installer has copied the skill, CLI, and src modules to `<target>`, apply the adapter files under `adapters/opencode/` to your OpenCode runtime:
 
 1. **Merge `AGENTS.snippet.md` into your lead agent instructions.**
@@ -88,7 +94,7 @@ After the installer has copied the skill, CLI, and src modules to `<target>`, ap
    Set this file's full content as the prompt for your `memory_curator` sub-agent. It defines the three recall/synthesis/consolidation modes and the `APPLIED`/`TENSION`/`BLOCKED` return contract.
 
 3. **Use `opencode.agent.example.json` as a sub-agent configuration template.**
-   Copy the agent definition from this file and adjust the `prompt` field to paste the contents of `memory-curator-prompt.md`. The example grants `read`, `edit`, `glob`, `grep`, `list`, and `external_directory` permissions while denying `bash`, `task`, `webfetch`, and `websearch`.
+   Copy the agent definition from this file and adjust the `prompt` field to paste the contents of `memory-curator-prompt.md`. The example grants `read`, `edit`, `glob`, `grep`, `list`, and `external_directory`; it asks before each `bash` command so the curator can run the Graphmory CLI, and denies `task`, `webfetch`, and `websearch`. Keep the curator in `subagent` mode. If the lead agent denies `task`/`subtask`, allow only this named curator in the lead's dispatch permission; do not enable unrestricted sub-agent launching. If an installed OpenCode plugin has a separate capability allowlist, permit `memory_curator` to run the Graphmory CLI while preserving its command approval rules and other agents' permissions.
 
 4. **Add `<target>/bin/` to your `PATH`** so you can run `graphmory.mjs` from any directory without `node <target>/bin/...`.
 
@@ -96,6 +102,11 @@ After the installer has copied the skill, CLI, and src modules to `<target>`, ap
    ```sh
    node <target>/bin/graphmory.mjs doctor --json
    ```
+
+6. **Pin a supported inexpensive Curator model and verify an actual child.**
+   Use `opencode models` to inspect availability, set the Curator's `model` field, and keep the user's main model unchanged. A free model is optional, not a Graphmory dependency. Check its current privacy terms before sending personal notes: [OpenCode Zen](https://opencode.ai/docs/en/zen/) documents temporary free availability and provider data policies. The installed host smoke report records the exact tested model and boundaries.
+
+If the host truncates batched originals as one long JSON line, use `graphmory read-notes ... --pretty`; formatting does not change source bytes or hashes. A large individual note can still exceed host limits, so use the collection workflow when necessary. Configure narrow permissions for Graphmory and normal host output reads rather than having the Curator generate parsing scripts. Do not use automatic approval to hide a failed dispatch or BLOCKED result.
 
 The core mapping is:
 

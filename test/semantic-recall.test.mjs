@@ -25,12 +25,14 @@ test("semantic confidence requires lane agreement and a clear score margin", () 
 test("semantic vectors are reused across calls and changed notes are re-embedded", async () => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-semantic-"))
   try {
+    const vault = path.join(directory, "vault")
+    fs.mkdirSync(vault)
     let embedded = 0
     const embed = async (texts) => {
       embedded += texts.length
       return { tolist: () => texts.map((text) => [text.length, 1]) }
     }
-    const options = { vault: directory, model: "test-model", modelCache: directory, maxDocumentCharacters: 100 }
+    const options = { vault, model: "test-model", modelCache: directory, maxDocumentCharacters: 100 }
     const first = [parseMarkdown("a.md", "# A\n\noriginal"), parseMarkdown("b.md", "# B\n\nother")]
     await cachedDocumentVectors(first, embed, options)
     assert.equal(embedded, 2)
@@ -52,7 +54,7 @@ test("the full semantic lane reports a missing optional embedding dependency", a
   try {
     const documents = [parseMarkdown("note.md", "# Note\n\nCurrent note.")]
     await assert.rejects(rankSemanticVectorLane(directory, "query", {
-      documents, model: "missing-dependency-test", modelCache: directory,
+      documents, model: "missing-dependency-test",
     }), /OPTIONAL_DEPENDENCY_MISSING/u)
   } finally {
     if (previous === undefined) delete process.env.MPH_TEST_SEMANTIC_MOCK_MISSING

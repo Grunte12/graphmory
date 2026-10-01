@@ -35,7 +35,7 @@ function parseAnswer(answer, name, type) {
   return answer
 }
 
-export async function planDecisionCuration(vault, input, config, { fetchImpl = fetch } = {}) {
+export async function planDecisionCuration(vault, input, config, { fetchImpl = fetch, beforeProvider } = {}) {
   if (!["hosted-jev", "local-decision"].includes(config.workflow)) throw new Error(`${config.workflow} cannot classify memory placement; use a curator agent or a local decision engine`)
   const patch = input?.patch
   const validation = validateMemoryPatch(patch)
@@ -92,6 +92,7 @@ export async function planDecisionCuration(vault, input, config, { fetchImpl = f
         insufficient: "The available excerpt cannot establish one of the other relationships.",
       } }
   })
+  beforeProvider?.()
   const response = await fetchImpl(config.decision.endpoint, { method: "POST", redirect: "error",
     headers: { "content-type": "application/json", ...(config.workflow === "hosted-jev" ? { authorization: `Bearer ${key}` } : {}) },
     body: JSON.stringify({ model: config.decision.model, state, questions }),

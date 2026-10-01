@@ -149,8 +149,20 @@ refer to sections within a named Markdown file, never separate file names.
 This handoff proves file identity only; it does not prove semantic support or
 authorize the proposed memory change.
 
+Agent-facing reads check checkpoint authority before reading and again before output. A pending operation blocks these routes; do not use a raw/native file read or another route to turn pending notes into a current answer. For repair, use only exact paths bound to the same pending operation:
+
+```sh
+graphmory read-notes --vault <path> --paths '["02 Projects/Example/Policy.md","90 Evidence/Approval Record.md"]' --purpose recovery --operation <pending-id>
+```
+
+This response is marked `recovery-only` and `authoritative: false`. It returns source Markdown only when the recorded source hash still matches and includes current hashes for target bytes. Clear legacy reads do not require a prior completion receipt. The state root must stay the same across sessions, and the CLI does not isolate native filesystem access.
+
 ### Experimental section coverage previews
 
 In curator mode, `recall-managed --auto --coverage-previews --agent` selects up to three nested sections by query overlap in body and heading, skipping the root metadata section. It changes preview selection only; read originals when evidence is incomplete and continue pagination using `nextOffset`. Notes without nested sections keep the existing preview. This option cannot be combined with `--matched-previews`.
 
 It is opt-in: [development experiments](../evaluation/locomo-coverage-preview-2026-09-28.md) show improved average evidence visibility with some regressions and an incomplete live answer. It is not a semantic search replacement or a guarantee of completeness.
+
+## Current Curator default
+
+New configuration uses `retrievalMode: hybrid`: keyword, local semantic and authored graph candidates are fused in normal managed recall. Missing embeddings produce BLOCKED; there is no automatic lexical downgrade. The older semantic escalation description above applies to advanced decision workflows and historical experiments. Legacy configurations without this field keep their prior behavior until deliberately migrated. [Setup and summary freshness](hybrid-summary.md).

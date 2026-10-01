@@ -1,14 +1,16 @@
 import { createNoteLinkResolver } from "./brain-sync.mjs"
+import { isValidUntilExpired, validUntilState } from "./lifecycle-date.mjs"
 
 const WORD = /[\p{L}\p{M}\p{N}_-]+/gu
 const SECTION_CACHE = Symbol("memoryPatchHarness.sections")
 const FIELD_COUNTS_CACHE = Symbol("memoryPatchHarness.fieldCounts")
 const FREQUENCY_CACHE = new WeakMap()
-const ELIGIBLE_CACHE = new WeakMap()
 const SECTION_ARRAY_CACHE = new WeakMap()
 const BM25_CORPUS_CACHE = new WeakMap()
 const BM25F_CORPUS_CACHE = new WeakMap()
 const REFERENCE_INDEX_CACHE = new WeakMap()
+const VALID_UNTIL_METADATA_KEYS = new Set(["valid_until", "valid-until", "validuntil"])
+const ELIGIBLE_CACHE = new WeakMap()
 
 export function tokenize(value) {
   const tokens = String(value)
@@ -76,14 +78,22 @@ function parseFrontmatter(frontmatter) {
 }
 
 function cleanScalar(value) {
-  return String(value).trim().replace(/^['"]|['"]$/gu, "")
+  const scalar = String(value).trim()
+  if (scalar.startsWith('"') && scalar.endsWith('"')) {
+    try { return JSON.parse(scalar) } catch { return scalar.slice(1, -1) }
+  }
+  if (scalar.startsWith("'") && scalar.endsWith("'")) return scalar.slice(1, -1).replaceAll("''", "'")
+  return scalar
 }
 
 const EXCLUDED_LIFECYCLES = new Set(["raw", "stale", "superseded", "archived", "deprecated"])
 
-export function isRetrievable(document, { includeNoncanonical = false, includeSuperseded = false } = {}) {
-  const status = String(document.metadata?.status ?? document.metadata?.lifecycle ?? "current").toLowerCase()
-  if (!includeNoncanonical && EXCLUDED_LIFECYCLES.has(status) && !(includeSuperseded && status === "superseded")) return false
+export function isRetrievable(document, { includeNoncanonical = false, includeSuperseded = false, now = new Date() } = {}) {
+  const status = String(document.metadata?.status ?? document.metadata?.lifecycle ?? "current").trim().toLowerCase()
+  const historicalSuperseded = includeSuperseded && status === "superseded"
+  if (status === "superseded" && !historicalSuperseded) return false
+  if (!includeNoncanonical && EXCLUDED_LIFECYCLES.has(status) && !historicalSuperseded) return false
+  if (!historicalSuperseded && isValidUntilExpired(validUntilState(document), now)) return false
   return true
 }
 
@@ -125,13 +135,92 @@ export function governedRank(documents, query, method, options = {}) {
 }
 
 function eligibleDocuments(documents, options) {
-  if (options.includeNoncanonical) return documents
-  if (options.includeSuperseded) return documents.filter((document) => isRetrievable(document, options))
-  const cached = ELIGIBLE_CACHE.get(documents)
-  if (cached) return cached
-  const eligible = documents.filter((document) => isRetrievable(document, options))
-  ELIGIBLE_CACHE.set(documents, eligible)
+  // Use one instant for the whole ranking pass. This keeps documents on a
+  // single side of an expiry boundary and avoids allocating a Date per note.
+  const eligibilityOptions = options.now === undefined ? { ...options, now: new Date() } : options
+  const now = clockMilliseconds(eligibilityOptions.now)
+  const cacheable = Number.isFinite(now) ? eligibilitySnapshot(documents) : null
+  const optionKey = `${eligibilityOptions.includeNoncanonical ? 1 : 0}${eligibilityOptions.includeSuperseded ? 1 : 0}`
+  let byOptions = ELIGIBLE_CACHE.get(documents)
+  const cached = cacheable && byOptions?.get(optionKey)
+  if (cached && now >= cached.checkedAt && now < cached.nextExpiry
+    && sameEligibilitySnapshot(cacheable, cached.snapshot)) {
+    cached.checkedAt = now
+    return cached.documents
+  }
+
+  const eligible = []
+  let nextExpiry = Number.POSITIVE_INFINITY
+  for (const document of documents) {
+    if (!isRetrievable(document, eligibilityOptions)) continue
+    eligible.push(document)
+    const status = String(document.metadata?.status ?? document.metadata?.lifecycle ?? "current").trim().toLowerCase()
+    if (eligibilityOptions.includeSuperseded && status === "superseded") continue
+    const expiry = validUntilState(document)
+    if (expiry.present && expiry.valid && expiry.expiresAt > now && expiry.expiresAt < nextExpiry) {
+      nextExpiry = expiry.expiresAt
+    }
+  }
+
+  if (cacheable) {
+    byOptions ??= new Map()
+    byOptions.set(optionKey, { documents: eligible, snapshot: cacheable, checkedAt: now, nextExpiry })
+    ELIGIBLE_CACHE.set(documents, byOptions)
+  }
   return eligible
+}
+
+function clockMilliseconds(value) {
+  const date = value instanceof Date ? value : new Date(value)
+  return date.getTime()
+}
+
+function eligibilitySnapshot(documents) {
+  const snapshot = []
+  for (const document of documents) {
+    if (!document || typeof document !== "object") return null
+    const metadata = document.metadata
+    const effectiveMetadata = metadata ?? {}
+    if (typeof effectiveMetadata !== "object") return null
+    const prototype = Object.getPrototypeOf(effectiveMetadata)
+    const aliases = Object.keys(effectiveMetadata)
+      .filter((key) => VALID_UNTIL_METADATA_KEYS.has(key.toLowerCase()))
+      .sort()
+    const keys = ["status", "lifecycle", ...aliases]
+    const fields = []
+    for (const key of keys) {
+      const descriptor = Object.getOwnPropertyDescriptor(effectiveMetadata, key)
+      if (descriptor && (descriptor.get || descriptor.set)) return null
+      const value = effectiveMetadata[key]
+      if (!isSnapshotPrimitive(value)) return null
+      fields.push([key, Object.hasOwn(effectiveMetadata, key), value])
+    }
+    snapshot.push({ document, markdown: document.markdown, metadata, prototype, fields })
+  }
+  return snapshot
+}
+
+function isSnapshotPrimitive(value) {
+  const type = typeof value
+  return value === null || type === "undefined" || type === "string" || type === "number"
+    || type === "boolean" || type === "bigint"
+}
+
+function sameEligibilitySnapshot(left, right) {
+  if (left.length !== right.length) return false
+  for (let index = 0; index < left.length; index += 1) {
+    const a = left[index]
+    const b = right[index]
+    if (a.document !== b.document || !Object.is(a.markdown, b.markdown)
+      || a.metadata !== b.metadata || a.prototype !== b.prototype || a.fields.length !== b.fields.length) return false
+    for (let fieldIndex = 0; fieldIndex < a.fields.length; fieldIndex += 1) {
+      const leftField = a.fields[fieldIndex]
+      const rightField = b.fields[fieldIndex]
+      if (leftField[0] !== rightField[0] || leftField[1] !== rightField[1]
+        || !Object.is(leftField[2], rightField[2])) return false
+    }
+  }
+  return true
 }
 
 function expandLinkedResults(results, documents, seedCount, resolutionDocuments = documents) {

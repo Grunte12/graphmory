@@ -35,12 +35,15 @@ import { writeFileAtomic, writeJsonAtomic } from "../src/atomic-write.mjs"
 import { loadRuntimeConfig, runtimeConfigPath, saveRuntimeConfig } from "../src/runtime-config.mjs"
 import { managedRecall } from "../src/decision-recall.mjs"
 import { readSourceNotes } from "../src/source-read.mjs"
+import { captureSummaryDependencies, inspectSummaryFreshness } from "../src/summary-memory.mjs"
 import { createSourceHandoff, readSourceHandoff } from "../src/source-handoff.mjs"
 import { createEvidenceCollection, collectEvidencePage, recordEvidenceSpan, summarizeEvidenceCollection } from "../src/evidence-collection.mjs"
 import { planDecisionCuration } from "../src/decision-curation.mjs"
 import { recallVaultAdaptive } from "../src/adaptive-recall.mjs"
 import { validateMemoryPatch } from "../src/contracts.mjs"
 import { verifyPatchPersistence } from "../src/patch-persistence.mjs"
+import { beginAgentRead, finishAgentRead, requireCurrentAgentRead, blockedReadEnvelope } from "../src/read-authority.mjs"
+import { readCurationRecoveryContext, verifyCurationRecoveryContext } from "../src/curation-checkpoint.mjs"
 
 const args = process.argv.slice(2)
 const command = args[0]
@@ -53,6 +56,88 @@ function option(name, fallback) {
 
 function flag(name) {
   return rest.includes(name)
+}
+
+function jsonOutputForGuardedRoute(route) {
+  if (["read-notes", "source-handoff", "curate-plan", "summary"].includes(route)) return true
+  if (["recall", "recall-loop", "recall-managed", "recall-explore"].includes(route)) return flag("--agent") || flag("--json")
+  if (["recall-rerank", "recall-semantic"].includes(route)) return flag("--json")
+  return false
+}
+
+function emitReadBlocked(decision, json) {
+  process.exitCode = 1
+  if (json) {
+    console.log(JSON.stringify(blockedReadEnvelope(decision)))
+    return
+  }
+  const operation = decision.operation ? ` operation ${decision.operation}` : ""
+  console.error(`${decision.code}${operation}: ${decision.nextAction}`)
+}
+
+async function runGuardedContentRoute(route, run) {
+  const vault = requireVault()
+  if (!fs.existsSync(vault)) throw new Error(`VAULT_NOT_FOUND: ${vault} does not exist`)
+  const stateRoot = option("--state-root")
+  const start = beginAgentRead({ vault, stateRoot })
+  const json = jsonOutputForGuardedRoute(route)
+  if (!start.ok) {
+    emitReadBlocked(start, json)
+    return
+  }
+
+  const stdout = process.stdout
+  const originalWrite = stdout.write
+  const buffered = []
+  let publisher = null
+  stdout.write = function captureWrite(chunk, encoding, callback) {
+    const selectedEncoding = typeof encoding === "string" ? encoding : undefined
+    buffered.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk, selectedEncoding))
+    const done = typeof encoding === "function" ? encoding : callback
+    if (typeof done === "function") queueMicrotask(done)
+    return true
+  }
+  try {
+    await run({ vault, stateRoot,
+      ensureCurrent: () => requireCurrentAgentRead({ vault, stateRoot, authorityToken: start.authorityToken }),
+      deferPublish(fn) {
+        if (typeof fn !== "function" || publisher) throw new Error("Only one deferred route publication is supported")
+        publisher = fn
+      },
+    })
+  } catch (error) {
+    stdout.write = originalWrite
+    if (error.authorityDecision) {
+      emitReadBlocked(error.authorityDecision, json)
+      return
+    }
+    throw error
+  }
+  stdout.write = originalWrite
+
+  const end = finishAgentRead({ vault, stateRoot, authorityToken: start.authorityToken })
+  if (!end.ok) {
+    emitReadBlocked(end, json)
+    return
+  }
+  try {
+    if (publisher) {
+      requireCurrentAgentRead({ vault, stateRoot, authorityToken: start.authorityToken })
+      await publisher()
+    }
+  } catch (error) {
+    if (error.authorityDecision) {
+      emitReadBlocked(error.authorityDecision, json)
+      return
+    }
+    throw error
+  }
+  const beforeOutput = finishAgentRead({ vault, stateRoot, authorityToken: start.authorityToken })
+  if (!beforeOutput.ok) {
+    emitReadBlocked(beforeOutput, json)
+    return
+  }
+  for (const chunk of buffered) originalWrite.call(stdout, chunk)
 }
 
 function validatePatchInput() {
@@ -92,7 +177,7 @@ function verifyPatchPersistenceCommand() {
   const vault = option("--vault")
   const notePath = option("--note")
   const emitInvalid = (errors, exitCode = 1) => {
-    console.log(JSON.stringify({ valid: false, metadataOnly: true, checkedFields: [], errors }))
+    console.log(JSON.stringify({ valid: false, metadataOnly: !flag("--full"), ...(flag("--full") ? { persistenceOnly: true, semanticSupportVerified: false } : {}), checkedFields: [], errors }))
     process.exitCode = exitCode
   }
   if (!input || !vault || !notePath) {
@@ -108,17 +193,58 @@ function verifyPatchPersistenceCommand() {
     return
   }
 
-  const result = verifyPatchPersistence({ vault, patch, notePath })
+  const result = verifyPatchPersistence({ vault, patch, notePath, full: flag("--full") })
   console.log(JSON.stringify(result))
   if (!result.valid) process.exitCode = 1
+}
+
+function readPatchFile() {
+  const input = requiredOption("--input")
+  let patch
+  try { patch = JSON.parse(fs.readFileSync(path.resolve(input), "utf8")) }
+  catch { throw new Error("Patch input cannot be read as valid JSON") }
+  const schema = validateMemoryPatch(patch)
+  if (!schema.valid) throw new Error(`PATCH_INVALID: ${schema.errors.join("; ")}`)
+  return patch
+}
+
+async function curationCheckpointCommand() {
+  const api = await import("../src/curation-checkpoint.mjs")
+  const action = rest[0]
+  const common = { vault: requireVault(), stateRoot: option("--state-root") }
+  let result
+  if (action === "status") result = api.inspectCurationCheckpoint(common)
+  else if (action === "prepare") result = api.prepareCurationCheckpoint({ ...common, patch: readPatchFile(),
+    targets: parseJsonOption("--targets"), sources: parseJsonOption("--sources") })
+  else if (action === "finish") result = api.finishCurationCheckpoint({ ...common, operation: requiredOption("--operation"),
+    patch: readPatchFile(), notePath: requiredOption("--note") })
+  else if (action === "restore") result = api.restoreCurationCheckpoint({ ...common, operation: requiredOption("--operation"),
+    expectedHashes: parseJsonOption("--expected"), approve: flag("--approve"), reviewLockHash: option("--review-lock") })
+  else throw new Error("curation-checkpoint requires prepare|status|finish|restore")
+  console.log(JSON.stringify(result))
+  if (result.valid === false || (action !== "status" && result.blocked)) process.exitCode = 1
+}
+
+function parseJsonOption(name) {
+  const value = requiredOption(name)
+  try { return JSON.parse(value) }
+  catch { throw new Error(`${name} must contain valid JSON`) }
+}
+
+async function renderPatchCommand() {
+  const { renderPatchRecord } = await import("../src/patch-record.mjs")
+  process.stdout.write(renderPatchRecord(readPatchFile()))
 }
 
 function usage(exitCode = 0) {
   const out = exitCode === 0 ? process.stdout : process.stderr
   out.write(`Graphmory brain sync\n\n`)
   out.write(`Usage:\n`)
-  out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --paths '<JSON array of relative Markdown paths>' (full sources, compact JSON)\n`)
-  out.write(`  node scripts/brain-sync.mjs source-handoff --vault <path> --paths '<JSON array of exact relative Markdown paths>' (metadata-only manifest; redirect output outside vault)\n`)
+  out.write(`  node scripts/brain-sync.mjs summary sources --vault <path> --paths '<JSON array>' (summary source fingerprints; no note writes)\n`)
+  out.write(`  node scripts/brain-sync.mjs summary check --vault <path> --note <summary.md> (source freshness; no semantic truth claim)\n`)
+  out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --paths '<JSON array of relative Markdown paths>' [--pretty] (full sources; --pretty splits JSON fields across lines)\n`)
+  out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --paths '<JSON array of exact paths>' --purpose recovery --operation <pending-id> (repair-only, non-authoritative)\n`)
+  out.write(`  node scripts/brain-sync.mjs source-handoff --vault <path> --paths '<JSON array of exact relative Markdown paths>' [--out <file outside vault>] (metadata-only manifest)\n`)
   out.write(`  node scripts/brain-sync.mjs read-notes --vault <path> --manifest <handoff.json> (verify all paths/hashes before full originals)\n`)
   out.write(`  recall-managed --auto --prefetch-wide-originals (experimental: attach full originals only on a complete wide first page)\n`)
   out.write(`  recall-managed --auto --prefetch-wide-originals --compact-prefetch (experimental: omit previews duplicated by full originals)\n`)
@@ -133,11 +259,16 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs config [show] [--config <path>] [--json]\n`)
-  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--offset N] [--auto|--bundle] [--matched-previews|--coverage-previews with --auto] [--bundle-budget BYTES] [--evidence-preview] [--include-superseded] [--semantic-expansion] [--model-cache <path>] [--index-cache <directory>] [--agent|--json] (curator: adaptive or byte-budgeted evidence; decision: 3 results)\n`)
+  out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--offset N] [--retrieval-mode hybrid|lexical] [--auto|--bundle] [--matched-previews|--coverage-previews with --auto] [--bundle-budget BYTES] [--evidence-preview] [--include-superseded] [--semantic-expansion] [--model-cache <path>] [--index-cache <directory>] [--agent|--json] (curator: adaptive or byte-budgeted evidence; decision: 3 results)\n`)
   out.write(`  node scripts/brain-sync.mjs recall-explore --vault <path> --query <text> [--scope <path>] [--k 3] [--agent|--json] (experimental)\n`)
   out.write(`  node scripts/brain-sync.mjs curate-plan --vault <path> --input <bundle.json> [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs validate-patch --input <patch.json> [--agent|--json] (schema-only preflight; no vault access or writes)\n`)
-  out.write(`  node scripts/brain-sync.mjs verify-patch-persistence --vault <path> --input <patch.json> --note <relative.md> [--agent|--json] (read-only lifecycle metadata check)\n`)
+  out.write(`  node scripts/brain-sync.mjs render-patch --input <patch.json> (canonical Markdown projection; stdout only, no vault write)\n`)
+  out.write(`  node scripts/brain-sync.mjs verify-patch-persistence --vault <path> --input <patch.json> --note <relative.md> [--full] [--agent|--json] (full mode checks saved fields/lineage, not truth or permission)\n`)
+  out.write(`  node scripts/brain-sync.mjs curation-checkpoint prepare --vault <path> --input <patch.json> --targets '<JSON paths>' --sources '<JSON paths>' [--state-root <outside-directory>]\n`)
+  out.write(`  node scripts/brain-sync.mjs curation-checkpoint status --vault <path> [--state-root <outside-directory>]\n`)
+  out.write(`  node scripts/brain-sync.mjs curation-checkpoint finish --vault <path> --operation <id> --input <patch.json> --note <relative.md>\n`)
+  out.write(`  node scripts/brain-sync.mjs curation-checkpoint restore --vault <path> --operation <id> --expected '<JSON current target hashes>' --approve [--review-lock <reviewed dead-owner SHA256>]\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs lifecycle-audit --vault <path> [--json] [--out <file>]\n`)
   out.write(`  node scripts/brain-sync.mjs init --vault <path> --repo <owner/repo> [--create-remote]\n`)
@@ -844,6 +975,9 @@ async function configureRuntime() {
       console.log("Curator examples: Codex → Luna; Claude Code → Haiku; Cursor/OpenCode → a low-cost model available in that host.")
       config.curator.provider = await ask("Curator provider (openai/anthropic/google/other)", config.curator.provider)
       config.curator.model = await ask("Curator model in your agent host", config.curator.model)
+      console.log("Hybrid combines keyword, local BGE embeddings and note links. It needs @huggingface/transformers and a first model download; no vector server or embedding API is required.")
+      config.retrievalMode = await ask("Retrieval (hybrid recommended; lexical diagnostics)", "hybrid")
+      if (!["hybrid", "lexical"].includes(config.retrievalMode)) throw new Error("Choose hybrid or lexical")
     }
     if (config.workflow === "hosted-jev") {
       const gateway = config.decision.endpoint === "https://ai-gateway.vercel.sh/typesafe/v1/systemone"
@@ -895,7 +1029,7 @@ async function configureRuntime() {
   }
 }
 
-async function recallManaged() {
+async function recallManaged(ensureCurrent) {
   const config = loadRuntimeConfig(runtimeConfigPath(option("--config")))
   if (flag("--index-cache") && (!option("--index-cache") || option("--index-cache").startsWith("--"))) {
     throw new Error("--index-cache requires a directory outside the vault")
@@ -909,6 +1043,7 @@ async function recallManaged() {
     offset: Number(option("--offset", "0")),
     scope: option("--scope", ""),
     semanticExpansion: flag("--semantic-expansion"),
+    retrievalMode: option("--retrieval-mode", config.retrievalMode ?? "lexical"),
     modelCache: option("--model-cache", ""),
     indexCache: option("--index-cache", ""),
     onIndexFallback: (code) => process.stderr.write(`INDEX_FALLBACK ${code}\n`),
@@ -920,9 +1055,18 @@ async function recallManaged() {
     includeSuperseded: flag("--include-superseded"),
     prefetchWideOriginals: flag("--prefetch-wide-originals"),
     compactPrefetch: flag("--compact-prefetch"),
+    stateRoot: option("--state-root"),
+    beforeCacheWrite: ensureCurrent,
   })
+  if (report.status === "BLOCKED") {
+    console.log(JSON.stringify(report))
+    process.exitCode = 1
+    return
+  }
   if (flag("--agent")) console.log(JSON.stringify(report.evidencePacket || {
     workflow: report.workflow,
+    retrievalMode: report.retrievalMode,
+    ...(report.graphLimitReached !== undefined ? { graphLimitReached: report.graphLimitReached } : {}),
     retrievalConfidence: report.retrievalConfidence,
     needsExpansion: report.needsExpansion,
     scanLimitReached: report.scanLimitReached,
@@ -933,7 +1077,8 @@ async function recallManaged() {
     ...(report.prefetch ? { prefetch: report.prefetch } : {}),
     ...(report.originalSources ? { originalSources: report.originalSources } : {}),
     ...(report.expanded ? { expanded: true, semanticModel: report.semanticModel, candidateLanes: report.candidateLanes } : {}),
-    results: report.results.map(({ path, relevance, status, evidencePreview, sourceReadRequired, previewOmitted }) => ({ path, ...(relevance === undefined ? {} : { relevance }), status,
+    results: report.results.map(({ path, relevance, status, lanes, graphTrail, evidencePreview, sourceReadRequired, previewOmitted }) => ({ path, ...(relevance === undefined ? {} : { relevance }), status,
+      ...(lanes ? { lanes } : {}), ...(graphTrail ? { graphTrail } : {}),
       ...(evidencePreview ? { evidencePreview } : {}),
       ...(sourceReadRequired ? { sourceReadRequired: true } : {}),
       ...(previewOmitted ? { previewOmitted: true } : {}),
@@ -950,7 +1095,14 @@ async function recallManaged() {
 
 function graphAudit() {
   const report = summarizeNoteGraph(loadVaultDocuments(requireVault()), { scope: option("--scope", "") })
-  console.log(JSON.stringify(report, null, flag("--agent") ? 0 : 2))
+  let curation
+  try {
+    const state = beginAgentRead({ vault: requireVault(), stateRoot: option("--state-root") })
+    curation = state.ok
+      ? { status: "clear" }
+      : { status: state.operationStatus ?? state.code, ...(state.operation ? { operation: state.operation } : {}) }
+  } catch { curation = { status: "unavailable" } }
+  console.log(JSON.stringify({ ...report, authority: "diagnostic-only", authoritative: false, curation }, null, flag("--agent") ? 0 : 2))
 }
 
 async function recallExplore() {
@@ -969,9 +1121,10 @@ async function recallExplore() {
   }
 }
 
-async function curatePlan() {
+async function curatePlan(ensureCurrent) {
   const input = JSON.parse(fs.readFileSync(requiredOption("--input"), "utf8"))
-  const report = await planDecisionCuration(requireVault(), input, loadRuntimeConfig(runtimeConfigPath(option("--config"))))
+  const report = await planDecisionCuration(requireVault(), input, loadRuntimeConfig(runtimeConfigPath(option("--config"))),
+    { beforeProvider: ensureCurrent })
   console.log(JSON.stringify(report, null, flag("--agent") ? 0 : 2))
 }
 
@@ -1176,7 +1329,7 @@ function recallRerank() {
   }
 }
 
-async function recallSemantic() {
+async function recallSemantic(ensureCurrent) {
   const vault = requireVault()
   const query = requiredOption("--query")
   const k = Number.parseInt(option("--k", "3"), 10)
@@ -1187,6 +1340,7 @@ async function recallSemantic() {
     scope: option("--scope", ""),
     model: option("--model", "Xenova/bge-small-en-v1.5"),
     modelCache: option("--model-cache", ""),
+    beforeCacheWrite: ensureCurrent,
   })
   if (flag("--json")) {
     console.log(JSON.stringify(report, null, 2))
@@ -1199,6 +1353,67 @@ async function recallSemantic() {
   if (report.needsExpansion) {
     console.log("Expansion required:")
     for (const step of report.nextSteps) console.log(`- ${step}`)
+  }
+}
+
+function readNotesCommand({ deferPublish }) {
+  if (!option("--vault") || Boolean(option("--paths")) === Boolean(option("--manifest"))) {
+    throw new Error("read-notes requires --vault and exactly one of --paths or --manifest")
+  }
+  if (option("--manifest")) {
+    if (option("--collect-state") || option("--record-span")) {
+      throw new Error("--manifest cannot be combined with collection state or span recording")
+    }
+    console.log(JSON.stringify(readSourceHandoff(option("--vault"), JSON.parse(fs.readFileSync(option("--manifest"), "utf8"))), null, flag("--pretty") ? 2 : undefined))
+    return
+  }
+  const requestedPaths = JSON.parse(option("--paths"))
+  const statePath = option("--collect-state")
+  if (!statePath) {
+    console.log(JSON.stringify(readSourceNotes(option("--vault"), requestedPaths), null, flag("--pretty") ? 2 : undefined))
+    return
+  }
+  const initial = createEvidenceCollection({ vaultRoot: option("--vault"), paths: requestedPaths,
+    scopeLabel: option("--collection-scope") || "explicit source paths" })
+  if (fs.existsSync(statePath) && fs.lstatSync(statePath).isSymbolicLink()) throw new Error("Collection state must not be a symlink")
+  const state = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, "utf8")) : initial
+  if (state.snapshotId !== initial.snapshotId) throw new Error("Collection state does not match current source scope")
+  let result
+  if (option("--record-span")) {
+    recordEvidenceSpan(state, JSON.parse(option("--record-span")))
+    result = summarizeEvidenceCollection(state)
+  } else result = collectEvidencePage(state, { maxBytes: Number(option("--bundle-bytes") || 16000) })
+  deferPublish(() => {
+    const temporary = `${statePath}.${process.pid}.tmp`
+    let temporaryCreated = false
+    try {
+      fs.writeFileSync(temporary, JSON.stringify(state), { flag: "wx", mode: 0o600 })
+      temporaryCreated = true
+      fs.renameSync(temporary, statePath)
+    } catch (error) {
+      if (temporaryCreated && fs.existsSync(temporary)) fs.unlinkSync(temporary)
+      throw error
+    }
+  })
+  console.log(JSON.stringify(result))
+}
+
+function recoveryReadNotes() {
+  const vault = requireVault()
+  const operation = option("--operation")
+  try {
+    if (!option("--paths") || !operation || option("--manifest") || option("--collect-state") || option("--record-span")) {
+      throw new Error("RECOVERY_REQUEST_INVALID: recovery reads require --paths and --operation only")
+    }
+    const paths = JSON.parse(option("--paths"))
+    const stateRoot = option("--state-root")
+    const result = readCurationRecoveryContext({ vault, stateRoot, operation, paths })
+    verifyCurationRecoveryContext({ vault, stateRoot, operation, authorityToken: result.authorityToken })
+    console.log(JSON.stringify(result))
+  } catch (error) {
+    const code = /^([A-Z][A-Z0-9_]+):/u.exec(String(error.message))?.[1] ?? "RECOVERY_READ_BLOCKED"
+    emitReadBlocked({ status: "BLOCKED", code, ...(operation ? { operation } : {}),
+      nextAction: "inspect the named checkpoint and limit recovery reads to its exact bound paths" }, true)
   }
 }
 
@@ -1955,59 +2170,57 @@ try {
   else if (command === "detect") detect()
   else if (command === "doctor") doctor()
   else if (command === "health") health()
-  else if (command === "recall") recall()
-  else if (command === "recall-loop") recallLoop()
-  else if (command === "recall-managed") await recallManaged()
-  else if (command === "source-handoff") {
+  else if (command === "recall") await runGuardedContentRoute(command, async () => recall())
+  else if (command === "recall-loop") await runGuardedContentRoute(command, async () => recallLoop())
+  else if (command === "recall-managed") await runGuardedContentRoute(command, async ({ ensureCurrent }) => recallManaged(ensureCurrent))
+  else if (command === "source-handoff") await runGuardedContentRoute(command, async ({ vault, deferPublish }) => {
     if (!option("--vault") || !option("--paths")) throw new Error("source-handoff requires --vault and --paths")
-    console.log(JSON.stringify(createSourceHandoff(option("--vault"), JSON.parse(option("--paths")))))
-  }
+    const manifest = createSourceHandoff(vault, JSON.parse(option("--paths")))
+    const outputPath = option("--out")
+    if (outputPath) {
+      let target = path.resolve(outputPath)
+      try {
+        assertRealPathInsideVault(fs, vault, target, "source handoff output")
+        throw new Error("source-handoff --out must be outside the vault")
+      } catch (error) {
+        if (!/PATH_ESCAPE/u.test(String(error.message))) throw error
+      }
+      deferPublish(() => writeJsonAtomic(target, manifest))
+    }
+    console.log(JSON.stringify(manifest))
+  })
+  else if (command === "read-notes" && option("--purpose") === "recovery") recoveryReadNotes()
+  else if (command === "summary") await runGuardedContentRoute(command, async ({ vault }) => {
+    const action = rest[0]
+    if (action === "sources") {
+      const sources = readSourceNotes(vault, JSON.parse(requiredOption("--paths"))).sources
+      const documents = sources.map(source => ({ id: source.path, markdown: source.markdown }))
+      const entries = captureSummaryDependencies(documents, sources.map(source => source.path))
+      console.log(JSON.stringify({ memory_kind: "summary", summary_sources: entries,
+        evidence_for: sources.map(source => source.path),
+        frontmatter: `memory_kind: summary\nevidence_for:\n${sources.map(source => `  - ${JSON.stringify(source.path)}`).join("\n")}\nsummary_sources:\n${entries.map(entry => `  - ${JSON.stringify(entry)}`).join("\n")}\n`,
+        semanticSupport: "curator-review-required" }))
+    } else if (action === "check") {
+      const documents = loadVaultDocuments(vault, { includeRawPaths: true })
+      const report = inspectSummaryFreshness(documents, requiredOption("--note"))
+      console.log(JSON.stringify(report))
+      if (report.status !== "fresh") process.exitCode = 1
+    } else throw new Error("summary supports sources --paths <JSON> or check --note <path>")
+  })
   else if (command === "read-notes") {
-    if (!option("--vault") || Boolean(option("--paths")) === Boolean(option("--manifest"))) {
-      throw new Error("read-notes requires --vault and exactly one of --paths or --manifest")
-    }
-    if (option("--manifest")) {
-      if (option("--collect-state") || option("--record-span")) {
-        throw new Error("--manifest cannot be combined with collection state or span recording")
-      }
-      console.log(JSON.stringify(readSourceHandoff(option("--vault"), JSON.parse(fs.readFileSync(option("--manifest"), "utf8")))))
-    } else {
-      const requestedPaths = JSON.parse(option("--paths"))
-      const statePath = option("--collect-state")
-      if (!statePath) console.log(JSON.stringify(readSourceNotes(option("--vault"), requestedPaths)))
-      else {
-        const initial = createEvidenceCollection({ vaultRoot: option("--vault"), paths: requestedPaths,
-          scopeLabel: option("--collection-scope") || "explicit source paths" })
-        if (fs.existsSync(statePath) && fs.lstatSync(statePath).isSymbolicLink()) throw new Error("Collection state must not be a symlink")
-        const state = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, "utf8")) : initial
-        if (state.snapshotId !== initial.snapshotId) throw new Error("Collection state does not match current source scope")
-        let result
-        if (option("--record-span")) {
-          recordEvidenceSpan(state, JSON.parse(option("--record-span")))
-          result = summarizeEvidenceCollection(state)
-        } else result = collectEvidencePage(state, { maxBytes: Number(option("--bundle-bytes") || 16000) })
-        const temporary = `${statePath}.${process.pid}.tmp`
-        let temporaryCreated = false
-        try {
-          fs.writeFileSync(temporary, JSON.stringify(state), { flag: "wx", mode: 0o600 })
-          temporaryCreated = true
-          fs.renameSync(temporary, statePath)
-        } catch (error) {
-          if (temporaryCreated && fs.existsSync(temporary)) fs.unlinkSync(temporary)
-          throw error
-        }
-        console.log(JSON.stringify(result))
-      }
-    }
+    if (option("--purpose")) throw new Error("--purpose supports only recovery")
+    await runGuardedContentRoute(command, async (context) => readNotesCommand(context))
   }
   else if (command === "graph-audit") graphAudit()
-  else if (command === "recall-explore") await recallExplore()
-  else if (command === "curate-plan") await curatePlan()
+  else if (command === "recall-explore") await runGuardedContentRoute(command, async () => recallExplore())
+  else if (command === "curate-plan") await runGuardedContentRoute(command, async ({ ensureCurrent }) => curatePlan(ensureCurrent))
   else if (command === "validate-patch") validatePatchInput()
   else if (command === "verify-patch-persistence") verifyPatchPersistenceCommand()
+  else if (command === "render-patch") await renderPatchCommand()
+  else if (command === "curation-checkpoint") await curationCheckpointCommand()
   else if (command === "config") await configureRuntime()
-  else if (command === "recall-rerank") recallRerank()
-  else if (command === "recall-semantic") await recallSemantic()
+  else if (command === "recall-rerank") await runGuardedContentRoute(command, async () => recallRerank())
+  else if (command === "recall-semantic") await runGuardedContentRoute(command, async ({ ensureCurrent }) => recallSemantic(ensureCurrent))
   else if (command === "curation-recommend") curationRecommend()
   else if (command === "lifecycle-audit") lifecycleAudit()
   else if (command === "init") init()
@@ -2029,8 +2242,10 @@ try {
   else if (command === "curation-apply") curationApply()
   else usage(2)
 } catch (error) {
-  if (["recall-managed", "recall-explore", "curate-plan"].includes(command) && flag("--agent")) {
-    console.log(JSON.stringify({ error: error.message, retryable: /HTTP 429|HTTP 529|fetch failed|timeout/iu.test(error.message) }))
+  if (["recall-managed", "recall-explore", "curate-plan", "curation-checkpoint", "render-patch"].includes(command) && flag("--agent")) {
+    console.log(JSON.stringify({ status: "BLOCKED", error: error.message,
+      ...(error.affectedAudit ? { affectedAudit: error.affectedAudit } : {}),
+      retryable: /HTTP 429|HTTP 529|fetch failed|timeout/iu.test(error.message) }))
   } else if (flag("--verbose")) {
     console.error(error.stack || error.message)
   } else {

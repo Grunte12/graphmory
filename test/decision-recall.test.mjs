@@ -6,7 +6,8 @@ import test from "node:test"
 import { spawnSync } from "node:child_process"
 import { chooseAdaptiveMode, curatorEvidencePreview, managedRecall } from "../src/decision-recall.mjs"
 import { loadVaultDocuments, recallVaultLoop } from "../src/memory-recall.mjs"
-import { DEFAULT_RUNTIME_CONFIG, loadRuntimeConfig, saveRuntimeConfig, validateRuntimeConfig, retrievalMethods } from "../src/runtime-config.mjs"
+import { DEFAULT_RUNTIME_CONFIG as HYBRID_RUNTIME_CONFIG, loadRuntimeConfig, saveRuntimeConfig, validateRuntimeConfig, retrievalMethods } from "../src/runtime-config.mjs"
+const DEFAULT_RUNTIME_CONFIG = { ...HYBRID_RUNTIME_CONFIG, retrievalMode: "lexical" }
 
 test("omitted short sections require original reads even when displayed previews are not truncated", async () => {
   const vault = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-preview-coverage-"))
@@ -292,7 +293,7 @@ test("optional coverage previews surface matching speaker turns without changing
     assert.ok(turns.some(turn => turn.heading.includes("Joanna (D1:2)")))
     assert.ok(turns.every(turn => !turn.text.includes("Timestamp:")))
     assert.ok(coverage.results.find(item => item.path === "ordinary.md").evidencePreview.length > 0)
-    const cli = spawnSync(process.execPath, ["scripts/brain-sync.mjs", "recall-managed", "--vault", vault,
+    const cli = spawnSync(process.execPath, ["scripts/brain-sync.mjs", "recall-managed", "--retrieval-mode", "lexical", "--vault", vault,
       "--query", query, "--auto", "--coverage-previews", "--agent"], { encoding: "utf8" })
     assert.equal(cli.status, 0, cli.stderr)
     assert.deepEqual(JSON.parse(cli.stdout).results.map(item => item.path), baseline.results.map(item => item.path))

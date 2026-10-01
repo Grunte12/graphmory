@@ -76,7 +76,7 @@ After installation, run `graphmory doctor --json`; verify the skill and named cu
 6. Install the CLI and named Memory Curator agent for the chosen host. On a supported host, the helper may preview the files before applying:
 
    ```sh
-   npm install -g --omit=optional .
+   npm install -g .
    graphmory-setup --host codex
    graphmory-setup --host codex --apply
    ```

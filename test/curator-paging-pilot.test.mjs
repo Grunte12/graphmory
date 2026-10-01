@@ -5,12 +5,15 @@ import os from 'node:os'
 import path from 'node:path'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 
-const runner = process.env.READER_PILOT_RUNNER || new URL('../scripts/run-curator-paging-pilot.py', import.meta.url).pathname
+const python = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3')
+const runner = process.env.READER_PILOT_RUNNER || fileURLToPath(new URL('../scripts/run-curator-paging-pilot.py', import.meta.url))
 function runFixture(mode, extraArgs = []) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'graphmory-paging-harness-'))
-  const vault = path.join(dir, 'vault'), bin = path.join(dir, 'bin')
-  fs.mkdirSync(vault); fs.mkdirSync(bin)
+  const vault = path.join(dir, 'vault')
+  let basicMemoryCommand = null
+  fs.mkdirSync(vault)
   const markdown = '# Fixture\n## Fact\nThe fixture owner is Ada.'
   const sha256 = createHash('sha256').update(markdown).digest('hex')
   fs.writeFileSync(path.join(vault, 'note.md'), markdown)
@@ -85,26 +88,32 @@ function runFixture(mode, extraArgs = []) {
     console.log(JSON.stringify({type:'item.completed',item:{type:'agent_message',text:JSON.stringify(response)}}));
     console.log(JSON.stringify({type:'turn.completed',usage:{input_tokens:10,output_tokens:3}}));
   });\n`
-  fs.writeFileSync(path.join(bin, 'codex'), fake, { mode: 0o700 })
+  const fakeHost = path.join(dir, 'fake-codex.cjs')
+  fs.writeFileSync(fakeHost, fake)
   if (mode === 'basic') {
     const native = path.join(dir, 'native'), notes = path.join(native, 'notes')
     fs.mkdirSync(notes, { recursive: true })
     fs.mkdirSync(path.join(native, 'state'), { recursive: true })
     fs.mkdirSync(path.join(native, 'home'), { recursive: true })
     fs.writeFileSync(path.join(notes, 'note.md'), '# Fixture\n## Fact\nThe fixture owner is Ada.\n')
-    const bm = path.join(bin, 'bm')
-    fs.writeFileSync(bm, `#!${process.execPath}\nconst args=process.argv.slice(2);if(args[0]==='--version')process.stdout.write('Basic Memory version: 0.23.2\\n');else if(args[0]==='tool'&&args[1]==='search-notes')process.stdout.write(JSON.stringify({results:[{file_path:'note.md',content:'The fixture owner is Ada.',matched_chunk:'Ada owns the fixture'}],has_more:false,current_page:1,page_size:10,total:1,total_is_exact:true}));else if(args[0]==='tool'&&args[1]==='read-note')process.stdout.write(JSON.stringify({file_path:'note.md',content:'# Fixture\\n## Fact\\nThe fixture owner is Ada.\\n'}));else process.exit(9);`, { mode: 0o700 })
-    fs.writeFileSync(path.join(dir, 'basic.json'), JSON.stringify({ exe: bm, state: path.join(native, 'state'), home: path.join(native, 'home'), notes, project: 'pilot' }))
+    const fakeBasicMemory = path.join(dir, 'fake-basic-memory.mjs')
+    fs.writeFileSync(fakeBasicMemory, `const args=process.argv.slice(2);if(args[0]==='--version')process.stdout.write('Basic Memory version: 0.23.2\\n');else if(args[0]==='tool'&&args[1]==='search-notes')process.stdout.write(JSON.stringify({results:[{file_path:'note.md',content:'The fixture owner is Ada.',matched_chunk:'Ada owns the fixture'}],has_more:false,current_page:1,page_size:10,total:1,total_is_exact:true}));else if(args[0]==='tool'&&args[1]==='read-note')process.stdout.write(JSON.stringify({file_path:'note.md',content:'# Fixture\\n## Fact\\nThe fixture owner is Ada.\\n'}));else process.exit(9);`)
+    fs.writeFileSync(path.join(dir, 'basic.json'), JSON.stringify({ exe: process.execPath, state: path.join(native, 'state'), home: path.join(native, 'home'), notes, project: 'pilot' }))
+    basicMemoryCommand = JSON.stringify([process.execPath, fakeBasicMemory])
   }
-  const child = spawnSync('python3', [runner, '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), '--model', 'gpt-5.6-luna', '--lead-model', 'gpt-5.6-sol', ...extraArgs, ...(mode === 'basic' ? ['--basic-config', path.join(dir, 'basic.json')] : []), ...(['persistent', 'changed-session', 'compact-repeat'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : []), ...(['citation', 'bad-citation'].includes(mode) ? ['--structured-citations'] : [])], {
+  const env = { ...process.env,
+    GRAPHMORY_TEST_CODEX_COMMAND: JSON.stringify([process.execPath, fakeHost]), PAGING_TEST_MODE: mode,
+    PAGING_TEST_COUNTER: path.join(dir, 'counter') }
+  if (basicMemoryCommand) env.GRAPHMORY_TEST_BASIC_MEMORY_COMMAND = basicMemoryCommand
+  const child = spawnSync(python, [runner, '--retrieval-mode', 'lexical', '--input', path.join(dir, 'input.json'), '--out', path.join(dir, 'run'), '--model', 'gpt-5.6-luna', '--lead-model', 'gpt-5.6-sol', ...extraArgs, ...(mode === 'basic' ? ['--basic-config', path.join(dir, 'basic.json')] : []), ...(['persistent', 'changed-session', 'compact-repeat'].includes(mode) ? ['--persistent-curator', '--compact-followup'] : []), ...(['citation', 'bad-citation'].includes(mode) ? ['--structured-citations'] : [])], {
     encoding: 'utf8', timeout: 10000,
-    env: { ...process.env, PATH: bin + path.delimiter + process.env.PATH, PAGING_TEST_MODE: mode, PAGING_TEST_COUNTER: path.join(dir, 'counter') },
+    env,
   })
   const report = JSON.parse(fs.readFileSync(path.join(dir, 'run', 'report.json')))
   let exactGraphToolBytes = null
   if (mode === 'valid') {
-    const cli = new URL('../scripts/brain-sync.mjs', import.meta.url).pathname
-    const search = spawnSync(process.execPath, [cli, 'recall-managed', '--vault', vault, '--query', 'Who owns the fixture?', '--agent', '--offset', '0', '--bundle'], { encoding: 'utf8' })
+    const cli = fileURLToPath(new URL('../scripts/brain-sync.mjs', import.meta.url))
+    const search = spawnSync(process.execPath, [cli, 'recall-managed', '--retrieval-mode', 'lexical', '--vault', vault, '--query', 'Who owns the fixture?', '--agent', '--offset', '0', '--bundle'], { encoding: 'utf8' })
     const read = spawnSync(process.execPath, [cli, 'read-notes', '--vault', vault, '--paths', '["note.md"]'], { encoding: 'utf8' })
     assert.equal(search.status, 0, search.stderr)
     assert.equal(read.status, 0, read.stderr)
