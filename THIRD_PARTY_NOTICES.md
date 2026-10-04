@@ -61,3 +61,12 @@ are guidance, not adopted benchmark implementations.
 ## Platform logos in promotional media
 
 `docs/media/graphmory-motion/work/logos/` contains proportionally resized official Cursor, OpenAI Codex, OpenCode, Antigravity and DeepSeek logo assets. These marks remain the property of their respective owners and are excluded from Graphmory’s MIT grant. Source links and derivations are recorded in [media credits](docs/media/graphmory-motion/CREDITS.md). Their illustrative appearance does not imply endorsement or verified integration with every depicted platform.
+
+## MCP runtime dependency
+
+`@modelcontextprotocol/sdk` 1.32.0 (official TypeScript SDK), copyright
+(c) 2024 Anthropic, PBC, is used under the MIT License. The installed package's
+`LICENSE` and `package.json` were inspected locally on 2026-10-04. Source:
+https://github.com/modelcontextprotocol/typescript-sdk . No SDK code is vendored;
+the npm dependency retains its license notice. `zod` is a direct schema-validation
+dependency under MIT; its license is retained in its installed package.

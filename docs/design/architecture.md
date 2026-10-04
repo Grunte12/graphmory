@@ -1,5 +1,23 @@
 # Architecture
 
+## Agent interface and shared engine
+
+Claude Code, Codex, Cursor and OpenCode can connect through MCP `recall`, `read` and `remember` to one configured Markdown vault. MCP stdio and authenticated Streamable HTTP share a resident engine with the CLI; there is no per-tool CLI subprocess. Host configuration templates are documented, while four-host native MCP acceptance remains untested.
+
+```text
+Agents → MCP (recall / read / remember) → shared src/ engine ← CLI
+Keyword BM25F + local BGE → up to 8 graph seeds → ≤3 hops / ≤512 visited
+Lifecycle eligibility → RRF k=60 → rerank (opt-in) → ranked shortlist
+Curator selects + verifies originals → cited Brain Brief
+Reviewed Memory Patch → prepare → bound placement → full finish → receipt
+Markdown / Obsidian canonical vault ↔ optional private Git sync
+Model / vectors / checkpoints outside the vault
+```
+
+Lifecycle filtering is also applied before traversal so excluded notes cannot act as active evidence bridges. RRF and rerank are distinct stages. Rerank is a margin-gated section-focus candidate, not a default cross-encoder. PPR, MMR, strongest-first context order and an abstain floor are implemented behind experiment flags, with no promotions from synthetic-only regression tests. Existing hybrid/legacy lexical configurations remain supported; missing hybrid semantic dependencies block instead of silently downgrading.
+
+`remember` requires the host's reviewed complete patch and exact placement; it never chooses semantic meaning or calls a decision provider. Deterministic new-note placement and authorized predecessor transitions are checkpointed. A typed needs_curation handoff can prepare and complete through the same tool family. It cannot merge arbitrary existing bodies; the CLI/Curator path remains for that workflow. Every pending operation blocks ordinary MCP/CLI recall and source reads; successful full finish is required before APPLIED. Failure detection and reviewed recovery are provided, not automatic multi-file rollback. See [the write resource](../guides/mcp-remember.md).
+
 ## Responsibility Boundary
 
 The lead agent has the richest task context. It owns the semantic decision:
@@ -11,7 +29,7 @@ The lead agent has the richest task context. It owns the semantic decision:
 
 The curator owns memory operations:
 
-- retrieve relevant evidence across pages as needed,
+- select and verify evidence from the ranked shortlist, paging when needed,
 - locate an existing canonical note,
 - detect duplicates and contradictions,
 - merge without expanding the claim,

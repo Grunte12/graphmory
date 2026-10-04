@@ -1057,6 +1057,13 @@ async function recallManaged(ensureCurrent) {
     compactPrefetch: flag("--compact-prefetch"),
     stateRoot: option("--state-root"),
     beforeCacheWrite: ensureCurrent,
+    pipeline: {
+      ...(flag("--ppr") ? { graphExpansion: "ppr" } : {}),
+      ...(flag("--mmr") ? { mmr: true } : {}),
+      ...(flag("--rerank-margin") ? { rerankMargin: Number(option("--rerank-margin")) } : {}),
+      ...(flag("--strongest-first") ? { contextOrder: "strongest-first" } : {}),
+      ...(flag("--abstain-floor") ? { abstainFloor: Number(option("--abstain-floor")) } : {}),
+    },
   })
   if (report.status === "BLOCKED") {
     console.log(JSON.stringify(report))
@@ -1066,6 +1073,7 @@ async function recallManaged(ensureCurrent) {
   if (flag("--agent")) console.log(JSON.stringify(report.evidencePacket || {
     workflow: report.workflow,
     retrievalMode: report.retrievalMode,
+    ...(report.decisionGate ? { status: report.status, decisionGate: report.decisionGate } : {}),
     ...(report.graphLimitReached !== undefined ? { graphLimitReached: report.graphLimitReached } : {}),
     retrievalConfidence: report.retrievalConfidence,
     needsExpansion: report.needsExpansion,

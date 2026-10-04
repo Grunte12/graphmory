@@ -2,6 +2,7 @@ import fs from "node:fs"
 import path from "node:path"
 import { governedRank, isAnswerCandidate, isRetrievable, parseMarkdown, sectionFocusRerank } from "./retrieval.mjs"
 import { applySummaryFreshness } from "./summary-memory.mjs"
+import { applyRetrievalCandidates } from "./retrieval-candidates.mjs"
 import { readSourceNotes } from "./source-read.mjs"
 
 const SKIP_DIRECTORIES = new Set([".git", ".obsidian", ".memory-patch-harness", "node_modules"])
@@ -16,11 +17,12 @@ function applyRawPathStatus(document) {
   return { ...document, metadata: { ...document.metadata, status: document.metadata.status ?? "raw" } }
 }
 
-export function loadVaultDocuments(vault, { includeRawPaths = false, maxFiles = 5000, scope = "" } = {}) {
+export function loadVaultDocuments(vault, { includeRawPaths = false, maxFiles = 5000, scope = "", priorDocuments = [] } = {}) {
   const root = path.resolve(vault)
   if (!fs.existsSync(root)) throw new Error(`VAULT_NOT_FOUND: ${root}`)
   if (!fs.statSync(root).isDirectory()) throw new Error(`INVALID_VAULT_PATH: not a directory: ${root}`)
   const documents = []
+  const previous = new Map(priorDocuments.map(document => [document.id, document]))
   const scopes = normalizeScopes(scope)
   const stack = [root]
   while (stack.length && documents.length < maxFiles) {
@@ -40,7 +42,9 @@ export function loadVaultDocuments(vault, { includeRawPaths = false, maxFiles = 
       const file = path.join(directory, entry.name)
       const relative = path.relative(root, file).replaceAll("\\", "/")
       if (scopes.length && !matchesScope(relative, scopes)) continue
-      const document = parseMarkdown(relative, fs.readFileSync(file, "utf8"))
+      const markdown = fs.readFileSync(file, "utf8")
+      const prior = previous.get(relative)
+      const document = prior?.markdown === markdown && !isSummaryDocument(prior) ? prior : parseMarkdown(relative, markdown)
       if (RAW_ROOTS.has(relative.split("/")[0].toLowerCase())) {
         document.metadata = { ...document.metadata, status: document.metadata.status ?? "raw" }
       }
@@ -129,6 +133,7 @@ export function recallVaultLoop(vault, query, {
   precomputedRankedLanes = [],
   allowLargePage = false,
   rankImpl,
+  pipeline = {},
 } = {}) {
   if (!query?.trim()) throw new Error("query is required")
   if (!Number.isInteger(k) || k < 1 || k > (allowLargePage ? maxFiles : 10)) throw new Error(`k must be between 1 and ${allowLargePage ? maxFiles : 10}`)
@@ -157,7 +162,9 @@ export function recallVaultLoop(vault, query, {
   // Preserve the previous first-page ordering; deeper lane results remain reachable.
   const shortlist = shortlistLimit > 0 ? fuseRankedLanes(rankedLanes.map((lane) => ({ ...lane, results: lane.results.slice(0, shortlistLimit) }))).slice(0, 10) : []
   const shortlistIds = new Set(shortlist.map((item) => item.id))
-  const fused = shortlistLimit > 0 ? [...shortlist, ...all.filter((item) => !shortlistIds.has(item.id))] : all
+  const ordered = shortlistLimit > 0 ? [...shortlist, ...all.filter((item) => !shortlistIds.has(item.id))] : all
+  const candidateReport = applyRetrievalCandidates(ordered, query, documents, pipeline)
+  const fused = candidateReport.results
   const top = fused.slice(offset, offset + k)
   const confidence = fused.length === 0
     ? "none"
@@ -176,9 +183,10 @@ export function recallVaultLoop(vault, query, {
     scanLimitReached: documents.length >= maxFiles,
     excludedByLifecycle: Math.max(...lanes.map((lane) => lane.excluded), 0),
     confidence,
-    needsExpansion: confidence !== "bounded",
-    reranked: rerank,
-    nextSteps: confidence === "bounded"
+    needsExpansion: !candidateReport.abstained && confidence !== "bounded",
+    reranked: rerank || candidateReport.reranked,
+    ...(candidateReport.abstained ? { status: "abstain", decisionGate: "abstain-floor" } : {}),
+    nextSteps: candidateReport.abstained || confidence === "bounded"
       ? []
       : [
           "Add a narrower --scope if the active project/domain is known.",
@@ -193,7 +201,7 @@ export function recallVaultLoop(vault, query, {
     results: top.map((item) => ({
       path: item.id,
       title: item.title,
-      score: Number(item.fusedScore.toFixed(4)),
+      score: Number((item.rerankScore ?? item.fusedScore).toFixed(4)),
       status: item.metadata?.status ?? item.metadata?.lifecycle ?? "current",
       lanes: item.lanes,
     })),
@@ -251,7 +259,8 @@ export function fuseRankedLanes(lanes, constant = 60) {
 export function filterByScope(documents, scope = "") {
   const scopes = normalizeScopes(scope)
   if (!scopes.length) return documents
-  return documents.filter((document) => matchesScope(document.id, scopes))
+  const filtered = documents.filter((document) => matchesScope(document.id, scopes))
+  return filtered.length === documents.length ? documents : filtered
 }
 
 function normalizeScopes(scope) {

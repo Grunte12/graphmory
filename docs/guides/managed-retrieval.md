@@ -166,3 +166,9 @@ It is opt-in: [development experiments](../evaluation/locomo-coverage-preview-20
 ## Current Curator default
 
 New configuration uses `retrievalMode: hybrid`: keyword, local semantic and authored graph candidates are fused in normal managed recall. Missing embeddings produce BLOCKED; there is no automatic lexical downgrade. The older semantic escalation description above applies to advanced decision workflows and historical experiments. Legacy configurations without this field keep their prior behavior until deliberately migrated. [Setup and summary freshness](hybrid-summary.md).
+
+## MCP and experimental retrieval stages
+
+Agents can use the in-process `recall`, `read` and `remember` tools instead of spawning the CLI. See [MCP recall](mcp-recall.md) and [guarded writes](mcp-remember.md). The Curator selects and verifies the ranked shortlist and may page once more; it does not re-rank all candidates. CLI scripting remains supported.
+
+Curator `recall-managed` exposes experiment flags `--ppr` (hybrid graph lane only), `--mmr` (token-overlap diversity), `--rerank-margin <0–1>` (post-RRF section focus only when top scores are close), `--strongest-first`, and `--abstain-floor <score>` (deterministic pre-Curator abstention). Constants are provisional: PPR damping 0.85, 30 iterations, eight seeds, three-hop induced neighborhood and 512 visited; MMR lambda 0.7. The flags do not run a cross-encoder or remote judge. No experiment is exposed as an MCP tool argument. Defaults remain unchanged until the [proposal's held-out gates](../research/retrieval-pipeline-proposal-2026-10-04.md) pass. Regression fixtures authored for implementation are not promotion evidence.

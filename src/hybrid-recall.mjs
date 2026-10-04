@@ -1,3 +1,4 @@
+import { personalizedPageRank } from "./retrieval-candidates.mjs"
 import { buildNoteGraph, linkedNeighbors } from "./graph-navigation.mjs"
 import { governedRank, isAnswerCandidate, isRetrievable } from "./retrieval.mjs"
 import { fuseRankedLanes } from "./memory-recall.mjs"
@@ -11,13 +12,18 @@ export function sparseHybridQuery(query) {
 }
 
 // Navigation follows authored links only; a trail is not evidence of its contents.
-export function rankGraphLane(documents, query, semanticLane, { methods, includeSuperseded = false } = {}) {
+export function rankGraphLane(documents, query, semanticLane, { methods, includeSuperseded = false, graphExpansion = "bfs", pprDamping = 0.85 } = {}) {
   const eligible = documents.filter(document => isRetrievable(document, { includeSuperseded }))
   const graph = buildNoteGraph(eligible)
   const seedLanes = (methods ?? ["bm25", "bm25f-focused-sections"]).map(method => ({ method,
     results: governedRank(eligible, sparseHybridQuery(query), method, { includeSuperseded, followLinks: false }).results.filter(item => item.score > 0).slice(0, 8) }))
   if (semanticLane) seedLanes.push({ method: semanticLane.method, results: semanticLane.results.slice(0, 8) })
   const seeds = fuseRankedLanes(seedLanes).slice(0, 8)
+  if (graphExpansion === "ppr") {
+    const ppr = personalizedPageRank(graph, seeds, { damping: pprDamping })
+    return { method: "graph-ppr", results: ppr.results.filter(isAnswerCandidate),
+      graphLimitReached: ppr.limited || graph.limitReached, graphIssues: graph.issueCounts }
+  }
   const found = new Map()
   const queue = seeds.filter(seed => graph.byId.has(seed.id)).map(seed => ({ id: seed.id, trail: [seed.id] }))
   const visited = new Set(queue.map(item => item.id))

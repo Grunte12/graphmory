@@ -1,6 +1,6 @@
 import { retrievalMethods } from "./runtime-config.mjs"
 import { createHash } from "node:crypto"
-import { loadVaultDocuments, recallVaultLoop } from "./memory-recall.mjs"
+import { filterByScope, loadVaultDocuments, recallVaultLoop } from "./memory-recall.mjs"
 import { rankSemanticVectorLane, recallVaultSemantic } from "./semantic-recall.mjs"
 import { isAnswerCandidate, splitMarkdownSections, tokenize, rank } from "./retrieval.mjs"
 import { persistentIndexLocation, supportsNativeSqlite } from "./index-capability.mjs"
@@ -60,6 +60,8 @@ async function managedRecallUnchecked(vault, query, config, {
   fetchImpl = fetch,
   beforeCacheWrite,
   stateRoot,
+  suppliedDocuments,
+  pipeline = {},
 } = {}) {
   if (!Number.isInteger(k) || k < 1 || k > 10) throw new Error("k must be 1–10")
   if (!Number.isInteger(offset) || offset < 0) throw new Error("offset must be a non-negative integer")
@@ -77,7 +79,7 @@ async function managedRecallUnchecked(vault, query, config, {
   if (indexCache && config.workflow !== "curator") throw new Error("Index cache is supported only in curator mode")
   if (indexCache && rankImpl) throw new Error("Choose indexCache or rankImpl")
   const limit = config.decision.maxCandidates
-  const vaultDocuments = loadVaultDocuments(vault, { scope })
+  const vaultDocuments = suppliedDocuments ? filterByScope(suppliedDocuments, scope) : loadVaultDocuments(vault, { scope })
   let effectiveRankImpl = rankImpl
   if (indexCache) {
     // Resolve and reject an in-vault cache even when this Node version cannot load SQLite.
@@ -119,14 +121,14 @@ async function managedRecallUnchecked(vault, query, config, {
         needsExpansion: false, nextSteps: ["Install @huggingface/transformers and make the BGE model available in --model-cache. Use --retrieval-mode lexical only for explicit diagnostics."],
         reason: error.message.includes("OPTIONAL_DEPENDENCY_MISSING") ? "dependency-missing" : "embedding-initialization-or-index-failed" }
     }
-    const graphLane = hybrid ? rankGraphLane(vaultDocuments, query, semanticLane, { methods, includeSuperseded }) : null
+    const graphLane = hybrid ? rankGraphLane(vaultDocuments, query, semanticLane, { methods, includeSuperseded, ...pipeline }) : null
     const graphTrails = new Map((graphLane?.results ?? []).map(item => [item.id, item.graphTrail]))
     const hybridRank = hybrid ? (documents, search, method) => (effectiveRankImpl ?? rank)(documents, sparseHybridQuery(search), method) : effectiveRankImpl
     const page = recallVaultLoop(vault, query, { k: bundleBytes || adaptiveBundle ? Math.max(1, vaultDocuments.length) : k, offset, scope,
       perMethodLimit: vaultDocuments.length, shortlistLimit: limit, documents: vaultDocuments, methods, includeSuperseded,
       precomputedRankedLanes: [...precomputedRankedLanes, ...(semanticLane ? [semanticLane] : []), ...(graphLane ? [graphLane] : [])],
       rankImpl: hybridRank,
-      allowLargePage: Boolean(bundleBytes || adaptiveBundle) })
+      allowLargePage: Boolean(bundleBytes || adaptiveBundle), pipeline })
     const adaptiveMode = adaptiveBundle ? chooseAdaptiveMode(query, page.results.slice(0, 10)) : null
     const effectiveBundleBytes = bundleBytes || (adaptiveMode === "wide" ? 32000 : 0)
     const documentsByPath = evidencePreview || bundleBytes || adaptiveBundle ? new Map(vaultDocuments.map((item) => [item.id, item])) : null
@@ -181,6 +183,7 @@ async function managedRecallUnchecked(vault, query, config, {
       ...(graphLane ? { graphLimitReached: graphLane.graphLimitReached } : {}),
       ...(includeSuperseded ? { historicalCandidatesIncluded: true } : {}),
       confidence: page.confidence, retrievalConfidence: page.confidence, needsExpansion: page.needsExpansion, scanLimitReached: page.scanLimitReached,
+      ...(page.decisionGate ? { status: page.status, decisionGate: page.decisionGate } : {}),
       offset: page.offset, totalCandidates: page.totalCandidates, hasMore, nextOffset: hasMore ? offset + results.length : null,
       ...(semanticLane ? {
         expanded: true,

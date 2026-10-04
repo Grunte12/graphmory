@@ -22,7 +22,8 @@
     "graphmory": "scripts/brain-sync.mjs",
     "graphmory-setup": "scripts/setup-curator-agent.mjs",
     "memory-patch-harness": "scripts/brain-sync.mjs",
-    "mph": "scripts/brain-sync.mjs"
+    "mph": "scripts/brain-sync.mjs",
+    "graphmory-mcp": "scripts/graphmory-mcp.mjs"
   },
   "files": [
     "adapters/",
@@ -105,7 +106,15 @@
     "docs/evaluation/hybrid-summary-experiment-06-2026-10-02.md",
     "docs/evaluation/hybrid-summary-native-2026-10-02.md",
     "docs/evaluation/hybrid-summary-review-repair-2026-10-02.md",
-    "docs/evaluation/push-eval-2026-10-02.md"
+    "docs/evaluation/push-eval-2026-10-02.md",
+    "scripts/graphmory-mcp.mjs",
+    "docs/guides/mcp-recall.md",
+    "docs/guides/mcp-remember.md",
+    "docs/evaluation/mcp-implementation-2026-10-04.md",
+    "docs/evaluation/retrieval-candidates-2026-10-04.md",
+    "docs/research/retrieval-pipeline-proposal-2026-10-04.md",
+    "docs/assets/graphmory-architecture.svg",
+    "docs/assets/graphmory-architecture.html"
   ],
   "scripts": {
     "test": "node --test",
@@ -150,5 +159,9 @@
     "coding-agents",
     "rag",
     "memory"
-  ]
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "zod": "^4.6.5"
+  }
 }

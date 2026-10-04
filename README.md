@@ -25,7 +25,7 @@ Long-running agents need durable memory, but saving every conversation creates n
 
 ## Architecture
 
-![Graphmory architecture: a coding agent delegates to a named Curator, which uses the CLI for hybrid search, original Markdown reads and guarded memory updates.](docs/assets/graphmory-architecture.svg)
+![Graphmory architecture: agents call MCP recall, read and remember; MCP and CLI share the engine, and the Curator selects and verifies evidence.](docs/assets/graphmory-architecture.svg)
 
 [Open the editable architecture diagram](docs/assets/graphmory-architecture.html).
 
@@ -35,9 +35,47 @@ Long-running agents need durable memory, but saving every conversation creates n
 
 [Watch the 20-second MP4](docs/assets/graphmory-workflow.mp4) · [Editable FFmpeg source and storyboard](docs/media/graphmory-motion/README.md). This is a conceptual visualization of the CLI/Markdown workflow. Frames are drawn locally and encoded with FFmpeg; no HyperFrames runtime is required. Platform logos are illustrative examples; native dispatch was verified on Codex and OpenCode.
 
-The default workflow uses a small host sub-agent as Curator. The local CLI combines keyword, semantic and authored graph retrieval; the Curator reads original notes and sends the lead a short cited brief. Pagination allows more related notes when needed, with no fixed total note cap. For updates, the lead supplies supported meaning, the Curator prepares and edits, and the CLI verifies the saved state before issuing a receipt.
+The default workflow uses a small host sub-agent as Curator. Agents can call the MCP tools `recall`, `read` and `remember`; the CLI remains supported and shares the engine in `src/`. Keyword, local semantic and authored graph retrieval produce ranked candidates. The Curator selects and verifies originals, then sends the Lead a short cited brief. Pagination permits more related evidence when needed. For updates, the Lead supplies a supported Memory Patch and reviewed placement; the server prepares, writes and runs full finish checks before issuing a receipt.
 
 Raw evidence is the immutable evidentiary source of truth. Markdown is canonical operational memory: an agent-maintained synthesis that must remain traceable to evidence. Search indexes, knowledge graphs, and generated reports are rebuildable derived views. In Jev/local mode, durable patch placement remains lead-owned; automatic note placement is still planned.
+
+## Use with MCP
+
+After installing this checkout, configure `graphmory-mcp` with a vault at startup. The default transport is stdio. The examples below are host configuration templates; native MCP discovery has not been tested on these four hosts in this change.
+
+Claude Code (`.mcp.json`) and Cursor (`.cursor/mcp.json`) use this stdio entry:
+
+```json
+{"mcpServers":{"graphmory":{"command":"graphmory-mcp","env":{"GRAPHMORY_VAULT":"/path/to/vault"}}}}
+```
+
+Codex (`config.toml`):
+
+```toml
+[mcp_servers.graphmory]
+command = "graphmory-mcp"
+env = { GRAPHMORY_VAULT = "/path/to/vault" }
+```
+
+OpenCode (`opencode.json`):
+
+```json
+{"mcp":{"graphmory":{"type":"local","command":["graphmory-mcp"],"environment":{"GRAPHMORY_VAULT":"/path/to/vault"}}}}
+```
+
+Read `graphmory://guide/recall` for citation/paging and `graphmory://guide/remember` for the complete patch, evidence and reviewed placement. Tool descriptions stay short; full originals are delivered only through `read`. A bare `remember` returns a typed `needs_curation` blocker. A complete reviewed patch uses guarded deterministic new-note placement and supports authorized supersession. Existing-note merges retain the CLI/host Curator workflow. See [write guidance](docs/guides/mcp-remember.md).
+
+For Streamable HTTP, set the token in `GRAPHMORY_MCP_TOKEN` (or use `--token-env <name>` or `--token-file <private-file>`), then run:
+
+```sh
+graphmory-mcp --vault "/path/to/vault" --http --port 3000
+```
+
+HTTP always requires a bearer token of at least 16 non-whitespace characters; use a randomly generated token. Connect to `http://127.0.0.1:3000/mcp` with `Authorization: Bearer <token>`. Tokens are never accepted as command-line values or logged. By default the server binds `127.0.0.1`; any other address (except `::1`) requires `--bind <address> --allow-remote` and the token. Every request is authenticated; there is no anonymous remote access. HTTP uses stateless POST with JSON responses. Browser origins and cross-origin discovery are disabled.
+
+For another machine, run behind Tailscale with an HTTPS reverse proxy to the loopback listener (for example, Tailscale Serve), preserve the Authorization header, restrict tailnet access, and provision the token separately to each trusted client. Tailscale does not replace bearer authentication. A token holder can read and request guarded writes to the configured vault. Never put a token in a URL, vault note, committed host config or shared log. Keep the same checkpoint state root across CLI and MCP processes; do not switch roots to bypass a pending write. See [privacy](PRIVACY.md).
+
+New Curator configs use local BGE hybrid retrieval; an unavailable backend returns `SEMANTIC_UNAVAILABLE`. Models load lazily and remain resident; vectors and model files stay outside the vault. Legacy lexical configs retain their behavior. Candidate PPR, MMR, margin rerank, context ordering and abstention are opt-in experiments, with no new defaults promoted in this synthetic-only run. [Implementation and evaluation status](docs/evaluation/mcp-implementation-2026-10-04.md).
 
 ## Quick Start
 

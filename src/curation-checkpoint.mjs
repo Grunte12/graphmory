@@ -1178,3 +1178,20 @@ export function restoreCurationCheckpoint({ vault, operation, expectedHashes, ap
     release()
   }
 }
+
+// MCP may resume only the exact prepared transaction, before any placement write.
+export function verifyCurationWriteBinding({ vault, stateRoot, operation, patch, targets, sources, expectedHashes } = {}) {
+  const vaultRoot = resolveVault(vault)
+  const context = resolveState(vaultRoot, stateRoot, { create: false })
+  const state = inspectCurationCheckpoint({ vault, stateRoot })
+  if (state.locked || state.operation !== operation || state.status !== "pending") throw new Error("CURATION_PENDING: operation is not writable")
+  const { manifest } = readManifest(context, operation)
+  if (!manifest.preimagesReady) throw new Error("CHECKPOINT_NOT_FINISHABLE: preparation incomplete")
+  assertTargetBinding(manifest, validatePathArray(targets, "targets"), validatePathArray(sources, "sources", { allowEmpty: true }), patchDigest(patch))
+  assertExpectedHashMap(expectedHashes, targets)
+  const inventory = inventoryVault(vaultRoot)
+  const drift = inventoryDrift(manifest.inventory.hashes, inventoryHashes(inventory), targets, sources)
+  if (drift.changed.length || drift.added.length || drift.removed.length || sourceDrift(vaultRoot, manifest.sources).length) throw new Error("SOURCE_CHANGED: prepared inventory changed")
+  for (const target of targets) if (currentHashForRestore(vaultRoot, target) !== expectedHashes[target]) throw new Error("TARGET_CHANGED: reviewed target hash changed")
+  return { operation, patchDigest: manifest.patchDigest }
+}
