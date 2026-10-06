@@ -1,17 +1,17 @@
-<h1 align="center"><img src="docs/assets/graphmory-banner.png" alt="Graphmory: shared, long-term memory for coding agents. Plain Markdown notes, served over MCP, every answer cited." width="100%"></h1>
+<h1 align="center"><img src="docs/assets/graphmory-banner.png" alt="Graphmory: governed memory for AI agents. Remember what's still true." width="100%"></h1>
 
 <p align="center">
   <a href="https://github.com/Grunte12/graphmory/actions/workflows/ci.yml"><img src="https://github.com/Grunte12/graphmory/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
 </p>
 
-Agents forget between sessions. Graphmory is a local MCP server that gives any coding agent a shared, long-term memory: plain Markdown notes that you own, searched by keyword, meaning and `[[links]]`, with every answer pointing back to its source.
+Graphmory is governed memory for AI agents: a local MCP server over plain Markdown notes that you own. Agents search them by keyword, meaning and `[[links]]`, every answer points back to its source, and new memories are checked before they are saved.
 
 Status: experimental, pre-1.0. The contracts, tests and evals are in place; live-model benchmark results are not published yet.
 
 ## Watch the film
 
-https://github.com/user-attachments/assets/1db48d36-d060-42bf-8ffb-22dd5809b1c8
+https://github.com/user-attachments/assets/c605a1c2-2d6d-46fd-9137-213957000b69
 
 ## Why Graphmory
 

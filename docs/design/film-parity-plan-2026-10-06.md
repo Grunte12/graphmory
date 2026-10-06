@@ -185,9 +185,9 @@ Total: about 15–18 h of work across several sessions. Every step ends with `np
 - `prune` to archive: not decided.
 - Publishing to npm: the film says "Start on GitHub".
 
-## 5. Status (end of session, 2026-10-06)
+## 5. Status (2026-10-06, merged to main in PR #2)
 
-Gate commands: `npm run check` exit 0 after every step. Tests: 500 total, 495 pass, 0 fail, 5 skipped. Nothing is committed.
+Gate commands: `npm run check` exit 0 after every step. Tests: 500 total, 495 pass, 0 fail, 5 skipped.
 
 | Item | State | Where |
 |---|---|---|
