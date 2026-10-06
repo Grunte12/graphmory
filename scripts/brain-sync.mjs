@@ -360,9 +360,9 @@ function run(bin, commandArgs, { cwd = process.cwd(), dryRun = false, allowFail 
 }
 
 function requireVault() {
-  const vault = option("--vault") || process.env.OBSIDIAN_VAULT
+  const vault = option("--vault") || process.env.GRAPHMORY_VAULT || process.env.OBSIDIAN_VAULT
   if (!vault) {
-    console.error("Missing --vault (or set OBSIDIAN_VAULT environment variable)")
+    console.error("Missing --vault (or set the GRAPHMORY_VAULT environment variable)")
     process.exit(2)
   }
   return path.resolve(vault)
@@ -620,7 +620,7 @@ function detect() {
 }
 
 async function doctor() {
-  const vaultOption = option("--vault") || process.env.OBSIDIAN_VAULT
+  const vaultOption = option("--vault") || process.env.GRAPHMORY_VAULT || process.env.OBSIDIAN_VAULT
   const vault = vaultOption ? path.resolve(vaultOption) : null
   const requireGithub = flag("--require-github")
   const json = flag("--json")

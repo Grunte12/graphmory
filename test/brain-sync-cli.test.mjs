@@ -153,6 +153,25 @@ test("doctor accepts OBSIDIAN_VAULT env var as vault fallback", () => {
   }
 })
 
+test("doctor accepts GRAPHMORY_VAULT env var, which wins over OBSIDIAN_VAULT", () => {
+  const root = tempRoot("mph-graphmory-env-")
+  try {
+    const result = spawnSync(process.execPath, [cli, "doctor", "--json"], {
+      cwd: repoRoot,
+      encoding: "utf8",
+      shell: false,
+      env: { ...process.env, GRAPHMORY_VAULT: root, OBSIDIAN_VAULT: path.join(root, "not-used") },
+    })
+    assert.equal(result.status, 0, result.stderr)
+    const report = JSON.parse(result.stdout)
+    assert.equal(report.vault, path.resolve(root))
+    assert.equal(report.checks.some((check) => check.id === "vault-detection"), true)
+    assert.equal(report.checks.some((check) => check.id === "vault-permission"), true)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
 test("doctor returns machine-readable diagnostics for a path with spaces", () => {
   const root = tempRoot("mph doctor path with spaces ")
   try {
