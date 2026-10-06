@@ -1,8 +1,7 @@
 # Research
 
-Background research, comparisons and design inputs. These are dated snapshots, not product documentation.
+Background research, comparisons and design inputs, written as dated snapshots. They are not product documentation, except [positioning](positioning.md) and [research foundations](research-foundations.md), which are maintained.
 
-- [QA Report — Graphmory](qa-report-2026-09-23.md) (partly Thai)
 - [A-MEM workflow feasibility inventory](amem-workflow-feasibility-2026-09-29.md)
 - [Architecture decision: paginated evidence collection with a source ledger](architecture-decision-2026-09-28.md)
 - [Four coexisting memory workflows and local model candidates](four-workflow-models-2026-09-23.md)
@@ -18,8 +17,9 @@ Background research, comparisons and design inputs. These are dated snapshots, n
 - [Independent NotebookLM Review](notebooklm-review.md)
 - [Obsidian Memory for AI: workflow feasibility](obsidian-memory-workflow-feasibility-2026-09-29.md)
 - [Positioning](positioning.md)
+- [QA Report — Graphmory](qa-report-2026-09-23.md) (partly Thai)
 - [Where This Fits in the RAG Landscape](rag-positioning.md) (Thai)
 - [Research Foundations](research-foundations.md)
-- [Research Source Map / แผนที่แหล่งวิจัย](research-source-map.md) (partly Thai)
+- [Research source map](research-source-map.md) (partly Thai)
 - [Retrieval pipeline proposal: deterministic where possible, evidence-gated (2026-10-04)](retrieval-pipeline-proposal-2026-10-04.md)
 - [Reuse-first retrieval decision (development checkpoint)](reuse-first-retrieval-decision-2026-09-29.md)

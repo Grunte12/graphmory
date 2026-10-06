@@ -27,13 +27,12 @@ Write new canonical notes in concise English and let the lead agent answer in th
 
 ## When to Change Transport
 
-If the agent environment changes (e.g., gains an MCP server, Obsidian CLI, or REST
-endpoint), update this section to the new transport. Supported transport values:
+MCP is the default. If the host cannot run an MCP server, use the filesystem transport, or another mechanism from this list:
 
 | Transport | Description |
 |---|---|
 | `filesystem` | Direct directory access via Graphmory scripts |
-| `mcp` | Model Context Protocol server |
+| `mcp` | Model Context Protocol server (`graphmory-mcp`), recommended |
 | `obsidian-cli` | Obsidian CLI (e.g., `obsidian vault open`) |
 | `obsidian-rest` | Obsidian Local REST API plugin |
 | `custom` | Agent-specific mechanism |

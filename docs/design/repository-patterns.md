@@ -1,4 +1,4 @@
-# Repository Patterns
+# Repository patterns
 
 This project should be easy to understand, install, evaluate, and fork. The shape below is based on patterns from successful agent-tool and agent-skill repositories, but the core harness stays dependency-light.
 

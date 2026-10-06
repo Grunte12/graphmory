@@ -13,9 +13,9 @@ Start with the [project README](../README.md), then connect an agent and learn w
 
 - [Codex, Cursor, and Claude Code](guides/agent-hosts.md)
 - [CLI reference and manual setup](guides/cli-reference.md)
-- [Manual native-host curator smoke](guides/curator-workflow-smoke.md)
-- [Demo Workflow](guides/demo-workflow.md)
-- [Hot Context Demo](guides/hot-context-demo.md)
+- [Manual curator smoke test on a native host](guides/curator-workflow-smoke.md)
+- [Demo workflow](guides/demo-workflow.md)
+- [Hot context demo](guides/hot-context-demo.md)
 - [Hybrid retrieval and reusable summaries](guides/hybrid-summary.md)
 - [Installation](guides/install.md)
 - [A small, explicit memory graph](guides/knowledge-graph.md)
@@ -26,10 +26,10 @@ Start with the [project README](../README.md), then connect an agent and learn w
 - [Guarded memory writes through MCP](guides/mcp-remember.md)
 - [Memory contracts](guides/memory-contracts.md)
 - [Portable Brain Sync](guides/portable-brain-sync.md)
-- [คู่มือแนวคิด Graphmory](guides/thai-strategy-guide.md) (Thai)
+- [Thai strategy guide](guides/thai-strategy-guide.md) (Thai)
 - [Language and token budget](guides/token-efficient-language.md)
 - [Local Curator trial](guides/trial-mvp.md)
-- [Troubleshooting and Agent Recovery](guides/troubleshooting.md)
+- [Troubleshooting and agent recovery](guides/troubleshooting.md)
 - [Vault setup and architecture](guides/vault-setup.md)
 
 ## Design
@@ -37,9 +37,8 @@ Start with the [project README](../README.md), then connect an agent and learn w
 - [Bounded retrieval loop (experimental)](design/adaptive-retrieval-loop.md)
 - [Architecture](design/architecture.md)
 - [Jev as the curator decision engine](design/jev-replaces-curator.md)
-- [Jev-assisted retrieval plan](design/jev-retrieval-plan.md)
-- [Learning Loop](design/learning-loop.md)
-- [Repository Patterns](design/repository-patterns.md)
+- [Learning loop](design/learning-loop.md)
+- [Repository patterns](design/repository-patterns.md)
 
 ## Evaluation
 

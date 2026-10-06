@@ -1,6 +1,6 @@
-# Demo Workflow
+# Demo workflow
 
-This walkthrough shows how the harness turns a verified coding-agent incident into future-useful memory.
+This walkthrough shows how Graphmory turns a verified coding-agent incident into future-useful memory.
 
 ## 1. A Task Finishes
 

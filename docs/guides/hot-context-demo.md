@@ -1,4 +1,4 @@
-# Hot Context Demo
+# Hot context demo
 
 This document shows the **render-hot-context** script in action.
 It accepts a Hot Context Pack JSON file and produces a compact Markdown view

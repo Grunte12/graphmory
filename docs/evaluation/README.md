@@ -24,7 +24,7 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - [Experiment: avoid false wide routing from incidental wording](adaptive-routing-language-2026-09-27.md)
 - [Adaptive bundle versus the current path-only reader](adaptive-vs-paths-fresh-four-2026-09-27.md)
 - [Agent retrieval output budget (2026-09-26)](agent-output-budget-2026-09-26.md)
-- [Astra evaluation audit — 2026-09-28](astra-eval-skill-audit-2026-09-28.md) — problem reproduced in the pre-repair scorer.** `scripts/eval-live-agent-score.mjs` assigns only 30% of its sco
+- [Astra evaluation audit — 2026-09-28](astra-eval-skill-audit-2026-09-28.md) — problem reproduced in the pre-repair scorer
 - [Astra review: separate omitted from truncated previews](astra-preview-state-2026-09-27.md)
 - [Basic Memory hybrid preflight — 2026-09-28](basic-memory-hybrid-preflight-2026-09-28.md)
 - [Basic Memory vector-index correction — 2026-09-28](basic-memory-vector-index-correction-2026-09-28.md)
@@ -34,10 +34,10 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - [BM25F scoring optimization](bm25f-optimization-2026-09-27.md)
 - [Citation identity verifier repair — 2026-09-28](citation-identity-repair-2026-09-28.md)
 - [Clear missing-evidence control — 2026-09-28](clear-abstention-control-2026-09-28.md)
-- [Experiment 2: one-call bundle versus paged delivery](cli-bundle-experiment-2026-09-28.md)
 - [Experiment 1: actual CLI pagination](cli-pagination-experiment-2026-09-28.md)
+- [Experiment 2: one-call bundle versus paged delivery](cli-bundle-experiment-2026-09-28.md)
 - [Codex curator A/B: source completeness flags](codex-source-flags-2026-09-27.md)
-- [Count-label preflight: fixed slot `conv-43:17`](collection-count-label-audit-2026-09-28.md) — ambiguous for a strict count of distinct won games; not qualified**. This is a source-label audit, not a model
+- [Count-label preflight: fixed slot `conv-43:17`](collection-count-label-audit-2026-09-28.md) — ambiguous for a strict count of distinct won games; not qualified
 - [Collection experiment: label readiness preflight](collection-label-preflight-2026-09-28.md)
 - [Exact prompt packing: deterministic transport preflight](collection-packing-preflight-2026-09-29.md)
 - [Collection runner integration audit](collection-runner-audit-2026-09-28.md)
@@ -46,19 +46,19 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - [Comparable benchmarks and retrieval simplification — 2026-09-26](comparable-benchmarks-2026-09-26.md)
 - [Historical competitor parity audit — 2026-09-28](competitor-parity-audit-2026-09-28.md)
 - [Local competitor pilot protocol — 2026-09-26](competitor-pilot-protocol-2026-09-26.md)
-- [ผลเปรียบเทียบคู่แข่งรอบแรก](competitor-pilot-th-2026-09-26.md) (Thai)
+- [Competitor pilot — 2026-09-26](competitor-pilot-th-2026-09-26.md) (Thai)
 - [Cost and Scale](cost-and-scale.md)
 - [Full-history count-label review gate](count-label-audit-2026-09-28.md)
 - [Curator continuation and raw QA score — 2026-09-28](curator-continuation-experiment-2026-09-28.md)
-- [Live curator optimization pilot — 2026-09-27](curator-loop-pilot-2026-09-27.md) — development loop in progress; acceptance criteria not met.
+- [Live curator optimization pilot — 2026-09-27](curator-loop-pilot-2026-09-27.md) — development loop in progress; acceptance criteria not met
 - [Curator pagination regression — 2026-09-27](curator-pagination-2026-09-27.md)
 - [Curator evidence-preview development loop](curator-preview-development-2026-09-27.md)
 - [Curator semantic integration: frozen verification protocol](curator-semantic-integration-protocol-2026-09-29.md)
-- [Curator semantic integration: results](curator-semantic-integration-results-2026-09-29.md) — verification in progress. No default promotion or superiority claim.
+- [Curator semantic integration: results](curator-semantic-integration-results-2026-09-29.md) — verification in progress
 - [Curator session/cache A/B diagnostic — 2026-09-28](curator-session-cache-ab-2026-09-28.md)
 - [Curator temporal decision A/B — 2026-09-28](curator-temporal-decision-ab-2026-09-28.md)
 - [Evaluation skill research and repository installation](evaluation-skills-2026-09-28.md)
-- [Graphmory evaluation strategy and audit — 2026-09-26](evaluation-strategy-2026-09-26.md) — research and proposed protocol. A small external session-retrieval pilot is now implemented: see [LongMemEval 
+- [Graphmory evaluation strategy and audit — 2026-09-26](evaluation-strategy-2026-09-26.md) — research and proposed protocol
 - [Evaluation](evaluation.md)
 - [Evidence collection: implementation checkpoint, not an answer benchmark](evidence-collection-implementation-2026-09-28.md)
 - [Mechanical evidence-state experiment — 2026-09-28](evidence-state-ab-2026-09-28.md)
@@ -104,7 +104,7 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - [LongMemEval transfer split source-overlap audit — 2026-09-28](longmemeval-source-overlap-audit-2026-09-28.md)
 - [Managed retrieval modes: local vault pilot (2026-09-23)](managed-modes-2026-09-23.md)
 - [Matched CLI retrieval diagnostic — 2026-09-28](matched-cli-retrieval-2026-09-28.md)
-- [Matched Markdown workflow protocol: Graphmory and Obsidian Memory for AI](matched-markdown-workflow-protocol-2026-09-29.md) — preregistered development fixture; no runs have been conducted under this protocol. This is not an official be
+- [Matched Markdown workflow protocol: Graphmory and Obsidian Memory for AI](matched-markdown-workflow-protocol-2026-09-29.md) — preregistered development fixture; no runs have been conducted under this protocol
 - [Matched native Curator preflight — 2026-09-28](matched-native-curator-preflight-2026-09-28.md)
 - [Matched native Curator development cases — 2026-09-28](matched-native-two-family-development-2026-09-28.md)
 - [Experiment: suppress weakly matched curator previews](matched-preview-experiment-2026-09-27.md)
@@ -113,25 +113,25 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - [R13: rc.4 checkpoint compatibility](mvp-checkpoint-compatibility-repair-2026-10-01.md)
 - [MVP correctness repair: native-session protocol](mvp-correctness-native-protocol-2026-10-01.md)
 - [MVP correctness repair — acceptance protocol](mvp-correctness-repair-protocol-2026-10-01.md)
-- [Graphmory: ผลการซ่อมและทดสอบ MVP — 1 ตุลาคม 2026](mvp-correctness-repair-result-2026-10-01.md) (Thai)
+- [MVP correctness repair result — 2026-10-01](mvp-correctness-repair-result-2026-10-01.md) (Thai)
 - [MVP evaluator repair follow-up — 1 October 2026](mvp-evaluator-repair-followup-2026-10-01.md)
 - [Held-out native MVP protocol — 2026-10-01](mvp-holdout-native-protocol-2026-10-01.md)
 - [Graphmory MVP native holdout — result (2026-10-01)](mvp-holdout-native-result-2026-10-01.md)
 - [MVP deterministic safety holdout — 2026-10-01](mvp-holdout-safety-2026-10-01.md)
 - [MVP deterministic safety holdout v2 — 2026-10-01](mvp-holdout-safety-v2-2026-10-01.md)
-- [Trial MVP implementation and acceptance — 2026-10-01](mvp-implementation-report-2026-10-01.md) — scoped trial MVP complete; G1–G9 pass after one retained native delegation failure and linked repair. Baseline
-- [MVP lifecycle-context repair: focused verification](mvp-lifecycle-context-repair-2026-10-01.md) — Focused source/tests complete; checkpoint integration and native evaluation remain pending.
+- [Trial MVP implementation and acceptance — 2026-10-01](mvp-implementation-report-2026-10-01.md) — scoped trial MVP complete; G1–G9 pass after one retained native delegation failure and linked repair
+- [MVP lifecycle-context repair: focused verification](mvp-lifecycle-context-repair-2026-10-01.md) — Focused source/tests complete; checkpoint integration and native evaluation remain pending
 - [Native-05 independent trace review](mvp-native-05-independent-review-2026-10-01.md)
 - [Native trial MVP acceptance — 2026-10-01](mvp-native-acceptance-2026-10-01.md)
 - [Proposed native trial MVP acceptance — 2026-09-30](mvp-native-protocol-2026-09-30.md)
-- [ผลทดสอบ MVP รอบ native-05 — 1 ตุลาคม 2026](mvp-native-retest-result-2026-10-01.md) (Thai)
+- [MVP native retest result — 2026-10-01](mvp-native-retest-result-2026-10-01.md) (Thai)
 - [MVP package audit — 2026-10-01](mvp-package-audit-2026-10-01.md)
 - [MVP post-implementation evaluation — 2026-10-01](mvp-post-implementation-eval-2026-10-01.md)
-- [ผลทดสอบ Graphmory MVP — 1 ตุลาคม 2026](mvp-post-implementation-eval-th-2026-10-01.md) (Thai)
+- [MVP post implementation eval — 2026-10-01](mvp-post-implementation-eval-th-2026-10-01.md) (Thai)
 - [MVP read-authority repair report — 2026-10-01](mvp-read-authority-repair-2026-10-01.md)
 - [MVP readiness audit — 2026-09-30](mvp-readiness-audit-2026-09-30.md)
-- [ตรวจความพร้อมก่อน push — 1 ตุลาคม 2026](mvp-readiness-reverify-2026-10-01.md) (Thai)
-- [สรุป Graphmory MVP — 1 ตุลาคม 2026](mvp-summary-th-2026-10-01.md) (Thai)
+- [MVP readiness reverify — 2026-10-01](mvp-readiness-reverify-2026-10-01.md) (Thai)
+- [MVP summary — 2026-10-01](mvp-summary-th-2026-10-01.md) (Thai)
 - [Native Curator lifecycle recovery: evidence closeout](native-curator-lifecycle-recovery-2026-09-29.md)
 - [Native Curator lifecycle recovery protocol](native-curator-lifecycle-recovery-protocol-2026-09-29.md)
 - [Native Curator preflight and lifecycle acceptance](native-curator-preflight-live-2026-09-29.md)
@@ -176,7 +176,7 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - [Ranked-original prefix: frozen offline preflight and next screen](ranked-original-prefix-preflight-2026-09-28.md)
 - [Ranked-original three-arm runner preflight](ranked-three-arm-runner-preflight-2026-09-28.md)
 - [Reader attribution pilot — 2026-09-28](reader-attribution-pilot-2026-09-28.md)
-- [Retrieval candidates — 2026-10-04](retrieval-candidates-2026-10-04.md) — implemented, regression-verified, opt-in. No candidate was promoted.
+- [Retrieval candidates — 2026-10-04](retrieval-candidates-2026-10-04.md) — implemented, regression-verified, opt-in
 - [Retrieval evidence delivery: process and current decision](retrieval-delivery-process-2026-09-27.md)
 - [Retrieval-stage profile: preregistration](retrieval-stage-profile-protocol-2026-09-29.md)
 - [Retrieval-stage profile: observed bottleneck](retrieval-stage-profile-results-2026-09-29.md)
@@ -185,19 +185,19 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - [Semantic cache optimization: frozen correctness and resource gates](semantic-cache-optimization-protocol-2026-09-29.md)
 - [Semantic cache reuse: correctness and measured resource experiment](semantic-cache-optimization-results-2026-09-29.md)
 - [Session identity failure accounting — 2026-09-28](session-failure-accounting-2026-09-28.md)
-- [Exact source handoff and fresh-session recall: native result](source-handoff-fresh-session-2026-09-29.md) — one synthetic development case passed its bounded write → fresh-session recall gates on 2026-09-29. This is no
-- [Exact source handoff and fresh-session recall protocol](source-handoff-fresh-session-protocol-2026-09-29.md) — preregistered development acceptance before native execution. Baseline `692d9a1` plus the source-handoff code/
+- [Exact source handoff and fresh-session recall: native result](source-handoff-fresh-session-2026-09-29.md) — one synthetic development case passed its bounded write → fresh-session recall gates on 2026-09-29
+- [Exact source handoff and fresh-session recall protocol](source-handoff-fresh-session-protocol-2026-09-29.md) — preregistered development acceptance before native execution
 - [Source-section window screen — 2026-09-28](source-section-window-2026-09-28.md)
 - [SQLite ranker after governance: frozen development screen](sqlite-eligible-ranker-protocol-2026-09-29.md)
-- [SQLite ranker after governance: managed Curator development result](sqlite-eligible-ranker-results-2026-09-29.md) — frozen development screens passed; not a production default**. This follows the [prewritten protocol](sqlite-e
+- [SQLite ranker after governance: managed Curator development result](sqlite-eligible-ranker-results-2026-09-29.md) — frozen development screens passed; not a production default
 - [Index eligibility: graph links and small real vault](sqlite-graph-small-vault-protocol-2026-09-29.md)
-- [SQLite eligible ranker: graph parity and small-vault cost](sqlite-graph-small-vault-results-2026-09-29.md) — graph parity passed; no automatic small-vault indexing**. The [protocol](sqlite-graph-small-vault-protocol-202
+- [SQLite eligible ranker: graph parity and small-vault cost](sqlite-graph-small-vault-results-2026-09-29.md) — graph parity passed; no automatic small-vault indexing
 - [SQLite lane inside managed Curator recall: frozen screen](sqlite-managed-recall-protocol-2026-09-29.md)
 - [SQLite inside managed Curator recall: stopped at first parity failure](sqlite-managed-recall-screen-2026-09-29.md)
 - [SQLite mutation parity: frozen development screen](sqlite-mutation-parity-protocol-2026-09-29.md)
-- [SQLite mutation parity: development result](sqlite-mutation-parity-results-2026-09-29.md) — synthetic mutation screen passed; no product integration**. The [frozen protocol](sqlite-mutation-parity-proto
+- [SQLite mutation parity: development result](sqlite-mutation-parity-results-2026-09-29.md) — synthetic mutation screen passed; no product integration
 - [SQLite postings prototype: frozen development screen](sqlite-postings-prototype-protocol-2026-09-29.md)
-- [SQLite postings prototype: development result](sqlite-postings-prototype-results-2026-09-29.md) — promising storage prototype; no production change**. This follows the [frozen protocol](sqlite-postings-protot
+- [SQLite postings prototype: development result](sqlite-postings-prototype-results-2026-09-29.md) — promising storage prototype; no production change
 - [Structured Lead citation pilot — 2026-09-28](structured-citation-pilot-2026-09-28.md)
 - [Three-arm native retrieval: first full diagnostic](three-arm-native-full1-2026-09-28.md)
 - [Three-arm native retrieval diagnostic: frozen design before execution](three-arm-native-retrieval-protocol-2026-09-28.md)

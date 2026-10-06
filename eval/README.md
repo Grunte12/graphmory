@@ -7,7 +7,7 @@ Fixtures, queries, labels and recorded results used by `npm run eval` and by the
 | `adaptive-graph/` | Synthetic vault and queries for the experimental bounded graph retrieval loop |
 | `bm25f-optimization/` | Paired warm-run timing results for the BM25F optimization |
 | `competitor-pilot/` | Comparison pilot with Basic Memory; has its own README |
-| `curator/` | Candidate Memory Patch writers for the patch-quality evaluation |
+| `curator/` | Scenarios and the A/B/C strategy candidates for `npm run eval:curator` |
 | `fixtures/` | Small synthetic notes used by tests and evaluations |
 | `future-task/` | Scenarios and candidates for the future-task evaluation |
 | `graph-hard/` | Hard graph challenge v1; has its own README |

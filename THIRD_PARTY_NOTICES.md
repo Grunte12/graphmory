@@ -73,9 +73,9 @@ The README diagrams (`docs/assets/source/`) use icons from [Lucide](https://luci
 
 ## Evaluation datasets
 
-Files under `eval/` and `docs/evaluation/` may contain excerpts, labels or summaries derived from public benchmarks. They are research artifacts and are not covered by this repository's MIT license; follow each source's license.
+Some files under `eval/` and `docs/evaluation/` contain excerpts, labels or summaries derived from public benchmarks. That derived content is not covered by this repository's MIT license; follow each source's license. Original synthetic fixtures and code remain MIT.
 
 - LoCoMo ([snap-research/locomo](https://github.com/snap-research/locomo)): CC BY-NC 4.0. Derived files under `eval/reader-pilot/` and `eval/locomo/` are for non-commercial use only.
 - LongMemEval ([xiaowu0162/LongMemEval](https://github.com/xiaowu0162/LongMemEval)): MIT license per the dataset card.
 - BEIR ([beir-cellar/beir](https://github.com/beir-cellar/beir)): each dataset keeps its own license.
-- RAGTruth: only a public manifest is stored in `eval/ragtruth-support-pilot/`. Redistribution rights for its source corpora are unverified, so source-containing records are not committed.
+- RAGTruth: `eval/ragtruth-support-pilot/` holds a public manifest, scores and an error audit, with no source text. Redistribution rights for its source corpora are unverified, so source-containing records are not committed.

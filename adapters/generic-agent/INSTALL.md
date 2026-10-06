@@ -83,7 +83,7 @@ Ask `Download the local meaning model now (about 130 MB, once)?` Choices: `Yes, 
 
    Use `claude` or `cursor` in place of `codex` where appropriate; Cursor also requires `--model <supported-cheap-model-id>`. For OpenCode use `node scripts/install.mjs --target "<agent-config-root>"` and its adapter. See `docs/guides/agent-hosts.md`.
 
-7. Connect the MCP server. Register `graphmory-mcp` in the host's MCP configuration with `GRAPHMORY_VAULT` set to the chosen vault path, using the snippet for the user's host in [MCP host configuration](../../docs/guides/mcp-hosts.md). Then run `graphmory doctor` and confirm it reports `mcp tools: recall · read · remember`. The tools are `recall`, `read` and `remember`; the CLI remains available when a host cannot run an MCP server.
+7. Connect the MCP server. Register `graphmory-mcp` in the host's MCP configuration with `GRAPHMORY_VAULT` set to the chosen vault path, using the snippet for the user's host in [MCP host configuration](../../docs/guides/mcp-hosts.md). Run `graphmory doctor` to confirm the server starts (`mcp tools: recall · read · remember`), then restart the host and confirm the agent lists the Graphmory `recall`, `read` and `remember` tools, or ask it to run one `recall`. The tools are `recall`, `read` and `remember`; the CLI remains available when a host cannot run an MCP server.
 
 8. Add this boundary to the user's main agent instructions:
 

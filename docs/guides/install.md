@@ -38,7 +38,7 @@ To verify the CLI works after install:
 ```sh
 node "<target>/bin/graphmory.mjs" doctor --json
 # or, after adding <target>/bin/ to PATH:
-graphmory.mjs doctor --json
+graphmory doctor --json
 ```
 
 Use `--check` to preview what would change during an upgrade:
@@ -99,7 +99,7 @@ After the installer has copied the skill, CLI, and src modules to `<target>`, ap
 
 5. **Verify the CLI works from the installed location:**
    ```sh
-   node <target>/bin/graphmory.mjs doctor --json
+   node <target>/bin/graphmory doctor --json
    ```
 
 6. **Pin a supported inexpensive Curator model and verify an actual child.**

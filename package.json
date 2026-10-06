@@ -70,6 +70,8 @@
     "docs/guides/hybrid-summary.md",
     "scripts/graphmory-mcp.mjs",
     "docs/glossary.md",
+    "docs/evaluation/live-model-results.md",
+    "docs/guides/demo-workflow.md",
     "docs/guides/mcp-recall.md",
     "docs/guides/mcp-remember.md",
     "docs/assets/graphmory-banner.png",

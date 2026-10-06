@@ -4,7 +4,7 @@ Run `graphmory config` in a terminal to select one of four workflows. All remain
 
 | Workflow | Evidence judge | Lead agent role |
 | --- | --- | --- |
-| Curator | Luna, Haiku, or another host sub-agent judges local BM25F results | Authors Memory Patches; receives a curator Brain Brief |
+| Curator | Luna (see the [glossary](../glossary.md)), Haiku, or another host sub-agent judges local BM25F results | Authors Memory Patches; receives a curator Brain Brief |
 | Hosted Jev | TypeSafe Jev judges retrieved candidates; requires separate API access and explicit opt-in before sending vault excerpts | Reads selected evidence, answers, and authors Memory Patches |
 | Local decision | A local server implementing the TypeSafe System One HTTP request/response shape judges candidates | Reads selected evidence, answers, and authors Memory Patches |
 | Local rerank | A local `/v1/rerank` server reorders retrieved candidates; raw rank scores are not decision probabilities | Reviews the ranked evidence and decides whether it answers the question |

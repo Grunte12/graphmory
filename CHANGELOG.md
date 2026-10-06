@@ -12,16 +12,12 @@ This project follows a lightweight changelog format inspired by Keep a Changelog
 - One Curator stop rule for MCP and CLI replaces the contradictory "page once more" text: keep paging while a page had a relevant item, stop at the first page with none (`nothing-relevant-left`), budget of 8 pages / 80 candidates. MCP `recall` now returns its `page` number and, at the budget, `budgetReached: true` with no `nextCursor`; the server enforces only the budget. New `npm run eval:deep-paging` (synthetic vault, oracle relevance, in `npm run eval`) shows needed notes ranked below page 1 are reached, the shallow and no-evidence cases stop early, and the budget cuts at 8 pages.
 - `remember` now checks for overlapping active notes itself (title about the claim's subject plus strong wording overlap; no provider call) and returns `TENSION` with `conflictingNotes: [{path, hash}]` unless `curation.reviewedConflicts` maps each to its current hash. Previously it trusted the host's `conflictsReviewed` flag alone. Probe on the bundled eval vault: 0 of 54 first-line claims flagged another note; the small self-referential demo workspace flags 1 of 6.
 - New explicit `graphmory semantic-warmup` downloads the local meaning model once (about 130 MB) so the first recall does not wait; guided setup asks first and doctor warns if the dependency or model is missing. `graphmory config` now states that a legacy config is keyword-only and keeps it that way unless the user types `hybrid`.
-- New `docs/guides/mcp-hosts.md` with MCP config for the hosts in the launch film, with links to vendor docs where they exist. README Quick Start and launch-film link added.
+- New `docs/guides/mcp-hosts.md` with MCP config for common MCP hosts, with links to vendor docs where they exist. README Quick Start and launch-film link added.
 - README rewritten: shorter, structured around what Graphmory does, how it works, Quick Start and the three tools. Two new diagrams (`docs/assets/graphmory-architecture.png` for the whole system, `graphmory-engine.png` for how recall and remember work) replace the old architecture SVG and HTML. Detailed material moved, not removed: `docs/guides/cli-reference.md`, `mcp-http.md`, `memory-contracts.md` and `docs/research/positioning.md`. Corrected two outdated statements: the default retriever is hybrid (keyword + meaning + links), and a Brain Brief is not capped at seven items.
 
-### Changed
+### Removed
 
-- Removed the legacy `memory-patch-harness` and `mph` commands. Use `graphmory`. Vault metadata under `.memory-patch-harness/` is still read.
-- Renamed the product, GitHub repository, npm package, and primary CLI command to Graphmory. Existing vault metadata paths stay readable.
-- Added curator, hosted decision-engine (Jev) and local decision workflows with compact managed retrieval. Decision-engine and local evidence goes directly to the lead agent without a curator sub-agent.
-- Added an optional hosted decision route through Vercel AI Gateway, a local reranker workflow with distinct raw rank scores, and a managed retrieval eval runner. Benchmarked the local vault without writing notes; see `docs/evaluation/managed-modes-2026-09-23.md`.
-- Fixed graph expansion for section-ranked notes, switched managed recall to a measured two-lane sparse default, and cached semantic vectors by note content outside the vault. This earlier sparse-only experiment is superseded by the rc.6 hybrid Curator setup below; independent generalization remains unproven.
+- The legacy `memory-patch-harness` and `mph` commands were removed. Use `graphmory`. Per-vault sync metadata is still stored under `.memory-patch-harness/`.
 
 ## 0.5.0-rc.6 - 2026-10-02
 
@@ -51,6 +47,13 @@ This project follows a lightweight changelog format inspired by Keep a Changelog
 - Correctness repair candidate. Installed acceptance and preserved failures are tracked in repository evaluation reports. The CLI is a cooperative workflow boundary, not native filesystem isolation or an atomic multi-file publication mechanism. Use one fixed state root; other hosts, deliberate root substitution and concurrent state cleanup remain outside this trial's guarantees.
 
 ## 0.5.0-rc.4 - 2026-10-01
+
+### Changed
+
+- Renamed the product, GitHub repository, npm package, and primary CLI command to Graphmory. Per-vault sync metadata stays under `.memory-patch-harness/`.
+- Added curator, hosted decision-engine (Jev) and local decision workflows with compact managed retrieval. Decision-engine and local evidence goes directly to the lead agent without a curator sub-agent.
+- Added an optional hosted decision route through Vercel AI Gateway, a local reranker workflow with distinct raw rank scores, and a managed retrieval eval runner. Benchmarked the local vault without writing notes; see `docs/evaluation/managed-modes-2026-09-23.md`.
+- Fixed graph expansion for section-ranked notes, switched managed recall to a measured two-lane sparse default, and cached semantic vectors by note content outside the vault. This earlier sparse-only experiment is superseded by the rc.6 hybrid Curator setup above; independent generalization remains unproven.
 
 ### Added
 

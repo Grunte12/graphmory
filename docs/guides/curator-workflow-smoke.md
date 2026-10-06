@@ -1,4 +1,4 @@
-# Manual native-host curator smoke
+# Manual curator smoke test on a native host
 
 Use this once after installing Graphmory to verify the host can discover and actually dispatch the named curator, retrieve linked memory, apply a lead-authored patch, and check lifecycle/link state. This is a manual integration check; deterministic CLI tests do not prove native host dispatch.
 

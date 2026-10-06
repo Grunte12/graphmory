@@ -117,6 +117,6 @@ The agent cannot approve its own low-confidence memory; there is no MCP tool for
 
 ## Project
 
-[MIT license](LICENSE) · [Changelog](CHANGELOG.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md) · [Support](SUPPORT.md) · [Contributing](CONTRIBUTING.md) · [Citation](CITATION.cff) · [Third-party notices](THIRD_PARTY_NOTICES.md)
+[MIT license](LICENSE) · [Changelog](CHANGELOG.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md) · [Support](SUPPORT.md) · [Contributing](CONTRIBUTING.md) · [All docs](docs/README.md) · [Citation](CITATION.cff) · [Third-party notices](THIRD_PARTY_NOTICES.md)
 
 Graphmory was previously called memory patch harness. Per-vault sync metadata is still stored under `.memory-patch-harness/`.

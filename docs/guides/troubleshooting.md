@@ -1,4 +1,4 @@
-# Troubleshooting and Agent Recovery
+# Troubleshooting and agent recovery
 
 Start with the doctor command instead of guessing:
 
@@ -50,6 +50,20 @@ Do not delete a vault, `.git`, `.obsidian`, sync config, migration record, or br
 | `may be running` | Restructure lock exists | Check for another process; remove a stale lock only after confirming no operation is active |
 | `state has drifted` | Files changed after migration record was created | Stop automatic rollback; compare the record, Git diff, and current notes manually |
 
+## MCP server
+
+| Symptom or code | Cause | Recovery |
+|---|---|---|
+| The host does not list `recall`, `read` and `remember` | The server is not registered, the host was not restarted, or `graphmory-mcp` is not on its PATH | Add the snippet from [MCP host configuration](mcp-hosts.md), restart the host, and run `graphmory doctor`; it should report `mcp tools: recall · read · remember` |
+| `VAULT_REQUIRED` | The server started without a vault | Set `GRAPHMORY_VAULT` (or pass `--vault`) in the server's environment |
+| `STALE_CURSOR` or `INVALID_CURSOR` | The vault changed, the server restarted, or the cursor was edited | Call `recall` again from the start; keep the same query and scope while paging |
+| `STALE_SOURCE` | The hash passed to `read` no longer matches the note | Call `recall` again to get the current hash, then re-read the note |
+| `SECTION_NOT_FOUND` | `section` is not the exact heading text of the note | Use the heading text returned by `recall`, or omit `section` to read the whole note |
+| `PATH_ESCAPE` | The path points outside the vault | Use a vault-relative path |
+| `CURATION_PENDING` | A guarded write is unfinished and blocks recall and read | Finish or review the pending operation as described in [guarded writes](mcp-remember.md); do not bypass it |
+| `SEMANTIC_UNAVAILABLE` | Hybrid retrieval is configured but the local meaning model or dependency is missing | Install the optional `@huggingface/transformers` dependency (`npm install`), then run `graphmory semantic-warmup`; hybrid does not silently fall back to keyword search |
+| `doctor` warns that the MCP SDK is missing | A copy without `node_modules` | Run `npm ci` in the checkout, or install the package globally |
+
 ## Platform Notes
 
 ### Windows
@@ -65,7 +79,7 @@ Do not delete a vault, `.git`, `.obsidian`, sync config, migration record, or br
 
 ### Linux
 
-- Use a user-owned vault path; avoid running the harness as root.
+- Use a user-owned vault path; avoid running Graphmory as root.
 - Confirm filesystem case sensitivity when moving notes whose names differ only by letter case.
 
 ## Safe Escalation Report
@@ -138,7 +152,7 @@ Do not attach note contents, credentials, full environment dumps, remote URLs co
 | Wrong GitHub account or repository | Stop sync; confirm account, repo visibility, and remote URL before changing `origin` |
 | Repo accidentally public | Make it private immediately through trusted GitHub controls, rotate any exposed secrets, then audit history |
 | Secret scan may be a false positive | Inspect only the named file locally; never bypass globally without user review |
-| Lock remains after a crash | Confirm no harness/agent process is active and inspect migration state before removing only that lock |
+| Lock remains after a crash | Confirm no Graphmory or agent process is active and inspect migration state before removing only that lock |
 | Case/Unicode/path-length failure | Move a small reviewed sample to portable names; do not bulk rename |
 | Cloud-sync/antivirus file lock | Pause the conflicting tool or move to a normal local working copy; preserve the original |
 | Unknown or contradictory state | Stop automation and produce the escalation report below |
@@ -158,7 +172,7 @@ Never choose the fastest recovery merely to make the command pass. Preserve user
 
 ### 6. Continue without optional services
 
-If GitHub CLI, network access, or a provider is unavailable, the harness can remain local:
+If GitHub CLI, network access, or a provider is unavailable, Graphmory can remain local:
 
 - continue using Markdown/Obsidian memory locally,
 - postpone `pull` and `push`,

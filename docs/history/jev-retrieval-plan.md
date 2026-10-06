@@ -1,6 +1,6 @@
 # Jev-assisted retrieval plan
 
-This is the earlier retrieval experiment plan. The [Jev curator-replacement design](jev-replaces-curator.md) defines the current target workflow. Hosted Jev retrieval has since been implemented; the experiment and full evidence contract remain open.
+This is the earlier retrieval experiment plan. The [Jev curator-replacement design](../design/jev-replaces-curator.md) defines the current target workflow. Hosted Jev retrieval has since been implemented; the experiment and full evidence contract remain open.
 
 ## Current shape
 

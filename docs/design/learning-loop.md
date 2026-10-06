@@ -1,4 +1,4 @@
-# Learning Loop
+# Learning loop
 
 Graphmory treats durable memory as the result of a verified loop, not a running diary.
 

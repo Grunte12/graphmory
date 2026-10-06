@@ -91,7 +91,7 @@ Graphmory ships `graphmory-mcp`, a Model Context Protocol server. Set `GRAPHMORY
 - `read(path, section?, hash?)` returns the original note or one section; a stale hash is refused.
 - `remember(claim, scope, evidence, curation?)` is a guarded write that returns `APPLIED`, `TENSION` or `BLOCKED`.
 
-Use the CLI only when the host cannot run an MCP server. See `docs/guides/mcp-recall.md` and `docs/guides/mcp-remember.md`.
+Read the MCP resources `graphmory://guide/recall` and `graphmory://guide/remember` before citing or writing. Use the CLI only when the host cannot run an MCP server. See `docs/guides/mcp-recall.md` and `docs/guides/mcp-remember.md`.
 
 ## Memory Roles
 
@@ -221,9 +221,10 @@ Do not push after every remembered item. Batch memory sync when it keeps the bra
 - Push at session end after verified durable Memory Patches.
 - Push before switching accounts, machines, or agent runtimes.
 
-Use `sync-plan --json` before deciding whether to hold, pull first, request conflict review, or ask the user to approve a push. The command is advisory and must never be treated as push approval.
 - Push after 3-7 small APPLIED patches or one high-value/risky patch.
 - Push before any restructure, conflict resolution, or long multi-session handoff.
+
+Use `sync-plan --json` before deciding whether to hold, pull first, request conflict review, or ask the user to approve a push. The command is advisory and must never be treated as push approval.
 - Do not push raw inbox/clipping noise, partial notes, unresolved conflicts, or unverified facts.
 - If local commits are `local-ahead`, it is safe to keep working locally until one of the thresholds above is reached.
 
