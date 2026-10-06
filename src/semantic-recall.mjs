@@ -7,7 +7,7 @@ import { filterByScope, loadVaultDocuments } from "./memory-recall.mjs"
 import { writeJsonAtomic } from "./atomic-write.mjs"
 import { persistentIndexLocation } from "./index-capability.mjs"
 
-const DEFAULT_MODEL = "Xenova/bge-small-en-v1.5"
+export const DEFAULT_MODEL = "Xenova/bge-small-en-v1.5"
 const PIPELINES = new Map()
 
 export async function recallVaultSemantic(vault, query, {
@@ -203,6 +203,13 @@ async function loadEmbeddingPipeline(model, modelCache) {
     return transformers.pipeline("feature-extraction", model, { dtype: "fp32" })
   })())
   try { return await PIPELINES.get(key) } catch (error) { PIPELINES.delete(key); throw error }
+}
+
+/** Load the embedding model once so the first recall does not wait on a download. Explicit action only. */
+export async function warmSemanticModel({ model = DEFAULT_MODEL, modelCache = "" } = {}) {
+  const embed = await loadEmbeddingPipeline(model, modelCache)
+  await embed("warm up", { pooling: "mean", normalize: true })
+  return { model, cache: modelCache || path.join(os.homedir(), ".cache", "graphmory", "semantic") }
 }
 
 export async function cachedDocumentVectors(documents, embed, {

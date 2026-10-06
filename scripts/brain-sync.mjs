@@ -26,6 +26,7 @@ import {
   validateRestructureManifest,
   verifyRestructureRecord,
 } from "../src/brain-sync.mjs"
+import { curatorModelCheck, mcpToolsCheck, semanticBackendCheck, doctorSummaryLines } from "../src/doctor-checks.mjs"
 import { summarizeNoteGraph } from "../src/graph-navigation.mjs"
 import { loadVaultDocuments, recallVault, recallVaultLoop } from "../src/memory-recall.mjs"
 import { recallVaultSemantic } from "../src/semantic-recall.mjs"
@@ -208,6 +209,45 @@ function readPatchFile() {
   return patch
 }
 
+// Owner-only review of memory the agent was not confident about. There is deliberately no MCP route to approve.
+async function reviewCommand() {
+  const queue = await import("../src/review-queue.mjs")
+  const action = rest[0]
+  const reviewId = rest[1]?.startsWith("--") ? undefined : rest[1]
+  const common = { vault: requireVault(), stateRoot: option("--state-root") }
+  const json = flag("--json")
+  const need = () => { if (!reviewId) throw new Error(`INVALID_REVIEW_ID: review ${action} requires a review id (see 'review list')`); return reviewId }
+  if (action === "list") {
+    const items = queue.listReviews(common)
+    if (json) console.log(JSON.stringify(items))
+    else if (!items.length) console.log("No memory is waiting for review.")
+    else for (const item of items) console.log(`${item.reviewId}  ${item.createdAt}  ${item.confidence}  ${item.target}\n  ${item.claim}`)
+  } else if (action === "show") {
+    const item = queue.showReview(common, need())
+    if (json) console.log(JSON.stringify(item))
+    else {
+      const { patch, target } = item.request.curation
+      console.log(`${item.reviewId} (${item.status}, ${item.confidence} confidence)\nClaim: ${item.claim}\nWhy it matters: ${patch.why_it_matters}\nApplies: ${patch.scope.applies.join("; ")}\nExcludes: ${patch.scope.excludes.join("; ") || "-"}\nTarget: ${target}`)
+      for (const entry of item.request.evidence) console.log(`Evidence: ${entry.path ? `${entry.path} (${entry.hash})` : `quote "${entry.quote}"`}`)
+    }
+  } else if (action === "reject") {
+    console.log(JSON.stringify(queue.rejectReview(common, need())))
+  } else if (action === "approve") {
+    const id = need()
+    // Approval must come from a person at a terminal: an agent shell has no TTY and cannot answer.
+    if (!process.stdin.isTTY || !process.stdout.isTTY) throw new Error("OWNER_APPROVAL_REQUIRED: run 'graphmory review approve' yourself in an interactive terminal")
+    queue.showReview(common, id)
+    const rl = createInterface({ input: process.stdin, output: process.stdout })
+    const answer = await rl.question(`Approve ${id} and write it to the vault? Type the review id to confirm: `)
+    rl.close()
+    if (answer.trim() !== id) throw new Error("APPROVAL_CANCELLED: nothing was written")
+    const { createMemoryEngine } = await import("../src/mcp-engine.mjs")
+    const result = await queue.approveReview({ ...common, reviewId: id, engine: createMemoryEngine({ vault: common.vault, stateRoot: common.stateRoot, config: loadRuntimeConfig() }) })
+    console.log(JSON.stringify(result))
+    if (result.status !== "APPLIED") process.exitCode = 1
+  } else throw new Error("review requires list|show|approve|reject")
+}
+
 async function curationCheckpointCommand() {
   const api = await import("../src/curation-checkpoint.mjs")
   const action = rest[0]
@@ -257,6 +297,7 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs graph-audit --vault <path> [--scope <path>] [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-loop --vault <path> --query <text> [--scope <path>] [--k 3] [--include-navigation] [--rerank] [--agent|--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-semantic --vault <path> --query <text> [--scope <path>] [--model Xenova/bge-small-en-v1.5] [--k 3] [--json]\n`)
+  out.write(`  node scripts/brain-sync.mjs semantic-warmup [--model Xenova/bge-small-en-v1.5] [--model-cache <path>] (one-time local meaning-model download; run only with the user's consent)\n`)
   out.write(`  node scripts/brain-sync.mjs recall-rerank --vault <path> --query <text> [--method bm25f-sections] [--k 3] [--scope <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs config [show] [--config <path>] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs recall-managed --vault <path> --query <text> [--scope <path>] [--k N] [--offset N] [--retrieval-mode hybrid|lexical] [--auto|--bundle] [--matched-previews|--coverage-previews with --auto] [--bundle-budget BYTES] [--evidence-preview] [--include-superseded] [--semantic-expansion] [--model-cache <path>] [--index-cache <directory>] [--agent|--json] (curator: adaptive or byte-budgeted evidence; decision: 3 results)\n`)
@@ -269,6 +310,8 @@ function usage(exitCode = 0) {
   out.write(`  node scripts/brain-sync.mjs curation-checkpoint status --vault <path> [--state-root <outside-directory>]\n`)
   out.write(`  node scripts/brain-sync.mjs curation-checkpoint finish --vault <path> --operation <id> --input <patch.json> --note <relative.md>\n`)
   out.write(`  node scripts/brain-sync.mjs curation-checkpoint restore --vault <path> --operation <id> --expected '<JSON current target hashes>' --approve [--review-lock <reviewed dead-owner SHA256>]\n`)
+  out.write(`  node scripts/brain-sync.mjs review list|show <id>|reject <id> --vault <path> [--json] (memory waiting for owner review)\n`)
+  out.write(`  node scripts/brain-sync.mjs review approve <id> --vault <path> (owner only: interactive terminal, confirms by typing the id)\n`)
   out.write(`  node scripts/brain-sync.mjs curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]\n`)
   out.write(`  node scripts/brain-sync.mjs lifecycle-audit --vault <path> [--json] [--out <file>]\n`)
   out.write(`  node scripts/brain-sync.mjs init --vault <path> --repo <owner/repo> [--create-remote]\n`)
@@ -576,7 +619,7 @@ function detect() {
   }
 }
 
-function doctor() {
+async function doctor() {
   const vaultOption = option("--vault") || process.env.OBSIDIAN_VAULT
   const vault = vaultOption ? path.resolve(vaultOption) : null
   const requireGithub = flag("--require-github")
@@ -662,6 +705,10 @@ function doctor() {
     }
   }
 
+  checks.push(curatorModelCheck())
+  checks.push(await mcpToolsCheck())
+  checks.push(semanticBackendCheck())
+
   const failedRequired = checks.filter((check) => check.required && check.status === "fail")
   const report = {
     ok: failedRequired.length === 0,
@@ -674,6 +721,8 @@ function doctor() {
   if (json) console.log(JSON.stringify(report, null, 2))
   else {
     console.log(`Graphmory doctor: ${report.ok ? "PASS" : "FAIL"}`)
+    for (const line of doctorSummaryLines(checks)) console.log(line)
+    console.log("")
     for (const check of checks) {
       console.log(`- [${check.status.toUpperCase()}] ${check.id}: ${check.detail}`)
       if (check.fix) console.log(`  Fix: ${check.fix}`)
@@ -976,7 +1025,8 @@ async function configureRuntime() {
       config.curator.provider = await ask("Curator provider (openai/anthropic/google/other)", config.curator.provider)
       config.curator.model = await ask("Curator model in your agent host", config.curator.model)
       console.log("Hybrid combines keyword, local BGE embeddings and note links. It needs @huggingface/transformers and a first model download; no vector server or embedding API is required.")
-      config.retrievalMode = await ask("Retrieval (hybrid recommended; lexical diagnostics)", "hybrid")
+      if (config.retrievalMode === undefined) console.log("This is a legacy configuration: keyword search only. Type hybrid to add meaning search (nothing changes unless you do).")
+      config.retrievalMode = await ask("Retrieval (hybrid recommended; lexical diagnostics)", config.retrievalMode ?? "lexical")
       if (!["hybrid", "lexical"].includes(config.retrievalMode)) throw new Error("Choose hybrid or lexical")
     }
     if (config.workflow === "hosted-jev") {
@@ -1027,6 +1077,16 @@ async function configureRuntime() {
   } finally {
     input.close()
   }
+}
+
+// Explicit, user-run download of the local meaning model (about 130 MB, once). Nothing else triggers it.
+async function semanticWarmup() {
+  const { warmSemanticModel, DEFAULT_MODEL } = await import("../src/semantic-recall.mjs")
+  const model = option("--model", DEFAULT_MODEL)
+  const modelCache = option("--model-cache", "")
+  console.log(`Loading ${model} (downloads about 130 MB on the first run, then works offline)...`)
+  const result = await warmSemanticModel({ model, modelCache })
+  console.log(JSON.stringify({ status: "READY", ...result }))
 }
 
 async function recallManaged(ensureCurrent) {
@@ -2176,7 +2236,7 @@ try {
   if (command === "adoption-plan") adoptionPlan()
   else if (command === "bootstrap") bootstrap()
   else if (command === "detect") detect()
-  else if (command === "doctor") doctor()
+  else if (command === "doctor") await doctor()
   else if (command === "health") health()
   else if (command === "recall") await runGuardedContentRoute(command, async () => recall())
   else if (command === "recall-loop") await runGuardedContentRoute(command, async () => recallLoop())
@@ -2226,6 +2286,8 @@ try {
   else if (command === "verify-patch-persistence") verifyPatchPersistenceCommand()
   else if (command === "render-patch") await renderPatchCommand()
   else if (command === "curation-checkpoint") await curationCheckpointCommand()
+  else if (command === "review") await reviewCommand()
+  else if (command === "semantic-warmup") await semanticWarmup()
   else if (command === "config") await configureRuntime()
   else if (command === "recall-rerank") await runGuardedContentRoute(command, async () => recallRerank())
   else if (command === "recall-semantic") await runGuardedContentRoute(command, async ({ ensureCurrent }) => recallSemantic(ensureCurrent))

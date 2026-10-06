@@ -100,6 +100,16 @@ function resolveState(vaultRoot, requestedRoot, { create = true } = {}) {
   return { vaultRoot, stateRoot, vaultDir, operationsDir: path.join(vaultDir, "operations"), exists: Boolean(vaultDirStat) }
 }
 
+/**
+ * Private per-vault location for sibling state (such as the review queue). It sits beside, not inside,
+ * the checkpoint directory so that checkpoint inspection never sees it. Outside the vault and the checkout.
+ */
+export function privateVaultStateLocation({ vault, stateRoot, create = true } = {}) {
+  const vaultRoot = resolveVault(vault)
+  const context = resolveState(vaultRoot, stateRoot, { create })
+  return { stateRoot: context.stateRoot, vaultKey: sha256(vaultRoot) }
+}
+
 function relativeMarkdownPath(value, label) {
   const normalized = safeMigrationPath(value, label)
   if (normalized !== value || normalized.includes("\\") || !normalized.endsWith(".md")) {

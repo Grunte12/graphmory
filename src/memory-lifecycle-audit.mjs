@@ -78,7 +78,13 @@ function auditDocumentWithMarkers(document, now, historicalMarkers) {
     findings.push(finding("medium", "revalidation-due", document, `revalidate_when ${revalidateWhen.toISOString().slice(0, 10)} is due.`, "Refresh evidence or mark the memory stale/tension if it cannot be verified."))
   }
 
-  if (EXPIRED_STATUSES.has(status) && !hasReplacement) {
+  const changedSources = document.summaryFreshness?.changedSources ?? []
+  if (changedSources.length) {
+    findings.push(finding("medium", "summary-source-changed", document, `Summary is stale because its sources changed: ${changedSources.join(", ")}.`, "Recheck the summary against the current sources, then refresh it through the approved patch workflow or retire it."))
+  }
+
+  // A summary marked stale only because of its sources has no authored status to replace.
+  if (EXPIRED_STATUSES.has(status) && !hasReplacement && !document.summaryFreshness) {
     findings.push(finding("medium", "obsolete-without-replacement", document, `Lifecycle is ${status} but no replacement/supersession marker was found.`, "Add replaced_by, superseded_by, or a short replacement note so future agents do not resurrect stale context."))
   }
 
@@ -268,6 +274,8 @@ function summarizeLifecycleActions(findings) {
       actions.push({ ...base, action: "revalidate", type: "invalid-valid-until", target: "valid_until" })
     } else if (item.kind === "revalidation-due") {
       actions.push({ ...base, action: "revalidate", type: "revalidation-due", target: "revalidate_when" })
+    } else if (item.kind === "summary-source-changed") {
+      actions.push({ ...base, action: "recheck-summary", type: "summary-source-changed", target: "summary_sources" })
     } else if (item.kind === "obsolete-without-replacement") {
       actions.push({ ...base, action: "add-replacement-marker", type: "obsolete-without-replacement", target: "supersedes/superseded_by" })
     } else if (item.kind === "active-note-has-stale-language") {

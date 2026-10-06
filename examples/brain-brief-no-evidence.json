@@ -1,0 +1,12 @@
+{
+  "outcome": "no-evidence",
+  "stop_reason": "nothing-relevant-left",
+  "pages_read": 1,
+  "relevant_memory": [],
+  "constraints": [],
+  "watchouts": [
+    "No supporting note. Say so; do not guess."
+  ],
+  "note_paths": [],
+  "direct_read_paths": []
+}

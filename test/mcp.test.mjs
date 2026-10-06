@@ -27,10 +27,10 @@ function fixture(t, count = 16) {
   return { root, vault, stateRoot, config, engine: createMemoryEngine({ vault, stateRoot, config }) }
 }
 function input(target = "Decision.md", supersedes = []) {
-  const claim = "Production releases require an independent approver."
-  const scope = { applies: ["production releases"], excludes: ["development deployments"] }
-  const quote = "Owner approved independent production release review."
-  const patch = { claim, why_it_matters: "Independent review preserves release safety.", scope, provenance: [{ kind: "user-statement", value: quote }],
+  const claim = "Hotfix deployments need a named incident commander on call."
+  const scope = { applies: ["hotfix deployments"], excludes: ["scheduled deployments"] }
+  const quote = "Owner approved a named incident commander for hotfix deployments."
+  const patch = { claim, why_it_matters: "A named commander keeps hotfix response accountable.", scope, provenance: [{ kind: "user-statement", value: quote }],
     confidence: "high", suggested_type: "decision", lifecycle: { status: "active", revalidate_when: ["release process changes"], supersedes } }
   return { claim, scope, evidence: [{ quote }], curation: { patch, target, targetHashes: { [target]: null }, supportVerified: true, conflictsReviewed: true, authorized: true } }
 }
@@ -69,6 +69,7 @@ for (const mode of ["memory", "stdio", "http"]) {
     assert.deepEqual(tools.map(t => t.name), ["recall", "read", "remember"])
     for (const tool of tools) {
       assert.ok(!tool.description.includes("\n"))
+      if (tool.name === "remember") for (const outcome of ["APPLIED", "TENSION", "BLOCKED", "receipt"]) assert.match(tool.description, new RegExp(outcome))
       assert.equal(tool.annotations.readOnlyHint, tool.name !== "remember")
       assert.equal(tool.annotations.idempotentHint, tool.name !== "remember")
     }
@@ -275,4 +276,29 @@ test("exact spaced path identifiers survive tool validation", async t => {
   fs.writeFileSync(path.join(f.vault, relative), "# Space\nExact original.\n")
   const original = await call(client, "read", { path: relative })
   assert.equal(original.path, relative); assert.equal(original.markdown, "# Space\nExact original.\n")
+})
+
+test("recall numbers its pages, cuts at the page budget and still rejects a tampered cursor", async t => {
+  const f = fixture(t, 100)
+  const pages = []
+  let cursor
+  do {
+    const page = await f.engine.recall({ query: "release policy", ...(cursor ? { cursor } : {}) })
+    pages.push(page)
+    cursor = page.nextCursor
+  } while (cursor)
+  assert.deepEqual(pages.map(p => p.page), [1, 2, 3, 4, 5, 6, 7, 8])
+  assert.equal(pages.reduce((sum, p) => sum + p.candidates.length, 0), 80)
+  assert.equal(pages.at(-1).budgetReached, true)
+  assert.equal(pages.at(-1).nextCursor, undefined)
+  assert.ok(pages.slice(0, -1).every(p => p.budgetReached === undefined && p.nextCursor))
+  await assert.rejects(f.engine.recall({ query: "release policy", cursor: pages[0].nextCursor + "x" }), e => e.publicCode === "INVALID_CURSOR")
+})
+
+test("a result set inside the budget has no budgetReached flag", async t => {
+  const f = fixture(t, 16)
+  const second = await f.engine.recall({ query: "release policy", cursor: (await f.engine.recall({ query: "release policy" })).nextCursor })
+  assert.equal(second.page, 2)
+  assert.equal(second.budgetReached, undefined)
+  assert.equal(second.nextCursor, undefined)
 })

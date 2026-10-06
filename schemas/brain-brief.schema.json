@@ -12,13 +12,40 @@
     "direct_read_paths"
   ],
   "properties": {
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "answered",
+        "no-evidence",
+        "partial"
+      ],
+      "default": "answered",
+      "description": "no-evidence means recall found nothing that supports an answer; the Lead must say \"no supporting note\" and not guess."
+    },
+    "stop_reason": {
+      "type": "string",
+      "enum": [
+        "nothing-relevant-left",
+        "evidence-sufficient",
+        "budget",
+        "scan-limit"
+      ],
+      "description": "Why the Curator stopped paging."
+    },
+    "pages_read": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Recall pages the Curator read before stopping."
+    },
     "relevant_memory": {
       "type": "array",
-      "minItems": 1,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["summary", "path"],
+        "required": [
+          "summary",
+          "path"
+        ],
         "properties": {
           "summary": {
             "type": "string",
@@ -27,6 +54,11 @@
           "path": {
             "type": "string",
             "minLength": 3
+          },
+          "hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "sha256 of the note as recalled, so the source of each finding can be checked."
           }
         }
       }
@@ -45,7 +77,6 @@
     },
     "note_paths": {
       "type": "array",
-      "minItems": 1,
       "items": {
         "type": "string"
       }
@@ -57,5 +88,42 @@
         "type": "string"
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "no-evidence"
+          }
+        },
+        "required": [
+          "outcome"
+        ]
+      },
+      "then": {
+        "properties": {
+          "relevant_memory": {
+            "maxItems": 0
+          },
+          "note_paths": {
+            "maxItems": 0
+          },
+          "direct_read_paths": {
+            "maxItems": 0
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "relevant_memory": {
+            "minItems": 1
+          },
+          "note_paths": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ]
 }

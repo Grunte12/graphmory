@@ -24,11 +24,15 @@ const schemas = {
     z.object({ path: text, hash: digest }).strict(), z.object({ quote: text }).strict(),
   ])).min(1).max(20), curation: z.object({ patch: patch.optional(), target: text.optional(),
     targetHashes: z.record(z.string(), digest.nullable()).optional(), supportVerified: z.boolean().optional(),
-    conflictsReviewed: z.boolean().optional(), authorized: z.boolean().optional(), conflictPath: text.optional(),
+    conflictsReviewed: z.boolean().optional(), reviewedConflicts: z.record(z.string(), digest).optional(), authorized: z.boolean().optional(), conflictPath: text.optional(),
     stage: z.enum(["prepare", "apply"]).optional(), operation: text.optional(),
   }).strict().optional() }).strict(),
 }
-const descriptions = { recall: "Find cited evidence in project memory.", read: "Open the original sections of recalled notes.", remember: "Save a decision with its evidence." }
+const descriptions = {
+  recall: "Find cited evidence in project memory. No candidates means no supporting note; say so instead of guessing.",
+  read: "Open the original sections of recalled notes.",
+  remember: "Save a decision with its evidence. Returns APPLIED with a receipt hash, TENSION when an active note conflicts (nothing written) or BLOCKED when review is needed (nothing written).",
+}
 const guides = {
   "graphmory://guide/recall": ["Recall and citation", new URL("../docs/guides/mcp-recall.md", import.meta.url)],
   "graphmory://guide/remember": ["Guarded memory writes", new URL("../docs/guides/mcp-remember.md", import.meta.url)],

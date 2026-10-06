@@ -121,16 +121,35 @@ export function validateMemoryPatch(value) {
   return { valid: errors.length === 0, errors }
 }
 
+const BRIEF_OUTCOMES = new Set(["answered", "no-evidence", "partial"])
+const BRIEF_STOP_REASONS = new Set(["nothing-relevant-left", "evidence-sufficient", "budget", "scan-limit"])
+const SHA256_HEX = /^[0-9a-f]{64}$/
+
 export function validateBrainBrief(value) {
   const errors = []
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     return { valid: false, errors: ["brief must be an object"] }
   }
 
+  // `outcome` is optional so briefs written before it existed still validate as "answered".
+  const outcome = value.outcome ?? "answered"
+  if (!BRIEF_OUTCOMES.has(outcome)) {
+    errors.push("outcome must be answered, no-evidence, or partial")
+  }
+  const noEvidence = outcome === "no-evidence"
+  if ("stop_reason" in value && !BRIEF_STOP_REASONS.has(value.stop_reason)) {
+    errors.push("stop_reason must be nothing-relevant-left, evidence-sufficient, budget, or scan-limit")
+  }
+  if ("pages_read" in value && !(Number.isInteger(value.pages_read) && value.pages_read >= 0)) {
+    errors.push("pages_read must be a non-negative integer")
+  }
+
   if (!Array.isArray(value.relevant_memory)) {
     errors.push("relevant_memory must be an array")
   } else {
-    if (value.relevant_memory.length < 1) {
+    if (noEvidence) {
+      if (value.relevant_memory.length > 0) errors.push("relevant_memory must be empty when outcome is no-evidence")
+    } else if (value.relevant_memory.length < 1) {
       errors.push("relevant_memory must contain at least one item")
     }
     value.relevant_memory.forEach((item, index) => {
@@ -140,13 +159,16 @@ export function validateBrainBrief(value) {
       }
       text(item.summary, `relevant_memory[${index}].summary`, errors, 3)
       text(item.path, `relevant_memory[${index}].path`, errors, 3)
+      if ("hash" in item && !(typeof item.hash === "string" && SHA256_HEX.test(item.hash))) {
+        errors.push(`relevant_memory[${index}].hash must be a sha256 hex string`)
+      }
     })
   }
 
   stringArray(value.constraints, "constraints", errors)
   stringArray(value.watchouts, "watchouts", errors)
-  stringArray(value.note_paths, "note_paths", errors, { min: 1 })
-  stringArray(value.direct_read_paths, "direct_read_paths", errors, { max: 3 })
+  stringArray(value.note_paths, "note_paths", errors, { min: noEvidence ? 0 : 1, max: noEvidence ? 0 : Infinity })
+  stringArray(value.direct_read_paths, "direct_read_paths", errors, { max: noEvidence ? 0 : 3 })
 
   return { valid: errors.length === 0, errors }
 }

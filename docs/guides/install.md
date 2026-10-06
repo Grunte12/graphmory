@@ -83,7 +83,7 @@ The memory repo should contain only curated Markdown memory and temporary inbox 
 
 ## OpenCode Adapter
 
-Install the shared `graphmory` CLI with `npm install -g .` first, including its optional embedding dependency. The file-copy installer copies runtime sources and launchers, **not** `node_modules`. Prefer the global `graphmory` command for normal hybrid recall; a copied launcher needs its own resolvable Transformers dependency. Verify hybrid recall as well as `doctor`, which does not prove embeddings are installed. Keep the checkout when the global install is linked to it.
+Install the shared `graphmory` CLI with `npm install -g .` first, including its optional embedding dependency. The file-copy installer copies runtime sources and launchers, **not** `node_modules`. Prefer the global `graphmory` command for normal hybrid recall; a copied launcher needs its own resolvable Transformers dependency. `graphmory doctor` warns when the embedding dependency or the downloaded model is missing; still verify one hybrid recall. Keep the checkout when the global install is linked to it.
 
 After the installer has copied the skill, CLI, and src modules to `<target>`, apply the adapter files under `adapters/opencode/` to your OpenCode runtime:
 

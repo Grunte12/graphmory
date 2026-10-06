@@ -70,3 +70,7 @@ are guidance, not adopted benchmark implementations.
 https://github.com/modelcontextprotocol/typescript-sdk . No SDK code is vendored;
 the npm dependency retains its license notice. `zod` is a direct schema-validation
 dependency under MIT; its license is retained in its installed package.
+
+## Diagram icons
+
+The README diagrams (`docs/assets/source/`) use icons from [Lucide](https://lucide.dev) (ISC license) and from [Simple Icons](https://simpleicons.org) (CC0 1.0). The Obsidian, Git, Claude, Cursor, GitHub Copilot, Gemini and Zed marks belong to their owners and appear only to identify tools that work with Graphmory. They do not imply endorsement.

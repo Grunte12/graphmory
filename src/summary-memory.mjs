@@ -49,12 +49,15 @@ export function applySummaryFreshness(documents) {
     .map((document) => document.id)
     .sort()
   const summaries = summaryPaths.map((summaryPath) => inspectPath(summaryPath, byPath, [], new Map()))
-  const statusByPath = new Map(summaries.map((report) => [report.path, report.status]))
+  const reportByPath = new Map(summaries.map((report) => [report.path, report]))
   const updatedDocuments = normalized.map((document) => {
-    if (statusByPath.get(document.id) !== "stale") return cloneDocument(document)
+    const report = reportByPath.get(document.id)
+    if (report?.status !== "stale") return cloneDocument(document)
     return {
       ...cloneDocument(document),
       metadata: { ...document.metadata, status: "stale" },
+      // Derived, never authored: lets recall and the lifecycle audit say which sources changed.
+      summaryFreshness: changedSourceReport(report),
     }
   })
 
@@ -63,6 +66,16 @@ export function applySummaryFreshness(documents) {
     summaries,
     freshCount: summaries.filter((report) => report.status === "fresh").length,
     staleCount: summaries.filter((report) => report.status === "stale").length,
+  }
+}
+
+const CHANGED_SOURCE_CODES = new Set(["source-changed", "source-missing", "summary-dependency-stale"])
+
+function changedSourceReport(report) {
+  const changed = report.reasons.filter((reason) => CHANGED_SOURCE_CODES.has(reason.code))
+  return {
+    changedSources: [...new Set(changed.map((reason) => reason.path))].sort(compareStrings),
+    reasons: reasonCodes(report.reasons),
   }
 }
 

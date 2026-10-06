@@ -50,6 +50,34 @@ test("accepts more than seven sourced findings without truncating the brief", ()
   assert.equal(validateBrainBrief(expanded).valid, false)
 })
 
+const noEvidenceBrief = JSON.parse(fs.readFileSync(new URL("../examples/brain-brief-no-evidence.json", import.meta.url)))
+
+test("accepts a no-evidence brief with no items and a stop reason", () => {
+  assert.deepEqual(validateBrainBrief(noEvidenceBrief), { valid: true, errors: [] })
+})
+
+test("rejects an answered brief with no items", () => {
+  const result = validateBrainBrief({ ...noEvidenceBrief, outcome: "answered" })
+  assert.equal(result.valid, false)
+  assert.match(result.errors.join("\n"), /relevant_memory must contain at least one item/)
+  assert.equal(validateBrainBrief({ ...noEvidenceBrief, outcome: undefined }).valid, false)
+})
+
+test("rejects a no-evidence brief that still lists notes", () => {
+  const result = validateBrainBrief({ ...noEvidenceBrief, relevant_memory: brief.relevant_memory, note_paths: brief.note_paths })
+  assert.equal(result.valid, false)
+  assert.match(result.errors.join("\n"), /must be empty when outcome is no-evidence/)
+})
+
+test("keeps briefs without outcome valid and checks stop_reason, pages_read and hashes", () => {
+  const { outcome, stop_reason, pages_read, ...legacy } = brief
+  assert.equal(validateBrainBrief({ ...legacy, relevant_memory: [{ summary: "UI ownership rule", path: "a.md" }] }).valid, true)
+  assert.equal(validateBrainBrief({ ...brief, outcome: "maybe" }).valid, false)
+  assert.equal(validateBrainBrief({ ...brief, stop_reason: "bored" }).valid, false)
+  assert.equal(validateBrainBrief({ ...brief, pages_read: -1 }).valid, false)
+  assert.equal(validateBrainBrief({ ...brief, relevant_memory: [{ ...brief.relevant_memory[0], hash: "abc" }] }).valid, false)
+})
+
 test("bounds direct reads to three paths", () => {
   const result = validateBrainBrief({
     ...brief,

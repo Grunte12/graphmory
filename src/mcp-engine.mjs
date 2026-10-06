@@ -10,6 +10,8 @@ import { prepareCurationCheckpoint, finishCurationCheckpoint, verifyCurationWrit
 import { renderPatchRecord } from "./patch-record.mjs"
 import { scanTextForSecrets, safeMigrationPath, assertRealPathInsideVault } from "./brain-sync.mjs"
 import { writeFileAtomic } from "./atomic-write.mjs"
+import { enqueueReview } from "./review-queue.mjs"
+import { findOverlappingNotes } from "./conflict-detection.mjs"
 
 const hash = value => createHash("sha256").update(value).digest("hex")
 const fail = (code, message) => Object.assign(new Error(message), { publicCode: code })
@@ -19,8 +21,26 @@ export function publicError(error) {
     CURATION_PENDING: "Finish or review the pending curation before reading memory.",
     STALE_SOURCE: "Source bytes changed; recall and verify the original again.",
     NEEDS_CURATION: "Supply a complete Memory Patch and reviewed placement in remember.curation.",
+    LOW_CONFIDENCE: "Low-confidence memory waits for the owner. Tell the user to run 'graphmory review list'; do not retry.",
   }[code] || "The operation could not be completed; inspect the configured server state." }
 }
+
+// Summaries dropped from recall because a source changed. Listed so the agent can tell the user;
+// limited to summaries that mention the query so unrelated stale notes do not add noise.
+const RECHECK_LIMIT = 5
+function summariesToRecheck(documents, query) {
+  const terms = [...new Set(query.toLowerCase().match(/[\p{L}\p{N}]{4,}/gu) ?? [])]
+  return documents
+    .filter(d => d.summaryFreshness?.changedSources.length)
+    .filter(d => { const text = `${d.id}\n${d.markdown}`.toLowerCase(); return terms.some(term => text.includes(term)) })
+    .slice(0, RECHECK_LIMIT)
+    .map(d => ({ path: d.id, changedSources: d.summaryFreshness.changedSources }))
+}
+
+// Hard paging budget per query. The server only enforces it; the host Curator still judges relevance
+// and normally stops long before it (see docs/guides/mcp-recall.md for the stop rule).
+export const MAX_RECALL_PAGES = 8
+export const MAX_RECALL_CANDIDATES = 80
 
 // A single engine is shared by all HTTP connections. No host decision/provider calls.
 export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateRoot, recallOptions = {} }) {
@@ -61,7 +81,8 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
     async recall({ query, scope = "", cursor }) {
       return guarded(async () => {
         const index = documents(scope)
-        const page = cursor ? open(cursor) : { offset: 0 }
+        const page = cursor ? open(cursor) : { offset: 0, page: 1 }
+        const pageNumber = page.page ?? 1
         if (cursor && (page.query !== query || page.scope !== scope || page.fingerprint !== index.fingerprint)) throw fail("STALE_CURSOR", "Recall snapshot changed")
         const report = await managedRecall(vault, query, config, { ...recallOptions, stateRoot, scope, offset: page.offset, suppliedDocuments: index.documents })
         if (report.status === "BLOCKED") throw fail(report.code, "Recall blocked")
@@ -75,9 +96,13 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
             hash: source.sha256, lanes: item.lanes ?? report.candidateLanes ?? ["keyword"] }
         })
         if (documents(scope).fingerprint !== index.fingerprint) throw fail("STALE_SOURCE", "Vault changed during recall")
-        return { candidates, scanLimitReached: Boolean(report.scanLimitReached),
+        const recheck = cursor ? [] : summariesToRecheck(index.documents, query)
+        const budgetReached = Boolean(report.hasMore) && (pageNumber >= MAX_RECALL_PAGES || report.nextOffset >= MAX_RECALL_CANDIDATES)
+        return { candidates, page: pageNumber, scanLimitReached: Boolean(report.scanLimitReached),
+          ...(recheck.length ? { recheck } : {}),
           ...(report.status === "abstain" ? { status: "abstain", code: "ABSTAIN_FLOOR" } : {}),
-          ...(report.hasMore ? { nextCursor: seal({ query, scope, fingerprint: index.fingerprint, offset: report.nextOffset }) } : {}) }
+          ...(budgetReached ? { budgetReached: true } : {}),
+          ...(report.hasMore && !budgetReached ? { nextCursor: seal({ query, scope, fingerprint: index.fingerprint, offset: report.nextOffset, page: pageNumber + 1 }) } : {}) }
       })
     },
     async read({ path: relative, section, hash: expected }) {
@@ -101,7 +126,8 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
         return { path: source.path, hash: source.sha256, ...(section ? { section } : {}), authority: "source-data", markdown }
       })
     },
-    async remember(input) {
+    // `options` is never reachable from MCP: the server passes only the validated tool input.
+    async remember(input, options = {}) {
       let operation
       try {
         const { claim, scope, evidence, curation } = input
@@ -120,7 +146,8 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
         const predecessors = patch.lifecycle.supersedes ?? []
         const targets = [target, ...predecessors]
         if (new Set(targets).size !== targets.length) throw fail("INVALID_TARGET", "Duplicate target")
-        if (patch.confidence === "low") throw fail("LOW_CONFIDENCE", "Low-confidence memory needs owner review outside MCP")
+        const lowConfidence = patch.confidence === "low" && !options.ownerApprovedReview
+        if (lowConfidence && curation.operation) throw fail("LOW_CONFIDENCE", "Low-confidence memory needs owner review outside MCP")
         const sources = evidence.filter(e => e.path).map(e => e.path)
         if (new Set(sources).size !== sources.length) throw fail("INVALID_EVIDENCE", "Duplicate source")
         if (curation.operation) {
@@ -150,6 +177,17 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
           }
           // Deterministic placement creates a new canonical note; existing notes are preserved.
           if (fs.existsSync(absolute) && fs.readFileSync(absolute, "utf8") !== record) throw fail("NEEDS_CURATION", "Existing target requires reviewed merge via CLI")
+          // The host attests it reviewed conflicts, but the engine still checks that it looked at every
+          // overlapping active note, by current hash. The host decides; the engine refuses to skip the question.
+          const overlapping = findOverlappingNotes({ documents: documents().documents, patch, exclude: [...targets, ...sources] })
+            .map(({ path: overlap }) => ({ path: overlap, hash: readSourceNotes(vault, [overlap]).sources[0].sha256 }))
+          const unreviewed = overlapping.filter(note => curation.reviewedConflicts?.[note.path] !== note.hash)
+          if (unreviewed.length) return { status: "TENSION", code: "CONFLICT", conflictingNotes: unreviewed,
+            message: "Read these notes. If the change replaces one, list it in lifecycle.supersedes. Then repeat remember with curation.reviewedConflicts mapping each path to its hash." }
+          if (lowConfidence) {
+            const { reviewId } = enqueueReview({ vault, stateRoot, request: input })
+            return { status: "BLOCKED", code: "LOW_CONFIDENCE", step: "owner_review", reviewId, ...publicError(fail("LOW_CONFIDENCE", "")) }
+          }
           const prepared = prepareCurationCheckpoint({ vault, stateRoot, patch, targets, sources })
           operation = prepared.operation
           if (prepared.replayed) return { status: "APPLIED", receipt: compactReceipt(prepared.receipt), replayed: true }
@@ -164,7 +202,7 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
         writeFileAtomic(absolute, record)
         const finished = finishCurationCheckpoint({ vault, stateRoot, operation, patch, notePath: target })
         indexes.clear()
-        return { status: "APPLIED", receipt: compactReceipt(finished.receipt) }
+        return { status: "APPLIED", receipt: { ...compactReceipt(finished.receipt), ...(options.ownerApprovedReview ? { approvedBy: "owner", reviewId: options.ownerApprovedReview } : {}) } }
       } catch (error) { return { status: "BLOCKED", ...publicError(error), ...(operation ? { checkpoint: operation } : {}) } }
     },
   }
