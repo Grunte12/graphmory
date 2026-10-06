@@ -1,17 +1,21 @@
-# Graphmory
+<h1 align="center"><img src="docs/assets/graphmory-banner.png" alt="Graphmory: shared, long-term memory for coding agents. Plain Markdown notes, served over MCP, every answer cited." width="100%"></h1>
 
-Shared, long-term memory for coding agents. Plain Markdown notes, served over MCP, with sources for every answer.
+<p align="center">
+  <a href="https://github.com/Grunte12/graphmory/actions/workflows/ci.yml"><img src="https://github.com/Grunte12/graphmory/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+</p>
 
-[![CI](https://github.com/Grunte12/graphmory/actions/workflows/ci.yml/badge.svg)](https://github.com/Grunte12/graphmory/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-https://github.com/user-attachments/assets/1db48d36-d060-42bf-8ffb-22dd5809b1c8
+Agents forget between sessions. Graphmory is a local MCP server that gives any coding agent a shared, long-term memory: plain Markdown notes that you own, searched by keyword, meaning and `[[links]]`, with every answer pointing back to its source.
 
 Status: experimental, pre-1.0. The contracts, tests and evals are in place; live-model benchmark results are not published yet.
 
+## Watch the film
+
+https://github.com/user-attachments/assets/1db48d36-d060-42bf-8ffb-22dd5809b1c8
+
 ## Why Graphmory
 
-Agents forget between sessions. Memory that saves everything fills up with noise, stale facts and guesses. Graphmory keeps a small set of curated notes that any agent can search, and makes every answer prove itself.
+Memory that saves everything fills up with noise, stale facts and guesses. Graphmory keeps a small set of curated notes that any agent can search, and makes every answer prove itself.
 
 - **Cited recall.** Answers come back with the note path and a hash of the note, so each claim can be checked against the original.
 - **Honest when nothing matches.** If no note supports an answer, the result is "No supporting note", not a guess.
