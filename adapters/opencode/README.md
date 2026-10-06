@@ -13,7 +13,7 @@ permission rules.
 | Method | **Filesystem** via harness scripts and OpenCode `bash` permission |
 | Optional extension | **MCP** — an MCP server can be defined to expose memory operations |
 | Requirements | Harness cloned locally; OpenCode agent config updated |
-| Startup setup | Lead agent runs `brain-sync auto-pull --json` at session start |
+| Startup setup | Lead agent runs `graphmory auto-pull --json` at session start |
 
 ## How Memory Access Is Established
 

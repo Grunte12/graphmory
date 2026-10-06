@@ -44,7 +44,7 @@ The command sends one source-support question and up to three five-way relations
 
 ## Implementation order
 
-1. **Implemented:** `mph config` asks for curator provider/model only in curator mode. Saved curator fields remain inactive for backward compatibility and are not required in Jev/local configurations.
+1. **Implemented:** `graphmory config` asks for curator provider/model only in curator mode. Saved curator fields remain inactive for backward compatibility and are not required in Jev/local configurations.
 2. **Implemented:** The OpenCode adapter is workflow-aware. In Jev mode, it runs `recall-managed --agent` and passes evidence directly to the lead.
 3. **Implemented:** Jev/local reports omit active `curator` metadata and expose `decisionModel`, `retrievalConfidence`, a decision gate, and an `EvidencePacket` schema. The packet allows an honest empty abstention.
 4. Increase candidate recall before optimizing the judge. Current `managedRecall` scores at most `maxCandidates` from a `k: 10` local shortlist. A good reranker cannot recover evidence that never reaches it. Measure candidate Recall@K and tune lexical/semantic fusion under token and latency budgets.

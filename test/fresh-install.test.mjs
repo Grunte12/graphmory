@@ -176,7 +176,7 @@ test("install.mjs copies skill, src, and CLI to target and CLI runs without a va
     // Verify CLI was copied
     const cliPath = path.join(target, "bin", "graphmory.mjs")
     assert.ok(fs.existsSync(cliPath), "bin/graphmory.mjs should exist after install")
-    assert.ok(fs.existsSync(path.join(target, "bin", "memory-patch-harness.mjs")), "legacy launcher should remain available")
+    assert.equal(fs.existsSync(path.join(target, "bin", "memory-patch-harness.mjs")), false, "the legacy launcher is no longer installed")
 
     // Verify installed CLI runs doctor without a vault
     const doctor = spawnSync(process.execPath, [cliPath, "doctor", "--json"], {

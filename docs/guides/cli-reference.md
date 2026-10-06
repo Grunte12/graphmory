@@ -25,7 +25,7 @@ Keep the checkout after `npm install -g .`: npm may link a local folder rather t
 
 OpenCode uses its [separate adapter](install.md#opencode-adapter). Contributors who edit or evaluate Graphmory should keep a checkout; ordinary users do not need a fork. When an npm release is published, `npm install -g graphmory` can replace the clone and local install steps. Do not use that registry command before a release exists.
 
-The package name, GitHub repository, and primary CLI command are `graphmory`. Existing `memory-patch-harness` and `mph` commands remain as compatibility aliases. Existing vault metadata under `.memory-patch-harness/` remains readable without migration.
+The package name, GitHub repository, and primary CLI command are `graphmory`. The older `memory-patch-harness` and `mph` commands were removed. Existing vault metadata under `.memory-patch-harness/` remains readable without migration.
 
 Initialize a project memory area:
 

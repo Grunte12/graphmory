@@ -19,7 +19,7 @@ A bare `remember` returns `BLOCKED/NEEDS_CURATION`. Supply the Lead's complete s
 
 ## CLI recall
 
-When `graphmory` is on PATH and the vault path is known, start with a compact machine-readable lookup. Prefer this canonical command: a legacy `mph` alias may point to an older installation.
+When `graphmory` is on PATH and the vault path is known, start with a compact machine-readable lookup. Prefer this command:
 
 ```sh
 graphmory recall-managed --vault "<vault-path>" --query "<question>" --agent
@@ -29,7 +29,7 @@ In curator mode, each call returns up to ten candidate **paths**, not ten full M
 
 **Stop rule (same for MCP and CLI).** Read page 1. Keep paging while the page you just read had at least one relevant item. Stop at the first page with none and report `nothing-relevant-left`. If the question has several parts and one is still unsupported you may read one more page after an empty one, never a third in a row. Stop earlier with `evidence-sufficient` only when every part is supported. A query is limited to 8 pages / 80 candidates: over MCP the server returns `budgetReached` and no `nextCursor`; on the CLI apply the same limit yourself. Report `budget` or `scan-limit` instead of claiming the vault was fully searched. Put `stop_reason` and `pages_read` in the brief (a `no-evidence` brief after one empty page is valid).
 
-The CLI has no server cutoff and no fixed total candidate count. If `scanLimitReached` is true, do not claim the vault was fully searched. The scores rank candidates; they do not establish that a claim is true or current. If candidates are exhausted without sufficient evidence, reformulate the query or use an appropriate alternate retrieval lane; abstain if evidence is still missing. Never dump the full vault into agent context. Use `mph config` in a terminal for human setup; do not run its interactive menu in an agent loop.
+The CLI has no server cutoff and no fixed total candidate count. If `scanLimitReached` is true, do not claim the vault was fully searched. The scores rank candidates; they do not establish that a claim is true or current. If candidates are exhausted without sufficient evidence, reformulate the query or use an appropriate alternate retrieval lane; abstain if evidence is still missing. Never dump the full vault into agent context. Use `graphmory config` in a terminal for human setup; do not run its interactive menu in an agent loop.
 
 For an explicit question about a previous state, add `--include-superseded` to `recall-managed`. It admits superseded notes without admitting raw, stale, archived, or deprecated notes. Keep it off for current-state questions. Read the originals and compare attribution, dates, and scope; inclusion alone does not prove a historical claim.
 

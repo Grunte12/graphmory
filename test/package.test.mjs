@@ -24,13 +24,14 @@ test("package ships the AI-agent entry instructions", () => {
   assert.equal(fs.existsSync(path.join(root, "AGENTS.md")), true)
 })
 
-test("package exposes portable brain sync CLI aliases", () => {
+test("package exposes the graphmory commands and no legacy aliases", () => {
   assert.equal(pkg.name, "graphmory")
   assert.equal(pkg.bin.graphmory, "scripts/brain-sync.mjs")
   assert.equal(pkg.bin["graphmory-setup"], "scripts/setup-curator-agent.mjs")
-  assert.equal(pkg.bin["memory-patch-harness"], "scripts/brain-sync.mjs")
-  assert.equal(pkg.bin.mph, "scripts/brain-sync.mjs")
-  assert.equal(fs.existsSync(path.join(root, pkg.bin.mph)), true)
+  assert.equal(pkg.bin["graphmory-mcp"], "scripts/graphmory-mcp.mjs")
+  assert.equal(pkg.bin["memory-patch-harness"], undefined)
+  assert.equal(pkg.bin.mph, undefined)
+  for (const target of Object.values(pkg.bin)) assert.equal(fs.existsSync(path.join(root, target)), true)
 })
 
 test("all explicit package file entries exist", () => {

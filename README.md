@@ -119,4 +119,4 @@ The agent cannot approve its own low-confidence memory; there is no MCP tool for
 
 [MIT license](LICENSE) · [Changelog](CHANGELOG.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md) · [Support](SUPPORT.md) · [Contributing](CONTRIBUTING.md) · [Citation](CITATION.cff) · [Third-party notices](THIRD_PARTY_NOTICES.md)
 
-The package, repository and primary command are named `graphmory`. The older `memory-patch-harness` and `mph` commands remain as aliases, and existing vault metadata under `.memory-patch-harness/` is still read.
+Graphmory was previously called memory patch harness. Vault metadata written under `.memory-patch-harness/` by earlier versions is still read.
