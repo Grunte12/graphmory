@@ -11,7 +11,7 @@ Status: experimental, pre-1.0. The contracts, tests and deterministic evals are 
 
 ## Watch the film
 
-https://github.com/user-attachments/assets/c605a1c2-2d6d-46fd-9137-213957000b69
+https://github.com/user-attachments/assets/910ec002-b976-4b80-aa1b-e4754af3497d
 
 ## Why Graphmory
 
