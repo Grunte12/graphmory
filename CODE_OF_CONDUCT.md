@@ -12,5 +12,7 @@ This project is small, technical, and experimental. The community standard is si
 
 Unacceptable behavior includes harassment, personal attacks, discriminatory language, doxxing, spam, and knowingly submitting private or unsafe data.
 
+Report violations privately through the same channel as security reports: the repository's Security tab, then Report a vulnerability.
+
 Maintainers may edit, hide, or remove comments and issues that violate these rules. Repeated or severe violations may result in blocking from the project.
 

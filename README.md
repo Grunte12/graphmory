@@ -7,7 +7,7 @@
 
 Graphmory is governed memory for AI agents: a local MCP server over plain Markdown notes that you own. Agents search them by keyword, meaning and `[[links]]`, every answer points back to its source, and new memories are checked before they are saved.
 
-Status: experimental, pre-1.0. The contracts, tests and evals are in place; live-model benchmark results are not published yet.
+Status: experimental, pre-1.0. The contracts, tests and deterministic evals are in place. Only a single-model live pilot is published; there is no cross-model benchmark yet.
 
 ## Watch the film
 
@@ -119,4 +119,4 @@ The agent cannot approve its own low-confidence memory; there is no MCP tool for
 
 [MIT license](LICENSE) · [Changelog](CHANGELOG.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md) · [Support](SUPPORT.md) · [Contributing](CONTRIBUTING.md) · [Citation](CITATION.cff) · [Third-party notices](THIRD_PARTY_NOTICES.md)
 
-Graphmory was previously called memory patch harness. Vault metadata written under `.memory-patch-harness/` by earlier versions is still read.
+Graphmory was previously called memory patch harness. Per-vault sync metadata is still stored under `.memory-patch-harness/`.

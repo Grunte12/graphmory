@@ -4,12 +4,12 @@ Review date: `2026-06-27`
 
 The research corpus was split into four focused notebooks to avoid retrieval contamination and blind bulk imports:
 
-| Lane | Notebook ID | Ready sources |
-|---|---|---:|
-| Harness and loops | `c6be4fa3-44cc-4fde-a057-932c0f60a098` | 14 |
-| Context and long-term memory | `8bfc0ec7-2812-4102-a61b-16b6efc64267` | 20 |
-| Local retrieval, RAG, and graphs | `3c156b41-56bb-4b5b-822d-9cda6003937c` | 16 |
-| Skills, tools, models, evals, and security | `1ff344c4-72b5-453f-ab84-3b1ae0bbac02` | 22 |
+| Lane | Ready sources |
+|---|---:|
+| Harness and loops | 14 |
+| Context and long-term memory | 20 |
+| Local retrieval, RAG, and graphs | 16 |
+| Skills, tools, models, evals, and security | 22 |
 
 All 72 selected sources were ready with zero ingestion errors at audit time. Deep Research candidates were filtered before import: official documentation, original repositories, and primary papers were preferred over SEO summaries.
 

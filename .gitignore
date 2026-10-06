@@ -12,3 +12,6 @@ tmp/
 
 __pycache__/
 *.py[cod]
+
+# Private local notes
+docs/development-handoff-*.md

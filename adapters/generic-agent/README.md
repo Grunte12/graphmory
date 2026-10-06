@@ -11,14 +11,14 @@ tooling is required.
 | Property | Value |
 |---|---|
 | Method | **Filesystem** (Node.js `fs` via `scripts/brain-sync.mjs`) |
-| Requirements | Local clone or checkout of the harness repository |
+| Requirements | Local clone or checkout of Graphmory repository |
 | Fallback | None — filesystem must be available on the runtime machine |
 | Lock discipline | Single-writer recommended; see `INSTALL.md` Shared Brain Hook |
 | Startup setup | `node scripts/brain-sync.mjs auto-pull --vault "<path>" --json` |
 
 ## How Memory Access Is Established
 
-1. The agent has filesystem read/write access to the harness repo directory.
+1. The agent has filesystem read/write access to Graphmory repo directory.
 2. The user provides a vault path (local directory or Git clone).
 3. Commands such as `recall`, `health`, `lifecycle-audit`, and `brain-sync` operate
    directly on that directory via `scripts/brain-sync.mjs`.
@@ -34,7 +34,7 @@ endpoint), update this section to the new transport. Supported transport values:
 
 | Transport | Description |
 |---|---|
-| `filesystem` | Direct directory access via harness scripts |
+| `filesystem` | Direct directory access via Graphmory scripts |
 | `mcp` | Model Context Protocol server |
 | `obsidian-cli` | Obsidian CLI (e.g., `obsidian vault open`) |
 | `obsidian-rest` | Obsidian Local REST API plugin |
@@ -43,5 +43,5 @@ endpoint), update this section to the new transport. Supported transport values:
 ## See Also
 
 - `INSTALL.md` — Step-by-step installation for this adapter.
-- `docs/guides/install.md` — General harness installation.
+- `docs/guides/install.md` — General Graphmory installation.
 - `docs/guides/portable-brain-sync.md` — Multi-machine sync guidance.

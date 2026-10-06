@@ -7,11 +7,11 @@ Graphmory is local-first. The core repository does not run a hosted service, tel
 - Memory Patches, Brain Briefs, examples, schemas, and eval fixtures are plain files.
 - Validation, tests, and deterministic eval scripts run on your machine.
 - The default install script copies local skill files into a local agent config directory.
-- The harness does not require API keys or a hosted database.
+- Graphmory does not require API keys or a hosted database.
 
 ## Optional Egress
 
-The core harness does not send data to external services. Optional integrations may use external tools, model APIs, web research, graph services or vector databases.
+Core Graphmory does not send data to external services. Optional integrations may use external tools, model APIs, web research, graph services or vector databases.
 
 Any optional integration should document:
 

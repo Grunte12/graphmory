@@ -10,7 +10,7 @@ This project is pre-1.0. Security fixes target the latest `main` branch until ve
 
 Please do not open a public issue for secrets, prompt-injection exploits, vault traversal problems, or data exposure bugs.
 
-Report privately by opening a GitHub Security Advisory for this repository when available, or contact the maintainer through the GitHub profile linked from the repository.
+Report privately through GitHub: open the repository's Security tab and choose Report a vulnerability (https://github.com/Grunte12/graphmory/security/advisories/new).
 
 Include:
 
@@ -22,7 +22,7 @@ Include:
 
 ## Security Boundaries
 
-The harness should never require:
+Graphmory should never require:
 
 - API keys in examples,
 - raw private transcripts in committed fixtures,

@@ -66,7 +66,7 @@ node scripts/brain-sync.mjs bootstrap \
   --create-remote
 ```
 
-On a new machine, install the harness and run the same bootstrap command. If the repo already exists and the target vault path is empty, it clones/connects that memory. Then run:
+On a new machine, install Graphmory and run the same bootstrap command. If the repo already exists and the target vault path is empty, it clones/connects that memory. Then run:
 
 ```sh
 node scripts/brain-sync.mjs status --vault "/path/to/YourBrain"
@@ -79,7 +79,7 @@ Use `push` only after a durable Memory Patch has been curated and validated:
 node scripts/brain-sync.mjs push --vault "/path/to/YourBrain" --message "memory: update lessons"
 ```
 
-The memory repo should contain only curated Markdown memory and temporary inbox evidence. Keep the harness code in this repo.
+The memory repo should contain only curated Markdown memory and temporary inbox evidence. Keep Graphmory code in this repo.
 
 ## OpenCode Adapter
 

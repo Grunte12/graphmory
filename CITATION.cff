@@ -1,9 +1,9 @@
 cff-version: 1.2.0
 message: "If you use Graphmory in research, writing, or a public project, please cite it."
 title: "Graphmory"
-version: "0.5.0-rc.3"
-date-released: "2026-07-06"
-abstract: "A local-first, provenance-preserving memory system for coding agents using Memory Patches, bounded recall, optional curator or decision-engine workflows, and human-controlled portable brain sync."
+version: "0.5.0-rc.6"
+date-released: "2026-10-02"
+abstract: "Governed memory for AI agents: a local MCP server over plain Markdown notes with cited hybrid recall, guarded writes and lifecycle-aware memory."
 authors:
   - name: "Grunte12"
 repository-code: "https://github.com/Grunte12/graphmory"

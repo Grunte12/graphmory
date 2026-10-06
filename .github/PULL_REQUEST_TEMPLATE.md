@@ -6,7 +6,6 @@ Describe the change in one or two sentences.
 
 - [ ] This PR is intentionally scoped and ready for human review
 - [ ] The author/maintainer approved the change direction before merge
-- [ ] No automatic paid/credit-based code review is required for this PR
 
 ## Type
 

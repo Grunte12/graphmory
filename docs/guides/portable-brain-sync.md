@@ -2,7 +2,7 @@
 
 Portable Brain Sync is an optional Graphmory workflow for keeping the same curated Markdown memory across accounts, machines, and coding agents.
 
-It does not replace the harness repository. It creates or connects a separate GitHub repository that stores only memory notes.
+It does not replace Graphmory repository. It creates or connects a separate GitHub repository that stores only memory notes.
 
 ## Repository Roles
 
@@ -25,7 +25,7 @@ The goal is not stop-and-ask synchronization. The goal is controlled portability
 
 ## Setup
 
-Install the harness first, then initialize a brain repo.
+Install Graphmory first, then initialize a brain repo.
 
 ```powershell
 git clone https://github.com/Grunte12/graphmory.git
@@ -197,13 +197,13 @@ Portable Brain Sync should assist setup, not silently decide where your memory l
 | Scenario | Example | Default behavior | Why |
 |---|---|---|---|
 | No local vault, no remote repo | New user on first machine | Create local vault skeleton and private GitHub repo when `--create-remote` is used | Fresh setup has no existing memory to protect |
-| No local vault, remote repo exists | New laptop/account | Clone repo, then write harness config only if compatible or explicitly adopted | Keeps memory portable |
-| Local vault already configured | `.memory-patch-harness/brain-sync.json` exists | Connect/status/pull/push normally | The repo already opted into this harness |
-| Local vault has harness-like folders | `00 Inbox`, `02 Projects`, `03 Reference` | Add sync config and continue | Compatible structure, low overwrite risk |
-| Existing Obsidian vault | `.obsidian/` plus notes | Require explicit adoption | User may have a personal second brain, not a harness brain |
+| No local vault, remote repo exists | New laptop/account | Clone repo, then write Graphmory config only if compatible or explicitly adopted | Keeps memory portable |
+| Local vault already configured | `.memory-patch-harness/brain-sync.json` exists | Connect/status/pull/push normally | The repo already opted into Graphmory |
+| Local vault has Graphmory-style folders | `00 Inbox`, `02 Projects`, `03 Reference` | Add sync config and continue | Compatible structure, low overwrite risk |
+| Existing Obsidian vault | `.obsidian/` plus notes | Require explicit adoption | User may have a personal second brain, not a Graphmory brain |
 | Existing custom agent-memory repo | `MEMORY.md`, `CLAUDE.md`, many `.md` notes | Require explicit adoption | Do not overwrite or reorganize another memory system |
 | Generic git repo | `.git/` but no memory signals | Require explicit adoption | Could be source code or unrelated data |
-| Non-empty random folder | Files exist but no known structure | Require explicit adoption | Avoid writing harness folders into the wrong place |
+| Non-empty random folder | Files exist but no known structure | Require explicit adoption | Avoid writing Graphmory folders into the wrong place |
 | Public repo requested | `--visibility public` | Refuse unless `--allow-public` is present | Memory is private by default |
 | Local dirty state before pull | Uncommitted note edits | Refuse pull | Prevent accidental merge/conflict corruption |
 | Secret-like value detected before push | API key/token/private key pattern | Refuse push | Cloud memory must not leak secrets |
@@ -227,7 +227,7 @@ node scripts/brain-sync.mjs adoption-plan `
   --out "C:\Users\you\ExistingBrain\.memory-patch-harness\adoption-plan.md"
 ```
 
-The plan inventories current folders, counts Markdown notes, proposes target harness folders, and buckets files into likely inbox/project/reference/template/review groups. It does not move files. The user or lead agent should approve a small migration step before any broad restructuring.
+The plan inventories current folders, counts Markdown notes, proposes target Graphmory folders, and buckets files into likely inbox/project/reference/template/review groups. It does not move files. The user or lead agent should approve a small migration step before any broad restructuring.
 
 ### Reviewed Restructure Flow
 
@@ -305,7 +305,7 @@ node scripts/brain-sync.mjs detect --vault "C:\Users\you\YourBrain" --json
 
 The agent should show the detected kind, signals, and recommended action to the user. If adoption is required, the agent must ask before running `bootstrap --adopt-existing`.
 
-When the user asks whether to refactor, redesign, or restructure memory into this harness, the agent should run:
+When the user asks whether to refactor, redesign, or restructure memory into Graphmory, the agent should run:
 
 ```powershell
 node scripts/brain-sync.mjs adoption-plan --vault "C:\Users\you\YourBrain" --json

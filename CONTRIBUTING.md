@@ -1,6 +1,6 @@
 # Contributing
 
-Contributions should preserve the harness boundaries:
+Contributions should preserve Graphmory boundaries:
 
 - the lead agent owns new semantic meaning,
 - the curator cannot invent unsupported memory,

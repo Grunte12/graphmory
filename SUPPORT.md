@@ -1,6 +1,6 @@
 # Support
 
-This project is experimental and maintained as an open-source developer harness.
+This project is experimental and maintained as an open-source developer tool.
 
 Use GitHub issues for:
 
@@ -10,7 +10,7 @@ Use GitHub issues for:
 - reproducible evaluation failures,
 - adapter requests for a specific agent platform.
 
-Use discussions or a feature request issue for:
+Use a feature request issue for:
 
 - architecture questions,
 - proposed retrieval strategies,

@@ -1,6 +1,6 @@
 # Graphmory Agent Instructions
 
-Use this file when a user gives this repository to an AI coding agent and asks it to install, connect, or use the harness.
+Use this file when a user gives this repository to an AI coding agent and asks it to install, connect, or use Graphmory.
 
 ## Goal
 
@@ -33,11 +33,8 @@ Graphmory adds a durable Markdown memory layer for coding agents. The tool repo 
 7. If setup or a command fails, run `doctor --json` and follow `docs/guides/troubleshooting.md`.
 8. Do not edit the user's agent config until you know which adapter they use.
 
-## Local Development Handoff
+## Contributing Guidance
 
-- Current delivery priority: follow `docs/design/end-to-end-delivery-plan-2026-09-29.md`. Complete the default end-to-end workflow and its integration gates before new latency/cost tuning or expanded competitor benchmarks. Preserve historical failures and scores.
-- If `docs/development-handoff-obsidian-database.md` exists, read it before continuing local resolver, schema-audit, or real-vault validation work.
-- The handoff may contain private local paths and unreleased observations. Do not stage, commit, push, publish, or sync it without explicit user approval.
 - Public tests, fixtures, examples, and documentation must remain synthetic and generic.
 
 ## Safe Setup Flow
@@ -98,7 +95,7 @@ The apply command requires a clean Git worktree and baseline commit, creates a l
 
 ## Using The Memory Curator Skill
 
-The harness ships an installable `memory-curator` skill at `skills/memory-curator/SKILL.md`. After the installer copies it to your target directory, load or reference it in your agent runtime:
+Graphmory ships an installable `memory-curator` skill at `skills/memory-curator/SKILL.md`. After the installer copies it to your target directory, load or reference it in your agent runtime:
 
 - **OpenCode**: the runtime's skill system automatically discovers skills under `<target>/skills/`. Load the skill when memory recall or consolidation is needed.
 - **Other runtimes**: read `skills/memory-curator/SKILL.md` and embed it as a role/function definition.
@@ -118,7 +115,7 @@ Adapters (under `adapters/`) configure the runtime — they do not overwrite age
 Use deterministic tools for mechanical checks so the LLM spends judgment on meaning:
 
 ```sh
-node <harness-path>/scripts/brain-sync.mjs health --vault "<vault-path>" --json
+node <graphmory-path>/scripts/brain-sync.mjs health --vault "<vault-path>" --json
 ```
 
 Run `health` after conflict resolution, restructure, large intake triage, and before a sync push that publishes durable memory. It checks unresolved links, duplicate titles, orphan notes, missing provenance/lifecycle markers, stale memory without revalidation, inbox backlog, raw captures outside Inbox, and secret-like values. Treat critical findings as blockers before push. Do not ask the Memory Curator to manually rediscover these checks from scratch.
@@ -126,7 +123,7 @@ Run `health` after conflict resolution, restructure, large intake triage, and be
 When memory may be time-sensitive or recently changed, run the lifecycle audit before relying on it:
 
 ```sh
-node <harness-path>/scripts/brain-sync.mjs lifecycle-audit --vault "<vault-path>" --json
+node <graphmory-path>/scripts/brain-sync.mjs lifecycle-audit --vault "<vault-path>" --json
 ```
 
 Use it after vendor/API/policy changes, before resurrecting old operational notes, during periodic hygiene, and after conflict resolution. It is read-only and returns review actions such as revalidate, add replacement marker, split/mark tension, add a decision path, or triage raw memory. It must not delete, supersede, or rewrite notes automatically.
@@ -134,13 +131,13 @@ Use it after vendor/API/policy changes, before resurrecting old operational note
 For recall, start with the bounded machine-readable path selector instead of broad vault reads:
 
 ```sh
-node <harness-path>/scripts/brain-sync.mjs recall --vault "<vault-path>" --query "<task-specific memory question>" --json
+node <graphmory-path>/scripts/brain-sync.mjs recall --vault "<vault-path>" --query "<task-specific memory question>" --json
 ```
 
 When the user has configured a managed workflow with `graphmory config`, use the compact agent interface instead. In Jev/local mode it returns an EvidencePacket with bounded excerpts and paths; `abstain` means no accepted evidence. Do not repeat a failed decision call automatically; report the error or expansion signal.
 
 ```sh
-node <harness-path>/scripts/brain-sync.mjs recall-managed --vault "<vault-path>" --query "<task-specific memory question>" --scope "<known project-or-domain path>" --agent
+node <graphmory-path>/scripts/brain-sync.mjs recall-managed --vault "<vault-path>" --query "<task-specific memory question>" --scope "<known project-or-domain path>" --agent
 ```
 
 Add `--scope "<known project-or-domain path>"` when the active project/domain is known. In curator mode, inspect the returned paths and request `--offset <nextOffset>` while evidence is incomplete and `hasMore` is true. Stop when the evidence is sufficient or candidates are exhausted; there is no fixed total note count. Raw inbox/clipping paths and stale/superseded lifecycle states are excluded by default. If the candidate paths still miss the answer, reformulate using project vocabulary or inspect the named MOC/backlink neighborhood; do not immediately scan the whole vault.
@@ -150,13 +147,13 @@ For explicit note relationships or multi-hop exploration, use `recall-explore --
 If bounded recall misses repeatedly, use the diagnostic sparse-fusion loop once before broad manual vault search:
 
 ```sh
-node <harness-path>/scripts/brain-sync.mjs recall-loop --vault "<vault-path>" --query "<task-specific memory question>" --scope "<known project-or-domain path>" --json
+node <graphmory-path>/scripts/brain-sync.mjs recall-loop --vault "<vault-path>" --query "<task-specific memory question>" --scope "<known project-or-domain path>" --json
 ```
 
 Treat `recall-loop` as a fallback, not the default. If eval misses persist, generate a curation recommendation report instead of guessing:
 
 ```sh
-node <harness-path>/scripts/brain-sync.mjs curation-recommend --report "<eval-report.json>" --queries "<query-set.json>" --method governed-bm25f-sections --json
+node <graphmory-path>/scripts/brain-sync.mjs curation-recommend --report "<eval-report.json>" --queries "<query-set.json>" --method governed-bm25f-sections --json
 ```
 
 Use the report to classify whether the miss is buried gold, missing scope, no candidates, or vocabulary/gold ambiguity. Apply clearly reversible curator improvements such as adding non-sensitive aliases, frontmatter hints, or MOC links when the evidence is explicit and the target note is unambiguous. Ask before meaning-changing rewrites, grouped-gold changes, note moves, deletions, or conflict resolution.
@@ -167,7 +164,7 @@ Curator-maintained summaries may reuse supported synthesis across agents. Run `s
 
 ## Human Judgment Gates
 
-The harness keeps humans in control of durable memory without forcing humans into every loop. Default to autonomous loop engineering for reversible, evidence-backed work:
+Graphmory keeps humans in control of durable memory without forcing humans into every loop. Default to autonomous loop engineering for reversible, evidence-backed work:
 
 1. detect the state with tools,
 2. make the smallest safe change,
@@ -194,7 +191,7 @@ If the user decision is not available, return `BLOCKED` with the smallest decisi
 When multiple agents use the same private brain repo, each runtime should use its own local clone. At session start and before a Brain Brief that depends on current shared state, the lead agent runs:
 
 ```sh
-node <harness-path>/scripts/brain-sync.mjs auto-pull --vault "<vault-path>" --json
+node <graphmory-path>/scripts/brain-sync.mjs auto-pull --vault "<vault-path>" --json
 ```
 
 Treat `up-to-date`, `updated`, and `local-ahead` as safe local states. For `skipped-dirty`, `offline-or-auth-failed`, `blocked-restructure`, or `diverged`, do not retry in a loop or merge automatically. Continue local-only only when stale shared context is acceptable; otherwise stop and resolve the named state. After a verified durable Memory Patch is curated, run `push`. `REMOTE_CHANGED` means another agent updated memory; preserve the local commit/changes and review both histories.
@@ -202,7 +199,7 @@ Treat `up-to-date`, `updated`, and `local-ahead` as safe local states. For `skip
 When histories diverge or `push` reports `REMOTE_CHANGED`, use conflict assist before proposing a resolution:
 
 ```bash
-node <harness-path>/scripts/brain-sync.mjs conflict-assist --vault "<vault-path>" --json
+node <graphmory-path>/scripts/brain-sync.mjs conflict-assist --vault "<vault-path>" --json
 ```
 
 Conflict assist is read-only. It fetches remote state, compares local/remote/dirty memory, names same-note semantic conflicts, and returns a decision report with structured `decisionOptions`. It must not merge, rebase, reset, discard, or rewrite notes. Ask the user to choose the memory lifecycle decision when both sides changed the same meaning: merge compatible facts, prefer one side, supersede stale memory, create TENSION, or leave BLOCKED pending evidence.
