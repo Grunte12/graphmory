@@ -4,7 +4,7 @@ Date: 2026-10-01. Contract frozen before repair acceptance; candidate/fixture ma
 
 ## Claim and scope
 
-Follow [the repair plan](../history/mvp-correctness-repair-plan-2026-10-01.md), gates R1–R13. Establish the scoped Codex/Luna workflow: supported update, exact full persistence and reciprocal history, completed receipt, fresh current/history/unsupported recall, and safe handling of pending authority. Preserve real vault/global config and all earlier failed runs. No optional models/providers, ranking tuning, competitor benchmark, commit or push.
+Follow the repair plan's gates R1–R13. Establish the scoped Codex/Luna workflow: supported update, exact full persistence and reciprocal history, completed receipt, fresh current/history/unsupported recall, and safe handling of pending authority. Preserve real vault/global config and all earlier failed runs. No optional models/providers, ranking tuning, competitor benchmark, commit or push.
 
 Baseline captured before repair at `../graphmory-mvp-repair-20261001/baseline.json`: Git HEAD and pre-existing dirty tree plus 453 source/test/guide/manifest file hashes. Baseline `npm test`: 395/395 PASS, zero skipped (`baseline-test.log`). Candidate version for new artifacts is `0.5.0-rc.5`; the version name alone is not package identity or readiness evidence.
 

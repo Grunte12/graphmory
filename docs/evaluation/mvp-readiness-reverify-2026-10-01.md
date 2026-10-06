@@ -1,63 +1,63 @@
-# ตรวจความพร้อมก่อน push — 1 ตุลาคม 2026
+# Pre-push readiness check — 2026-10-01
 
-## ผลสรุป
+## Summary
 
-**ยังไม่ควรเผยแพร่ rc.5 ในฐานะ MVP ที่ใช้งานได้ครบ workflow** การตรวจโค้ดและแพ็กเกจผ่าน แต่การอัปเดต memory ด้วย Curator จริงของ candidate เดียวกันยังล้มเหลว และยังไม่มี fresh-session recall หลัง receipt ที่สำเร็จ
+**rc.5 should not be released yet as an MVP with a complete working workflow.** The code and package checks pass, but a memory update through a real Curator on the same candidate still fails, and there is no fresh-session recall after a successful receipt.
 
-รอบนี้เป็นการ verify ไม่แก้ runtime ไม่ทำ native retry ไม่ commit/push และไม่แก้ Obsidian vault จริง ผลทดสอบเดิมและ pending operation ถูกเก็บไว้
+This round only verified. It did not change the runtime, retry the native run, commit or push, or touch a real Obsidian vault. The earlier results and the pending operation were kept.
 
-## สิ่งที่ตรวจใหม่
+## What was re-checked
 
-| รายการ | ผลและขอบเขต |
+| Item | Result and scope |
 |---|---|
-| `npm run check` | exit 0, tests 421/421 ผ่าน, 0 fail/skipped/cancelled; ประมาณ 11.5 วินาทีสำหรับ test suite |
-| `git diff --check` | ผ่าน ไม่มี whitespace errors |
-| `doctor --json` | `ok:true`; เป็นการตรวจ environment/CLI ไม่ใช่ผล native workflow |
-| Candidate identity | rc.5 iteration-03 SHA-256 `11725097611ba5e65ecf2ee6ea39fbf5562061b0053c0e811946e3afe90ff04a`; runtime ใน checkout ตรงกับ archive 119/119 ไฟล์ |
-| Synthetic metadata reproduction | full verifier ปฏิเสธ predecessor ที่ยัง active และใช้ replacement แบบชื่อย่อ ด้วยสอง error เดียวกับ native-05 |
-| Package dry-run | rc.5, 119 ไฟล์; bins/local imports ครบ, semantic dependency ยัง optional; path/credential scan ไม่พบรายการน่าสงสัยในขอบเขตที่ตรวจ |
-| Sync status ของ synthetic vault | `SYNC_CONFIG_NOT_FOUND` เพราะ fixture นี้ไม่ได้ตั้งค่า Git brain sync; ไม่ได้ใช้เป็นหลักฐานผ่านหรือไม่ผ่าน shared sync |
-| Failed fixture integrity | ไฟล์ใน native-05 vault ยังตรงกับ failed capture ทั้งหมด หลัง diagnostic แบบอ่านอย่างเดียว |
+| `npm run check` | exit 0, tests 421/421 passed, 0 failed, skipped or cancelled; about 11.5 seconds for the test suite |
+| `git diff --check` | passed, no whitespace errors |
+| `doctor --json` | `ok:true`; this checks the environment and CLI, not the native workflow |
+| Candidate identity | rc.5 iteration-03 SHA-256 `11725097611ba5e65ecf2ee6ea39fbf5562061b0053c0e811946e3afe90ff04a`; the runtime in the checkout matches the archive for 119 of 119 files |
+| Synthetic metadata reproduction | the full verifier rejected a predecessor that was still active and a replacement written as a short name, with the same two errors as native-05 |
+| Package dry-run | rc.5, 119 files; bins and local imports complete, semantic dependency still optional; the path and credential scan found nothing suspicious within the scope checked |
+| Sync status of the synthetic vault | `SYNC_CONFIG_NOT_FOUND`, because this fixture has no Git brain sync configured; it is not evidence either way for shared sync |
+| Failed fixture integrity | the files in the native-05 vault still match the failed capture exactly, after a read-only diagnostic |
 
-ไม่มีการรันโมเดลซ้ำ: runtime ทั้ง 119 ไฟล์ไม่เปลี่ยนจาก candidate ที่มี native failure จึงยังไม่เกิดหลักฐานใหม่ว่าปัญหาถูกแก้
+The model was not re-run: all 119 runtime files are unchanged from the candidate that had the native failure, so there is no new evidence that the problem was fixed.
 
-## Blocker ที่ต้องแก้
+## Blockers to fix
 
-### 1. Curator ต้องเขียน lifecycle metadata เอง
+### 1. The Curator has to write lifecycle metadata itself
 
-native-05 สร้าง/แก้ครบ targets แต่ predecessor ยังมี `status: active` และ `superseded_by: [[Recovery Window Policy]]` full verifier ต้องการ `superseded` กับ canonical replacement path จึงไม่ให้ receipt งานยัง pending และ R11 ไม่ได้รัน
+native-05 created and edited all the targets, but the predecessor still had `status: active` and `superseded_by: [[Recovery Window Policy]]`. The full verifier requires `superseded` and the canonical replacement path, so it issued no receipt, the work stayed pending, and R11 did not run.
 
-render-patch สร้างข้อมูล successor แต่ไม่ได้สร้าง predecessor transition ให้ การแก้ควรให้ workflow บันทึกเดิมจัดการเฉพาะ metadata ที่อนุมัติแล้ว จาก validated patch และ declared targets พร้อมรักษา preimages, source hashes, pending guard และ full verification
+render-patch produces the successor data but not the predecessor transition. The fix should have the existing note workflow handle only the approved metadata, from the validated patch and the declared targets, while preserving the preimages, the source hashes, the pending guard and the full verification.
 
-กฎตรวจ predecessor ตรงกับเอกสารและ focused test ข้อผิดพลาดนี้เป็นการเขียนข้อมูลของ Curator ไม่ใช่ false rejection ของ verifier
+The predecessor rule matches the documentation and the focused test. This error came from what the Curator wrote, not from a false rejection by the verifier.
 
-### 2. Native evaluator ยังอ่าน trace บางรูปแบบไม่ครบ
+### 2. The native evaluator still misreads some trace shapes
 
-ตัว eval ไม่รองรับ dynamic child ID และบางคำสั่งที่ใช้ตัวแปรครบ ทำให้ผล trace gate คลาดเคลื่อน ต้องเพิ่ม regression จาก raw native-05 และตรึง evaluator รุ่นแก้ไขใหม่ เก็บ frozen score เดิมไว้ การแก้ตัว eval ไม่เปลี่ยนข้อผิดพลาดจริงในข้อ 1
+The eval does not support dynamic child IDs or some commands that use variables, so the trace gate result was off. A regression from the raw native-05 trace needs to be added and the corrected evaluator frozen as a new version, keeping the original frozen score. Fixing the eval does not change the real error in item 1.
 
-### 3. เอกสารที่แนบในแพ็กเกจอ้าง candidate เก่า
+### 3. The documentation shipped in the package refers to an older candidate
 
-`package.json` ระบุ version rc.5 และแนบ `docs/guides/trial-mvp.md` กับ `docs/evaluation/mvp-native-acceptance-2026-10-01.md` คู่มือบรรทัด 13 ชี้ไป acceptance ของ rc.4 ซึ่งระบุพร้อมทดลองใน configuration ที่ทดสอบไว้ แต่แพ็กเกจไม่ได้แนบ [รายงาน rc.5 ล่าสุด](mvp-native-retest-result-2026-10-01.md) ที่ระบุ R10 FAIL และ R11 NOT RUN
+`package.json` declares rc.5 and ships `docs/guides/trial-mvp.md` and `docs/evaluation/mvp-native-acceptance-2026-10-01.md`. Line 13 of the guide points to the rc.4 acceptance report, which says ready for a trial in the tested configuration, but the package does not ship the [latest rc.5 report](mvp-native-retest-result-2026-10-01.md), which records R10 FAIL and R11 NOT RUN.
 
-ควรคงรายงานประวัติไว้ แล้วให้คู่มือ/แพ็กเกจแสดงสถานะของ current candidate และข้อจำกัดของ host/model ที่ตรวจจริงอย่างชัดเจน
+The historical reports should stay, and the guide and package should state the status of the current candidate and the limits of the host and model actually tested.
 
-## เกณฑ์ก่อนบอกว่าพร้อมทดลองครบ workflow
+## Criteria before saying the full workflow is ready for a trial
 
-1. แก้ lifecycle metadata ในเครื่องมือและปรับขั้นตอน Curator ให้ใช้ทางเดียว ลด validation ที่ซ้ำกับ finish โดยเก็บ diagnostic แยกไว้
-2. ซ่อม evaluator แล้วตรึง candidate, fixture และ gold ใหม่
-3. ใช้ Luna ทำ native update บน fresh synthetic vault ต้องได้ matching receipt พร้อม source/target bindings และประวัติแทนที่ถูกต้อง
-4. เปิด session ใหม่อ่านกลับ ต้องใช้ข้อมูลปัจจุบัน ตอบประวัติย้อนหลังได้ และไม่เติมข้อเท็จจริงที่ไม่มีหลักฐาน
-5. pending refusal ยังต้องบล็อกการอ่านและคง vault/state เดิม; ตรวจแพ็กเกจและเอกสาร current candidate ก่อน commit/push
+1. Fix the lifecycle metadata in the tooling and give the Curator a single path, reducing validation that duplicates finish and keeping diagnostics separate.
+2. Repair the evaluator, then freeze a new candidate, fixture and gold set.
+3. Run a native update with Luna on a fresh synthetic vault. It must produce a matching receipt with source and target bindings and a correct replacement history.
+4. Open a new session and read it back. It must use the current data, answer history questions, and add no fact that has no evidence.
+5. A pending refusal must still block reads and keep the vault and state unchanged. Check the package and the documentation for the current candidate before commit and push.
 
-ยังไม่ต้องเพิ่ม provider, semantic model หรือ benchmark ใหม่ก่อนปิด workflow นี้ ผลผ่านบน Codex/Luna ต้องรายงานตาม configuration ที่ทดสอบ ไม่ขยายเป็นการรับรองทุก host/model
+No new provider, semantic model or benchmark is needed before this workflow is closed. A pass on Codex with Luna must be reported for the configuration tested and not extended into an endorsement of every host and model.
 
-## หลักฐาน
+## Evidence
 
 - [Native-05 retest](mvp-native-retest-result-2026-10-01.md)
 - [Independent raw review](mvp-native-05-independent-review-2026-10-01.md)
 - Private evidence root: `outputs/graphmory-mvp-repair-20261001/`
 - New artifacts: `readiness-reverify-check.log`, `readiness-reverify-identity.json`, `readiness-reverify-core.json`, `readiness-reverify-package.json`, `readiness-reverify-doctor.json`, `readiness-reverify-status.log`, `readiness-reverify-fixture-integrity.json`
 
-Package dry-run ครั้งแรกติด permission ของ user npm cache จึงใช้ cache ชั่วคราวใน `/private/tmp` โดยไม่เปลี่ยน global config หรือ ownership ตรวจสำเร็จแล้วลบเฉพาะ cache ชั่วคราวนั้น รายงาน private เก็บ command, initial error, retry และ cleanup ไว้
+The first package dry-run hit a permission problem in the user's npm cache, so a temporary cache under `/private/tmp` was used without changing the global config or ownership. The check succeeded and only that temporary cache was deleted. The private report keeps the command, the initial error, the retry and the cleanup.
 
-ผลนี้เป็นการตรวจความพร้อมของ candidate ปัจจุบัน ไม่ใช่ benchmark เปรียบเทียบเครื่องมืออื่น
+This result is a readiness check of the current candidate, not a benchmark against other tools.

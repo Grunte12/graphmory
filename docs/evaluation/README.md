@@ -13,7 +13,7 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - Files with a date in the name are snapshots from that day. They are not edited afterwards. A later report may supersede an earlier one.
 - A **protocol** is written and frozen before a run; a **result** reports what was measured; a failed or rejected experiment is kept on purpose. Negative results are not zero scores.
 - Names such as Luna, Jev, Astra and I-MEM are defined in the [glossary](../glossary.md).
-- Some reports are in Thai and are marked below. Reports written before the rename use the old command names `mph` and `memory-patch-harness`, which have been removed.
+- Reports written before the rename use the old command names `mph` and `memory-patch-harness`, which have been removed.
 - Datasets and fixtures live in [`eval/`](../../eval/README.md). Derived LoCoMo files are for non-commercial use; see the [third-party notices](../../THIRD_PARTY_NOTICES.md).
 
 ## All reports
@@ -34,8 +34,8 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - [BM25F scoring optimization](bm25f-optimization-2026-09-27.md)
 - [Citation identity verifier repair — 2026-09-28](citation-identity-repair-2026-09-28.md)
 - [Clear missing-evidence control — 2026-09-28](clear-abstention-control-2026-09-28.md)
-- [Experiment 1: actual CLI pagination](cli-pagination-experiment-2026-09-28.md)
 - [Experiment 2: one-call bundle versus paged delivery](cli-bundle-experiment-2026-09-28.md)
+- [Experiment 1: actual CLI pagination](cli-pagination-experiment-2026-09-28.md)
 - [Codex curator A/B: source completeness flags](codex-source-flags-2026-09-27.md)
 - [Count-label preflight: fixed slot `conv-43:17`](collection-count-label-audit-2026-09-28.md) — ambiguous for a strict count of distinct won games; not qualified
 - [Collection experiment: label readiness preflight](collection-label-preflight-2026-09-28.md)
@@ -45,8 +45,8 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - [Full-scope collection scale preflight](collection-scale-preflight-2026-09-28.md)
 - [Comparable benchmarks and retrieval simplification — 2026-09-26](comparable-benchmarks-2026-09-26.md)
 - [Historical competitor parity audit — 2026-09-28](competitor-parity-audit-2026-09-28.md)
+- [First competitor comparison results](competitor-pilot-first-results-2026-09-26.md)
 - [Local competitor pilot protocol — 2026-09-26](competitor-pilot-protocol-2026-09-26.md)
-- [Competitor pilot — 2026-09-26](competitor-pilot-th-2026-09-26.md) (Thai)
 - [Cost and Scale](cost-and-scale.md)
 - [Full-history count-label review gate](count-label-audit-2026-09-28.md)
 - [Curator continuation and raw QA score — 2026-09-28](curator-continuation-experiment-2026-09-28.md)
@@ -113,7 +113,7 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - [R13: rc.4 checkpoint compatibility](mvp-checkpoint-compatibility-repair-2026-10-01.md)
 - [MVP correctness repair: native-session protocol](mvp-correctness-native-protocol-2026-10-01.md)
 - [MVP correctness repair — acceptance protocol](mvp-correctness-repair-protocol-2026-10-01.md)
-- [MVP correctness repair result — 2026-10-01](mvp-correctness-repair-result-2026-10-01.md) (Thai)
+- [Graphmory: MVP repair and test result — 2026-10-01](mvp-correctness-repair-result-2026-10-01.md)
 - [MVP evaluator repair follow-up — 1 October 2026](mvp-evaluator-repair-followup-2026-10-01.md)
 - [Held-out native MVP protocol — 2026-10-01](mvp-holdout-native-protocol-2026-10-01.md)
 - [Graphmory MVP native holdout — result (2026-10-01)](mvp-holdout-native-result-2026-10-01.md)
@@ -124,14 +124,13 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - [Native-05 independent trace review](mvp-native-05-independent-review-2026-10-01.md)
 - [Native trial MVP acceptance — 2026-10-01](mvp-native-acceptance-2026-10-01.md)
 - [Proposed native trial MVP acceptance — 2026-09-30](mvp-native-protocol-2026-09-30.md)
-- [MVP native retest result — 2026-10-01](mvp-native-retest-result-2026-10-01.md) (Thai)
+- [MVP native-05 test result — 2026-10-01](mvp-native-retest-result-2026-10-01.md)
 - [MVP package audit — 2026-10-01](mvp-package-audit-2026-10-01.md)
 - [MVP post-implementation evaluation — 2026-10-01](mvp-post-implementation-eval-2026-10-01.md)
-- [MVP post implementation eval — 2026-10-01](mvp-post-implementation-eval-th-2026-10-01.md) (Thai)
 - [MVP read-authority repair report — 2026-10-01](mvp-read-authority-repair-2026-10-01.md)
 - [MVP readiness audit — 2026-09-30](mvp-readiness-audit-2026-09-30.md)
-- [MVP readiness reverify — 2026-10-01](mvp-readiness-reverify-2026-10-01.md) (Thai)
-- [MVP summary — 2026-10-01](mvp-summary-th-2026-10-01.md) (Thai)
+- [Pre-push readiness check — 2026-10-01](mvp-readiness-reverify-2026-10-01.md)
+- [Graphmory MVP summary — 2026-10-01](mvp-summary-2026-10-01.md)
 - [Native Curator lifecycle recovery: evidence closeout](native-curator-lifecycle-recovery-2026-09-29.md)
 - [Native Curator lifecycle recovery protocol](native-curator-lifecycle-recovery-protocol-2026-09-29.md)
 - [Native Curator preflight and lifecycle acceptance](native-curator-preflight-live-2026-09-29.md)

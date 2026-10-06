@@ -26,7 +26,6 @@ Start with the [project README](../README.md), then connect an agent and learn w
 - [Guarded memory writes through MCP](guides/mcp-remember.md)
 - [Memory contracts](guides/memory-contracts.md)
 - [Portable Brain Sync](guides/portable-brain-sync.md)
-- [Thai strategy guide](guides/thai-strategy-guide.md) (Thai)
 - [Language and token budget](guides/token-efficient-language.md)
 - [Local Curator trial](guides/trial-mvp.md)
 - [Troubleshooting and agent recovery](guides/troubleshooting.md)

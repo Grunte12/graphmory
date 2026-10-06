@@ -1,8 +1,7 @@
-# Research Source Map / แผนที่แหล่งวิจัย
+# Research source map
 
 This file records which sources change the architecture and which sources were reviewed but excluded.
 
-ไฟล์นี้ระบุว่าแหล่งใดเปลี่ยน architecture ของเรา และแหล่งใดตรวจแล้วแต่ไม่เกี่ยวข้องโดยตรง
 
 ## Adopted Foundations
 
@@ -32,10 +31,10 @@ The broader discovery and filtering method is documented in [Independent Noteboo
 
 [StockAgent / arXiv:2407.18957](https://arxiv.org/abs/2407.18957) studies LLM-based stock-trading simulation. It may be relevant to financial multi-agent systems, but it does not evaluate coding-agent memory, context retrieval, consolidation, or harness cost. It is therefore excluded from this project's architectural evidence.
 
-## สรุปภาษาไทย
+## Summary
 
-- Anthropic และ LangChain สนับสนุนการเลือก context เท่าที่จำเป็นแทนการโหลดทุกอย่าง
-- งาน memory ปี 2026 สนับสนุนการแยก episodic evidence ออกจาก semantic memory และเตือนว่าการ consolidate บ่อยเกินไปทำให้ความจำแย่ลงได้
-- HumanLayer สนับสนุน structured outputs, focused agents และการควบคุม context/control flow ด้วยตัว harness
-- งาน RAG สนับสนุน hybrid retrieval และ reranking แต่ยอมรับต้นทุนด้าน latency และระบบ
-- Architecture ของเราแยกหลักฐานต้นทางออกจาก Markdown ซึ่งเป็น canonical operational memory และเปิดทางให้ BM25, vector และ graph เป็น derived indexes ที่เพิ่มเมื่อ eval พิสูจน์ว่าจำเป็น
+- Anthropic and LangChain support selecting only the context that is needed instead of loading everything.
+- 2026 memory work supports separating episodic evidence from semantic memory, and warns that consolidating too often can make memory worse.
+- HumanLayer supports structured outputs, focused agents, and controlling context and control flow in the tool itself.
+- RAG work supports hybrid retrieval and reranking, but accepts the latency and system cost.
+- Our architecture keeps the source evidence separate from Markdown, which is the canonical operational memory, and leaves BM25, vector and graph indexes as derived indexes to be added when evals show they are needed.

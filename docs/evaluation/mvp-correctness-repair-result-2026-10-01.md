@@ -1,88 +1,88 @@
-# Graphmory: ผลการซ่อมและทดสอบ MVP — 1 ตุลาคม 2026
+# Graphmory: MVP repair and test result — 2026-10-01
 
-## สรุปสถานะ
+## Status summary
 
-**แก้โค้ดและคู่มือแล้ว แต่ยังไม่ประกาศว่า MVP พร้อมใช้งานครบ workflow**
+**The code and the guide were fixed, but the MVP is not yet declared ready for the full workflow.**
 
-ชุดตรวจโค้ดผ่าน 414/414, แพ็กเกจติดตั้งตรงกับ archive 119/119, การปฏิเสธอ่านเมื่อมีงานค้างผ่านใน Codex จริง และ checkpoint ที่สร้างด้วย rc.4 ใช้ rc.5 ปิดงาน/กู้คืนได้จริง
+The code checks pass 414/414, the installed package matches the archive for 119 of 119 files, refusing to read while work is pending passes on a real Codex, and a checkpoint created with rc.4 can be finished or recovered with rc.5.
 
-ส่วนที่ยังต้องยืนยันคือ **Curator อัปเดตครบเมื่อมีโน้ตใหม่ แล้วอ่านข้อมูลกลับใน session ใหม่** การทดสอบ update สองครั้งยัง FAIL และเก็บไว้ทั้งสองครั้ง คู่มือแก้สาเหตุล่าสุดแล้ว แต่ยังไม่ได้ทดสอบ native update หลังการแก้นั้น ตามขอบเขตที่จำกัดการลองซ้ำ
+What still needs confirmation is **the Curator completing an update when there is a new note, then reading the data back in a fresh session**. Two update tests still FAILED, and both were kept. The guide fixed the latest cause, but no native update has been run after that fix, because the scope limits repeated attempts.
 
-## แก้อะไรและทำไม
+## What was fixed and why
 
-| ส่วน | สิ่งที่แก้ |
+| Area | What was fixed |
 |---|---|
-| Lifecycle | การอ้างโน้ตเก่าที่มีลิงก์ predecessor/successor ถูกต้องไม่ถูกตีความว่าโน้ตปัจจุบันเองเก่า รองรับ prior/previous/earlier rule, policy, record และ version โดยยังตรวจความสัมพันธ์สองทาง |
-| Conflict | `No decision yet.` ไม่ถูกนับว่าเป็น decision path แล้ว ต้องมีขั้นตอนหรือผู้รับผิดชอบที่ระบุจริง |
-| Retrieval / read authority | คำสั่งอ่านสำหรับ agent ตรวจ pending state ก่อนอ่าน ก่อน provider/cache work และก่อนส่ง output ตรวจการเปลี่ยนสถานะระหว่างอ่านด้วย |
-| Recovery | อ่านเพื่อซ่อมได้เฉพาะ operation และ path ใน manifest ตรวจ source hash และแยกข้อมูล partial/recovery ออกจากข้อมูลที่ยืนยันแล้ว |
-| Finish diagnostics | เมื่อปิดงานไม่ได้ ระบุ path, kind และ next action แบบสั้น พร้อมเก็บงานค้างไว้ ไม่มี note body ใน error |
-| Curator setup / skill | ใช้ state root เดียว เคารพ BLOCKED และตรวจ receipt; แยก existing original จาก target ใหม่ที่อนุมัติชัดเจน ต้อง prepare ก่อนสร้างไฟล์ใหม่ |
+| Lifecycle | A reference to an old note that has correct predecessor and successor links is no longer taken to mean the current note is itself old. It supports prior, previous and earlier rule, policy, record and version, and still checks the relationship in both directions |
+| Conflict | `No decision yet.` no longer counts as a decision path. A named step or owner is required |
+| Retrieval and read authority | The agent read command checks the pending state before reading, before provider or cache work, and before sending output. It also checks for a state change during the read |
+| Recovery | A recovery read is allowed only for the operation and the paths in the manifest. It checks the source hash and keeps partial and recovery data apart from confirmed data |
+| Finish diagnostics | When a task cannot be finished, a short path, kind and next action are reported and the pending work is kept. No note body appears in an error |
+| Curator setup and skill | A single state root, respect for BLOCKED, and a receipt check. An existing original is separated from a clearly approved new target, and prepare is required before a new file is created |
 
-งานสำรวจ แก้โค้ด และตรวจเฉพาะส่วนใช้ Luna Max แยกกัน Root รวมงาน ตรวจ archive และรัน native acceptance ไม่มีการเปลี่ยน retrieval strategy, เพิ่ม provider หรือ benchmark คู่แข่งในรอบนี้
+Exploration, code fixes and focused checks were done by separate Luna Max runs. The root combined the work, checked the archive and ran the native acceptance. No retrieval strategy was changed, no provider was added and no competitor was benchmarked in this round.
 
-## ผลตามเกณฑ์ R1–R13
+## Results against criteria R1–R13
 
-| เกณฑ์ | ผล | หลักฐาน |
+| Criterion | Result | Evidence |
 |---|---|---|
-| R1–R4 lifecycle/history/conflict | PASS แบบ deterministic | Exact chain, self-stale, chain ขาด/กำกวม/หมดอายุ, negated decision และข้อความที่พบใน native failure |
-| R5–R8 read guard/recovery/clear reads/state transition | PASS แบบ deterministic | Focused integration 104/104 และ regression suite |
-| R9 regression/package/install | PASS | `npm run check` 414/414, zero skipped; final archive/checkout/installed 119 ไฟล์ตรงกัน; project skill/role สร้างจากตัวติดตั้งจริง |
-| R10 native approved update | ยังไม่ยืนยันกับ final guide candidate | Native สองครั้งก่อนหน้า FAIL; รอบหนึ่งเขียน partial แล้ว finish ไม่ผ่าน อีกครั้งหยุดก่อน prepare/เขียน |
-| R11 fresh current/history/unsupported recall | NOT RUN | ยังไม่มี native update ที่ได้ matching APPLIED receipt จึงไม่ใช้ข้อมูลที่เตรียมเองแทนเพื่อให้ผ่าน |
-| R12 fresh pending refusal | PASS ในขอบเขตที่สังเกตได้ | Actual Lead + Curator, pending envelope, ไม่มี policy answer หรือ raw vault bypass, vault 12/12 hash เท่า seed; automated gates ผ่านทั้งหมด |
-| R13 rc.4 → final rc.5 compatibility | PASS | แยกสอง lane: finish ได้ matching receipt/full persistence; reviewed restore คืน baseline 12 ไฟล์ครบ สถานะ recovered และไม่มี receipt |
+| R1–R4 lifecycle, history, conflict | PASS, deterministic | Exact chain, self-stale, broken, ambiguous or expired chain, negated decision, and the wording found in the native failure |
+| R5–R8 read guard, recovery, clear reads, state transition | PASS, deterministic | Focused integration 104/104 and the regression suite |
+| R9 regression, package, install | PASS | `npm run check` 414/414, zero skipped; the final archive, checkout and installed copy match for 119 files; the project skill and role were created by the real installer |
+| R10 native approved update | not confirmed against the final guide candidate | The two earlier native runs FAILED; one wrote partial edits and then finish failed, the other stopped before prepare or any write |
+| R11 fresh current, history and unsupported recall | NOT RUN | There is no native update with a matching APPLIED receipt yet, and data prepared by hand was not substituted to make it pass |
+| R12 fresh pending refusal | PASS within what could be observed | Actual Lead and Curator, a pending envelope, no policy answer or raw vault bypass, vault hashes 12/12 equal to the seed; all automated gates passed |
+| R13 rc.4 to final rc.5 compatibility | PASS | Two lanes: finish produced a matching receipt and full persistence; the reviewed restore returned all 12 baseline files, a recovered state and no receipt |
 
-R12 มีข้อจำกัดหลักฐาน: ก่อน launch ไม่ได้บันทึก hash ของ state tree ทุกไฟล์ จึงไม่อ้างว่าได้เปรียบเทียบ state bytes ทั้งต้นไม้ก่อน/หลัง ตรวจได้ว่า operation/preimages/current hashes ตรงกับ seed, state files มี mtime ก่อน launch และ trace ไม่มีคำสั่งเขียน state
+R12 has an evidence limit: the hash of every state tree file was not recorded before launch, so it is not claimed that the whole state bytes were compared before and after. It could be checked that the operation, the preimages and the current hashes match the seed, that the state files have an mtime before launch, and that the trace has no command that writes state.
 
-## Native experiments ที่เกิดขึ้นจริง
+## Native experiments that actually ran
 
-ทุก session ใช้ Codex CLI, Lead และ named `graphmory_curator` เป็น `gpt-5.6-luna`, effort `low` มี raw dispatch `fork_context:false`, ไม่มี child model override และตรวจ actual child/wait metadata
+Every session used the Codex CLI, with the Lead and the named `graphmory_curator` on `gpt-5.6-luna` at effort `low`. They have a raw dispatch with `fork_context:false`, no child model override, and the actual child and wait metadata was checked.
 
-| Run | Candidate | ผล |
+| Run | Candidate | Result |
 |---|---|---|
-| `repair-native-01` | `978c…cdd` | ไม่เริ่ม model: graph preflight อ่าน edge objects ผิด และ role ที่ harness สร้างเองขัดกับ installer เก็บ failure แล้วแก้ harness |
-| `repair-native-02` | `978c…cdd` | R10 FAIL: persistence ถูก แต่ audit ปฏิเสธ Runbook ที่อ้าง `superseded prior rule` ทั้งที่ chain ถูกต้อง มี partial edits และ pending operation, ไม่มี receipt แก้ grammar พร้อม negative tests |
-| `repair-native-03` | `aa2b…a80` | R10 FAIL: Curator ถือว่า approved new target ที่ยังไม่มีไฟล์เป็น blocker หยุดก่อน prepare/เขียน ตรวจอิสระแล้ว vault 12/12 ไม่เปลี่ยน ไม่มี operation/receipt แก้ guidance แล้ว |
-| `repair-native-04` | `1172…04a` | รันเฉพาะ R12: BLOCKED/CURATION_PENDING ตามคาด ไม่มี policy details และไม่มี vault changes ทั้ง parent/child จบ task_complete |
+| `repair-native-01` | `978c…cdd` | The model did not start: the graph preflight read the edge objects wrongly, and a role created by the harness itself conflicted with the installer. The failure was kept and the harness fixed |
+| `repair-native-02` | `978c…cdd` | R10 FAIL: persistence was correct, but the audit rejected a Runbook that cites `superseded prior rule` even though the chain was correct. There were partial edits and a pending operation, and no receipt. The grammar was fixed with negative tests |
+| `repair-native-03` | `aa2b…a80` | R10 FAIL: the Curator treated an approved new target with no file yet as a blocker and stopped before prepare or any write. An independent check found the vault 12/12 unchanged, with no operation or receipt. The guidance was fixed |
+| `repair-native-04` | `1172…04a` | Ran R12 only: BLOCKED and CURATION_PENDING as expected, no policy details and no vault changes in either parent or child; it ended with task_complete |
 
-Final candidate คือ `artifacts/iteration-03/graphmory-0.5.0-rc.5.tgz`, SHA-256:
+The final candidate is `artifacts/iteration-03/graphmory-0.5.0-rc.5.tgz`, SHA-256:
 
 `11725097611ba5e65ecf2ee6ea39fbf5562061b0053c0e811946e3afe90ff04a`
 
-Version เท่ากันทั้งสาม iteration แต่ archive hashes ต่างกัน จึงเก็บแยกและใช้ hash ระบุ candidate ไม่แทนที่ archive เก่า
+The version is the same in all three iterations but the archive hashes differ, so they are kept apart and the hash identifies the candidate; older archives were not replaced.
 
-## ข้อผิดพลาดของ eval ที่บันทึกไว้
+## Recorded eval errors
 
-- Lifecycle focused รอบแรก 15/16 นำไปสู่การแก้ genuine negated-decision defect; ไม่ลบ FAIL
-- R13 harness รอบแรกคาด field `blocked:false` ที่ rc.4 ไม่คืนมา รอบสองเรียก rc.4 binary แทน rc.5 แก้เป็นคนละ install และตรวจ version/archive-member parity ก่อน CLI ทุกครั้ง รอบที่ใช้ candidate ถูกต้องผ่าน
-- Native scorer แก้การอ่าน graph edge และ actual host dispatch schema โดยบันทึก old/new scorer hashes และคง semantic gold/candidate/input เดิม
-- Native02 ยังมี scorer limitations: source anchor `.md#D2`, การ lowercase state path และ offset 0 ที่ CLI ใช้เป็น default native03 capture ยัง throw เมื่อ required new target ไม่มี ทั้งหมดอยู่ใน remaining eval work; ไม่ใช้ข้อผิดพลาดเหล่านี้ลบ genuine workflow FAIL
-- Independent pending review รุ่นแรกเทียบ status กับ manifest ผิดชนิด และตีความ `sed` ที่อ่าน skill เป็น raw vault read ผิด เก็บไฟล์เดิมและบันทึก correction แยกไว้ ผล R12 automated PASS คงเดิม
+- The first lifecycle focused run scored 15/16, which led to fixing a genuine negated-decision defect. The FAIL was not deleted.
+- The first R13 harness expected a field `blocked:false` that rc.4 does not return; the second called the rc.4 binary instead of rc.5. It was fixed to use two separate installs, and the version and archive-member parity are checked before every CLI call. The run with the right candidate passed.
+- The native scorer was fixed for reading graph edges and the actual host dispatch schema, recording the old and new scorer hashes and keeping the semantic gold, candidate and input unchanged.
+- Native02 still had scorer limitations: the source anchor `.md#D2`, lowercasing of the state path, and offset 0 that the CLI uses as a default. The native03 capture still threw when a required new target was missing. All of this is in the remaining eval work, and these errors were not used to remove a genuine workflow FAIL.
+- The first independent pending review compared the status with the manifest using the wrong type, and misread a `sed` that read the skill as a raw vault read. The original file was kept and the correction recorded separately. The automated R12 PASS stands.
 
-## ขั้นต่อไปก่อนประกาศ MVP พร้อม
+## Next steps before declaring the MVP ready
 
-1. ซ่อม scorer ด้วย recorded traces: source fragments, case-preserved state paths, implicit offset 0 และ missing target ต้องคืน FAIL พร้อมเหตุผลแทน crash เพิ่ม state-tree hash snapshot ก่อน launch
-2. Freeze evaluator/candidate/input/gold ก่อนเปิด model และเก็บ exact evaluator bytes
-3. ทดสอบ native update ใหม่ด้วยคู่มือ new target ที่แก้แล้ว ตรวจ source/target/history/receipt/state แยกกัน
-4. หลัง update ได้ receipt จึงรัน fresh recall สำหรับ current, historical และ unsupported facts ถ้าข้อใดไม่ผ่านต้องรายงานตามจริง
+1. Repair the scorer using the recorded traces: source fragments, case-preserved state paths, implicit offset 0, and a missing target must return FAIL with a reason instead of crashing. Add a state-tree hash snapshot before launch.
+2. Freeze the evaluator, candidate, input and gold before opening the model, and keep the exact evaluator bytes.
+3. Run a new native update with the fixed new-target guide. Check the source, target, history, receipt and state separately.
+4. After the update produces a receipt, run a fresh recall for current, historical and unsupported facts. Report any that fail as they are.
 
-## ขอบเขตและการเก็บหลักฐาน
+## Scope and evidence handling
 
-นี่เป็น synthetic correctness/workflow acceptance ของ Codex/Luna ไม่ใช่ LoCoMo/LongMemEval score, general accuracy หรือหลักฐานว่าเหนือกว่าเครื่องมืออื่น CLI guard อาศัยการทำตามกติกาของ agent; ไม่ใช่ filesystem isolation ของ host และไม่รับรอง atomicity ต่อ external edits หลังการตรวจครั้งสุดท้าย
+This is a synthetic correctness and workflow acceptance for Codex with Luna. It is not a LoCoMo or LongMemEval score, general accuracy, or evidence of superiority over other tools. The CLI guard relies on the agent following the rules; it is not host filesystem isolation and does not promise atomicity against external edits after the last check.
 
-ไม่ได้แก้ vault จริง `<user-vault>` หรือ global config/trust ไม่ commit/push เก็บ original failed fixture/operation, private gold, raw rollouts, manifests และ preimages ไว้ ไม่ล้าง pending state เพื่อทำให้ผลผ่าน
+No real vault, `<user-vault>`, or global config or trust was changed, and nothing was committed or pushed. The original failed fixture and operation, the private gold, the raw rollouts, the manifests and the preimages were kept. The pending state was not cleared to make a result pass.
 
-Private evidence: `../graphmory-mvp-repair-20261001/` รวม `baseline.json`, `repository-check-03.log`, `candidate-03.json`, native evidence และ `r13-compatibility-2026-10-01-r13-final-guide-20261001/result.json` งานเดิมที่ค้างใน working tree ถูกเก็บไว้ มี round inventory แยกจาก Git diff เดิม
+Private evidence: `../graphmory-mvp-repair-20261001/`, including `baseline.json`, `repository-check-03.log`, `candidate-03.json`, the native evidence, and `r13-compatibility-2026-10-01-r13-final-guide-20261001/result.json`. The earlier work left in the working tree was kept, with a round inventory separate from the original Git diff.
 
-รายงานที่เกี่ยวข้อง: [lifecycle](mvp-lifecycle-context-repair-2026-10-01.md), [read authority](mvp-read-authority-repair-2026-10-01.md), [native protocol/failures](mvp-correctness-native-protocol-2026-10-01.md), [checkpoint compatibility](mvp-checkpoint-compatibility-repair-2026-10-01.md), [acceptance protocol](mvp-correctness-repair-protocol-2026-10-01.md)
+Related reports: [lifecycle](mvp-lifecycle-context-repair-2026-10-01.md), [read authority](mvp-read-authority-repair-2026-10-01.md), [native protocol and failures](mvp-correctness-native-protocol-2026-10-01.md), [checkpoint compatibility](mvp-checkpoint-compatibility-repair-2026-10-01.md), [acceptance protocol](mvp-correctness-repair-protocol-2026-10-01.md)
 
-Cleanup เสร็จแล้ว: ลบเฉพาะ dependency/cache และ Python bytecode ใน private test root เก็บ archives, gold, raw traces, fixture vaults, manifests และ preimages ครบ ไม่แตะ dependency ของ checkout หลัก บันทึกไว้ใน `cleanup.json`
+Cleanup is done: only the dependencies, the cache and the Python bytecode in the private test root were deleted. The archives, gold, raw traces, fixture vaults, manifests and preimages were all kept, and the main checkout's dependencies were not touched. It is recorded in `cleanup.json`.
 
-## Follow-up: native-05 หลังผู้ใช้อนุมัติทดสอบต่อ
+## Follow-up: native-05 after the user approved more testing
 
-แก้ development evaluator พร้อม regression 7/7 และ `npm run check` ผ่าน 421/421 จากนั้นทดสอบ final candidate เดิมด้วย Lead/Curator Luna จริงบน fresh fixture ผล R10 ยัง FAIL: Curator ไม่เปลี่ยน predecessor เป็น superseded และใช้ replacement link แบบชื่อย่อ; full verifier บล็อกถูกต้อง งานคง pending ไม่มี receipt จึงไม่รัน R11
+The development evaluator was fixed with regression 7/7 and `npm run check` passed 421/421. The same final candidate was then tested with a real Lead and Curator on Luna on a fresh fixture. R10 still FAILED: the Curator did not change the predecessor to superseded and used a short-name replacement link; the full verifier correctly blocked it, the task stayed pending with no receipt, so R11 was not run.
 
-R12 ปฏิเสธข้อมูลและคง vault/state tree เดิมไว้ครบ แต่ frozen automated trace gate ยังอ่าน dynamic wait ไม่ครบ จึงคงคะแนน FAIL เดิมไว้ พร้อม independent raw review แยกผลการทำงานกับข้อจำกัดของตัว eval ไม่มี manual repair เพื่อเปลี่ยน failed attempt ให้เป็น success
+R12 refused to give the data and kept the vault and state tree unchanged, but the frozen automated trace gate still does not read the dynamic wait completely, so the original FAIL score was kept, with an independent raw review that separates the behavior from the limits of the eval. No manual repair was made to turn a failed attempt into a success.
 
-[รายงาน follow-up และขั้นแก้ที่แนะนำ](mvp-native-retest-result-2026-10-01.md) · [independent review](mvp-native-05-independent-review-2026-10-01.md)
+[Follow-up report and recommended fixes](mvp-native-retest-result-2026-10-01.md) · [independent review](mvp-native-05-independent-review-2026-10-01.md)
