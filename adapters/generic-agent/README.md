@@ -1,10 +1,8 @@
 # Generic Agent Adapter
 
-**Transport: Filesystem**
+**Transport: MCP, with filesystem as a fallback**
 
-This adapter connects any AI coding agent to Graphmory through
-direct filesystem access. No plugin, REST API, MCP server, or Obsidian-specific
-tooling is required.
+This adapter connects any AI coding agent to Graphmory. The recommended transport is the `graphmory-mcp` MCP server; see [MCP host configuration](../../docs/guides/mcp-hosts.md). Direct filesystem access through the CLI scripts also works and needs no plugin, REST API or Obsidian-specific tooling.
 
 ## Transport
 

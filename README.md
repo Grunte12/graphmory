@@ -112,8 +112,8 @@ The agent cannot approve its own low-confidence memory; there is no MCP tool for
 |---|---|
 | Install and hosts | [Installation](docs/guides/install.md) · [Codex, Cursor and Claude Code](docs/guides/agent-hosts.md) · [MCP hosts](docs/guides/mcp-hosts.md) · [Vault layout](docs/guides/vault-setup.md) · [Troubleshooting](docs/guides/troubleshooting.md) |
 | Using it | [CLI reference](docs/guides/cli-reference.md) · [Portable Brain Sync](docs/guides/portable-brain-sync.md) · [Demo workflow](docs/guides/demo-workflow.md) · [Managed retrieval](docs/guides/managed-retrieval.md) |
-| Design | [Memory contracts](docs/guides/memory-contracts.md) · [Learning loop](docs/design/learning-loop.md) · [Positioning and RAG](docs/research/positioning.md) · [Research foundations](docs/research/research-foundations.md) |
-| Evaluation | [Evaluation](docs/evaluation/evaluation.md) · [Cost and scale](docs/evaluation/cost-and-scale.md) · [Live model results](docs/evaluation/live-model-results.md) · `npm run eval` |
+| Design | [Memory contracts](docs/guides/memory-contracts.md) · [Learning loop](docs/design/learning-loop.md) · [Positioning and RAG](docs/research/positioning.md) · [Research foundations](docs/research/research-foundations.md) · [Glossary](docs/glossary.md) |
+| Evaluation | [Evaluation](docs/evaluation/evaluation.md) · [Evaluation index](docs/evaluation/README.md) · [Cost and scale](docs/evaluation/cost-and-scale.md) · [Live model results](docs/evaluation/live-model-results.md) · `npm run eval` |
 
 ## Project
 

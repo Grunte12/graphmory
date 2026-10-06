@@ -1,6 +1,6 @@
 # Proposed native trial MVP acceptance — 2026-09-30
 
-**Revision 3, frozen protocol snapshot, final verification 2026-10-01.** This was proposed during the planning-only review at baseline `e3e43ab`. Subsequent authorized implementation and execution are recorded separately in the [native acceptance report](mvp-native-acceptance-2026-10-01.md); scenarios below are requirements rather than evidence. Gate IDs refer to the [reviewed implementation plan](../design/mvp-finalization-plan-2026-09-30.md).
+**Revision 3, frozen protocol snapshot, final verification 2026-10-01.** This was proposed during the planning-only review at baseline `e3e43ab`. Subsequent authorized implementation and execution are recorded separately in the [native acceptance report](mvp-native-acceptance-2026-10-01.md); scenarios below are requirements rather than evidence. Gate IDs refer to the [reviewed implementation plan](../history/mvp-finalization-plan-2026-09-30.md).
 
 ## 1. Freeze inputs and the final installed artifact
 

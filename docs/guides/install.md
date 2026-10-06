@@ -1,12 +1,11 @@
 # Installation
 
-Graphmory is file-first. For Codex, Cursor, and Claude Code, its setup script can install a named curator agent and skill after a path/model preview. The OpenCode installer still uses adapter snippets and does not rewrite `opencode.json`.
+Graphmory is a local MCP server over plain Markdown notes. Connect it to your agent with the [MCP host configuration](mcp-hosts.md); the steps below install the CLI, the Curator skill and the vault. Graphmory is file-first. For Codex, Cursor, and Claude Code, its setup script can install a named curator agent and skill after a path/model preview. The OpenCode installer still uses adapter snippets and does not rewrite `opencode.json`.
 
 For Codex, Cursor, or Claude Code, follow the [cross-host setup guide](agent-hosts.md). The steps below describe the existing OpenCode installer and vault setup.
 
 For the guarded local Curator workflow, see [the trial guide](trial-mvp.md). A newer CLI does not update an existing installed role automatically; preview and review the skill/role upgrade rather than overwrite personal settings.
 
-The candidate CLI blocks agent-facing content reads while checkpoint state is pending or unreadable and checks authority again before returning output. This does not sandbox native filesystem tools. After a block, do not use those tools or switch state roots to produce a current answer. Keep one state root across sessions; use the exact-operation recovery read only to repair that operation.
 
 ## Where installation instructions live
 

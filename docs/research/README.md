@@ -1,0 +1,25 @@
+# Research
+
+Background research, comparisons and design inputs. These are dated snapshots, not product documentation.
+
+- [QA Report — Graphmory](qa-report-2026-09-23.md) (partly Thai)
+- [A-MEM workflow feasibility inventory](amem-workflow-feasibility-2026-09-29.md)
+- [Architecture decision: paginated evidence collection with a source ledger](architecture-decision-2026-09-28.md)
+- [Four coexisting memory workflows and local model candidates](four-workflow-models-2026-09-23.md)
+- [Hindsight as a workflow reference](hindsight-workflow-reference-2026-09-29.md)
+- [Human reference for source-support calibration](human-source-support-calibration-2026-09-28.md)
+- [I-MEM and Graphmory: repository comparison](i-mem-comparison-2026-09-23.md)
+- [I-MEM bibliography: memory and retrieval systems to compare](imem-memory-tools-inventory-2026-09-29.md)
+- [Improvement Research Notes](improvement-research.md)
+- [Index reuse research: evidence and pending decisions](index-reuse-research-2026-09-29.md)
+- [Memory workflow patterns: Hindsight, Basic Memory, Letta](memory-workflow-patterns-2026-09-29.md)
+- [Native Curator dispatch diagnostic](native-curator-dispatch-diagnostic-2026-09-29.md)
+- [Research checkpoint: alternatives for evidence completeness](next-architecture-evidence-2026-09-28.md)
+- [Independent NotebookLM Review](notebooklm-review.md)
+- [Obsidian Memory for AI: workflow feasibility](obsidian-memory-workflow-feasibility-2026-09-29.md)
+- [Positioning](positioning.md)
+- [Where This Fits in the RAG Landscape](rag-positioning.md) (Thai)
+- [Research Foundations](research-foundations.md)
+- [Research Source Map / แผนที่แหล่งวิจัย](research-source-map.md) (partly Thai)
+- [Retrieval pipeline proposal: deterministic where possible, evidence-gated (2026-10-04)](retrieval-pipeline-proposal-2026-10-04.md)
+- [Reuse-first retrieval decision (development checkpoint)](reuse-first-retrieval-decision-2026-09-29.md)

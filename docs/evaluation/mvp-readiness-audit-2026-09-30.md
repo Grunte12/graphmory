@@ -2,7 +2,7 @@
 
 **Scope:** read-only exploration, validation, audit and verification of baseline `e3e43ab`, Graphmory `0.5.0-rc.3`. **Outcome:** baseline checks pass, but scoped MVP readiness is not established. Two concrete correctness gaps were independently reproduced; several mandatory native integration gates remain unverified.
 
-The user changed the round to plan-only while implementation drafts were in progress. Those drafts and their new runtime/tests were removed from the active repository; no draft result is used to claim baseline readiness. The active deliverables are this audit, the [implementation plan](../design/mvp-finalization-plan-2026-09-30.md), and a [proposed unexecuted native protocol](mvp-native-protocol-2026-09-30.md). No commit/push, global installation, native Codex acceptance session, or private Obsidian vault mutation occurred.
+The user changed the round to plan-only while implementation drafts were in progress. Those drafts and their new runtime/tests were removed from the active repository; no draft result is used to claim baseline readiness. The active deliverables are this audit, the [implementation plan](../history/mvp-finalization-plan-2026-09-30.md), and a [proposed unexecuted native protocol](mvp-native-protocol-2026-09-30.md). No commit/push, global installation, native Codex acceptance session, or private Obsidian vault mutation occurred.
 
 ## Actual checks
 
@@ -79,7 +79,7 @@ Read-only fixture exploration in this round found a depth-2 graph path and showe
 
 ## Release recommendation
 
-Do not label the final scoped MVP ready yet. Complete bundles A–D and every mandatory gate in the [implementation plan](../design/mvp-finalization-plan-2026-09-30.md), then publish actual state/trace evidence. Keep the baseline's passing tests as useful mechanical evidence, while leaving missing integrations and failed invariants visible.
+Do not label the final scoped MVP ready yet. Complete bundles A–D and every mandatory gate in the [implementation plan](../history/mvp-finalization-plan-2026-09-30.md), then publish actual state/trace evidence. Keep the baseline's passing tests as useful mechanical evidence, while leaving missing integrations and failed invariants visible.
 
 ## Plan review addendum — 2026-10-01
 

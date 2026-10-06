@@ -4,7 +4,7 @@ Status: scoped trial MVP complete; G1–G9 pass after one retained native delega
 
 ## Scope and changes
 
-The user authorized the reviewed [Revision 3 plan](../design/mvp-finalization-plan-2026-09-30.md). Root integrated three parallel Luna Max work packages: full patch/lifecycle integrity, discoverable recovery, and independent installed-package native acceptance. Other hosts and optional retrieval engines are outside this trial.
+The user authorized the reviewed [Revision 3 plan](../history/mvp-finalization-plan-2026-09-30.md). Root integrated three parallel Luna Max work packages: full patch/lifecycle integrity, discoverable recovery, and independent installed-package native acceptance. Other hosts and optional retrieval engines are outside this trial.
 
 | Layer | Delivered change |
 |---|---|

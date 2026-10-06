@@ -2,6 +2,8 @@
 
 The same `graphmory` CLI and `memory-curator` skill work across hosts that can run shell commands. For broad compatibility, have the user's coding agent follow the [guided install interview](../../adapters/generic-agent/INSTALL.md#agent-guided-setup). The agent inspects its host, asks for missing choices, and installs one named curator with a consistent role, skill, and inexpensive model. The lead agent still decides when to delegate and authors every new Memory Patch.
 
+Hosts that support MCP should also connect the `graphmory-mcp` server, which exposes `recall`, `read` and `remember` as tools; see [MCP host configuration](mcp-hosts.md). The CLI steps below remain available for hosts that cannot run an MCP server.
+
 ## 1. Install the CLI once
 
 From a checkout of this repository with Node.js 20 or newer:

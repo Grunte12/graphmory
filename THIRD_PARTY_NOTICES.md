@@ -58,10 +58,6 @@ revision `6dbe1a1d868eab51a3bc9011b0f55e2891513e40`, under MIT. The license and 
 resources are excluded from the npm package. Bundled heuristic example scorers
 are guidance, not adopted benchmark implementations.
 
-## Platform logos in promotional media
-
-`docs/media/graphmory-motion/work/logos/` contains proportionally resized official Cursor, OpenAI Codex, OpenCode, Antigravity and DeepSeek logo assets. These marks remain the property of their respective owners and are excluded from Graphmory’s MIT grant. Source links and derivations are recorded in [media credits](docs/media/graphmory-motion/CREDITS.md). Their illustrative appearance does not imply endorsement or verified integration with every depicted platform.
-
 ## MCP runtime dependency
 
 `@modelcontextprotocol/sdk` 1.32.0 (official TypeScript SDK), copyright
@@ -74,3 +70,12 @@ dependency under MIT; its license is retained in its installed package.
 ## Diagram icons
 
 The README diagrams (`docs/assets/source/`) use icons from [Lucide](https://lucide.dev) (ISC license) and from [Simple Icons](https://simpleicons.org) (CC0 1.0). The Obsidian, Git, Claude, Cursor, GitHub Copilot, Gemini and Zed marks belong to their owners and appear only to identify tools that work with Graphmory. They do not imply endorsement.
+
+## Evaluation datasets
+
+Files under `eval/` and `docs/evaluation/` may contain excerpts, labels or summaries derived from public benchmarks. They are research artifacts and are not covered by this repository's MIT license; follow each source's license.
+
+- LoCoMo ([snap-research/locomo](https://github.com/snap-research/locomo)): CC BY-NC 4.0. Derived files under `eval/reader-pilot/` and `eval/locomo/` are for non-commercial use only.
+- LongMemEval ([xiaowu0162/LongMemEval](https://github.com/xiaowu0162/LongMemEval)): MIT license per the dataset card.
+- BEIR ([beir-cellar/beir](https://github.com/beir-cellar/beir)): each dataset keeps its own license.
+- RAGTruth: only a public manifest is stored in `eval/ragtruth-support-pilot/`. Redistribution rights for its source corpora are unverified, so source-containing records are not committed.

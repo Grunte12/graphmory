@@ -7,7 +7,7 @@ Contributions should preserve Graphmory boundaries:
 - canonical Markdown remains separate from derived indexes,
 - and measurable behavior matters more than prompt length.
 
-Before opening a pull request:
+Requirements: Node.js 20 or newer, Git and Python 3 (a few tests spawn Python). Run `npm ci` once, then before opening a pull request:
 
 ```sh
 npm run check

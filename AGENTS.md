@@ -83,6 +83,16 @@ node scripts/brain-sync.mjs restructure-verify --vault "<vault-path>" --record "
 
 The apply command requires a clean Git worktree and baseline commit, creates a local backup branch, limits the default batch to 20 notes, and records exact moves. Verification proves path state only. Repair and validate wikilinks/Markdown links before committing. Use `restructure-rollback --approve` if the result is wrong.
 
+## MCP Tools
+
+Graphmory ships `graphmory-mcp`, a Model Context Protocol server. Set `GRAPHMORY_VAULT` to the vault path and register the server in the host as described in `docs/guides/mcp-hosts.md`. It exposes three tools:
+
+- `recall(query, scope?, cursor?)` returns a ranked, paged shortlist with path, heading, excerpt and note hash.
+- `read(path, section?, hash?)` returns the original note or one section; a stale hash is refused.
+- `remember(claim, scope, evidence, curation?)` is a guarded write that returns `APPLIED`, `TENSION` or `BLOCKED`.
+
+Use the CLI only when the host cannot run an MCP server. See `docs/guides/mcp-recall.md` and `docs/guides/mcp-remember.md`.
+
 ## Memory Roles
 
 - Write new canonical memory in concise English; the lead agent answers the user in their chosen language. Preserve exact identifiers and provenance, and do not create translated duplicate notes. See `docs/guides/token-efficient-language.md`.

@@ -1,51 +1,54 @@
-# Docs Index
+# Documentation
 
-Files here are the engineering docs — architecture, operations, evaluation
-evidence, and the project's own research/positioning notes — grouped by
-purpose. Nothing has been deleted, only regrouped; this is a navigation aid.
+Start with the [project README](../README.md), then connect an agent and learn what the three tools do.
 
-## Guides (`guides/`)
+## Start here
 
-Operational how-tos for installing, running, and troubleshooting the harness.
+- [Installation](guides/install.md) and [MCP host configuration](guides/mcp-hosts.md)
+- [Recall and citation](guides/mcp-recall.md) and [guarded writes](guides/mcp-remember.md)
+- [Memory contracts](guides/memory-contracts.md) and the [glossary](glossary.md)
+- [Architecture](design/architecture.md)
 
-- `install.md` — installation and adapter setup.
-- `troubleshooting.md` — start with the doctor command, not guesswork.
-- `demo-workflow.md` — a walkthrough turning a verified incident into durable memory.
-- `portable-brain-sync.md` — syncing the same curated vault across machines/accounts/agents.
-- `hot-context-demo.md` — the `render-hot-context` script demonstrated on real output, not a metrics doc.
-- `thai-strategy-guide.md` — Thai-language concept guide.
+## Guides
 
-## Design (`design/`)
+- [Codex, Cursor, and Claude Code](guides/agent-hosts.md)
+- [CLI reference and manual setup](guides/cli-reference.md)
+- [Manual native-host curator smoke](guides/curator-workflow-smoke.md)
+- [Demo Workflow](guides/demo-workflow.md)
+- [Hot Context Demo](guides/hot-context-demo.md)
+- [Hybrid retrieval and reusable summaries](guides/hybrid-summary.md)
+- [Installation](guides/install.md)
+- [A small, explicit memory graph](guides/knowledge-graph.md)
+- [Managed retrieval and model roles](guides/managed-retrieval.md)
+- [MCP host configuration](guides/mcp-hosts.md)
+- [Streamable HTTP and remote access](guides/mcp-http.md)
+- [Recall and citation through MCP](guides/mcp-recall.md)
+- [Guarded memory writes through MCP](guides/mcp-remember.md)
+- [Memory contracts](guides/memory-contracts.md)
+- [Portable Brain Sync](guides/portable-brain-sync.md)
+- [คู่มือแนวคิด Graphmory](guides/thai-strategy-guide.md) (Thai)
+- [Language and token budget](guides/token-efficient-language.md)
+- [Local Curator trial](guides/trial-mvp.md)
+- [Troubleshooting and Agent Recovery](guides/troubleshooting.md)
+- [Vault setup and architecture](guides/vault-setup.md)
 
-The system's architecture and the reasoning behind its shape.
+## Design
 
-- `architecture.md` — the lead-agent/curator responsibility split and system components.
-- `repository-patterns.md` — why the repo is shaped the way it is (install/eval/fork ergonomics).
-- `learning-loop.md` — the verified-loop model for how a note becomes durable memory.
+- [Bounded retrieval loop (experimental)](design/adaptive-retrieval-loop.md)
+- [Architecture](design/architecture.md)
+- [Jev as the curator decision engine](design/jev-replaces-curator.md)
+- [Jev-assisted retrieval plan](design/jev-retrieval-plan.md)
+- [Learning Loop](design/learning-loop.md)
+- [Repository Patterns](design/repository-patterns.md)
 
-## Evaluation (`evaluation/`)
+## Evaluation
 
-The project's canonical eval docs — updated in place as the suite evolves —
-plus dated, point-in-time reproduction snapshots that are never edited after
-the fact; they get superseded by a new dated file instead.
+Reports, protocols and results from the evaluation work. Start with the [evaluation overview](evaluation/evaluation.md), [cost and scale](evaluation/cost-and-scale.md) and [live model results](evaluation/live-model-results.md). The [evaluation index](evaluation/README.md) lists every dated report and explains how to read them. Datasets and fixtures are in [`eval/`](../eval/README.md).
 
-- `evaluation.md` — the living deterministic eval suite writeup (retrieval baseline, acceptance gate, curator/patch-quality proxy tables). Kept current; superseded numbers are corrected in place with a note, not silently overwritten.
-- `live-model-eval.md` — methodology: how to run and score a live-model comparison (what to compare, how scoring works). Process doc, not results.
-- `live-model-results.md` — the living live-model results doc, explicitly separate from the deterministic proxy evals in `evaluation.md`.
-- `cost-and-scale.md` — includes the private, non-reproducible 30-question scoped-vault eval (semantic-hybrid dense-fusion gain) plus cost-reduction claims, flagged as a reproducibility gap precisely because that fixture isn't committed.
-- `query-reformulation-ablation-2026-08-05.md` — blind LLM query-reformulation ablation extended from N=2 to the full 34-query real-vault set. Result: net negative (1 fix, 2 regressions vs. baseline).
-- `raw-logs/` — query-level JSON backing the dated ablation snapshots above (e.g. `query-reformulation-2026-08-05.json`).
+## Research
 
-## Research (`research/`)
+Background research and comparisons. See the [research index](research/README.md).
 
-The project's own positioning and research-sourcing notes.
+## History
 
-- `rag-positioning.md` — the project's own first-pass self-assessment of where it sits in the RAG landscape (English + Thai).
-- `research-foundations.md` — which components are directly supported by prior published work vs. engineering synthesis without a claimed precedent.
-- `research-source-map.md` — a log of which external sources changed the architecture vs. were reviewed and excluded (bilingual EN/TH).
-- `improvement-research.md` — research-backed improvement-area notes from the v0.5.0-rc.3 era.
-- `notebooklm-review.md` — an independent external review (2026-06-27), kept as outside-eyes feedback, not authored by this project.
-
-## History (`history/`)
-
-- `v0.3-development-plan.md` — historical development plan (v0.2 → v0.3 branch start).
+Dated plans and handoffs kept for the record. See the [history index](history/README.md).

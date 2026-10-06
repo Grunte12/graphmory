@@ -6,7 +6,7 @@ Use this guide when an AI coding agent is asked to install or connect Graphmory 
 
 You are the installer on the user's machine. This Markdown guide is the source of truth; `graphmory-setup` is an optional file-writing helper for known hosts, not the universal installation interface. Use the host's native multiple-choice question UI when available. If it is unavailable, ask one concise numbered-choice question in chat at a time. Never block setup merely because the host lacks a named question tool.
 
-These UIs have different names and availability: Claude Code documents `AskUserQuestion`, Cursor's ACP documents `cursor/ask_question`, and Codex may expose a user-input tool in the current client. Use the tool actually available in the session; do not call a guessed name. [Claude reference](https://code.claude.com/docs/en/agent-sdk/permissions) · [Cursor reference](https://prod.cursor.com/docs/cli/acp)
+These UIs have different names and availability: Claude Code documents `AskUserQuestion`, Cursor's ACP documents `cursor/ask_question`, and Codex may expose a user-input tool in the current client. Use the tool actually available in the session; do not call a guessed name. [Claude reference](https://code.claude.com/docs/en/agent-sdk/permissions) · [Cursor reference](https://cursor.com/docs/cli/acp)
 
 Inspect the host, OS, available models, existing agent files, and candidate vault paths before asking. Ask only for decisions you cannot reliably infer. Keep answers in the conversation until the requirements below are complete; do not write a config containing guessed answers.
 
@@ -83,7 +83,9 @@ Ask `Download the local meaning model now (about 130 MB, once)?` Choices: `Yes, 
 
    Use `claude` or `cursor` in place of `codex` where appropriate; Cursor also requires `--model <supported-cheap-model-id>`. For OpenCode use `node scripts/install.mjs --target "<agent-config-root>"` and its adapter. See `docs/guides/agent-hosts.md`.
 
-7. Add this boundary to the user's main agent instructions:
+7. Connect the MCP server. Register `graphmory-mcp` in the host's MCP configuration with `GRAPHMORY_VAULT` set to the chosen vault path, using the snippet for the user's host in [MCP host configuration](../../docs/guides/mcp-hosts.md). Then run `graphmory doctor` and confirm it reports `mcp tools: recall · read · remember`. The tools are `recall`, `read` and `remember`; the CLI remains available when a host cannot run an MCP server.
+
+8. Add this boundary to the user's main agent instructions:
 
    ```text
    The lead agent authors Memory Patches after verified work.

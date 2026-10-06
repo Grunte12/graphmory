@@ -1,6 +1,6 @@
 # OpenCode Adapter
 
-**Transport: Filesystem (with MCP as optional extension)**
+**Transport: MCP, with filesystem as a fallback**
 
 This adapter configures Graphmory for the [OpenCode](https://opencode.ai/)
 coding agent platform. OpenCode supports custom agent definitions, skills, and
@@ -10,31 +10,30 @@ permission rules.
 
 | Property | Value |
 |---|---|
-| Method | **Filesystem** via harness scripts and OpenCode `bash` permission |
-| Optional extension | **MCP** — an MCP server can be defined to expose memory operations |
-| Requirements | Harness cloned locally; OpenCode agent config updated |
+| Method | **CLI** via Graphmory scripts and OpenCode `bash` permission (fallback) |
+| Recommended | **MCP** — register `graphmory-mcp` under `mcp` in `opencode.json` |
+| Requirements | Graphmory cloned locally; OpenCode agent config updated |
 | Startup setup | Lead agent runs `graphmory auto-pull --json` at session start |
 
 ## How Memory Access Is Established
 
-1. The harness repository is cloned to the local machine.
+1. The Graphmory repository is cloned to the local machine.
 2. The lead agent's instructions reference the Memory Curator and related commands.
 3. Memory Curator is configured as a sub-agent with filesystem read/edit/glob/grep
    permissions (see `opencode.agent.example.json`).
-4. The harness scripts (`scripts/brain-sync.mjs`, `scripts/render-hot-context.mjs`)
+4. The Graphmory scripts (`scripts/brain-sync.mjs`, `scripts/render-hot-context.mjs`)
    are invoked through OpenCode's `bash` tool permission.
 5. Memory Patches are written as Markdown notes in the vault directory.
 6. `AGENTS.snippet.md` provides the durable-memory section for the lead agent.
 
 ## Switched Transport
 
-If your OpenCode runtime gains an MCP server that wraps the harness, you may
-change the transport to `mcp`. A future adapter could use Obsidian CLI or REST.
+OpenCode can use the `graphmory-mcp` server directly: add it under `mcp` in `opencode.json` as shown in [MCP host configuration](../../docs/guides/mcp-hosts.md). A future adapter could use Obsidian CLI or REST.
 
 | Transport | When to use |
 |---|---|
-| `filesystem` | Default — direct harness scripts with `bash` permission |
-| `mcp` | When a harness MCP server is running and accessible |
+| `filesystem` | Fallback — direct Graphmory scripts with `bash` permission |
+| `mcp` | Recommended — the `graphmory-mcp` server is registered in `opencode.json` |
 | `obsidian-cli` | When the vault is an Obsidian vault and Obsidian CLI is available |
 
 ## Files in This Adapter

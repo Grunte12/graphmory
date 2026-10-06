@@ -1,5 +1,7 @@
 # Host installation and README media — 2026-10-02
 
+Historical report, written before the rename: it uses the old command names `mph` and `memory-patch-harness`, which have since been removed. The 20-second motion graphic described here was later removed from the repository.
+
 ## Scope
 
 Install the shared Graphmory CLI, memory-curator skill and named Curator in Codex and OpenCode. Verify actual native delegation and original-source reads, then document the architecture and prepare a short motion graphic. This is an installation acceptance experiment, not a retrieval-quality or competitor benchmark.
@@ -49,9 +51,9 @@ The diagram uses the selected editorial style: off-white background, dark text a
 
 The first 10-second composition passed technical checks but failed the user's creative review: it communicated through animated typography rather than graphic visualization. It remains preserved as a rejected concept, not a completed media deliverable. The replacement uses the explicitly requested [brag workflow](https://github.com/latent-spaces/brag) to animate the shared graph, three retrieval lanes, cited Brief and note replacement in a 20-second composition.
 
-The user approved the revised graphical concept and requested FFmpeg rather than HyperFrames. The final [editable renderer](../media/graphmory-motion/README.md) uses Pillow to draw deterministic frames from its own SVG artwork, then pipes them into FFmpeg for video encoding and two quiet CC0 sound accents. No JavaScript, browser or HyperFrames runtime is needed. The artwork keeps original notes, evidence links, a Curator, cited Brief and superseded history visible.
+The user approved the revised graphical concept and requested FFmpeg rather than HyperFrames. The final editable renderer uses Pillow to draw deterministic frames from its own SVG artwork, then pipes them into FFmpeg for video encoding and two quiet CC0 sound accents. No JavaScript, browser or HyperFrames runtime is needed. The artwork keeps original notes, evidence links, a Curator, cited Brief and superseded history visible.
 
-Native proof frames were inspected at 0, 2.8, 3.85, 4.15, 5.5, 8.8, 9.85, 10.15, 13.8, 14.85, 15.15, 18.7 and 19.8 seconds. A settled frame at 13.8 seconds replaces frame zero, preserving video timing. The poster, MP4, GIF preview, storyboard, renderer and sound credits are included; intermediate frames, rejected prototypes and private host backups are excluded. System fonts are loaded locally rather than redistributed. See [media credits](../media/graphmory-motion/CREDITS.md).
+Native proof frames were inspected at 0, 2.8, 3.85, 4.15, 5.5, 8.8, 9.85, 10.15, 13.8, 14.85, 15.15, 18.7 and 19.8 seconds. A settled frame at 13.8 seconds replaces frame zero, preserving video timing. The poster, MP4, GIF preview, storyboard, renderer and sound credits are included; intermediate frames, rejected prototypes and private host backups are excluded. System fonts are loaded locally rather than redistributed. See media credits.
 
 Final publication checks include whitespace, local README asset links, full video decoding, and npm packaging. The previously passed runtime release gate remains the software acceptance evidence; this experiment does not claim broader MVP write/recovery certification or superiority over another tool.
 
