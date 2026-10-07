@@ -1038,7 +1038,7 @@ test("the installed graphmory command is the owner CLI and sends agents to MCP",
   for (const agentCommand of [["recall-managed", "--query", "x"], ["read-notes"], ["render-patch"], ["curation-checkpoint", "prepare"]]) {
     const refused = spawnSync(process.execPath, [owner, ...agentCommand], { encoding: "utf8" })
     assert.equal(refused.status, 2, agentCommand.join(" "))
-    assert.match(refused.stderr, /graphmory-mcp tools recall, read, remember, status and sync/)
+    assert.match(refused.stderr, /graphmory-mcp tools recall, read, remember, link, status and sync/)
   }
   const status = spawnSync(process.execPath, [owner, "curation-checkpoint", "status", "--vault", os.tmpdir()], { encoding: "utf8" })
   assert.doesNotMatch(status.stderr, /not part of the owner CLI/)

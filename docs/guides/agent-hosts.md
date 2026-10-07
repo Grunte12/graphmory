@@ -2,7 +2,7 @@
 
 The same `graphmory-mcp` server and `graphmory-curator` skill work across MCP hosts. For broad compatibility, have the user's coding agent follow the [guided install interview](../../adapters/generic-agent/INSTALL.md#agent-guided-setup). The agent inspects its host, asks for missing choices, and installs one named curator with a consistent role, skill, and inexpensive model. The main agent still decides when to delegate and authors every new Memory Patch.
 
-Agents use only the `graphmory-mcp` server, which exposes `recall`, `read`, `remember`, `status` and `sync` as tools; see [MCP host configuration](mcp-hosts.md). The `graphmory` CLI below is the owner's one-time setup and maintenance tool.
+Agents use only the `graphmory-mcp` server, which exposes `recall`, `read`, `remember`, `link`, `status` and `sync` as tools; see [MCP host configuration](mcp-hosts.md). The `graphmory` CLI below is the owner's one-time setup and maintenance tool.
 
 ## 1. Install the CLI once
 
@@ -67,7 +67,7 @@ The host locations follow [Codex's repository skill convention](https://develope
 
 ## 3. Connect the MCP server
 
-Agents reach memory only through `graphmory-mcp` and its tools `recall`, `read`, `remember`, `status` and `sync`. Register it in the host with `GRAPHMORY_VAULT` set to the vault path, using the snippet in [MCP host configuration](mcp-hosts.md), then restart the host. The default workflow is already `curator`, which the server requires; the owner changes retrieval settings in a terminal with `graphmory config`.
+Agents reach memory only through `graphmory-mcp` and its tools `recall`, `read`, `remember`, `link`, `status` and `sync`. Register it in the host with `GRAPHMORY_VAULT` set to the vault path, using the snippet in [MCP host configuration](mcp-hosts.md), then restart the host. The default workflow is already `curator`, which the server requires; the owner changes retrieval settings in a terminal with `graphmory config`.
 
 The Curator calls `recall`, `read`s only the relevant candidates by path and hash, preserves provenance and abstains when evidence is insufficient. See [recall and citation](mcp-recall.md). The `graphmory` command is the owner's CLI; agents do not run it.
 
@@ -91,6 +91,6 @@ The Curator files a supported patch with `remember`, which prepares a private ch
 
 ## 5. Smoke check
 
-Use the [end-to-end smoke guide](curator-workflow-smoke.md) to exercise the real install and write workflow safely. For a quick read-only check, use a disposable Markdown vault: run `graphmory doctor --vault "<vault-path>"` in a terminal (it should report `mcp tools: recall · read · remember · status · sync`), then ask the agent to delegate one recall of a known memory question to the Curator.
+Use the [end-to-end smoke guide](curator-workflow-smoke.md) to exercise the real install and write workflow safely. For a quick read-only check, use a disposable Markdown vault: run `graphmory doctor --vault "<vault-path>"` in a terminal (it should report `mcp tools: recall · read · remember · link · status · sync`), then ask the agent to delegate one recall of a known memory question to the Curator.
 
 Confirm the host calls the MCP `recall` tool, receives the compact response, and reads only the returned notes it needs. Do not treat an empty result as permission to broaden into the full vault. Treat installation, MCP connection, skill discovery, and native named-agent dispatch as separate checks.

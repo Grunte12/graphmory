@@ -349,7 +349,7 @@ function usage(exitCode = 0) {
     ]],
   ]
   out.write(`Graphmory: governed memory for AI agents\n\n`)
-  out.write(`Agents connect through the MCP server (graphmory-mcp) and its tools recall, read, remember, status and sync.\n`)
+  out.write(`Agents connect through the MCP server (graphmory-mcp) and its tools recall, read, remember, link, status and sync.\n`)
   out.write(`This CLI is for the vault owner: setup, health checks, review and Git sync.\n`)
   for (const [title, lines] of OWNER_CLI ? sections.filter(([title]) => !title.startsWith("Developer")) : sections) {
     out.write(`\n${title}:\n`)
@@ -2146,7 +2146,7 @@ function curationApply() {
 try {
   if (!command || command === "--help" || command === "-h" || flag("--help") || command === "help") usage(0)
   if (OWNER_CLI && isAgentCommand()) {
-    console.error(`graphmory ${command} is not part of the owner CLI. Agents use the graphmory-mcp tools recall, read, remember, status and sync.`)
+    console.error(`graphmory ${command} is not part of the owner CLI. Agents use the graphmory-mcp tools recall, read, remember, link, status and sync.`)
     console.error(`Developers and evaluations: node <graphmory>/scripts/brain-sync.mjs ${command} ...`)
     process.exit(2)
   }
