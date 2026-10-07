@@ -296,27 +296,45 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
         return { status: "APPLIED", receipt: { ...compactReceipt(finished.receipt), ...(options.ownerApprovedReview ? { approvedBy: "owner", reviewId: options.ownerApprovedReview } : {}) } }
       } catch (error) { return { status: "BLOCKED", ...publicError(error), ...(operation ? { checkpoint: operation } : {}) } }
     },
-    // Link maintenance: relation properties and broken-link repair on one note, bound to the hash the
-    // Curator read. The write is a single atomic file replace; nothing outside the links changes.
-    async link({ path: relative, hash: expected, add, remove, repair }) {
+    // Link maintenance in one call: relation properties and broken-link repair across up to 50 notes,
+    // each bound to the hash the Curator read. All notes are checked before any write; if a write
+    // fails, the notes already written are put back, so the batch applies whole or not at all.
+    async link({ notes: requested }) {
+      let failing
       try {
-        if (!add?.length && !remove?.length && !repair?.length) throw fail("INVALID_ARGUMENT", "Nothing to change")
         const authority = beginAgentRead({ vault, stateRoot })
         if (!authority.ok) throw fail(authority.code, "Pending curation")
-        if (safeMigrationPath(relative, "path") !== relative || !relative.endsWith(".md")) throw fail("INVALID_TARGET", "Exact Markdown path required")
-        const absolute = path.resolve(vault, relative)
-        assertRealPathInsideVault(fs, vault, absolute, "path")
-        const source = readSourceNotes(vault, [relative]).sources[0]
-        if (source.sha256 !== expected) throw fail("TARGET_CHANGED", "Note changed since review")
-        const notes = loadVaultDocuments(vault, { includeRawPaths: true }).map(d => ({ path: d.id, title: d.title, text: d.markdown }))
-        const edited = editNoteLinks({ markdown: source.markdown, notePath: relative, notes, add, remove, repair })
-        if (!edited.changes.length) return { status: "UNCHANGED", path: relative, hash: source.sha256 }
-        if (scanTextForSecrets(JSON.stringify(edited.changes)).length) throw fail("SECRET", "Secret-like content refused")
-        if (readSourceNotes(vault, [relative]).sources[0].sha256 !== expected) throw fail("TARGET_CHANGED", "Note changed during edit")
-        writeFileAtomic(absolute, edited.markdown)
-        indexes.clear()
-        return { status: "LINKED", path: relative, previousHash: expected, hash: hash(edited.markdown), changes: edited.changes }
-      } catch (error) { return { status: "BLOCKED", ...publicError(error) } }
+        if (new Set(requested.map(note => note.path)).size !== requested.length) throw fail("INVALID_ARGUMENT", "Each note may appear once")
+        const inventory = loadVaultDocuments(vault, { includeRawPaths: true }).map(d => ({ path: d.id, title: d.title, text: d.markdown }))
+        const planned = requested.map(({ path: relative, hash: expected, add, remove, repair }) => {
+          failing = relative
+          if (!add?.length && !remove?.length && !repair?.length) throw fail("INVALID_ARGUMENT", "Nothing to change")
+          if (safeMigrationPath(relative, "path") !== relative || !relative.endsWith(".md")) throw fail("INVALID_TARGET", "Exact Markdown path required")
+          const absolute = path.resolve(vault, relative)
+          assertRealPathInsideVault(fs, vault, absolute, "path")
+          const source = readSourceNotes(vault, [relative]).sources[0]
+          if (source.sha256 !== expected) throw fail("TARGET_CHANGED", "Note changed since review")
+          const edited = editNoteLinks({ markdown: source.markdown, notePath: relative, notes: inventory, add, remove, repair })
+          if (scanTextForSecrets(JSON.stringify(edited.changes)).length) throw fail("SECRET", "Secret-like content refused")
+          return { relative, absolute, expected, original: source.markdown, edited }
+        })
+        const changed = planned.filter(item => item.edited.changes.length)
+        for (const item of changed) {
+          failing = item.relative
+          if (readSourceNotes(vault, [item.relative]).sources[0].sha256 !== item.expected) throw fail("TARGET_CHANGED", "Note changed during edit")
+        }
+        failing = undefined
+        const written = []
+        try {
+          for (const item of changed) { writeFileAtomic(item.absolute, item.edited.markdown); written.push(item) }
+        } catch (error) {
+          for (const item of written) writeFileAtomic(item.absolute, item.original)
+          throw error
+        } finally { if (written.length) indexes.clear() }
+        return { status: changed.length ? "LINKED" : "UNCHANGED", notes: planned.map(item => item.edited.changes.length
+          ? { path: item.relative, previousHash: item.expected, hash: hash(item.edited.markdown), changes: item.edited.changes }
+          : { path: item.relative, hash: item.expected, changes: [] }) }
+      } catch (error) { return { status: "BLOCKED", ...publicError(error), ...(failing ? { path: failing } : {}) } }
     },
     // Pull only fast-forwards. Push commits and publishes only after the owner approved the exact
     // changes in the host's question UI; the approval is bound to their bytes.

@@ -90,7 +90,7 @@ Graphmory ships `graphmory-mcp`, a Model Context Protocol server. Set `GRAPHMORY
 - `recall(query, scope?, cursor?)` returns a ranked, paged shortlist with path, heading, excerpt and note hash.
 - `read(path, section?, hash?)` returns the original note or one section; a stale hash is refused.
 - `remember(claim, scope, evidence, curation?)` is a guarded write that returns `APPLIED`, `TENSION` or `BLOCKED`.
-- `link(path, hash, add?, remove?, repair?)` lets the Curator maintain one note's relation links and repair broken links, bound to the hash it read.
+- `link(notes)` lets the Curator maintain relation links and repair broken links across up to 50 notes in one all-or-nothing call, each bound to the hash it read.
 - `status(ask?)` reports pending work, the owner review queue, lifecycle and health, and Git sync state. `ask: "reviews"` or `ask: "recovery"` puts the owner's decision to them through MCP elicitation.
 - `sync(action, message?)` pulls (fast-forward only) or pushes the vault's Git remote; a push needs the owner's approval through MCP elicitation.
 

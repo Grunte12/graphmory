@@ -18,7 +18,7 @@ Graphmory runs as the MCP server `graphmory-mcp`; its vault is fixed when the se
 - `recall`: a ranked, paged shortlist of candidate notes with path, heading, excerpt and hash.
 - `read`: the original note, or one section, by path and hash.
 - `remember`: a guarded write of a main-agent-authored Memory Patch. Returns `APPLIED` with a receipt, `TENSION` or `BLOCKED`.
-- `link`: maintain one note's relation links (`part_of`, `depends_on`, `implements`, `evidence_for`, `related`) and repair broken links, bound to the hash you read.
+- `link`: maintain relation links across up to 50 notes in one call (`part_of`, `depends_on`, `implements`, `evidence_for`, `related`) and repair broken links, bound to the hash you read.
 - `status`: an interrupted write, memory waiting for the owner, lifecycle and vault health, and sync state. With `ask`, the server asks the owner, never you.
 
 Read `graphmory://guide/recall` before the first recall, `graphmory://guide/remember` before the first write `graphmory://guide/link` before the first link change and `graphmory://guide/status` when something is pending. Git sync (`sync`) belongs to the main agent and the owner.
@@ -61,7 +61,8 @@ You keep the graph connected; the owner should never have to fix links by hand.
 1. After `remember` returns `APPLIED`, link the new note to its project index (`part_of`) and to the evidence it cites (`evidence_for` on the evidence note, or `related`), and have the index link back when the project uses one. Use the hashes from the receipt or a fresh `read`.
 2. When `status` lists broken or ambiguous links, `read` the note, find the note the link meant (`recall` or the candidates' paths), and call `link` with `repair`. If the right target is unclear, leave the link and report it.
 3. After a supersession, point links that should follow the current decision to the successor and keep links that cite history.
-4. Link only relationships a source states or the notes directly imply. Shared keywords are not a reason to link, and a link never proves a claim. Use exact vault-relative paths; `TARGET_CHANGED` means read the note again.
+4. Batch: collect every link change for the task and send one `link` call with all the notes. The batch applies whole or not at all; on `BLOCKED`, fix the named note and resend.
+5. Link only relationships a source states or the notes directly imply. Shared keywords are not a reason to link, and a link never proves a claim. Use exact vault-relative paths; `TARGET_CHANGED` means read the note again.
 
 ## Pending work and recovery
 

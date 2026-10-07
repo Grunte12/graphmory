@@ -95,7 +95,7 @@ Other hosts: [MCP host configuration](docs/guides/mcp-hosts.md). For a client th
 | `recall` | Finds a ranked shortlist for a question: up to ten candidates per page, each with path, heading, excerpt, note hash and the search lanes that found it. Pages with a cursor; a query is limited to 8 pages |
 | `read` | Opens the original note, or one section of it, so the Curator can verify a candidate. A stale hash is refused |
 | `remember` | Saves a decision with its evidence in a new note, or updates an existing note and keeps its other content. Returns `APPLIED`, `TENSION` or `BLOCKED` |
-| `link` | Lets the Curator keep the graph connected: adds or removes relation links (part of, depends on, evidence for, related) and repairs broken links, one note at a time |
+| `link` | Lets the Curator keep the graph connected: adds or removes relation links (part of, depends on, evidence for, related) and repairs broken links, across many notes in one call |
 | `status` | Shows what needs attention: an interrupted write, memory waiting for you, notes due for revalidation, vault health and Git sync state. With `ask`, it puts your decisions to you in the host's question UI |
 | `sync` | Pulls from the vault's private Git remote (fast-forward only) or pushes to it. A push lists the changed files and waits for your approval |
 
