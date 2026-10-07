@@ -26,7 +26,7 @@ import {
   validateRestructureManifest,
   verifyRestructureRecord,
 } from "../src/brain-sync.mjs"
-import { curatorModelCheck, mcpToolsCheck, semanticBackendCheck, doctorSummaryLines } from "../src/doctor-checks.mjs"
+import { curatorModelCheck, curatorFreshnessCheck, mcpToolsCheck, semanticBackendCheck, doctorSummaryLines } from "../src/doctor-checks.mjs"
 import { summarizeNoteGraph } from "../src/graph-navigation.mjs"
 import { loadVaultDocuments, recallVault, recallVaultLoop } from "../src/memory-recall.mjs"
 import { recallVaultSemantic } from "../src/semantic-recall.mjs"
@@ -722,6 +722,7 @@ async function doctor() {
   }
 
   checks.push(curatorModelCheck())
+  checks.push(curatorFreshnessCheck())
   checks.push(await mcpToolsCheck())
   checks.push(semanticBackendCheck())
 

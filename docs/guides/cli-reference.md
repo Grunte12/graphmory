@@ -21,7 +21,7 @@ graphmory-setup --host codex
 graphmory-setup --host codex --apply
 ```
 
-Keep the checkout after `npm install -g .`: npm may link a local folder rather than copy it. The first `graphmory-setup` call previews the agent path, skill path, and model; `--apply` installs them. Use `--host claude` for Claude Code. For Cursor, use `--host cursor --model <supported-small-model-id>`. The recommended curator workflow uses the CLI, skill, and named agent together; copying `SKILL.md` alone does not install the CLI. Follow the [host setup guide](agent-hosts.md) to select a vault and add the short lead-agent instruction. The installer will not overwrite existing agent or skill files.
+Keep the checkout after `npm install -g .`: npm may link a local folder rather than copy it. The first `graphmory-setup` call previews the agent path, skill path, and model; `--apply` installs them. Use `--host claude` for Claude Code. For Cursor, use `--host cursor --model <supported-small-model-id>`. The recommended curator workflow uses the CLI, skill, and named agent together; copying `SKILL.md` alone does not install the CLI. Follow the [host setup guide](agent-hosts.md) to select a vault and add the short lead-agent instruction. The installer will not overwrite existing agent or skill files unless you pass `--update`, which keeps the installed model and a backup.
 
 OpenCode uses its [separate adapter](install.md#opencode-adapter). Contributors who edit or evaluate Graphmory should keep a checkout; ordinary users do not need a fork. When an npm release is published, `npm install -g graphmory` can replace the clone and local install steps. Do not use that registry command before a release exists.
 
