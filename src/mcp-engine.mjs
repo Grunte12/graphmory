@@ -31,6 +31,7 @@ export function publicError(error) {
     REMOTE_CHANGED: "Remote memory moved. Call sync with action: \"pull\" first; nothing was pushed.",
     CHANGED_DURING_REVIEW: "Memory changed after the owner approved; nothing was pushed. Call sync again so they see the new changes.",
     SYNC_BUSY: "Another sync is running. Wait, then try again.",
+    COMMAND_FAILED: "A Git command failed. Tell the owner; `graphmory push` in a terminal shows the details.",
   }[code] || "The operation could not be completed; inspect the configured server state." }
 }
 

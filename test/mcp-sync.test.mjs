@@ -26,7 +26,10 @@ function sharedBrain(t) {
   fs.mkdirSync(path.join(vault, ".memory-patch-harness"), { recursive: true })
   fs.writeFileSync(path.join(vault, ".memory-patch-harness", "brain-sync.json"), JSON.stringify({ version: 1, repo: "example/brain", branch: "main" }))
   fs.writeFileSync(path.join(vault, "Shared.md"), "# Shared\n\nInitial.\n")
-  git(vault, ["init", "-q", "-b", "main"]); git(vault, ["add", "-A"]); git(vault, ["commit", "-qm", "base"])
+  git(vault, ["init", "-q", "-b", "main"])
+  // The server commits with the vault's own identity, as on an owner's machine.
+  git(vault, ["config", "user.name", "Sync Test"]); git(vault, ["config", "user.email", "sync@example.invalid"])
+  git(vault, ["add", "-A"]); git(vault, ["commit", "-qm", "base"])
   git(vault, ["remote", "add", "origin", remote]); git(vault, ["push", "-q", "-u", "origin", "main"])
   git(root, ["clone", "-q", remote, other])
   return { root, remote, vault, other, stateRoot: path.join(root, "state"), engine: createMemoryEngine({ vault, stateRoot: path.join(root, "state"), config }) }
