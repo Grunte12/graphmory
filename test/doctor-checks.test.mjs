@@ -100,7 +100,7 @@ test("semantic-warmup is an explicit command and reports a missing dependency in
 test("curator freshness check warns when the installed curator is older than the package", () => {
   const home = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-fresh-"))
   try {
-    assert.equal(spawnSync(process.execPath, [path.resolve("scripts/setup-curator-agent.mjs"), "--host", "claude", "--scope", "project", "--project", home, "--apply"], { encoding: "utf8" }).status, 0)
+    assert.equal(spawnSync(process.execPath, [path.resolve("scripts/setup-curator-agent.mjs"), "--host", "claude", "--scope", "project", "--project", home, "--model", "haiku", "--apply"], { encoding: "utf8" }).status, 0)
     assert.equal(curatorFreshnessCheck({ home }).status, "pass")
     fs.appendFileSync(path.join(home, ".claude", "skills", "memory-curator", "SKILL.md"), "\nold\n")
     const check = curatorFreshnessCheck({ home })

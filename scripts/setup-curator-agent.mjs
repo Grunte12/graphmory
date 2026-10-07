@@ -5,25 +5,24 @@ import path from "node:path"
 import process from "node:process"
 import readline from "node:readline/promises"
 import { fileURLToPath } from "node:url"
+import { detectHosts, hostModels, modelFamily } from "../src/host-models.mjs"
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const args = process.argv.slice(2)
 
-// The model choices offered for the Curator. The first entry is the default when none is chosen.
-const MODEL_CHOICES = {
-  codex: [{ model: "gpt-6-luna", label: "gpt-6-luna (Recommended)", description: "Fast and inexpensive; enough for recall and filing." }],
-  claude: [
-    { model: "haiku", label: "Haiku (Recommended)", description: "Fast and inexpensive; enough for recall and filing." },
-    { model: "sonnet", label: "Sonnet", description: "Stronger judgement on conflicts; costs more per call." },
-  ],
-  cursor: [],
-}
+// How the installing agent turns the host's list into a suggestion. The user always decides.
+const CHOOSING_GUIDANCE = "Suggest 2-4 models from these choices, then let the user pick or type another. Do not choose for the user. "
+  + "The Curator reads notes, follows a strict protocol and returns short structured answers, so it needs reliable instruction following and tool use, not frontier reasoning. "
+  + "Put first the newest generation of the host's fast, low-cost tier (for example a Luna, Haiku or Flash model); prefer it over an older generation of the same tier. "
+  + "Offer one stronger mid-tier model for vaults with many conflicts. Mention that frontier models cost more for little gain here. Never suggest auto or inherit. "
+  + "If there are more choices than the question UI shows, ask for the family first, then the model. For Codex, then ask for the effort; low or medium is usually enough."
 
 if (args.includes("--help") || args.includes("-h")) {
   console.log("Usage: graphmory-setup --host codex|claude|cursor [--scope user|project] [--project <path>] [--model <host-model-id>] [--effort <level>] [--apply] [--update]")
-  console.log("       graphmory-setup --host codex|claude|cursor --choices")
-  console.log("Preview is the default. --apply installs the Graphmory Curator agent and its skill. --update replaces an older install and keeps a backup.")
-  console.log("--choices prints the model question as JSON so an agent can ask the user. Without --model an interactive terminal asks; otherwise the recommended model is used.")
+  console.log("       graphmory-setup [--host codex|claude|cursor] --choices")
+  console.log("Preview is the default. --apply installs the Graphmory Curator sub-agent and its skill. --update replaces an older install and keeps a backup.")
+  console.log("--choices prints the installed hosts, or the models a host reports, as JSON so an agent can ask the user. Graphmory never picks the model:")
+  console.log("pass --model, or run --apply in an interactive terminal to choose from the host's list.")
   process.exit(0)
 }
 
@@ -38,18 +37,20 @@ function installedValue(file, pattern) {
   try { return pattern.exec(fs.readFileSync(file, "utf8"))?.[1] } catch { return undefined }
 }
 
-async function askModel(host) {
-  const choices = MODEL_CHOICES[host]
+async function pick(question, options, { allowCustom = false } = {}) {
   const prompt = readline.createInterface({ input: process.stdin, output: process.stderr })
   try {
-    process.stderr.write("Which model should the Graphmory Curator use?\n")
-    choices.forEach((choice, index) => process.stderr.write(`  ${index + 1}. ${choice.label}: ${choice.description}\n`))
-    process.stderr.write(`  ${choices.length + 1}. Type another model id\n`)
-    const answer = (await prompt.question(`Choice [${choices.length ? 1 : choices.length + 1}]: `)).trim()
-    const index = answer ? Number(answer) - 1 : (choices.length ? 0 : choices.length)
-    if (Number.isInteger(index) && choices[index]) return choices[index].model
-    if (Number.isInteger(index) && index === choices.length) return (await prompt.question("Model id: ")).trim()
-    return answer
+    process.stderr.write(`${question}\n`)
+    options.forEach((option, index) => process.stderr.write(`  ${index + 1}. ${option.label}${option.description ? `: ${option.description}` : ""}\n`))
+    if (allowCustom) process.stderr.write(`  ${options.length + 1}. Type another id\n`)
+    for (;;) {
+      const answer = (await prompt.question("Choice: ")).trim()
+      const index = Number(answer) - 1
+      if (Number.isInteger(index) && options[index]) return options[index].value
+      if (allowCustom && (index === options.length || (answer && !/^\d+$/.test(answer)))) {
+        return index === options.length ? (await prompt.question("Id: ")).trim() : answer
+      }
+    }
   } finally {
     prompt.close()
   }
@@ -65,17 +66,27 @@ function sameTree(source, target) {
 
 try {
   const host = option("--host")
-  if (!["codex", "claude", "cursor"].includes(host)) throw new Error("Choose --host codex|claude|cursor")
+  if (host && !["codex", "claude", "cursor"].includes(host)) throw new Error("Choose --host codex|claude|cursor")
   if (args.includes("--choices")) {
+    if (!host) {
+      const hosts = detectHosts()
+      console.log(JSON.stringify({ question: "Which coding agent should get the Graphmory Curator sub-agent?", header: "Agent host",
+        choices: hosts.map((id) => ({ host: id })), next: "graphmory-setup --host <host> --choices" }, null, 2))
+      process.exit(0)
+    }
+    const { source, models } = hostModels(host)
     console.log(JSON.stringify({
-      question: "Which model should the Graphmory Curator use?",
+      question: "Which model should the Graphmory Curator sub-agent use?",
       header: "Curator model",
-      choices: MODEL_CHOICES[host],
+      source,
+      choices: models.map((model) => ({ ...model, family: modelFamily(model.model) })),
       allowCustom: true,
-      next: `graphmory-setup --host ${host} --model <chosen model> --apply`,
+      guidance: CHOOSING_GUIDANCE,
+      next: `graphmory-setup --host ${host} --model <chosen model>${host === "codex" ? " --effort <chosen effort>" : ""} --apply`,
     }, null, 2))
     process.exit(0)
   }
+  if (!host) throw new Error("Choose --host codex|claude|cursor, or run --choices to list the installed hosts")
   const scope = option("--scope") || "user"
   const apply = args.includes("--apply")
   const update = args.includes("--update")
@@ -91,12 +102,17 @@ try {
   // An update keeps the owner's earlier model and effort choices unless new ones are given.
   const modelPattern = host === "codex" ? /^\s*model\s*=\s*"([^"]+)"/mu : /^model:\s*["']?([^\s"']+)/mu
   let model = option("--model") || (update ? installedValue(agentPath, modelPattern) : undefined)
-  if (!model && process.stdin.isTTY && apply) model = await askModel(host)
-  model ||= MODEL_CHOICES[host][0]?.model
-  if (!model) throw new Error("Cursor needs --model <supported-cheap-model-id>; 'inherit' would use the lead model")
-  if (!/^[a-zA-Z0-9._:/-]+$/.test(model) || model.toLowerCase() === "inherit") throw new Error("Invalid model identifier")
-  const effort = option("--effort") || (update ? installedValue(agentPath, /^\s*model_reasoning_effort\s*=\s*"([^"]+)"/mu) : undefined) || "low"
-  if (!/^[a-z]+$/.test(effort)) throw new Error("Invalid effort level")
+  let effort = option("--effort") || (update ? installedValue(agentPath, /^\s*model_reasoning_effort\s*=\s*"([^"]+)"/mu) : undefined)
+  if (!model && apply && process.stdin.isTTY) {
+    const { models } = hostModels(host)
+    model = await pick("Which model should the Graphmory Curator sub-agent use?", models.map((item) => ({ value: item.model, label: item.label, description: item.description })), { allowCustom: true })
+    const efforts = models.find((item) => item.model === model)?.efforts ?? []
+    if (host === "codex" && !effort && efforts.length) effort = await pick("Which reasoning effort?", efforts.map((value) => ({ value, label: value })))
+  }
+  if (!model && apply) throw new Error(`Choose the Curator model: pass --model <id>. Run 'graphmory-setup --host ${host} --choices' to list the models this host reports`)
+  if (model && (!/^[a-zA-Z0-9._:/-]+$/.test(model) || model.toLowerCase() === "inherit")) throw new Error("Invalid model identifier; 'inherit' would use the lead model")
+  if (host === "codex" && !effort) effort = hostModels(host).models.find((item) => item.model === model)?.defaultEffort ?? "low"
+  if (effort && !/^[a-z]+$/.test(effort)) throw new Error("Invalid effort level")
 
   const prompt = fs.readFileSync(path.join(skillSource, "references", "curator-agent.md"), "utf8").trim()
   const skillFile = path.join(skillDir, "SKILL.md")
