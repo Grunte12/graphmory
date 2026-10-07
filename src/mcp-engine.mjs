@@ -12,6 +12,7 @@ import { scanTextForSecrets, safeMigrationPath, assertRealPathInsideVault } from
 import { writeFileAtomic } from "./atomic-write.mjs"
 import { enqueueReview, approveReview, rejectReview, listReviews, showReview } from "./review-queue.mjs"
 import { memoryStatus, RESTORABLE } from "./memory-status.mjs"
+import { readSyncConfig, localSyncState, pullMemory, pushMemory, pendingChanges, scanVaultForSecrets } from "./vault-sync.mjs"
 import { findOverlappingNotes } from "./conflict-detection.mjs"
 
 const hash = value => createHash("sha256").update(value).digest("hex")
@@ -25,6 +26,12 @@ export function publicError(error) {
     LOW_CONFIDENCE: "Low-confidence memory waits for the owner's decision. Tell the user it is queued; do not retry or raise the confidence.",
     RESTORE_HASH_MISMATCH: "A note changed while the owner was deciding; nothing was restored. Call status again.",
     STATE_LOCK_OWNER_ALIVE: "Another Graphmory write is still running. Wait, then call status again.",
+    SYNC_NOT_CONFIGURED: "This vault has no Git sync yet. The owner sets it up once with `graphmory bootstrap`.",
+    SECRET_FOUND: "Secret-like values are in the vault, so nothing was pushed. Tell the owner which files to clean.",
+    REMOTE_CHANGED: "Remote memory moved. Call sync with action: \"pull\" first; nothing was pushed.",
+    CHANGED_DURING_REVIEW: "Memory changed after the owner approved; nothing was pushed. Call sync again so they see the new changes.",
+    SYNC_BUSY: "Another sync is running. Wait, then try again.",
+    COMMAND_FAILED: "A Git command failed. Tell the owner; `graphmory push` in a terminal shows the details.",
   }[code] || "The operation could not be completed; inspect the configured server state." }
 }
 
@@ -46,6 +53,8 @@ export const MAX_RECALL_PAGES = 8
 export const MAX_RECALL_CANDIDATES = 80
 // Owner questions per status call, so one call never turns into a long run of prompts.
 const REVIEW_BATCH = 5
+// Changed paths listed in the push question; the rest are counted.
+const PUSH_LIST_LIMIT = 15
 
 // A single engine is shared by all HTTP connections. No host decision/provider calls.
 export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateRoot, recallOptions = {} }) {
@@ -106,6 +115,7 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
     }
     return { answer, result: { ...queued, ...note } }
   }
+  const unsupportedPush = { status: "unsupported", message: "This host cannot show owner questions, so nothing was pushed. The owner can push with `graphmory push` in a terminal." }
   const unsupported = { status: "unsupported", message: "This host cannot show owner questions. Tell the owner what is waiting; they can decide with `graphmory review list` or `graphmory curation-checkpoint status` in a terminal." }
   // Walks the review queue one question at a time and stops as soon as the owner dismisses a question.
   async function decideReviews(askOwner) {
@@ -280,6 +290,40 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
         indexes.clear()
         return { status: "APPLIED", receipt: { ...compactReceipt(finished.receipt), ...(options.ownerApprovedReview ? { approvedBy: "owner", reviewId: options.ownerApprovedReview } : {}) } }
       } catch (error) { return { status: "BLOCKED", ...publicError(error), ...(operation ? { checkpoint: operation } : {}) } }
+    },
+    // Pull only fast-forwards. Push commits and publishes only after the owner approved the exact
+    // changes in the host's question UI; the approval is bound to their bytes.
+    async sync({ action, message }, options = {}) {
+      try {
+        const config = readSyncConfig(vault)
+        if (!config || config.unreadable) throw fail("SYNC_NOT_CONFIGURED", "No sync config")
+        if (inspectCurationCheckpoint({ vault, stateRoot }).blocked) throw fail("CURATION_PENDING", "Pending curation")
+        const branch = typeof config.branch === "string" ? config.branch : "main"
+        if (action === "pull") {
+          const pulled = pullMemory(vault, { branch })
+          indexes.clear()
+          return { status: pulled.status, safeToContinue: pulled.safeToContinue, detail: pulled.detail }
+        }
+        const commitMessage = message ?? `memory: update brain snapshot ${new Date().toISOString().slice(0, 10)}`
+        if (scanTextForSecrets(commitMessage).length) throw fail("SECRET", "Secret-like content refused")
+        const { changes, snapshot } = pendingChanges(vault)
+        const unpushed = localSyncState(vault).commitsAhead ?? 0
+        if (!changes.length && !unpushed) return { status: "no-changes" }
+        const secrets = scanVaultForSecrets(vault)
+        if (secrets.length) return { status: "BLOCKED", ...publicError(fail("SECRET_FOUND", "")), files: [...new Set(secrets.map(item => item.file))] }
+        if (!options.askOwner) return unsupportedPush
+        const listed = changes.slice(0, PUSH_LIST_LIMIT).map(item => `- ${item.path}`)
+        if (changes.length > PUSH_LIST_LIMIT) listed.push(`- and ${changes.length - PUSH_LIST_LIMIT} more`)
+        const answer = await options.askOwner({
+          message: `Graphmory: commit and push memory to ${config.repo ?? "the configured repository"} (${branch})?\n\n${changes.length} changed file(s)${listed.length ? `:\n${listed.join("\n")}` : ""}${unpushed ? `\n${unpushed} local commit(s) not pushed yet` : ""}\n\nCommit message: ${commitMessage}`,
+          choices: [{ value: "push", title: "Commit and push" }, { value: "later", title: "Not now" }],
+          note: false,
+        })
+        if (answer.action === "unsupported") return unsupportedPush
+        if (answer.action !== "accept" || answer.decision !== "push") return { status: "kept", message: "The owner chose not to push. Nothing was committed." }
+        const pushed = pushMemory(vault, { branch }, commitMessage, { expectedSnapshot: snapshot })
+        return { ...pushed, approvedBy: "owner" }
+      } catch (error) { return { status: "BLOCKED", ...publicError(error) } }
     },
     // Read-only report. With ask, the server puts the owner's decisions to them and reports the outcome.
     async status({ ask } = {}, options = {}) {

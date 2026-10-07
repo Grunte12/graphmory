@@ -54,7 +54,7 @@ Do not delete a vault, `.git`, `.obsidian`, sync config, migration record, or br
 
 | Symptom or code | Cause | Recovery |
 |---|---|---|
-| The host does not list `recall`, `read`, `remember` and `status` | The server is not registered, the host was not restarted, or `graphmory-mcp` is not on its PATH | Add the snippet from [MCP host configuration](mcp-hosts.md), restart the host, and run `graphmory doctor`; it should report `mcp tools: recall · read · remember · status` |
+| The host does not list `recall`, `read`, `remember`, `status` and `sync` | The server is not registered, the host was not restarted, or `graphmory-mcp` is not on its PATH | Add the snippet from [MCP host configuration](mcp-hosts.md), restart the host, and run `graphmory doctor`; it should report `mcp tools: recall · read · remember · status · sync` |
 | `VAULT_REQUIRED` | The server started without a vault | Set `GRAPHMORY_VAULT` (or pass `--vault`) in the server's environment |
 | `STALE_CURSOR` or `INVALID_CURSOR` | The vault changed, the server restarted, or the cursor was edited | Call `recall` again from the start; keep the same query and scope while paging |
 | `STALE_SOURCE` | The hash passed to `read` no longer matches the note | Call `recall` again to get the current hash, then re-read the note |
@@ -63,6 +63,9 @@ Do not delete a vault, `.git`, `.obsidian`, sync config, migration record, or br
 | `CURATION_PENDING` | A guarded write is unfinished and blocks recall and read | Call `status`; if `pending.restorable` is true, call `status` with `ask: "recovery"` so the owner can restore the notes ([status](mcp-status.md)). Do not bypass it |
 | `LOW_CONFIDENCE` with `step: owner_review` | A low-confidence memory waits for the owner; the host has no elicitation support, or the owner chose Decide later | Call `status` with `ask: "reviews"` when the user is ready to decide, or the owner runs `graphmory review list` in a terminal; the agent must not retry |
 | `OWNER_REJECTED` | The owner rejected the memory in the host's question | Nothing was written; do not retry unless the owner asks |
+| `SYNC_NOT_CONFIGURED` | `sync` was called on a vault without Git sync | The owner sets it up once with `graphmory bootstrap` |
+| `SECRET_FOUND` from `sync` | Secret-like values are in the listed `files` | Tell the owner which files to clean; nothing was pushed |
+| `REMOTE_CHANGED` or `CHANGED_DURING_REVIEW` from `sync` | The remote moved, or files changed after the owner approved | Call `sync` with `action: "pull"`, or call push again so the owner sees the new changes |
 | `SEMANTIC_UNAVAILABLE` | Hybrid retrieval is configured but the local meaning model or dependency is missing | Install the optional `@huggingface/transformers` dependency (`npm install`), then run `graphmory semantic-warmup`; hybrid does not silently fall back to keyword search |
 | `doctor` warns that the MCP SDK is missing | A copy without `node_modules` | Run `npm ci` in the checkout, or install the package globally |
 

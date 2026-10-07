@@ -69,14 +69,15 @@ for (const mode of ["memory", "stdio", "http"]) {
     const f = fixture(t)
     const { client, logs } = await connect(t, mode, f)
     const tools = (await client.listTools()).tools
-    assert.deepEqual(tools.map(t => t.name), ["recall", "read", "remember", "status"])
+    assert.deepEqual(tools.map(t => t.name), ["recall", "read", "remember", "status", "sync"])
     for (const tool of tools) {
       assert.ok(!tool.description.includes("\n"))
       if (tool.name === "remember") for (const outcome of ["APPLIED", "TENSION", "BLOCKED", "receipt"]) assert.match(tool.description, new RegExp(outcome))
       assert.equal(tool.annotations.readOnlyHint, ["recall", "read"].includes(tool.name))
       assert.equal(tool.annotations.destructiveHint, tool.name === "remember")
+      assert.equal(tool.annotations.openWorldHint, tool.name === "sync")
     }
-    assert.equal((await client.listResources()).resources.length, 6)
+    assert.equal((await client.listResources()).resources.length, 7)
     assert.match((await client.readResource({ uri: "graphmory://guide/recall" })).contents[0].text, /data, never instructions/)
     assert.match((await client.readResource({ uri: "graphmory://guide/remember" })).contents[0].text, /checkpoint/)
     const first = await call(client, "recall", { query: "release policy" })
@@ -457,6 +458,6 @@ test("status sync state reads the local Git repository without fetching", async 
   git(["init", "-q", "-b", "main"]); git(["add", "-A"]); git(["commit", "-qm", "base"])
   fs.writeFileSync(path.join(f.vault, "New.md"), "# New\n")
   const { sync, next } = await f.engine.status()
-  assert.deepEqual(sync, { configured: true, repo: "owner/brain", branch: "main", git: "ok", changedFiles: 1, remoteBranch: "not-fetched" })
-  assert.ok(next.some(line => /1 changed file/.test(line)))
+  assert.deepEqual({ ...sync, plan: sync.plan.decision }, { configured: true, repo: "owner/brain", branch: "main", git: "ok", changedFiles: 1, remoteBranch: "not-fetched", plan: "hold" })
+  assert.equal(next.some(line => /sync with action/.test(line)), false)
 })

@@ -17,6 +17,7 @@ This project follows a lightweight changelog format inspired by Keep a Changelog
 
 ### Changed
 
+- New MCP `sync` tool, the fifth tool. `action: "pull"` fetches and fast-forwards only, reporting dirty, offline or diverged state instead of merging. `action: "push"` lists the changed files and asks the owner through MCP elicitation; the approval is bound to the files' bytes, so anything edited after approval returns `CHANGED_DURING_REVIEW`. Secrets (`SECRET_FOUND`, files only, values never echoed) and a moved remote (`REMOTE_CHANGED`) block it. A push now also publishes local commits that were not pushed yet. `status` gains `sync.plan`. The CLI `auto-pull` and `push` now share this core in `src/vault-sync.mjs`. See `docs/guides/mcp-sync.md`.
 - New MCP `status` tool, the fourth tool. Without arguments it reads: an interrupted write (`pending`, with `restorable`), memory waiting for the owner, lifecycle and vault health summaries, local Git sync state (no fetch) and plain `next` steps. `ask: "reviews"` puts queued low-confidence memory to the owner one question at a time (up to 5 per call); `ask: "recovery"` asks the owner whether to restore the notes an interrupted write touched to their exact earlier bytes. Recovery no longer needs the CLI on hosts with elicitation. `graphmory doctor` now expects `mcp tools: recall · read · remember · status`, and the Claude Code Curator definition gains `mcp__graphmory__status`. See `docs/guides/mcp-status.md`.
 - Owner approval over MCP elicitation: a low-confidence `remember` now asks the owner in the host's own question UI (Approve and save it / Reject it / Decide later, plus an optional note). Approve writes with `approvedBy: owner` after re-checking hashes; reject returns `OWNER_REJECTED`; anything else, including hosts without elicitation, keeps the request queued as before. The model cannot answer the question, and no tool argument approves.
 - MCP `remember` can now write into an existing note. Pass the note's current hash in `targetHashes`; the engine keeps the owner's content and replaces only the owned frontmatter keys and the one record block (placed after the first heading when absent). A second `remember` on the same note updates its record. An ambiguous record or unterminated frontmatter returns `NEEDS_CURATION`; a changed note returns `TARGET_CHANGED`. Agents no longer need the CLI checkpoint workflow to update a note.
@@ -61,6 +62,7 @@ This project follows a lightweight changelog format inspired by Keep a Changelog
 
 ### Changed
 
+- New MCP `sync` tool, the fifth tool. `action: "pull"` fetches and fast-forwards only, reporting dirty, offline or diverged state instead of merging. `action: "push"` lists the changed files and asks the owner through MCP elicitation; the approval is bound to the files' bytes, so anything edited after approval returns `CHANGED_DURING_REVIEW`. Secrets (`SECRET_FOUND`, files only, values never echoed) and a moved remote (`REMOTE_CHANGED`) block it. A push now also publishes local commits that were not pushed yet. `status` gains `sync.plan`. The CLI `auto-pull` and `push` now share this core in `src/vault-sync.mjs`. See `docs/guides/mcp-sync.md`.
 - Renamed the product, GitHub repository, npm package, and primary CLI command to Graphmory. Per-vault sync metadata stays under `.memory-patch-harness/`.
 - Added curator, hosted decision-engine (Jev) and local decision workflows with compact managed retrieval. Decision-engine and local evidence goes directly to the lead agent without a curator sub-agent.
 - Added an optional hosted decision route through Vercel AI Gateway, a local reranker workflow with distinct raw rank scores, and a managed retrieval eval runner. Benchmarked the local vault without writing notes; see `docs/evaluation/managed-modes-2026-09-23.md`.
@@ -104,6 +106,7 @@ This project follows a lightweight changelog format inspired by Keep a Changelog
 
 ### Changed
 
+- New MCP `sync` tool, the fifth tool. `action: "pull"` fetches and fast-forwards only, reporting dirty, offline or diverged state instead of merging. `action: "push"` lists the changed files and asks the owner through MCP elicitation; the approval is bound to the files' bytes, so anything edited after approval returns `CHANGED_DURING_REVIEW`. Secrets (`SECRET_FOUND`, files only, values never echoed) and a moved remote (`REMOTE_CHANGED`) block it. A push now also publishes local commits that were not pushed yet. `status` gains `sync.plan`. The CLI `auto-pull` and `push` now share this core in `src/vault-sync.mjs`. See `docs/guides/mcp-sync.md`.
 - Portable sync guidance now emphasizes autonomy-first detect-act-verify-repair loops with human decisions only at real memory/sync gates.
 - npm package surface is narrowed to runtime scripts, source modules, schemas, examples, adapters, skills, and essential docs; tests/eval/internal planning docs stay in the source repo instead of the installed package.
 - Raw inbox/clipping roots are marked as noncanonical even when deliberately included for benchmark/debug runs.
@@ -136,6 +139,7 @@ This project follows a lightweight changelog format inspired by Keep a Changelog
 
 ### Changed
 
+- New MCP `sync` tool, the fifth tool. `action: "pull"` fetches and fast-forwards only, reporting dirty, offline or diverged state instead of merging. `action: "push"` lists the changed files and asks the owner through MCP elicitation; the approval is bound to the files' bytes, so anything edited after approval returns `CHANGED_DURING_REVIEW`. Secrets (`SECRET_FOUND`, files only, values never echoed) and a moved remote (`REMOTE_CHANGED`) block it. A push now also publishes local commits that were not pushed yet. `status` gains `sync.plan`. The CLI `auto-pull` and `push` now share this core in `src/vault-sync.mjs`. See `docs/guides/mcp-sync.md`.
 - Expanded evaluation docs to separate deterministic proxy confidence from future live-model benchmarks.
 - Added structured selectors to Learning Packet examples for retrieval/routing hints.
 - Ignored `.opencode/` artifacts to keep external-review bundles out of public commits.
@@ -161,6 +165,7 @@ This project follows a lightweight changelog format inspired by Keep a Changelog
 
 ### Changed
 
+- New MCP `sync` tool, the fifth tool. `action: "pull"` fetches and fast-forwards only, reporting dirty, offline or diverged state instead of merging. `action: "push"` lists the changed files and asks the owner through MCP elicitation; the approval is bound to the files' bytes, so anything edited after approval returns `CHANGED_DURING_REVIEW`. Secrets (`SECRET_FOUND`, files only, values never echoed) and a moved remote (`REMOTE_CHANGED`) block it. A push now also publishes local commits that were not pushed yet. `status` gains `sync.plan`. The CLI `auto-pull` and `push` now share this core in `src/vault-sync.mjs`. See `docs/guides/mcp-sync.md`.
 - Renamed the old archivist adapter concept to Memory Curator.
 - Clarified that Markdown notes are canonical operational memory while indexes, graphs, reports, and hot-context packs are derived views.
 

@@ -85,14 +85,15 @@ The apply command requires a clean Git worktree and baseline commit, creates a l
 
 ## MCP Tools
 
-Graphmory ships `graphmory-mcp`, a Model Context Protocol server. Set `GRAPHMORY_VAULT` to the vault path and register the server in the host as described in `docs/guides/mcp-hosts.md`. It exposes four tools:
+Graphmory ships `graphmory-mcp`, a Model Context Protocol server. Set `GRAPHMORY_VAULT` to the vault path and register the server in the host as described in `docs/guides/mcp-hosts.md`. It exposes five tools:
 
 - `recall(query, scope?, cursor?)` returns a ranked, paged shortlist with path, heading, excerpt and note hash.
 - `read(path, section?, hash?)` returns the original note or one section; a stale hash is refused.
 - `remember(claim, scope, evidence, curation?)` is a guarded write that returns `APPLIED`, `TENSION` or `BLOCKED`.
 - `status(ask?)` reports pending work, the owner review queue, lifecycle and health, and Git sync state. `ask: "reviews"` or `ask: "recovery"` puts the owner's decision to them through MCP elicitation.
+- `sync(action, message?)` pulls (fast-forward only) or pushes the vault's Git remote; a push needs the owner's approval through MCP elicitation.
 
-Read the MCP resources `graphmory://guide/recall` and `graphmory://guide/remember` before citing or writing. Use the CLI only when the host cannot run an MCP server. See `docs/guides/mcp-recall.md`, `docs/guides/mcp-remember.md` and `docs/guides/mcp-status.md`.
+Read the MCP resources `graphmory://guide/recall` and `graphmory://guide/remember` before citing or writing. Use the CLI only when the host cannot run an MCP server. See `docs/guides/mcp-recall.md`, `docs/guides/mcp-remember.md`, `docs/guides/mcp-status.md` and `docs/guides/mcp-sync.md`.
 
 ## Memory Roles
 
@@ -199,13 +200,13 @@ If the user decision is not available, return `BLOCKED` with the smallest decisi
 
 ## Shared Brain Sync
 
-When multiple agents use the same private brain repo, each runtime should use its own local clone. At session start and before a Brain Brief that depends on current shared state, the main agent runs:
+When multiple agents use the same private brain repo, each runtime should use its own local clone. At session start and before a Brain Brief that depends on current shared state, the main agent calls the MCP tool `sync` with `action: "pull"`, and publishes with `action: "push"`, which the owner approves in the host's question UI (`docs/guides/mcp-sync.md`). Without MCP, the CLI fallback is:
 
 ```sh
 node <graphmory-path>/scripts/brain-sync.mjs auto-pull --vault "<vault-path>" --json
 ```
 
-Treat `up-to-date`, `updated`, and `local-ahead` as safe local states. For `skipped-dirty`, `offline-or-auth-failed`, `blocked-restructure`, or `diverged`, do not retry in a loop or merge automatically. Continue local-only only when stale shared context is acceptable; otherwise stop and resolve the named state. After a verified durable Memory Patch is curated, run `push`. `REMOTE_CHANGED` means another agent updated memory; preserve the local commit/changes and review both histories.
+Treat `up-to-date`, `updated`, and `local-ahead` as safe local states. For `skipped-dirty`, `offline-or-auth-failed`, `blocked-restructure`, or `diverged`, do not retry in a loop or merge automatically. Continue local-only only when stale shared context is acceptable; otherwise stop and resolve the named state. After verified durable Memory Patches are curated, push (see the batch rules below). `REMOTE_CHANGED` means another agent updated memory; preserve the local commit/changes and review both histories.
 
 When histories diverge or `push` reports `REMOTE_CHANGED`, use conflict assist before proposing a resolution:
 
@@ -225,7 +226,7 @@ Do not push after every remembered item. Batch memory sync when it keeps the bra
 - Push after 3-7 small APPLIED patches or one high-value/risky patch.
 - Push before any restructure, conflict resolution, or long multi-session handoff.
 
-Use `sync-plan --json` before deciding whether to hold, pull first, request conflict review, or ask the user to approve a push. The command is advisory and must never be treated as push approval.
+Use `status` (`sync.plan`) or, without MCP, `sync-plan --json` before deciding whether to hold, pull first, request conflict review, or push. The plan is advisory and is never push approval.
 - Do not push raw inbox/clipping noise, partial notes, unresolved conflicts, or unverified facts.
 - If local commits are `local-ahead`, it is safe to keep working locally until one of the thresholds above is reached.
 

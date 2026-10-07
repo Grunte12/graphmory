@@ -45,6 +45,7 @@ import { validateMemoryPatch } from "../src/contracts.mjs"
 import { verifyPatchPersistence } from "../src/patch-persistence.mjs"
 import { beginAgentRead, finishAgentRead, requireCurrentAgentRead, blockedReadEnvelope } from "../src/read-authority.mjs"
 import { readCurationRecoveryContext, verifyCurationRecoveryContext } from "../src/curation-checkpoint.mjs"
+import { pullMemory, pushMemory, scanVaultForSecrets, withSyncLock } from "../src/vault-sync.mjs"
 
 const args = process.argv.slice(2)
 const command = args[0]
@@ -341,7 +342,7 @@ function usage(exitCode = 0) {
     ]],
   ]
   out.write(`Graphmory: governed memory for AI agents\n\n`)
-  out.write(`Agents connect through the MCP server (graphmory-mcp) and its tools recall, read, remember and status.\n`)
+  out.write(`Agents connect through the MCP server (graphmory-mcp) and its tools recall, read, remember, status and sync.\n`)
   out.write(`This CLI is for the vault owner: setup, health checks, review and Git sync.\n`)
   for (const [title, lines] of sections) {
     out.write(`\n${title}:\n`)
@@ -463,28 +464,6 @@ function writeInitialFiles(vault, dryRun, { adoptionMode = false } = {}) {
   }
 }
 
-function trackedFiles(vault) {
-  const listed = run("git", ["ls-files", "--others", "--cached", "--exclude-standard"], {
-    cwd: vault,
-  }).stdout
-  return listed.split(/\r?\n/u).map((line) => line.trim()).filter(Boolean)
-}
-
-function scanVault(vault) {
-  const findings = []
-  for (const relativePath of trackedFiles(vault)) {
-    const file = path.join(vault, relativePath)
-    if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) continue
-    const ext = path.extname(file).toLowerCase()
-    if (!["", ".md", ".json", ".txt", ".yaml", ".yml", ".csv"].includes(ext)) continue
-    const text = fs.readFileSync(file, "utf8")
-    for (const finding of scanTextForSecrets(text)) {
-      findings.push({ file: relativePath, ...finding })
-    }
-  }
-  return findings
-}
-
 function assertCleanEnoughForPull(vault) {
   const status = run("git", ["status", "--porcelain"], { cwd: vault }).stdout.trim()
   if (status) {
@@ -510,24 +489,6 @@ function withRestructureLock(vault, action) {
     handle = fs.openSync(lock, "wx")
   } catch {
     throw new Error(`Another restructure operation may be running: ${lock}`)
-  }
-  try {
-    return action()
-  } finally {
-    fs.closeSync(handle)
-    fs.rmSync(lock, { force: true })
-  }
-}
-
-function withSyncLock(vault, action) {
-  const gitPath = run("git", ["rev-parse", "--git-path", "memory-patch-harness-sync.lock"], { cwd: vault }).stdout.trim()
-  const lock = path.isAbsolute(gitPath) ? gitPath : path.join(vault, gitPath)
-  fs.mkdirSync(path.dirname(lock), { recursive: true })
-  let handle
-  try {
-    handle = fs.openSync(lock, "wx")
-  } catch {
-    throw new Error(`SYNC_BUSY: another sync operation may be running: ${lock}`)
   }
   try {
     return action()
@@ -926,7 +887,7 @@ function restructureApply() {
   }
 
   assertCleanGitBaseline(vault)
-  const findings = scanVault(vault)
+  const findings = scanVaultForSecrets(vault)
   if (findings.length) throw new Error("Refusing restructure because secret-like values were found in the vault")
 
   withRestructureLock(vault, () => {
@@ -975,7 +936,7 @@ function status() {
   console.log(`Branch: ${config.branch}`)
   const gitStatus = run("git", ["status", "--short", "--branch"], { cwd: vault }).stdout
   process.stdout.write(gitStatus)
-  const findings = scanVault(vault)
+  const findings = scanVaultForSecrets(vault)
   if (findings.length) {
     console.log("\nSecret-like findings:")
     for (const finding of findings) console.log(`- ${finding.file}: ${finding.name} (${finding.sample})`)
@@ -1507,7 +1468,7 @@ function syncPlan() {
   const config = readConfig(vault)
   const dirty = run("git", ["status", "--porcelain"], { cwd: vault }).stdout.trim()
   const changedFiles = dirty ? dirty.split(/\r?\n/u).filter(Boolean).length : 0
-  const secretFindings = scanVault(vault).length
+  const secretFindings = scanVaultForSecrets(vault).length
   const health = analyzeVaultHealth(vault)
   const remoteRef = `refs/remotes/origin/${config.branch}`
   const counts = run("git", ["rev-list", "--left-right", "--count", `${remoteRef}...HEAD`], {
@@ -1557,57 +1518,11 @@ function autoPull() {
   const config = readConfig(vault)
   const json = flag("--json")
   const strict = flag("--strict")
-  let report
-  try {
-    report = withSyncLock(vault, () => {
-      if (fs.existsSync(path.join(vault, ".memory-patch-harness", "restructure.lock"))) {
-        return syncReport("blocked-restructure", false, "A memory restructure operation is active")
-      }
-      const dirty = run("git", ["status", "--porcelain"], { cwd: vault }).stdout.trim()
-      if (dirty) return syncReport("skipped-dirty", false, "Local memory changes must be reviewed before pull")
-
-      const fetched = run("git", ["fetch", "origin", config.branch], { cwd: vault, allowFail: true })
-      if (fetched.status !== 0) {
-        const detail = `${fetched.stderr || fetched.stdout || "fetch failed"}`.trim().split(/\r?\n/u)[0]
-        return syncReport("offline-or-auth-failed", false, detail)
-      }
-
-      const remoteRef = `refs/remotes/origin/${config.branch}`
-      const remote = run("git", ["rev-parse", "--verify", remoteRef], { cwd: vault, allowFail: true })
-      if (remote.status !== 0) return syncReport("remote-branch-missing", true, `No remote branch ${config.branch} yet`)
-      const local = run("git", ["rev-parse", "--verify", "HEAD"], { cwd: vault, allowFail: true })
-      if (local.status !== 0) return syncReport("local-history-missing", false, "Local vault has no baseline commit")
-
-      const localHead = local.stdout.trim()
-      const remoteHead = remote.stdout.trim()
-      if (localHead === remoteHead) return syncReport("up-to-date", true, "Local and remote memory match")
-
-      const localBehind = run("git", ["merge-base", "--is-ancestor", localHead, remoteHead], { cwd: vault, allowFail: true })
-      if (localBehind.status === 0) {
-        run("git", ["merge", "--ff-only", remoteRef], { cwd: vault })
-        return syncReport("updated", true, `Fast-forwarded to ${remoteHead.slice(0, 12)}`)
-      }
-      const localAhead = run("git", ["merge-base", "--is-ancestor", remoteHead, localHead], { cwd: vault, allowFail: true })
-      if (localAhead.status === 0) return syncReport("local-ahead", true, "Local commits are not yet pushed")
-      return syncReport("diverged", false, "Local and remote memory histories diverged; semantic review is required")
-    })
-  } catch (error) {
-    if (!error.message.startsWith("SYNC_BUSY:")) throw error
-    report = syncReport("sync-busy", false, error.message)
-  }
+  const report = pullMemory(vault, config)
 
   if (json) console.log(JSON.stringify(report, null, 2))
   else console.log(`Auto-pull ${report.status}: ${report.detail}`)
   if (strict && !report.safeToContinue) process.exitCode = 1
-}
-
-function syncReport(status, safeToContinue, detail) {
-  return {
-    status,
-    safeToContinue,
-    detail,
-    checkedAt: new Date().toISOString(),
-  }
 }
 
 function conflictAssist() {
@@ -1947,43 +1862,16 @@ function push() {
   const vault = requireVault()
   const config = readConfig(vault)
   const message = option("--message", `memory: update brain snapshot ${new Date().toISOString().slice(0, 10)}`)
-  return withSyncLock(vault, () => pushUnlocked(vault, config, message))
-}
-
-function pushUnlocked(vault, config, message) {
-  const findings = scanVault(vault)
-  if (findings.length) {
-    console.error("Refusing to push because secret-like values were found:")
-    for (const finding of findings) console.error(`- ${finding.file}: ${finding.name} (${finding.sample})`)
-    throw new Error("SECRET_FOUND: push aborted due to secret-like values in vault")
-  }
-  const remoteBranch = run("git", ["ls-remote", "--exit-code", "--heads", "origin", config.branch], {
-    cwd: vault,
-    allowFail: true,
-  })
-  if (remoteBranch.status === 0) {
-    run("git", ["fetch", "origin", config.branch], { cwd: vault })
-    const localHead = run("git", ["rev-parse", "--verify", "HEAD"], { cwd: vault, allowFail: true })
-    if (localHead.status === 0) {
-      const remoteRef = `refs/remotes/origin/${config.branch}`
-      const remoteIsAncestor = run("git", ["merge-base", "--is-ancestor", remoteRef, "HEAD"], {
-        cwd: vault,
-        allowFail: true,
-      })
-      if (remoteIsAncestor.status !== 0) {
-        throw new Error("REMOTE_CHANGED: pull and review remote memory before committing local changes")
-      }
+  try {
+    const result = pushMemory(vault, config, message)
+    console.log(result.status === "pushed" ? "Brain memory pushed." : "No memory changes to push.")
+  } catch (error) {
+    if (error.findings) {
+      console.error("Refusing to push because secret-like values were found:")
+      for (const finding of error.findings) console.error(`- ${finding.file}: ${finding.name} (${finding.sample})`)
     }
+    throw error
   }
-  run("git", ["add", "-A"], { cwd: vault })
-  const staged = run("git", ["diff", "--cached", "--quiet"], { cwd: vault, allowFail: true })
-  if (staged.status === 0) {
-    console.log("No memory changes to push.")
-    return
-  }
-  run("git", ["commit", "-m", message], { cwd: vault })
-  run("git", ["push", "-u", "origin", config.branch], { cwd: vault })
-  console.log("Brain memory pushed.")
 }
 
 function conflictPlan() {
