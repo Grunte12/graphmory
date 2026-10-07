@@ -1,6 +1,6 @@
 # OpenCode Adapter
 
-**Transport: MCP, with filesystem as a fallback**
+**Transport: MCP**
 
 This adapter configures Graphmory for the [OpenCode](https://opencode.ai/)
 coding agent platform. OpenCode supports custom agent definitions, skills, and
@@ -10,31 +10,17 @@ permission rules.
 
 | Property | Value |
 |---|---|
-| Method | **CLI** via Graphmory scripts and OpenCode `bash` permission (fallback) |
-| Recommended | **MCP** — register `graphmory-mcp` under `mcp` in `opencode.json` |
-| Requirements | Graphmory cloned locally; OpenCode agent config updated |
-| Startup setup | Main agent runs `graphmory auto-pull --json` at session start |
+| Method | **MCP**: register `graphmory-mcp` under `mcp` in `opencode.json` ([MCP host configuration](../../docs/guides/mcp-hosts.md)) |
+| Requirements | Graphmory installed; OpenCode agent config updated |
+| Startup setup | The main agent calls `sync` with `action: "pull"` at session start |
 
 ## How Memory Access Is Established
 
-1. The Graphmory repository is cloned to the local machine.
-2. The main agent's instructions reference the Graphmory Curator and related commands.
-3. Graphmory Curator is configured as a sub-agent with filesystem read/edit/glob/grep
-   permissions (see `opencode.agent.example.json`).
-4. The Graphmory scripts (`scripts/brain-sync.mjs`, `scripts/render-hot-context.mjs`)
-   are invoked through OpenCode's `bash` tool permission.
-5. Memory Patches are written as Markdown notes in the vault directory.
-6. `AGENTS.snippet.md` provides the durable-memory section for the main agent.
-
-## Switched Transport
-
-OpenCode can use the `graphmory-mcp` server directly: add it under `mcp` in `opencode.json` as shown in [MCP host configuration](../../docs/guides/mcp-hosts.md). A future adapter could use Obsidian CLI or REST.
-
-| Transport | When to use |
-|---|---|
-| `filesystem` | Fallback — direct Graphmory scripts with `bash` permission |
-| `mcp` | Recommended — the `graphmory-mcp` server is registered in `opencode.json` |
-| `obsidian-cli` | When the vault is an Obsidian vault and Obsidian CLI is available |
+1. `graphmory-mcp` is registered in `opencode.json` with `GRAPHMORY_VAULT` set.
+2. The main agent's instructions reference the Graphmory Curator (`AGENTS.snippet.md`).
+3. Graphmory Curator is configured as a sub-agent that works through the MCP tools; it has no edit or shell permission (see `opencode.agent.example.json`).
+4. Memory Patches are filed with `remember`, which writes the Markdown notes in the vault.
+5. Owner decisions (low-confidence memory, recovery, every push) appear as questions in OpenCode's UI when it supports MCP elicitation; otherwise the owner decides in a terminal.
 
 ## Files in This Adapter
 

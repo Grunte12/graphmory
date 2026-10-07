@@ -1,6 +1,15 @@
 # CLI reference and manual setup
 
-The MCP tools cover day-to-day use. This guide keeps the command-line path: manual install for Codex, project setup, evaluation, Portable Brain Sync and recall diagnostics. For the shortest path, start from the [README](../../README.md#quick-start).
+Agents use the MCP tools only. This guide covers the command-line side: manual install, project setup, owner maintenance, evaluation and diagnostics. For the shortest path, start from the [README](../../README.md#quick-start).
+
+## Two command lines
+
+| Command | Who | What it has |
+|---|---|---|
+| `graphmory` (installed) | The vault owner | Setup and health (`doctor`, `config`, `semantic-warmup`, `bootstrap`, `health`, `status`), owner review and recovery (`review`, `curation-checkpoint status/restore`), Git sync (`pull`, `push`, `auto-pull`, `sync-plan`, `conflict-assist`) and vault maintenance (`audit`, `lint`, `lifecycle-audit`, `graph-audit`, restructure) |
+| `node scripts/brain-sync.mjs` (from a checkout) | Developers and evaluations | Everything above plus the agent and evaluation commands: `recall`, `recall-loop`, `recall-managed`, `recall-semantic`, `recall-rerank`, `recall-explore`, `read-notes`, `source-handoff`, `summary`, `curate-plan`, `validate-patch`, `render-patch`, `verify-patch-persistence`, `curation-checkpoint prepare/finish` and `curation-recommend` |
+
+The installed `graphmory` refuses the agent commands and points to the MCP tools. They run the same engine as `graphmory-mcp`, so evaluations stay reproducible.
 
 For the guarded local Curator release candidate, follow [the trial workflow](trial-mvp.md). It adds full saved-field verification and discoverable write recovery; readiness depends on actual installed/native acceptance.
 
@@ -21,7 +30,7 @@ graphmory-setup --host codex --choices
 graphmory-setup --host codex --model <chosen model> --apply
 ```
 
-Keep the checkout after `npm install -g .`: npm may link a local folder rather than copy it. `--choices` lists the models the host reports; pick one and pass it with `--model`. Without `--apply`, setup previews the agent path, skill path and model; `--apply` installs them. Use `--host claude` for Claude Code or `--host cursor` for Cursor. The recommended curator workflow uses the CLI, skill, and named agent together; copying `SKILL.md` alone does not install the CLI. Follow the [host setup guide](agent-hosts.md) to select a vault and add the short main-agent instruction. The installer will not overwrite existing agent or skill files unless you pass `--update`, which keeps the installed model and a backup.
+Keep the checkout after `npm install -g .`: npm may link a local folder rather than copy it. `--choices` lists the models the host reports; pick one and pass it with `--model`. Without `--apply`, setup previews the agent path, skill path and model; `--apply` installs them. Use `--host claude` for Claude Code or `--host cursor` for Cursor. The recommended curator workflow uses the MCP server, the skill and the named agent together; copying `SKILL.md` alone does not connect the MCP server. Follow the [host setup guide](agent-hosts.md) to select a vault and add the short main-agent instruction. The installer will not overwrite existing agent or skill files unless you pass `--update`, which keeps the installed model and a backup.
 
 OpenCode uses its [separate adapter](install.md#opencode-adapter). Contributors who edit or evaluate Graphmory should keep a checkout; ordinary users do not need a fork. When an npm release is published, `npm install -g graphmory` can replace the clone and local install steps. Do not use that registry command before a release exists.
 
@@ -103,11 +112,11 @@ node scripts/brain-sync.mjs curation-recommend --report tmp/private-vault-report
 
 The recommender classifies misses such as buried gold, missing scope, no candidates, and vocabulary/gold ambiguity, then suggests aliases/frontmatter, scope fixes, MOC links, and human-reviewed grouped-gold candidates. Agents may apply small reversible metadata/link fixes when the evidence is explicit. They should ask before grouped-gold changes, note moves, deletion, conflict resolution, or any rewrite that changes meaning.
 
-For Hermes, OpenCode, or other agents sharing one brain, use separate local clones and run event-driven `auto-pull` at session start/before shared recall. Sync is fast-forward-only; push never auto-rebases competing memory.
+For Hermes, OpenCode, or other agents sharing one brain, use separate local clones; each main agent calls the MCP `sync` tool with `action: "pull"` at session start and before shared recall (`auto-pull` is the owner's terminal equivalent). Sync is fast-forward-only; push never auto-rebases competing memory.
 
 Do not push every remembered item. Push at healthy thresholds: session end, account/machine handoff, 3-7 small verified patches, one high-value/risky patch, or before restructure/conflict work. Keep raw inbox noise and unresolved facts local until curated.
 
-Run `health` after conflict resolution, restructure, large intake triage, and before publishing durable memory. It gives agents a deterministic health report instead of making them manually rediscover unresolved links, duplicate titles, missing provenance, stale notes, inbox backlog, and secret-like values.
+Run `health` after conflict resolution, restructure, large intake triage, and before publishing durable memory. Agents get the same summary from the MCP `status` tool; the owner can run it in a terminal. It reports, without manual rediscovery, unresolved links, duplicate titles, missing provenance, stale notes, inbox backlog, and secret-like values.
 
 Run `lifecycle-audit` when memory may have changed over time: after a vendor/API/policy change, before relying on old operational notes, before conflict resolution, or during periodic brain hygiene. It flags expired `valid_until`, due `revalidate_when`, active notes that contain stale language, superseded notes without replacement markers, and tension notes without decision paths. It is read-only: it creates a review/action plan, not automatic rewrites.
 

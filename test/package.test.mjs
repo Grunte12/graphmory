@@ -26,7 +26,7 @@ test("package ships the AI-agent entry instructions", () => {
 
 test("package exposes the graphmory commands and no legacy aliases", () => {
   assert.equal(pkg.name, "graphmory")
-  assert.equal(pkg.bin.graphmory, "scripts/brain-sync.mjs")
+  assert.equal(pkg.bin.graphmory, "scripts/graphmory.mjs")
   assert.equal(pkg.bin["graphmory-setup"], "scripts/setup-curator-agent.mjs")
   assert.equal(pkg.bin["graphmory-mcp"], "scripts/graphmory-mcp.mjs")
   assert.equal(pkg.bin["memory-patch-harness"], undefined)
@@ -45,7 +45,7 @@ test("package ships the manual native-host curator workflow smoke guide", () => 
   assert.equal(pkg.files.includes(entry), true)
   const guide = fs.readFileSync(path.join(root, entry), "utf8")
   assert.match(guide, /native child run for `graphmory_curator`/)
-  assert.match(guide, /graphmory recall-explore/)
+  assert.match(guide, /brain-sync.mjs recall-explore/)
   assert.match(guide, /graphmory lifecycle-audit/)
 })
 
@@ -130,8 +130,10 @@ test("agent package includes the shared-brain auto-pull contract", () => {
   assert.match(portable, /same-note conflicts/)
   assert.match(portable, /never auto-rebases/)
   assert.match(cliReference, /health --vault/)
-  assert.match(opencode, /Graphmory Curator should not run Git sync itself/)
-  assert.match(opencode, /conflict-assist --json/)
+  assert.match(opencode, /Graphmory Curator does not run Git sync/)
+  assert.match(opencode, /`sync` with `action: "pull"`/)
+  assert.match(opencode, /graphmory conflict-assist/)
+  assert.doesNotMatch(opencode, /recall-managed|read-notes/)
 })
 
 test("agent package preserves autonomy-first human-gated sync thresholds", () => {

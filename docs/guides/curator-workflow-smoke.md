@@ -1,5 +1,7 @@
 # Manual curator smoke test on a native host
 
+> This smoke exercises the earlier CLI Curator workflow and runs from a checkout (`node scripts/brain-sync.mjs`). Agents now use the MCP tools; for a quick MCP check see step 5 of [Codex, Cursor and Claude Code](agent-hosts.md).
+
 Use this once after installing Graphmory to verify the host can discover and actually dispatch the named curator, retrieve linked memory, apply a main-agent-authored patch, and check lifecycle/link state. This is a manual integration check; deterministic CLI tests do not prove native host dispatch.
 
 The commands below use Codex. The curator model override is an explicit smoke choice, not a Graphmory default. Substitute a small model ID available to the account if `gpt-5.6-luna` is unavailable.
@@ -98,7 +100,7 @@ graphmory-setup --host codex --scope project --project "$SMOKE_ROOT" --model gpt
 
 In the fresh Codex session opened on `SMOKE_ROOT`, replace `<VAULT>` below with the printed absolute value of `$VAULT`, then ask the main agent to delegate a read-only task to the installed `graphmory_curator`:
 
-> Use native named-agent dispatch to ask `graphmory_curator` what ownership rule the production runbook reaches by following its map. Give it the vault path `<VAULT>`. It should use `graphmory recall-managed --vault "<VAULT>" --query "What ownership rule does the production release runbook use?" --scope "01 Projects/Release" --agent`, inspect returned originals, then use `graphmory recall-explore --vault "<VAULT>" --query "What ownership note does the runbook reach through its MOC?" --scope "01 Projects/Release" --agent`. Follow the ownership note's historical-policy link to the old rule and E0. Return the source-backed path chain and quote E1. State explicitly that E1 proves who owns readiness, not who approves a release; report E0's conflicting approval rule or say approval remains unverified if E0 was not returned. Do not edit.
+> Use native named-agent dispatch to ask `graphmory_curator` what ownership rule the production runbook reaches by following its map. Give it the vault path `<VAULT>`. It should use `node scripts/brain-sync.mjs recall-managed --vault "<VAULT>" --query "What ownership rule does the production release runbook use?" --scope "01 Projects/Release" --agent`, inspect returned originals, then use `node scripts/brain-sync.mjs recall-explore --vault "<VAULT>" --query "What ownership note does the runbook reach through its MOC?" --scope "01 Projects/Release" --agent`. Follow the ownership note's historical-policy link to the old rule and E0. Return the source-backed path chain and quote E1. State explicitly that E1 proves who owns readiness, not who approves a release; report E0's conflicting approval rule or say approval remains unverified if E0 was not returned. Do not edit.
 
 Confirm the host shows a native child run for `graphmory_curator` and that the child read the installed `graphmory-curator` skill. A role file on disk or the main agent's text claiming it delegated is not proof of dispatch. The recall result should identify the runbook-to-map-to-ownership route and cite the original evidence; graph traversal is a navigation aid, so the child must open the notes before treating the rule as supported.
 
@@ -135,7 +137,7 @@ Ask the main agent to author and pass this bounded patch to `graphmory_curator`:
 Save that JSON as `"$SMOKE_ROOT/patch.json"` outside the vault and run the schema preflight before dispatching the edit:
 
 ```sh
-graphmory validate-patch --input "$SMOKE_ROOT/patch.json" --agent
+node scripts/brain-sync.mjs validate-patch --input "$SMOKE_ROOT/patch.json" --agent
 ```
 
 Proceed only when it returns `valid: true`. This checks the patch shape only; it does not verify evidence, authorization, or lifecycle meaning. The main agent still must explicitly authorize the E2 policy update and the named supersession below.

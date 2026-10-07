@@ -32,7 +32,7 @@ npm run check
 node scripts/install.mjs --target "$HOME/.config/opencode"
 ```
 
-The installer copies `skills/graphmory-curator/`, `src/` modules, and the `brain-sync.mjs` CLI binary (`bin/graphmory.mjs`). It does not edit `opencode.json`.
+The installer copies `skills/graphmory-curator/`, `src/` modules, and the owner CLI (`bin/graphmory.mjs`, which loads `bin/brain-sync.mjs`). It does not edit `opencode.json`.
 
 To verify the CLI works after install:
 ```sh
@@ -105,7 +105,7 @@ After the installer has copied the skill, CLI, and src modules to `<target>`, ap
 6. **Pin a supported inexpensive Curator model and verify an actual child.**
    Use `opencode models` to inspect availability, set the Curator's `model` field, and keep the user's main model unchanged. A free model is optional, not a Graphmory dependency. Check its current privacy terms before sending personal notes: [OpenCode Zen](https://opencode.ai/docs/en/zen/) documents temporary free availability and provider data policies. The installed host smoke report records the exact tested model and boundaries.
 
-If the host truncates batched originals as one long JSON line, use `graphmory read-notes ... --pretty`; formatting does not change source bytes or hashes. A large individual note can still exceed host limits, so use the collection workflow when necessary. Configure narrow permissions for Graphmory and normal host output reads rather than having the Curator generate parsing scripts. Do not use automatic approval to hide a failed dispatch or BLOCKED result.
+If the host truncates a large original, have the Curator `read` one section at a time with the `section` argument; the hash stays the note's hash. Give the Curator the Graphmory MCP tools rather than shell or file-editing permissions. Do not use automatic approval to hide a failed dispatch or BLOCKED result.
 
 The core mapping is:
 

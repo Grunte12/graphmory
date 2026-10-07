@@ -50,7 +50,7 @@ Return:
 - `watchouts`
 - `note_paths`: empty only when `outcome` is `no-evidence`
 - `direct_read_paths`: 0-3 exact paths (none when `no-evidence`)
-- `stop_reason`: `nothing-relevant-left`, `evidence-sufficient`, `budget` or `scan-limit` (stop rule: `graphmory://guide/curator`, CLI section)
+- `stop_reason`: `nothing-relevant-left`, `evidence-sufficient`, `budget` or `scan-limit` (stop rule: `graphmory://guide/curator`)
 - `pages_read`: recall pages read before stopping
 
 A `no-evidence` brief is a valid answer. The main agent must tell the user there is no supporting note; it must not fill the gap with a guess or an unsupported memory.

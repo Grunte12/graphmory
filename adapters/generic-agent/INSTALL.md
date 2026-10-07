@@ -121,19 +121,9 @@ Report what changed and what remains manual for the user's agent harness.
 For Hermes, OpenCode, or another agent sharing one private brain repo, give each runtime a separate local clone. Add an event-driven instruction to its main-agent/session-start surface:
 
 ```text
-At session start and before shared-memory recall, run:
-node <graphmory-path>/scripts/brain-sync.mjs auto-pull --vault "<this-agent-vault>" --json
-Do not loop retries or auto-merge. After a verified durable Memory Patch, push once. If `diverged` or `REMOTE_CHANGED` appears, preserve local work and run:
-node <graphmory-path>/scripts/brain-sync.mjs conflict-assist --vault "<this-agent-vault>" --json
-node <graphmory-path>/scripts/brain-sync.mjs lifecycle-audit --vault "<this-agent-vault>" --json
-node <graphmory-path>/scripts/brain-sync.mjs recall --vault "<this-agent-vault>" --query "<memory question>" --scope "<known project-or-domain path>" --json
-node <graphmory-path>/scripts/brain-sync.mjs recall-loop --vault "<this-agent-vault>" --query "<memory question>" --scope "<known project-or-domain path>" --json
-node <graphmory-path>/scripts/brain-sync.mjs sync-plan --vault "<this-agent-vault>" --json
-Explain the report to the user and ask for a semantic memory decision before resolving.
-
-Use `recall-loop` only after normal `recall` is low-confidence or misses repeatedly. For eval misses, run `brain-sync.mjs curation-recommend` to classify miss patterns and propose alias/link/scope improvements before broad manual vault search.
-
-Use `lifecycle-audit` before relying on old time-sensitive memory, after vendor/API/policy changes, and during periodic brain hygiene. It is read-only and returns revalidation/replacement/tension actions; do not treat it as permission to rewrite memory automatically.
+At session start and before shared-memory recall, call the Graphmory MCP tool `sync` with action "pull". Do not loop retries or auto-merge. Push in batches with `sync` action "push"; the owner approves each push in the host's question UI. If `diverged` or `REMOTE_CHANGED` appears, preserve local work and tell the user; they review it with `graphmory conflict-assist` in a terminal.
+Call `status` before relying on old time-sensitive memory, after vendor/API/policy changes, and during periodic brain hygiene. Its lifecycle findings are review items, not permission to rewrite memory automatically.
+Recall goes through the Curator and the MCP `recall` and `read` tools. Never run the `graphmory` command or read the vault with file tools instead.
 ```
 
 Do not push every remembered item. Ask the main agent to batch pushes until a healthy threshold is reached: session end, account/machine/runtime handoff, 3-7 small verified patches, one high-value/risky patch, or before restructure/conflict work. Raw inbox notes, partial drafts, and unresolved `TENSION`/`BLOCKED` memory should stay local until curated.

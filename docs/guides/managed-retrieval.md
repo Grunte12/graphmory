@@ -17,14 +17,14 @@ Example:
 
 ```sh
 graphmory config
-graphmory recall-managed --vault /path/to/vault --query "What is our deployment policy?" --agent
-graphmory recall-managed --vault /path/to/vault --query "What is our deployment policy?" --offset 10 --agent
+node scripts/brain-sync.mjs recall-managed --vault /path/to/vault --query "What is our deployment policy?" --agent
+node scripts/brain-sync.mjs recall-managed --vault /path/to/vault --query "What is our deployment policy?" --offset 10 --agent
 ```
 
 For an explicit question about a prior state, curator mode can add `--include-superseded`. This includes notes marked `superseded` in the candidate ranking while still excluding `raw`, `stale`, `archived`, and `deprecated` notes. The agent packet marks `historicalCandidatesIncluded: true`; it does not decide which dated claim answers the question. Read original notes and compare attribution, scope, and dates. Omit this flag for current-state questions. The flag is unavailable in decision modes.
 
 ```sh
-graphmory recall-managed --vault /path/to/vault --query "What was the deployment policy before March?" --include-superseded --agent
+node scripts/brain-sync.mjs recall-managed --vault /path/to/vault --query "What was the deployment policy before March?" --include-superseded --agent
 ```
 
 For hosted Jev, choose either TypeSafe direct or Vercel AI Gateway in `graphmory config`. The direct route uses `TYPESAFE_API_KEY` and `https://api.typesafe.ai/v1/systemone`. If TypeSafe registration is full, [create an AI Gateway key in the Vercel dashboard](https://vercel.com/docs/ai-gateway/authentication-and-byok/api-keys), set `AI_GATEWAY_API_KEY` in the process environment, and choose the gateway route. It uses model `typesafe-ai/jev` at Vercel's [TypeSafe-compatible endpoint](https://vercel.com/docs/ai-gateway/sdks-and-apis/typesafe). Gateway usage is billed through Vercel; check [current rates and credits](https://vercel.com/docs/ai-gateway/pricing) before a live benchmark. Do not paste keys into config files, chat, or the vault. The console asks for explicit consent before sending candidate excerpts to the selected hosted route.
@@ -50,7 +50,7 @@ query, scope and flags until `hasMore` is false. The page size limits transport,
 not the total number of candidates available to Curator.
 
 ```sh
-graphmory recall-managed --vault /path/to/vault --query "How do we preserve long-lived memories?" --semantic-expansion --agent
+node scripts/brain-sync.mjs recall-managed --vault /path/to/vault --query "How do we preserve long-lived memories?" --semantic-expansion --agent
 ```
 
 The compact response marks `expanded: true`, `semanticModel` and
@@ -74,7 +74,7 @@ not a lightweight default. See the [frozen integration protocol](../evaluation/c
 On Node 24 or newer, Curator recall can reuse focused-section BM25F postings:
 
 ```sh
-graphmory recall-managed --vault /path/to/vault --query "deployment policy" --index-cache /path/to/private-cache --agent
+node scripts/brain-sync.mjs recall-managed --vault /path/to/vault --query "deployment policy" --index-cache /path/to/private-cache --agent
 ```
 
 Choose a dedicated cache directory outside the vault. First use builds a private SQLite file; later calls compare current Markdown hashes and transactionally update changed notes. Cached scoring keeps the existing eligible candidates, scores, links and output shape. No model, vector database or additional package is needed. Default recall remains unchanged. The cache contains vault-derived terms and paths; keep it private and delete the designated cache directory when no longer needed.
@@ -83,7 +83,7 @@ Node 20, a busy cache or a cache error uses ordinary recall and emits at most on
 
 The normal `recall` and `recall-loop` commands keep `canonical_memory: false` navigation notes in the ranked corpus but omit them from the answer results. Managed recall inherits this rule, including when optional semantic expansion proposes extra candidates. Use `--include-navigation` with the ordinary recall commands when intentionally inspecting a MOC or derived index. This preserves source-note slots in the returned candidate list without deleting the index or its links.
 
-For a question that explicitly asks about related notes, papers, or a route through a shared index/MOC, `graphmory recall-explore --vault /path/to/vault --query "Which other papers are linked to this design?" --agent` tries a bounded link and backlink expansion after local sparse retrieval. It does not call a model, create embeddings, or write to the vault. The compact response lists candidate paths and marks them `unverified`; the main agent must read the notes before answering. Ordinary questions keep the sparse ranking. This is an opt-in experiment, not a replacement for `recall-managed`. See the [design](../design/adaptive-retrieval-loop.md) and [pilot results](../evaluation/adaptive-graph-pilot-2026-09-24.md).
+For a question that explicitly asks about related notes, papers, or a route through a shared index/MOC, `node scripts/brain-sync.mjs recall-explore --vault /path/to/vault --query "Which other papers are linked to this design?" --agent` tries a bounded link and backlink expansion after local sparse retrieval. It does not call a model, create embeddings, or write to the vault. The compact response lists candidate paths and marks them `unverified`; the main agent must read the notes before answering. Ordinary questions keep the sparse ranking. This is an opt-in experiment, not a replacement for `recall-managed`. See the [design](../design/adaptive-retrieval-loop.md) and [pilot results](../evaluation/adaptive-graph-pilot-2026-09-24.md).
 
 ## Conversation histories
 
@@ -122,7 +122,7 @@ behavior; default adapters are unchanged. See the [A/B report](../evaluation/pre
 ### Read selected originals together
 
 ```sh
-graphmory read-notes --vault <path> --paths '["projects/one.md","decisions/two.md"]'
+node scripts/brain-sync.mjs read-notes --vault <path> --paths '["projects/one.md","decisions/two.md"]'
 ```
 
 This local read-only command returns full Markdown per path, SHA-256 of file
@@ -136,8 +136,8 @@ For a main agent → Curator consolidation handoff, the main agent can freeze ex
 and target file identity without sending note bodies in the handoff:
 
 ```sh
-graphmory source-handoff --vault <path> --paths '["90 Evidence/Approval Record.md","01 Projects/Example/Runbook.md"]' > <handoff-outside-vault.json>
-graphmory read-notes --vault <path> --manifest <handoff-outside-vault.json>
+node scripts/brain-sync.mjs source-handoff --vault <path> --paths '["90 Evidence/Approval Record.md","01 Projects/Example/Runbook.md"]' > <handoff-outside-vault.json>
+node scripts/brain-sync.mjs read-notes --vault <path> --manifest <handoff-outside-vault.json>
 ```
 
 The second command verifies the vault and every named file's SHA-256/byte count
@@ -152,7 +152,7 @@ authorize the proposed memory change.
 Agent-facing reads check checkpoint authority before reading and again before output. A pending operation blocks these routes; do not use a raw/native file read or another route to turn pending notes into a current answer. For repair, use only exact paths bound to the same pending operation:
 
 ```sh
-graphmory read-notes --vault <path> --paths '["02 Projects/Example/Policy.md","90 Evidence/Approval Record.md"]' --purpose recovery --operation <pending-id>
+node scripts/brain-sync.mjs read-notes --vault <path> --paths '["02 Projects/Example/Policy.md","90 Evidence/Approval Record.md"]' --purpose recovery --operation <pending-id>
 ```
 
 This response is marked `recovery-only` and `authoritative: false`. It returns source Markdown only when the recorded source hash still matches and includes current hashes for target bytes. Clear legacy reads do not require a prior completion receipt. The state root must stay the same across sessions, and the CLI does not isolate native filesystem access.

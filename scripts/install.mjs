@@ -8,6 +8,8 @@ import { writeJsonAtomic } from "../src/atomic-write.mjs"
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(here, "..")
+// graphmory.mjs is the owner CLI; it loads brain-sync.mjs, the full CLI, from the same folder.
+const CLI_FILES = ["graphmory.mjs", "brain-sync.mjs"]
 const args = process.argv.slice(2)
 
 function option(name, fallback) {
@@ -97,11 +99,11 @@ if (flag("--check")) {
   } else {
     check.changes.push({ action: "add", file: "src/ (directory)" })
   }
-  for (const name of ["graphmory.mjs"]) {
+  for (const name of CLI_FILES) {
     const cliTarget = path.join(targetRoot, "bin", name)
     if (!fs.existsSync(cliTarget)) {
       check.changes.push({ action: "add", file: `bin/${name} (CLI launcher)` })
-    } else if (fs.readFileSync(path.join(root, "scripts", "brain-sync.mjs"), "utf8") !== fs.readFileSync(cliTarget, "utf8")) {
+    } else if (fs.readFileSync(path.join(root, "scripts", name), "utf8") !== fs.readFileSync(cliTarget, "utf8")) {
       check.changes.push({ action: "update", file: `bin/${name}` })
     }
   }
@@ -150,11 +152,10 @@ if (!dryRun) {
 
 // --- Install CLI launcher ---
 const binDir = path.join(targetRoot, "bin")
-const cliSource = path.join(root, "scripts", "brain-sync.mjs")
 if (!dryRun) {
   fs.mkdirSync(binDir, { recursive: true })
-  for (const name of ["graphmory.mjs"]) {
-    fs.cpSync(cliSource, path.join(binDir, name), { force: upgradeMode })
+  for (const name of CLI_FILES) {
+    fs.cpSync(path.join(root, "scripts", name), path.join(binDir, name), { force: upgradeMode })
   }
   console.log(`Installed CLI: ${path.join(binDir, "graphmory.mjs")}`)
 }
@@ -165,7 +166,7 @@ if (!dryRun) {
     version: ownVersion,
     installedAt: new Date().toISOString(),
     target: targetRoot,
-    components: ["skills/graphmory-curator", "src/", "bin/graphmory.mjs"],
+    components: ["skills/graphmory-curator", "src/", ...CLI_FILES.map((name) => `bin/${name}`)],
   }
   writeJsonAtomic(path.join(skillDest, ".install-manifest.json"), manifest)
 }
