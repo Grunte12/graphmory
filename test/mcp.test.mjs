@@ -9,6 +9,8 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js"
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js"
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js"
+import { ElicitRequestSchema } from "@modelcontextprotocol/sdk/types.js"
+import { listReviews } from "../src/review-queue.mjs"
 import { createMemoryEngine } from "../src/mcp-engine.mjs"
 import { createMcpServer, startHttpServer } from "../src/mcp-server.mjs"
 import { DEFAULT_RUNTIME_CONFIG } from "../src/runtime-config.mjs"
@@ -331,4 +333,50 @@ test("a result set inside the budget has no budgetReached flag", async t => {
   assert.equal(second.page, 2)
   assert.equal(second.budgetReached, undefined)
   assert.equal(second.nextCursor, undefined)
+})
+
+async function ownerClient(t, f, answer) {
+  const client = new Client({ name: "owner-tests", version: "1" }, answer ? { capabilities: { elicitation: {} } } : {})
+  const asked = []
+  if (answer) client.setRequestHandler(ElicitRequestSchema, async request => { asked.push(request.params); return answer })
+  const pair = InMemoryTransport.createLinkedPair()
+  const server = createMcpServer(f.engine)
+  await server.connect(pair[1])
+  await client.connect(pair[0])
+  t.after(async () => { await client.close(); await server.close() })
+  return { client, asked }
+}
+
+test("low-confidence remember asks the owner through elicitation: approve writes with an owner receipt", async t => {
+  const f = fixture(t, 1)
+  const { client, asked } = await ownerClient(t, f, { action: "accept", content: { decision: "approve", note: "Looks right." } })
+  const request = input(); request.curation.patch.confidence = "low"
+  const applied = await call(client, "remember", request)
+  assert.equal(applied.status, "APPLIED", JSON.stringify(applied))
+  assert.equal(applied.receipt.approvedBy, "owner")
+  assert.equal(applied.ownerNote, "Looks right.")
+  assert.equal(asked.length, 1)
+  assert.match(asked[0].message, /Hotfix deployments need a named incident commander/)
+  assert.deepEqual(asked[0].requestedSchema.properties.decision.oneOf.map(choice => choice.const), ["approve", "reject", "later"])
+  assert.ok(fs.existsSync(path.join(f.vault, "Decision.md")))
+  assert.equal(listReviews(f).length, 0)
+})
+
+test("owner reject drops the request; later, dismiss and no elicitation keep it queued", async t => {
+  const f = fixture(t, 1)
+  const low = () => { const request = input(); request.curation.patch.confidence = "low"; return request }
+  const rejecting = await ownerClient(t, f, { action: "accept", content: { decision: "reject" } })
+  const rejected = await call(rejecting.client, "remember", low())
+  assert.equal(rejected.code, "OWNER_REJECTED")
+  assert.equal(listReviews(f).length, 0)
+  assert.equal(fs.existsSync(path.join(f.vault, "Decision.md")), false)
+
+  for (const answer of [{ action: "accept", content: { decision: "later" } }, { action: "cancel" }, { action: "accept", content: { decision: "forged" } }, null]) {
+    const { client } = await ownerClient(t, f, answer)
+    const queued = await call(client, "remember", low())
+    assert.equal(queued.code, "LOW_CONFIDENCE", JSON.stringify(answer))
+    assert.equal(queued.step, "owner_review")
+    assert.equal(fs.existsSync(path.join(f.vault, "Decision.md")), false)
+  }
+  assert.equal(listReviews(f).length, 1)
 })

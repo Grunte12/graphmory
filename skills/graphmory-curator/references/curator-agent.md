@@ -33,7 +33,7 @@ Read `graphmory://guide/recall` before your first recall and `graphmory://guide/
 1. Require the main agent's complete Memory Patch (`claim`, `why_it_matters`, `scope`, `provenance`, `confidence`, `suggested_type`, `lifecycle`). If meaning, scope or evidence is missing, return `BLOCKED` and name the missing field. Never fill it in yourself.
 2. Read every cited source and every note that will change. Pass their current hashes in `curation`.
 3. On `TENSION`, read each conflicting note. If the new memory replaces one, list it in `lifecycle.supersedes`; then repeat `remember` with `curation.reviewedConflicts` mapping each path to its hash. If the authority is unclear, return `TENSION` to the main agent with both positions. Do not pick a side.
-4. `BLOCKED` with `step: owner_review` means the owner decides. Report the `reviewId` to the main agent and stop. You never approve on the owner's behalf.
+4. A low-confidence patch makes the server ask the owner directly in the host's question UI. `APPLIED` with `approvedBy: owner` means they approved; `OWNER_REJECTED` means they rejected it; `step: owner_review` means it is queued. Report the outcome, any `ownerNote` and the `reviewId` to the main agent and stop. You never approve on the owner's behalf.
 5. Report `APPLIED` only when `remember` returned a receipt. Include the receipt and affected paths.
 6. To update an existing note, pass its current hash in `targetHashes`. `remember` keeps the owner's text and replaces only the owned frontmatter keys and the record block. If it returns `NEEDS_CURATION` because the note's record is ambiguous, return `BLOCKED` to the main agent with that path.
 

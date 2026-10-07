@@ -10,7 +10,7 @@ import { prepareCurationCheckpoint, finishCurationCheckpoint, verifyCurationWrit
 import { renderPatchRecord, placePatchRecord } from "./patch-record.mjs"
 import { scanTextForSecrets, safeMigrationPath, assertRealPathInsideVault } from "./brain-sync.mjs"
 import { writeFileAtomic } from "./atomic-write.mjs"
-import { enqueueReview } from "./review-queue.mjs"
+import { enqueueReview, approveReview, rejectReview } from "./review-queue.mjs"
 import { findOverlappingNotes } from "./conflict-detection.mjs"
 
 const hash = value => createHash("sha256").update(value).digest("hex")
@@ -21,7 +21,7 @@ export function publicError(error) {
     CURATION_PENDING: "Finish or review the pending curation before reading memory.",
     STALE_SOURCE: "Source bytes changed; recall and verify the original again.",
     NEEDS_CURATION: "Supply a complete Memory Patch and reviewed placement in remember.curation.",
-    LOW_CONFIDENCE: "Low-confidence memory waits for the owner. Tell the user to run 'graphmory review list'; do not retry.",
+    LOW_CONFIDENCE: "Low-confidence memory waits for the owner's decision. Tell the user it is queued; do not retry or raise the confidence.",
   }[code] || "The operation could not be completed; inspect the configured server state." }
 }
 
@@ -77,7 +77,31 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
     if (!result.ok) throw fail(result.code, "Read authority unavailable")
     return result.value
   }
-  return {
+  // Asks the owner through the host's question UI. Approve writes now; reject drops the item;
+  // anything else (later, dismissed, no elicitation support) leaves it queued for review.
+  async function ownerDecides(askOwner, request, reviewId) {
+    const queued = { status: "BLOCKED", code: "LOW_CONFIDENCE", step: "owner_review", reviewId, ...publicError(fail("LOW_CONFIDENCE", "")) }
+    if (!askOwner) return queued
+    const answer = await askOwner({
+      message: `Graphmory: approve this low-confidence memory?\n\nClaim: ${request.claim}\nNote: ${request.curation.target}\nEvidence: ${request.evidence.length} item(s)`,
+      choices: [
+        { value: "approve", title: "Approve and save it" },
+        { value: "reject", title: "Reject it" },
+        { value: "later", title: "Decide later (keep it in the review queue)" },
+      ],
+    })
+    const note = answer.note ? { ownerNote: answer.note } : {}
+    if (answer.action === "accept" && answer.decision === "approve") {
+      const approved = await approveReview({ vault, stateRoot, reviewId, engine })
+      return { ...approved, ...note }
+    }
+    if (answer.action === "accept" && answer.decision === "reject") {
+      rejectReview({ vault, stateRoot }, reviewId)
+      return { status: "BLOCKED", code: "OWNER_REJECTED", step: "owner_rejected", reviewId, message: "The owner rejected this memory. Nothing was written; do not retry.", ...note }
+    }
+    return { ...queued, ...note }
+  }
+  const engine = {
     async recall({ query, scope = "", cursor }) {
       return guarded(async () => {
         const index = documents(scope)
@@ -126,7 +150,8 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
         return { path: source.path, hash: source.sha256, ...(section ? { section } : {}), authority: "source-data", markdown }
       })
     },
-    // `options` is never reachable from MCP: the server passes only the validated tool input.
+    // Tool input never reaches `options`: the server adds only its own askOwner callback, and
+    // ownerApprovedReview is set only by approveReview after the owner decided.
     async remember(input, options = {}) {
       let operation
       try {
@@ -186,7 +211,7 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
             message: "Read these notes. If the change replaces one, list it in lifecycle.supersedes. Then repeat remember with curation.reviewedConflicts mapping each path to its hash." }
           if (lowConfidence) {
             const { reviewId } = enqueueReview({ vault, stateRoot, request: input })
-            return { status: "BLOCKED", code: "LOW_CONFIDENCE", step: "owner_review", reviewId, ...publicError(fail("LOW_CONFIDENCE", "")) }
+            return ownerDecides(options.askOwner, input, reviewId)
           }
           const prepared = prepareCurationCheckpoint({ vault, stateRoot, patch, targets, sources })
           operation = prepared.operation
@@ -208,6 +233,7 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
       } catch (error) { return { status: "BLOCKED", ...publicError(error), ...(operation ? { checkpoint: operation } : {}) } }
     },
   }
+  return engine
 }
 function compactReceipt(receipt) {
   if (!receipt) return undefined
