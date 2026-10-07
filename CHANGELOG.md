@@ -18,6 +18,7 @@ This project follows a lightweight changelog format inspired by Keep a Changelog
 ### Changed
 
 - `graphmory --help` now groups commands for the vault owner (setup and health, owner review, Git sync, vault maintenance) and lists agent and evaluation commands under an Advanced section that points agents to the MCP tools. No command was removed or renamed.
+- The memory-curator skill and the OpenCode adapter now state MCP as the default path: the stop rule sits with the MCP section, the CLI section is titled "CLI fallback", and Consolidation says `remember` creates new notes while merges into existing notes and recovery keep the CLI checkpoint workflow.
 
 ### Removed
 
