@@ -61,6 +61,8 @@ Do not delete a vault, `.git`, `.obsidian`, sync config, migration record, or br
 | `SECTION_NOT_FOUND` | `section` is not the exact heading text of the note | Use the heading text returned by `recall`, or omit `section` to read the whole note |
 | `PATH_ESCAPE` | The path points outside the vault | Use a vault-relative path |
 | `CURATION_PENDING` | A guarded write is unfinished and blocks recall and read | Finish or review the pending operation as described in [guarded writes](mcp-remember.md); do not bypass it |
+| `LOW_CONFIDENCE` with `step: owner_review` | A low-confidence memory waits for the owner; the host has no elicitation support, or the owner chose Decide later | The owner decides when asked again, or runs `graphmory review list` and `review approve <id>` in a terminal; the agent must not retry |
+| `OWNER_REJECTED` | The owner rejected the memory in the host's question | Nothing was written; do not retry unless the owner asks |
 | `SEMANTIC_UNAVAILABLE` | Hybrid retrieval is configured but the local meaning model or dependency is missing | Install the optional `@huggingface/transformers` dependency (`npm install`), then run `graphmory semantic-warmup`; hybrid does not silently fall back to keyword search |
 | `doctor` warns that the MCP SDK is missing | A copy without `node_modules` | Run `npm ci` in the checkout, or install the package globally |
 
