@@ -57,7 +57,7 @@ Search combines three lanes: keyword matching (BM25F over note sections), meanin
    graphmory doctor
    ```
 
-   Expect `vault ok`, `curator model ok (<model>)`, `mcp tools: recall · read · remember` and `meaning search ok`. Any line that says `needs attention` comes with the fix.
+   Expect `vault ok`, `curator model ok (<model>)`, `mcp tools: recall · read · remember · status` and `meaning search ok`. Any line that says `needs attention` comes with the fix.
 4. **Connect your agent** to the MCP server, below.
 
 Optional: `graphmory semantic-warmup` downloads the local meaning model once (about 130 MB) so the first recall does not wait.
@@ -88,13 +88,14 @@ OpenCode (`opencode.json`):
 
 Other hosts: [MCP host configuration](docs/guides/mcp-hosts.md). For a client that cannot start a local process, [Streamable HTTP](docs/guides/mcp-http.md) is available behind a bearer token.
 
-## The three tools
+## The four tools
 
 | Tool | What it does |
 |---|---|
 | `recall` | Finds a ranked shortlist for a question: up to ten candidates per page, each with path, heading, excerpt, note hash and the search lanes that found it. Pages with a cursor; a query is limited to 8 pages |
 | `read` | Opens the original note, or one section of it, so the Curator can verify a candidate. A stale hash is refused |
-| `remember` | Saves a decision with its evidence. Returns `APPLIED`, `TENSION` or `BLOCKED` |
+| `remember` | Saves a decision with its evidence in a new note, or updates an existing note and keeps its other content. Returns `APPLIED`, `TENSION` or `BLOCKED` |
+| `status` | Shows what needs attention: an interrupted write, memory waiting for you, notes due for revalidation, vault health and Git sync state. With `ask`, it puts your decisions to you in the host's question UI |
 
 What `remember` returns:
 
@@ -102,9 +103,9 @@ What `remember` returns:
 |---|---|
 | `APPLIED` | Saved as a new note, with a receipt hash for what was written. A replaced note stays as history |
 | `TENSION` | An active note overlaps or conflicts. Nothing is written until the agent has read it and answered |
-| `BLOCKED` | Evidence is missing or stale, a secret was found, or confidence is low. Nothing is written. Low-confidence memory waits in a private queue for you: `graphmory review list`, then `approve` or `reject` |
+| `BLOCKED` | Evidence is missing or stale, a secret was found, or confidence is low. Nothing is written. Low-confidence memory waits in a private queue, and the host asks you to approve, reject or decide later |
 
-The agent cannot approve its own low-confidence memory; there is no MCP tool for it. Guides: [recall and citation](docs/guides/mcp-recall.md), [guarded writes](docs/guides/mcp-remember.md), [memory contracts](docs/guides/memory-contracts.md).
+The agent cannot approve its own low-confidence memory or restore an interrupted write: the server asks you through MCP elicitation, and no tool argument answers for you. Guides: [recall and citation](docs/guides/mcp-recall.md), [guarded writes](docs/guides/mcp-remember.md), [status and owner decisions](docs/guides/mcp-status.md), [memory contracts](docs/guides/memory-contracts.md).
 
 ## Documentation
 

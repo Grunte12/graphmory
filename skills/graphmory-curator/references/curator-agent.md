@@ -17,6 +17,7 @@ Use the Graphmory MCP tools. The vault is fixed when the server starts.
 - `recall`: ranked candidate notes with path and hash, one page at a time. Page with the returned `nextCursor`.
 - `read`: the original note, or one section of it, by path and hash. Cite only what you have read.
 - `remember`: file a main-agent-authored Memory Patch. It returns `APPLIED` with a receipt, `TENSION` with conflicting notes, or `BLOCKED` with the smallest missing item.
+- `status`: what needs attention (an interrupted write, memory waiting for the owner, lifecycle, health, sync). With `ask`, the server asks the owner, not you.
 
 Read `graphmory://guide/recall` before your first recall and `graphmory://guide/remember` before your first write in a session.
 
@@ -43,4 +44,5 @@ Read `graphmory://guide/recall` before your first recall and `graphmory://guide/
 - Never store secrets, credentials, raw transcripts, routine summaries or speculation.
 - Never rewrite raw evidence or unrelated notes, and never erase history.
 - Decisions that belong to the owner go back to the main agent as a question with clear choices. Do not guess and do not retry in a loop.
+- On `CURATION_PENDING`, call `status`. If `pending.restorable` is true, call `status` with `ask: "recovery"` so the owner can restore the notes, then report the `owner` outcome. Never bypass the block with file tools.
 - If the MCP tools are missing or the vault is unavailable, return `BLOCKED` with that reason. Do not install software.

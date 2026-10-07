@@ -1,11 +1,11 @@
 # Documentation
 
-Start with the [project README](../README.md), then connect an agent and learn what the three tools do.
+Start with the [project README](../README.md), then connect an agent and learn what the four tools do.
 
 ## Start here
 
 - [Installation](guides/install.md) and [MCP host configuration](guides/mcp-hosts.md)
-- [Recall and citation](guides/mcp-recall.md) and [guarded writes](guides/mcp-remember.md)
+- [Recall and citation](guides/mcp-recall.md), [guarded writes](guides/mcp-remember.md) and [status and owner decisions](guides/mcp-status.md)
 - [Memory contracts](guides/memory-contracts.md) and the [glossary](glossary.md)
 - [Architecture](design/architecture.md)
 
@@ -24,6 +24,7 @@ Start with the [project README](../README.md), then connect an agent and learn w
 - [Streamable HTTP and remote access](guides/mcp-http.md)
 - [Recall and citation through MCP](guides/mcp-recall.md)
 - [Guarded memory writes through MCP](guides/mcp-remember.md)
+- [Status and owner decisions through MCP](guides/mcp-status.md)
 - [Memory contracts](guides/memory-contracts.md)
 - [Portable Brain Sync](guides/portable-brain-sync.md)
 - [Language and token budget](guides/token-efficient-language.md)

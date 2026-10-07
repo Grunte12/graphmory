@@ -2,7 +2,7 @@
 
 ## Agent interface and shared engine
 
-Claude Code, Codex, Cursor and OpenCode can connect through MCP `recall`, `read` and `remember` to one configured Markdown vault. MCP stdio and authenticated Streamable HTTP share a resident engine with the CLI; there is no per-tool CLI subprocess. Host configuration templates are documented, while four-host native MCP acceptance remains untested.
+Claude Code, Codex, Cursor and OpenCode can connect through MCP `recall`, `read`, `remember` and `status` to one configured Markdown vault. MCP stdio and authenticated Streamable HTTP share a resident engine with the CLI; there is no per-tool CLI subprocess. Host configuration templates are documented, while four-host native MCP acceptance remains untested.
 
 ```text
 Agents → MCP (recall / read / remember) → shared src/ engine ← CLI

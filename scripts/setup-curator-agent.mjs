@@ -115,7 +115,7 @@ try {
   const prompt = fs.readFileSync(path.join(skillSource, "references", "curator-agent.md"), "utf8").trim()
   const skillFile = path.join(skillDir, "SKILL.md")
   const description = "Graphmory memory specialist. Use to recall cited memory from the Markdown vault as a Brain Brief, or to file a main-agent-authored Memory Patch (APPLIED/TENSION/BLOCKED)."
-  const tools = "Read, Glob, Grep, Bash, Edit, Write, mcp__graphmory__recall, mcp__graphmory__read, mcp__graphmory__remember"
+  const tools = "Read, Glob, Grep, Bash, Edit, Write, mcp__graphmory__recall, mcp__graphmory__read, mcp__graphmory__remember, mcp__graphmory__status"
   const content = host === "codex"
     ? `name = "graphmory_curator"\ndescription = ${JSON.stringify(description)}\nmodel = ${JSON.stringify(model)}\nmodel_reasoning_effort = ${JSON.stringify(effort)}\ndeveloper_instructions = ${JSON.stringify(`${prompt}\n\nInstalled skill: ${skillFile}`)}\n\n[[skills.config]]\npath = ${JSON.stringify(skillFile)}\nenabled = true\n`
     : `---\nname: graphmory-curator\ndescription: ${description}\nmodel: ${model}\n${host === "claude" ? `tools: ${tools}\nskills:\n  - graphmory-curator\n` : "readonly: false\n"}---\n\n${prompt}\n\nInstalled skill: ${skillFile}\n`

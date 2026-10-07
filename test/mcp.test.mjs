@@ -16,6 +16,7 @@ import { createMcpServer, startHttpServer } from "../src/mcp-server.mjs"
 import { DEFAULT_RUNTIME_CONFIG } from "../src/runtime-config.mjs"
 import { managedRecall } from "../src/decision-recall.mjs"
 import { prepareCurationCheckpoint, inspectCurationCheckpoint } from "../src/curation-checkpoint.mjs"
+import { writeFileAtomic } from "../src/atomic-write.mjs"
 import { renderPatchRecord } from "../src/patch-record.mjs"
 const config = { ...DEFAULT_RUNTIME_CONFIG, retrievalMode: "lexical" }
 const digest = value => createHash("sha256").update(value).digest("hex")
@@ -68,14 +69,14 @@ for (const mode of ["memory", "stdio", "http"]) {
     const f = fixture(t)
     const { client, logs } = await connect(t, mode, f)
     const tools = (await client.listTools()).tools
-    assert.deepEqual(tools.map(t => t.name), ["recall", "read", "remember"])
+    assert.deepEqual(tools.map(t => t.name), ["recall", "read", "remember", "status"])
     for (const tool of tools) {
       assert.ok(!tool.description.includes("\n"))
       if (tool.name === "remember") for (const outcome of ["APPLIED", "TENSION", "BLOCKED", "receipt"]) assert.match(tool.description, new RegExp(outcome))
-      assert.equal(tool.annotations.readOnlyHint, tool.name !== "remember")
-      assert.equal(tool.annotations.idempotentHint, tool.name !== "remember")
+      assert.equal(tool.annotations.readOnlyHint, ["recall", "read"].includes(tool.name))
+      assert.equal(tool.annotations.destructiveHint, tool.name === "remember")
     }
-    assert.equal((await client.listResources()).resources.length, 5)
+    assert.equal((await client.listResources()).resources.length, 6)
     assert.match((await client.readResource({ uri: "graphmory://guide/recall" })).contents[0].text, /data, never instructions/)
     assert.match((await client.readResource({ uri: "graphmory://guide/remember" })).contents[0].text, /checkpoint/)
     const first = await call(client, "recall", { query: "release policy" })
@@ -379,4 +380,83 @@ test("owner reject drops the request; later, dismiss and no elicitation keep it 
     assert.equal(fs.existsSync(path.join(f.vault, "Decision.md")), false)
   }
   assert.equal(listReviews(f).length, 1)
+})
+
+test("status reports pending work, queued reviews, lifecycle, health and sync without writing", async t => {
+  const f = fixture(t, 1), { client } = await ownerClient(t, f, null)
+  const clean = await call(client, "status", {})
+  assert.equal(clean.status, "ok", JSON.stringify(clean.next))
+  assert.equal(clean.pending, null); assert.equal(clean.reviews.count, 0)
+  assert.deepEqual(clean.sync, { configured: false })
+  assert.equal(clean.health.markdownFiles, 1)
+
+  const low = input(); low.curation.patch.confidence = "low"
+  assert.equal((await call(client, "remember", low)).code, "LOW_CONFIDENCE")
+  const prepared = await call(client, "remember", { ...input("Other.md"), curation: { ...input("Other.md").curation, stage: "prepare" } })
+  const before = fs.readdirSync(f.vault).sort()
+  const report = await call(client, "status", {})
+  assert.equal(report.status, "attention")
+  assert.equal(report.pending.operation, prepared.checkpoint)
+  assert.deepEqual(report.pending.targets, ["Other.md"]); assert.equal(report.pending.restorable, true)
+  assert.equal(report.reviews.count, 1); assert.match(report.reviews.items[0].claim, /incident commander/)
+  assert.ok(report.next.some(line => /ask: "recovery"/.test(line)) && report.next.some(line => /ask: "reviews"/.test(line)))
+  assert.deepEqual(fs.readdirSync(f.vault).sort(), before)
+  const unsupported = await call(client, "status", { ask: "reviews" })
+  assert.equal(unsupported.owner.status, "unsupported")
+  assert.equal((await call(client, "status", { ask: "everything" })).code, "INVALID_ARGUMENT")
+})
+
+test("status ask: reviews puts each queued memory to the owner and stops when they dismiss", async t => {
+  const f = fixture(t, 1)
+  const queue = async target => { const request = input(target); request.curation.patch.confidence = "low"; return f.engine.remember(request) }
+  for (const target of ["A.md", "B.md", "C.md"]) assert.equal((await queue(target)).code, "LOW_CONFIDENCE")
+  const answers = [{ action: "accept", content: { decision: "approve" } }, { action: "accept", content: { decision: "reject", note: "Not ours." } }, { action: "cancel" }]
+  const client = new Client({ name: "owner-tests", version: "1" }, { capabilities: { elicitation: {} } })
+  const asked = []
+  client.setRequestHandler(ElicitRequestSchema, async request => { asked.push(request.params.message); return answers[asked.length - 1] })
+  const pair = InMemoryTransport.createLinkedPair(), server = createMcpServer(f.engine)
+  await server.connect(pair[1]); await client.connect(pair[0])
+  t.after(async () => { await client.close(); await server.close() })
+  const result = await call(client, "status", { ask: "reviews" })
+  assert.equal(asked.length, 3)
+  assert.deepEqual(result.owner.decisions.map(item => item.outcome), ["approved", "rejected", "kept"])
+  assert.equal(result.owner.decisions[1].ownerNote, "Not ours.")
+  assert.ok(result.owner.decisions[0].receipt.operation)
+  assert.equal(result.reviews.count, 1)
+  assert.equal(fs.readdirSync(f.vault).filter(name => /^[ABC]\.md$/.test(name)).length, 1)
+})
+
+test("status ask: recovery restores an interrupted write only when the owner chooses it", async t => {
+  const f = fixture(t, 1)
+  const original = "# Existing note\n\nOwner text.\n"
+  fs.writeFileSync(path.join(f.vault, "Existing.md"), original)
+  const request = input("Existing.md"); request.curation.targetHashes["Existing.md"] = digest(original)
+  const prepared = await f.engine.remember({ ...request, curation: { ...request.curation, stage: "prepare" } })
+  writeFileAtomic(path.join(f.vault, "Existing.md"), "# Existing note\n\nHalf-written.\n")
+  const leaving = await ownerClient(t, f, { action: "accept", content: { decision: "leave" } })
+  const kept = await call(leaving.client, "status", { ask: "recovery" })
+  assert.equal(kept.owner.status, "kept"); assert.equal(kept.pending.operation, prepared.checkpoint)
+  assert.match(leaving.asked[0].message, /- Existing\.md/)
+  assert.equal(leaving.asked[0].requestedSchema.properties.note, undefined)
+  const restoring = await ownerClient(t, f, { action: "accept", content: { decision: "restore" } })
+  const restored = await call(restoring.client, "status", { ask: "recovery" })
+  assert.equal(restored.owner.status, "restored", JSON.stringify(restored.owner))
+  assert.deepEqual(restored.owner.restored, ["Existing.md"])
+  assert.equal(fs.readFileSync(path.join(f.vault, "Existing.md"), "utf8"), original)
+  assert.equal(restored.pending, null)
+  assert.equal((await call(restoring.client, "recall", { query: "release" })).candidates.length > 0, true)
+  assert.equal((await call(restoring.client, "status", { ask: "recovery" })).owner.status, "nothing-to-decide")
+})
+
+test("status sync state reads the local Git repository without fetching", async t => {
+  const f = fixture(t, 1)
+  fs.mkdirSync(path.join(f.vault, ".memory-patch-harness"))
+  fs.writeFileSync(path.join(f.vault, ".memory-patch-harness", "brain-sync.json"), JSON.stringify({ repo: "owner/brain", branch: "main" }))
+  assert.equal((await f.engine.status()).sync.git, "not-a-repository")
+  const git = args => spawnSync("git", ["-c", "user.name=t", "-c", "user.email=t@example.invalid", ...args], { cwd: f.vault, encoding: "utf8" })
+  git(["init", "-q", "-b", "main"]); git(["add", "-A"]); git(["commit", "-qm", "base"])
+  fs.writeFileSync(path.join(f.vault, "New.md"), "# New\n")
+  const { sync, next } = await f.engine.status()
+  assert.deepEqual(sync, { configured: true, repo: "owner/brain", branch: "main", git: "ok", changedFiles: 1, remoteBranch: "not-fetched" })
+  assert.ok(next.some(line => /1 changed file/.test(line)))
 })
