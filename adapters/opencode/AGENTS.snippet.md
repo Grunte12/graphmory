@@ -1,9 +1,9 @@
 ## Durable Memory
 
-- If `graphmory-mcp` is registered, use the `recall`, `read`, `remember` and `status` tools. Use the CLI commands below only as a fallback.
+- If `graphmory-mcp` is registered, use the `recall`, `read`, `remember`, `status` and `sync` tools. Use the CLI commands below only as a fallback.
 - Write new canonical vault notes in concise English. Keep exact technical identifiers and provenance intact. Do not duplicate notes by language or translate existing notes solely for consistency. Answer the user in their chosen language, including Thai. Keep routine replies short while preserving decisions, evidence, uncertainty, and next actions.
 
-- At session start and before current shared memory is required, ask the main agent to run `graphmory auto-pull --json`. Graphmory Curator should not run Git sync itself.
+- At session start and before current shared memory is required, the main agent calls `sync` with `action: "pull"` (CLI fallback: `graphmory auto-pull --json`). Graphmory Curator should not run Git sync itself.
 - The main agent owns the meaning of new memory.
 - Before non-trivial work where prior decisions could change the plan, inspect the selected `graphmory config` workflow. In curator mode, ask the memory curator for a compact Brain Brief. In hosted Jev or local decision mode, run `graphmory recall-managed --query "<specific question>" --scope "<known project/domain>" --agent` directly; the main agent reads its selected paths and uses the EvidencePacket. Do not dispatch a curator or silently fall back to one in decision modes.
 - After verified work, save only knowledge that can change future work.
@@ -19,4 +19,4 @@
 - In curator mode, Graphmory Curator calls the MCP `recall` tool, then `read` on the cited paths. Without MCP it runs `graphmory recall-managed --query "<specific question>" --scope "<known project/domain>" --agent` and inspects relevant sections of the returned canonical paths. For an explicit prior-state question, add `--include-superseded`; inspect dates and scope before answering. Omit it for current-state questions. If evidence is incomplete and `hasMore` is true, repeat the same lookup with `--offset <nextOffset>` until evidence is sufficient or candidates are exhausted. If retrieval still misses, reformulate the query or inspect an appropriate linked neighborhood; never dump the vault into context. A `scanLimitReached` result means the vault was not fully searched.
 - In hosted Jev or local decision mode, `graphmory recall-managed --agent` returns an EvidencePacket. `abstain` or empty evidence means no accepted evidence; report it instead of repeatedly retrying. Command errors are distinct from abstention.
 - For repeated eval misses, generate a curation recommendation report before broad vault search. Use recommendations to propose aliases, MOC links, scope fixes, or human-reviewed grouped-gold candidates; do not auto-edit memory from recommendations.
-- Before publishing a memory batch, Orchestrator runs `graphmory sync-plan --json`. A `push-ready` result still requires explicit user approval; it is never automatic authorization.
+- Before publishing a memory batch, Orchestrator checks `status` (`sync.plan`) and calls `sync` with `action: "push"`; the owner approves the push in the host's question UI. A `push-ready` plan is never approval by itself.

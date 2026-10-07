@@ -46,10 +46,10 @@ test("curator-model warns when no host agent is installed", () => {
   assert.match(check.fix, /graphmory-setup/)
 })
 
-test("mcp-tools lists exactly recall, read, remember and status without a vault", async () => {
+test("mcp-tools lists exactly recall, read, remember, status and sync without a vault", async () => {
   const check = await mcpToolsCheck()
   assert.equal(check.status, "pass")
-  assert.equal(check.detail, "mcp tools: recall · read · remember · status")
+  assert.equal(check.detail, "mcp tools: recall · read · remember · status · sync")
 })
 
 test("semantic-backend warns when the dependency is missing and when the model is not downloaded", () => {
@@ -66,10 +66,10 @@ test("summary lines mirror the setup scene and flag problems", () => {
   const lines = doctorSummaryLines([
     { id: "vault-detection", status: "pass" }, { id: "vault-permission", status: "pass" },
     { id: "curator-model", status: "pass", model: "haiku" },
-    { id: "mcp-tools", status: "pass", detail: "mcp tools: recall · read · remember · status" },
+    { id: "mcp-tools", status: "pass", detail: "mcp tools: recall · read · remember · status · sync" },
     { id: "semantic-backend", status: "warn" },
   ])
-  assert.deepEqual(lines, ["vault ok", "curator model ok (haiku)", "mcp tools: recall · read · remember · status", "meaning search: needs attention"])
+  assert.deepEqual(lines, ["vault ok", "curator model ok (haiku)", "mcp tools: recall · read · remember · status · sync", "meaning search: needs attention"])
 })
 
 test("doctor --json adds the new check ids and still reports ok when only warnings remain", () => {

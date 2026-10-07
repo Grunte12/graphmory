@@ -4,7 +4,7 @@ import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { DEFAULT_MODEL } from "./semantic-recall.mjs"
 
-export const MCP_TOOLS = ["recall", "read", "remember", "status"]
+export const MCP_TOOLS = ["recall", "read", "remember", "status", "sync"]
 
 // Where graphmory-setup writes the user-scope Curator agent for each host (docs/guides/agent-hosts.md).
 const HOST_AGENTS = [

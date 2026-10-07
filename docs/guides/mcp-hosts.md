@@ -56,4 +56,4 @@ GRAPHMORY_VAULT = "/path/to/vault"
 
 ## Curator sub-agent
 
-MCP discovery and the Curator sub-agent are separate. `graphmory-setup` installs a Curator agent only for Codex, Claude Code and Cursor ([agent-hosts.md](agent-hosts.md)). Other hosts can call the four tools, but dispatching a cheap Curator model is up to that host.
+MCP discovery and the Curator sub-agent are separate. `graphmory-setup` installs a Curator agent only for Codex, Claude Code and Cursor ([agent-hosts.md](agent-hosts.md)). Other hosts can call the five tools, but dispatching a cheap Curator model is up to that host.

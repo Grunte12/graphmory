@@ -45,4 +45,5 @@ Read `graphmory://guide/recall` before your first recall and `graphmory://guide/
 - Never rewrite raw evidence or unrelated notes, and never erase history.
 - Decisions that belong to the owner go back to the main agent as a question with clear choices. Do not guess and do not retry in a loop.
 - On `CURATION_PENDING`, call `status`. If `pending.restorable` is true, call `status` with `ask: "recovery"` so the owner can restore the notes, then report the `owner` outcome. Never bypass the block with file tools.
+- Git sync belongs to the main agent and the owner. You do not call `sync`.
 - If the MCP tools are missing or the vault is unavailable, return `BLOCKED` with that reason. Do not install software.

@@ -29,12 +29,14 @@ const schemas = {
     stage: z.enum(["prepare", "apply"]).optional(), operation: text.optional(),
   }).strict().optional() }).strict(),
   status: z.object({ ask: z.enum(["reviews", "recovery"]).optional() }).strict(),
+  sync: z.object({ action: z.enum(["pull", "push"]), message: z.string().min(1).max(120).regex(/^[^\r\n]*\S[^\r\n]*$/u).optional() }).strict(),
 }
 const descriptions = {
   recall: "Find cited evidence in project memory. No candidates means no supporting note; say so instead of guessing.",
   read: "Open the original sections of recalled notes.",
   remember: "Save a decision with its evidence in a new note, or update an existing note while keeping its other content. Returns APPLIED with a receipt hash, TENSION when an active note conflicts (nothing written) or BLOCKED when review is needed (nothing written).",
   status: "Show what needs attention: an interrupted write, memory waiting for the owner, lifecycle and vault health, and Git sync state. With ask, the owner decides queued reviews or restores an interrupted write in the host's question UI; you never decide for them.",
+  sync: "Sync the vault with its Git remote. pull fast-forwards only and never merges. push asks the owner to approve the listed changes in the host's question UI, then commits and pushes; secrets or a moved remote block it.",
 }
 const annotations = {
   recall: { readOnlyHint: true, idempotentHint: true, destructiveHint: false },
@@ -42,11 +44,13 @@ const annotations = {
   remember: { readOnlyHint: false, idempotentHint: false, destructiveHint: true },
   // Writes only after the owner chose it in an elicitation; a call without ask only reads.
   status: { readOnlyHint: false, idempotentHint: false, destructiveHint: false },
+  sync: { readOnlyHint: false, idempotentHint: false, destructiveHint: false, openWorldHint: true },
 }
 const guides = {
   "graphmory://guide/recall": ["Recall and citation", new URL("../docs/guides/mcp-recall.md", import.meta.url)],
   "graphmory://guide/remember": ["Guarded memory writes", new URL("../docs/guides/mcp-remember.md", import.meta.url)],
   "graphmory://guide/status": ["Status and owner decisions", new URL("../docs/guides/mcp-status.md", import.meta.url)],
+  "graphmory://guide/sync": ["Git pull and push", new URL("../docs/guides/mcp-sync.md", import.meta.url)],
   "graphmory://guide/protocol": ["Curation authority and permission", new URL("../skills/graphmory-curator/references/protocol.md", import.meta.url)],
   "graphmory://guide/note-schema": ["Canonical note schema", new URL("../skills/graphmory-curator/references/note-schema.md", import.meta.url)],
   "graphmory://guide/curator": ["Graphmory Curator protocol", new URL("../skills/graphmory-curator/SKILL.md", import.meta.url)],
@@ -60,11 +64,11 @@ export function createMcpServer(engine) {
   const askOwner = createOwnerAsk(server)
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: Object.entries(schemas).map(([name, schema]) => ({
     name, description: descriptions[name], inputSchema: z.toJSONSchema(schema),
-    annotations: { ...annotations[name], openWorldHint: false },
+    annotations: { openWorldHint: false, ...annotations[name] },
   })) }))
   server.setRequestHandler(CallToolRequestSchema, async ({ params }) => {
     const schema = Object.hasOwn(schemas, params.name) && schemas[params.name]
-    if (!schema) return result({ code: "UNKNOWN_TOOL", message: "Choose recall, read, remember or status." }, true)
+    if (!schema) return result({ code: "UNKNOWN_TOOL", message: "Choose recall, read, remember, status or sync." }, true)
     const input = schema.safeParse(params.arguments)
     if (!input.success) return result({ code: "INVALID_ARGUMENT", message: "Arguments do not match the tool schema; read its guide resource." }, true)
     try { const value = await engine[params.name](input.data, { askOwner }); return result(value, value.status === "BLOCKED") }
