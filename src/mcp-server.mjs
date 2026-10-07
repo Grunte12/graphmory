@@ -36,9 +36,9 @@ const descriptions = {
 const guides = {
   "graphmory://guide/recall": ["Recall and citation", new URL("../docs/guides/mcp-recall.md", import.meta.url)],
   "graphmory://guide/remember": ["Guarded memory writes", new URL("../docs/guides/mcp-remember.md", import.meta.url)],
-  "graphmory://guide/protocol": ["Curation authority and permission", new URL("../skills/memory-curator/references/protocol.md", import.meta.url)],
-  "graphmory://guide/note-schema": ["Canonical note schema", new URL("../skills/memory-curator/references/note-schema.md", import.meta.url)],
-  "graphmory://guide/curator": ["Memory Curator protocol", new URL("../skills/memory-curator/SKILL.md", import.meta.url)],
+  "graphmory://guide/protocol": ["Curation authority and permission", new URL("../skills/graphmory-curator/references/protocol.md", import.meta.url)],
+  "graphmory://guide/note-schema": ["Canonical note schema", new URL("../skills/graphmory-curator/references/note-schema.md", import.meta.url)],
+  "graphmory://guide/curator": ["Graphmory Curator protocol", new URL("../skills/graphmory-curator/SKILL.md", import.meta.url)],
 }
 function result(value, isError = false) {
   return { content: [{ type: "text", text: JSON.stringify(value) }], structuredContent: value, ...(isError ? { isError: true } : {}) }

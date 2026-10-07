@@ -35,7 +35,7 @@ The top-level README should answer:
 
 Runtime-critical behavior belongs in:
 
-- `skills/memory-curator/SKILL.md`,
+- `skills/graphmory-curator/SKILL.md`,
 - adapter prompts under `adapters/`,
 - schemas under `schemas/`,
 - scripts and tests.

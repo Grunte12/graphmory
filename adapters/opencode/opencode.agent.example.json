@@ -1,9 +1,9 @@
 {
   "agent": {
-    "memory_curator": {
+    "graphmory_curator": {
       "description": "Retrieves bounded Brain Briefs and applies provenance-preserving Memory Patches.",
       "mode": "subagent",
-      "prompt": "{paste the contents of memory-curator-prompt.md}",
+      "prompt": "{paste the contents of graphmory-curator-prompt.md}",
       "permission": {
         "read": "allow",
         "edit": "allow",

@@ -90,9 +90,12 @@ try {
   if (scope === "project" && !project) throw new Error("Project scope needs --project <path>")
   const base = scope === "user" ? os.homedir() : path.resolve(project)
   const hostDir = path.join(base, `.${host}`)
-  const skillDir = host === "codex" ? path.join(base, ".agents", "skills", "memory-curator") : path.join(hostDir, "skills", "memory-curator")
+  const skillDir = host === "codex" ? path.join(base, ".agents", "skills", "graphmory-curator") : path.join(hostDir, "skills", "graphmory-curator")
+  // Before the rename the skill was installed as memory-curator; an update moves it to the backup.
+  const legacySkillDir = path.join(path.dirname(skillDir), "memory-curator")
+  const legacy = fs.existsSync(legacySkillDir)
   const agentPath = path.join(hostDir, "agents", host === "codex" ? "graphmory_curator.toml" : "graphmory-curator.md")
-  const skillSource = path.join(repo, "skills", "memory-curator")
+  const skillSource = path.join(repo, "skills", "graphmory-curator")
 
   // An update keeps the owner's earlier model and effort choices unless new ones are given.
   const modelPattern = host === "codex" ? /^\s*model\s*=\s*"([^"]+)"/mu : /^model:\s*["']?([^\s"']+)/mu
@@ -115,17 +118,18 @@ try {
   const tools = "Read, Glob, Grep, Bash, Edit, Write, mcp__graphmory__recall, mcp__graphmory__read, mcp__graphmory__remember"
   const content = host === "codex"
     ? `name = "graphmory_curator"\ndescription = ${JSON.stringify(description)}\nmodel = ${JSON.stringify(model)}\nmodel_reasoning_effort = ${JSON.stringify(effort)}\ndeveloper_instructions = ${JSON.stringify(`${prompt}\n\nInstalled skill: ${skillFile}`)}\n\n[[skills.config]]\npath = ${JSON.stringify(skillFile)}\nenabled = true\n`
-    : `---\nname: graphmory-curator\ndescription: ${description}\nmodel: ${model}\n${host === "claude" ? `tools: ${tools}\nskills:\n  - memory-curator\n` : "readonly: false\n"}---\n\n${prompt}\n\nInstalled skill: ${skillFile}\n`
+    : `---\nname: graphmory-curator\ndescription: ${description}\nmodel: ${model}\n${host === "claude" ? `tools: ${tools}\nskills:\n  - graphmory-curator\n` : "readonly: false\n"}---\n\n${prompt}\n\nInstalled skill: ${skillFile}\n`
 
   const action = fs.existsSync(agentPath) ? (fs.readFileSync(agentPath, "utf8") === content ? "unchanged" : update ? "update" : "conflict") : "create"
   const skillAction = fs.existsSync(skillDir) ? (sameTree(skillSource, skillDir) ? "unchanged" : update ? "update" : "conflict") : "create"
   const verificationReminder = host === "codex"
     ? `${scope === "project" ? "Open this project as trusted in Codex, " : ""}restart Codex once so it loads the sub-agent. The main agent then dispatches graphmory_curator as a child run; verify a native graphmory_curator child run. With a spawn schema exposing fork_turns, select agent_type=graphmory_curator and fork_turns=none; a full-history fork cannot select the configured role.`
     : `Restart ${host} once so it loads the sub-agent. The main agent then dispatches graphmory-curator as a child run; verify the named curator runs as a child.`
-  console.log(JSON.stringify({ host, scope, model, ...(host === "codex" ? { effort } : {}), agentPath, action, skillDir, skillAction, mode: apply ? "apply" : "preview" }, null, 2))
+  console.log(JSON.stringify({ host, scope, model, ...(host === "codex" ? { effort } : {}), agentPath, action, skillDir, skillAction, ...(legacy ? { legacySkillDir, legacyAction: update ? "backup" : "conflict" } : {}), mode: apply ? "apply" : "preview" }, null, 2))
+  if (legacy && !update) throw new Error(`Found the older memory-curator skill at ${legacySkillDir}. Re-run with --update to replace it with graphmory-curator (a backup is kept)`)
   if (action === "conflict") throw new Error("Existing agent differs. Re-run with --update to replace it (a backup is kept); the installer will not overwrite it otherwise")
   if (skillAction === "conflict") throw new Error("Existing skill differs. Re-run with --update to replace it (a backup is kept); the installer will not overwrite it otherwise")
-  if (apply && skillAction === "unchanged" && action === "unchanged") {
+  if (apply && skillAction === "unchanged" && action === "unchanged" && !legacy) {
     console.log(`Agent and skill already installed. ${verificationReminder}`)
     process.exit(0)
   }
@@ -135,8 +139,10 @@ try {
   }
   // Backups sit outside the skills and agents folders so the host never loads them.
   const backupDir = path.join(path.dirname(path.dirname(skillDir)), "graphmory-backups", new Date().toISOString().replace(/[:.]/g, "-"))
-  if (action === "update" || skillAction === "update") fs.mkdirSync(backupDir, { recursive: true, mode: 0o700 })
-  if (skillAction === "update") fs.renameSync(skillDir, path.join(backupDir, "memory-curator"))
+  const backingUp = action === "update" || skillAction === "update" || legacy
+  if (backingUp) fs.mkdirSync(backupDir, { recursive: true, mode: 0o700 })
+  if (legacy) fs.renameSync(legacySkillDir, path.join(backupDir, "memory-curator"))
+  if (skillAction === "update") fs.renameSync(skillDir, path.join(backupDir, "graphmory-curator"))
   if (skillAction !== "unchanged") {
     fs.mkdirSync(path.dirname(skillDir), { recursive: true })
     fs.cpSync(skillSource, skillDir, { recursive: true, errorOnExist: true, force: false })
@@ -146,8 +152,8 @@ try {
     fs.mkdirSync(path.dirname(agentPath), { recursive: true })
     fs.writeFileSync(agentPath, content, { flag: "wx", mode: 0o600 })
   }
-  if (action === "update" || skillAction === "update") console.log(`Previous files backed up to ${backupDir}`)
-  console.log(`${action === "update" || skillAction === "update" ? "Updated" : "Installed"}. ${verificationReminder}`)
+  if (backingUp) console.log(`Previous files backed up to ${backupDir}`)
+  console.log(`${backingUp ? "Updated" : "Installed"}. ${verificationReminder}`)
 } catch (error) {
   console.error(error.message)
   process.exitCode = 1

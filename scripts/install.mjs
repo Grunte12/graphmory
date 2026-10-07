@@ -24,7 +24,7 @@ const force = args.includes("--force")
 const dryRun = flag("--dry-run")
 
 // --- Read installed manifest if present ---
-const manifestPath = path.join(targetRoot, "skills", "memory-curator", ".install-manifest.json")
+const manifestPath = path.join(targetRoot, "skills", "graphmory-curator", ".install-manifest.json")
 let oldVersion = null
 if (fs.existsSync(manifestPath)) {
   try {
@@ -55,29 +55,29 @@ if (oldVersion && !upgradeMode && !flag("--check")) {
 // --- Check mode: diff what would change ---
 if (flag("--check")) {
   const check = { version: ownVersion, installed: oldVersion, changes: [] }
-  const installedSkill = path.join(targetRoot, "skills", "memory-curator")
+  const installedSkill = path.join(targetRoot, "skills", "graphmory-curator")
   if (fs.existsSync(installedSkill)) {
-    const skillFiles = fs.readdirSync(path.join(root, "skills", "memory-curator"), { recursive: true })
+    const skillFiles = fs.readdirSync(path.join(root, "skills", "graphmory-curator"), { recursive: true })
     for (const file of skillFiles) {
-      const repoFile = path.join(root, "skills", "memory-curator", file)
+      const repoFile = path.join(root, "skills", "graphmory-curator", file)
       const targetFile = path.join(installedSkill, file)
       if (!fs.existsSync(targetFile)) {
-        check.changes.push({ action: "add", file: `skills/memory-curator/${file}` })
+        check.changes.push({ action: "add", file: `skills/graphmory-curator/${file}` })
       } else if (
         fs.statSync(repoFile).isFile() &&
         fs.readFileSync(repoFile, "utf8") !== fs.readFileSync(targetFile, "utf8")
       ) {
-        check.changes.push({ action: "update", file: `skills/memory-curator/${file}` })
+        check.changes.push({ action: "update", file: `skills/graphmory-curator/${file}` })
       }
     }
     for (const file of fs.readdirSync(installedSkill, { recursive: true })) {
       if (file === ".install-manifest.json") continue
-      if (!fs.existsSync(path.join(root, "skills", "memory-curator", file))) {
-        check.changes.push({ action: "remove", file: `skills/memory-curator/${file}` })
+      if (!fs.existsSync(path.join(root, "skills", "graphmory-curator", file))) {
+        check.changes.push({ action: "remove", file: `skills/graphmory-curator/${file}` })
       }
     }
   } else {
-    check.changes.push({ action: "add", file: "skills/memory-curator/ (directory)" })
+    check.changes.push({ action: "add", file: "skills/graphmory-curator/ (directory)" })
   }
   const srcDest = path.join(targetRoot, "src")
   if (fs.existsSync(srcDest)) {
@@ -111,8 +111,10 @@ if (flag("--check")) {
 }
 
 // --- Copy skill ---
-const skillSource = path.join(root, "skills", "memory-curator")
-const skillDest = path.join(targetRoot, "skills", "memory-curator")
+const skillSource = path.join(root, "skills", "graphmory-curator")
+const skillDest = path.join(targetRoot, "skills", "graphmory-curator")
+const legacySkill = path.join(targetRoot, "skills", "memory-curator")
+if (fs.existsSync(legacySkill)) console.warn(`Found the older memory-curator skill at ${legacySkill}. It is not removed; delete it after checking it holds no local changes.`)
 if (fs.existsSync(skillDest)) {
   if (!upgradeMode) {
     console.error(`Refusing to overwrite ${skillDest}`)
@@ -163,7 +165,7 @@ if (!dryRun) {
     version: ownVersion,
     installedAt: new Date().toISOString(),
     target: targetRoot,
-    components: ["skills/memory-curator", "src/", "bin/graphmory.mjs"],
+    components: ["skills/graphmory-curator", "src/", "bin/graphmory.mjs"],
   }
   writeJsonAtomic(path.join(skillDest, ".install-manifest.json"), manifest)
 }
@@ -176,7 +178,7 @@ if (dryRun) {
 console.log("")
 console.log("Manual OpenCode integration:")
 console.log(`1. Review ${path.join(root, "adapters", "opencode", "AGENTS.snippet.md")}`)
-console.log(`2. Review ${path.join(root, "adapters", "opencode", "memory-curator-prompt.md")}`)
+console.log(`2. Review ${path.join(root, "adapters", "opencode", "graphmory-curator-prompt.md")}`)
 console.log(`3. Merge the example agent using only fields supported by your OpenCode version.`)
 console.log(`4. To run the CLI from anywhere, add ${binDir} to your PATH.`)
 console.log("The installer intentionally does not edit opencode.json.")

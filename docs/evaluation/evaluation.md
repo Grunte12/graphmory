@@ -189,7 +189,7 @@ The command classifies miss patterns such as buried gold, missing scope, no cand
 
 JSON output is a `curation-plan` derived contract. Each `patchCandidates` item records the target, proposed metadata/link change, originating miss evidence, `requiresHumanReview: true`, and `autoApplicable: false`. Agents may use this plan to prepare a bounded review, but must not treat it as canonical memory or apply it without validating the note and intent.
 
-## Obsidian Memory Curator Eval
+## Obsidian Graphmory Curator Eval
 
 Retrieval quality is necessary but not enough. The core claim of this harness is that a memory curator should retrieve and maintain an Obsidian/Markdown memory without inventing meaning. That requires a separate behavior eval.
 

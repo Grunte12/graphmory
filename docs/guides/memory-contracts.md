@@ -100,7 +100,7 @@ docs/                    Architecture, research, and evaluation
 examples/                Valid example contracts
 schemas/                 Machine-readable JSON Schema
 scripts/                 Install, initialize, and validate
-skills/memory-curator/   Installable on-demand agent skill
+skills/graphmory-curator/   Installable on-demand agent skill
 src/                     Dependency-free validation logic
 test/                    Deterministic contract tests
 ```

@@ -4,7 +4,7 @@
 
 ## What It Is
 
-A Brain Brief is the compact recall response from Memory Curator.
+A Brain Brief is the compact recall response from Graphmory Curator.
 It provides just enough context for a main agent to make informed decisions.
 
 ## Schema
@@ -28,7 +28,7 @@ It provides just enough context for a main agent to make informed decisions.
 ## When Not to Request
 
 - Trivial one-off edits with no memory relevance.
-- When Memory Curator is not available in the current agent runtime.
+- When Graphmory Curator is not available in the current agent runtime.
 
 ## Related
 

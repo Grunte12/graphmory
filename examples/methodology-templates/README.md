@@ -20,7 +20,7 @@ conventions — there is no automatic methodology router.
 1. Choose a methodology or stay with generic.
 2. Copy the corresponding note layout into your vault.
 3. Update `source-map.md` or your vault's index to match.
-4. The Memory Curator will report when a vault convention exists.
+4. The Graphmory Curator will report when a vault convention exists.
 
 ## Important
 

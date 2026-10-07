@@ -18,8 +18,8 @@ permission rules.
 ## How Memory Access Is Established
 
 1. The Graphmory repository is cloned to the local machine.
-2. The main agent's instructions reference the Memory Curator and related commands.
-3. Memory Curator is configured as a sub-agent with filesystem read/edit/glob/grep
+2. The main agent's instructions reference the Graphmory Curator and related commands.
+3. Graphmory Curator is configured as a sub-agent with filesystem read/edit/glob/grep
    permissions (see `opencode.agent.example.json`).
 4. The Graphmory scripts (`scripts/brain-sync.mjs`, `scripts/render-hot-context.mjs`)
    are invoked through OpenCode's `bash` tool permission.
@@ -42,11 +42,11 @@ OpenCode can use the `graphmory-mcp` server directly: add it under `mcp` in `ope
 |---|---|
 | `README.md` | This file — adapter overview and transport |
 | `AGENTS.snippet.md` | Durable-memory instruction block for the main agent |
-| `memory-curator-prompt.md` | Full prompt for the Memory Curator sub-agent |
+| `graphmory-curator-prompt.md` | Full prompt for the Graphmory Curator sub-agent |
 | `opencode.agent.example.json` | Example sub-agent configuration with permissions |
 
 ## See Also
 
 - `AGENTS.snippet.md` — Copy these instructions into the main agent prompt.
-- `memory-curator-prompt.md` — The Memory Curator role prompt.
+- `graphmory-curator-prompt.md` — The Graphmory Curator role prompt.
 - `opencode.agent.example.json` — Example agent-definition JSON.

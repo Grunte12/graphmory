@@ -102,7 +102,7 @@ test("curator freshness check warns when the installed curator is older than the
   try {
     assert.equal(spawnSync(process.execPath, [path.resolve("scripts/setup-curator-agent.mjs"), "--host", "claude", "--scope", "project", "--project", home, "--model", "haiku", "--apply"], { encoding: "utf8" }).status, 0)
     assert.equal(curatorFreshnessCheck({ home }).status, "pass")
-    fs.appendFileSync(path.join(home, ".claude", "skills", "memory-curator", "SKILL.md"), "\nold\n")
+    fs.appendFileSync(path.join(home, ".claude", "skills", "graphmory-curator", "SKILL.md"), "\nold\n")
     const check = curatorFreshnessCheck({ home })
     assert.equal(check.status, "warn")
     assert.match(check.fix, /graphmory-setup --host claude --apply --update/)
