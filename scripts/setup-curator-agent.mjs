@@ -109,8 +109,8 @@ try {
   const action = fs.existsSync(agentPath) ? (fs.readFileSync(agentPath, "utf8") === content ? "unchanged" : update ? "update" : "conflict") : "create"
   const skillAction = fs.existsSync(skillDir) ? (sameTree(skillSource, skillDir) ? "unchanged" : update ? "update" : "conflict") : "create"
   const verificationReminder = host === "codex"
-    ? `${scope === "project" ? "Open this project as trusted in Codex, " : ""}start a fresh session, and verify a native graphmory_curator child run. With a spawn schema exposing fork_turns, select agent_type=graphmory_curator and fork_turns=none; a full-history fork cannot select the configured role.`
-    : `Start a fresh ${host} session if needed and verify the named curator runs as a child.`
+    ? `${scope === "project" ? "Open this project as trusted in Codex, " : ""}restart Codex once so it loads the sub-agent. The lead agent then dispatches graphmory_curator as a child run; verify a native graphmory_curator child run. With a spawn schema exposing fork_turns, select agent_type=graphmory_curator and fork_turns=none; a full-history fork cannot select the configured role.`
+    : `Restart ${host} once so it loads the sub-agent. The lead agent then dispatches graphmory-curator as a child run; verify the named curator runs as a child.`
   console.log(JSON.stringify({ host, scope, model, ...(host === "codex" ? { effort } : {}), agentPath, action, skillDir, skillAction, mode: apply ? "apply" : "preview" }, null, 2))
   if (action === "conflict") throw new Error("Existing agent differs. Re-run with --update to replace it (a backup is kept); the installer will not overwrite it otherwise")
   if (skillAction === "conflict") throw new Error("Existing skill differs. Re-run with --update to replace it (a backup is kept); the installer will not overwrite it otherwise")
