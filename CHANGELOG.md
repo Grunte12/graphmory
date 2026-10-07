@@ -15,6 +15,10 @@ This project follows a lightweight changelog format inspired by Keep a Changelog
 - New `docs/guides/mcp-hosts.md` with MCP config for common MCP hosts, with links to vendor docs where they exist. README Quick Start and launch-film link added.
 - README rewritten: shorter, structured around what Graphmory does, how it works, Quick Start and the three tools. Two new diagrams (`docs/assets/graphmory-architecture.png` for the whole system, `graphmory-engine.png` for how recall and remember work) replace the old architecture SVG and HTML. Detailed material moved, not removed: `docs/guides/cli-reference.md`, `mcp-http.md`, `memory-contracts.md` and `docs/research/positioning.md`. Corrected two outdated statements: the default retriever is hybrid (keyword + meaning + links), and a Brain Brief is not capped at seven items.
 
+### Changed
+
+- `graphmory --help` now groups commands for the vault owner (setup and health, owner review, Git sync, vault maintenance) and lists agent and evaluation commands under an Advanced section that points agents to the MCP tools. No command was removed or renamed.
+
 ### Removed
 
 - The legacy `memory-patch-harness` and `mph` commands were removed. Use `graphmory`. Per-vault sync metadata is still stored under `.memory-patch-harness/`.

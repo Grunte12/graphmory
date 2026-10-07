@@ -1018,6 +1018,17 @@ test("brain-session-brief shows sync config when available", () => {
   }
 })
 
+test("CLI help points agents to MCP and groups owner commands first", () => {
+  const result = runCli(["--help"])
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(result.stdout, /graphmory-mcp/)
+  const owner = result.stdout.indexOf("Setup and health:")
+  const advanced = result.stdout.indexOf("Advanced:")
+  assert.ok(owner !== -1 && advanced > owner, "owner sections come before Advanced")
+  assert.ok(result.stdout.indexOf("graphmory recall --vault") > advanced, "agent recall is listed under Advanced")
+  assert.doesNotMatch(result.stdout, /^ {2}recall-managed/m)
+})
+
 test("CLI help lists the new audit, lint, and brain-session-brief commands", () => {
   const result = runCli(["--help"])
   assert.equal(result.status, 0, result.stderr)
