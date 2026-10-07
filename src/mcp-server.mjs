@@ -11,6 +11,7 @@ import { createMemoryEngine, publicError } from "./mcp-engine.mjs"
 
 const text = z.string().min(1).max(1200).regex(/\S/u)
 const digest = z.string().regex(/^[a-f0-9]{64}$/)
+const relation = z.enum(["part_of", "depends_on", "implements", "evidence_for", "related"])
 const scope = z.object({ applies: z.array(text).min(1).max(20), excludes: z.array(text).max(20) }).strict()
 const patch = z.object({ claim: text, why_it_matters: text, scope,
   provenance: z.array(z.object({ kind: z.enum(["file", "user-statement"]), value: text }).strict()).min(1).max(20),
@@ -28,11 +29,11 @@ const schemas = {
     conflictsReviewed: z.boolean().optional(), reviewedConflicts: z.record(z.string(), digest).optional(), authorized: z.boolean().optional(), conflictPath: text.optional(),
     stage: z.enum(["prepare", "apply"]).optional(), operation: text.optional(),
   }).strict().optional() }).strict(),
-  link: z.object({ path: text, hash: digest,
-    add: z.array(z.object({ target: text, relation: z.enum(["part_of", "depends_on", "implements", "evidence_for", "related"]) }).strict()).max(20).optional(),
-    remove: z.array(z.object({ target: text, relation: z.enum(["part_of", "depends_on", "implements", "evidence_for", "related"]) }).strict()).max(20).optional(),
+  link: z.object({ notes: z.array(z.object({ path: text, hash: digest,
+    add: z.array(z.object({ target: text, relation }).strict()).max(20).optional(),
+    remove: z.array(z.object({ target: text, relation }).strict()).max(20).optional(),
     repair: z.array(z.object({ from: text, to: text }).strict()).max(20).optional(),
-  }).strict(),
+  }).strict()).min(1).max(50) }).strict(),
   status: z.object({ ask: z.enum(["reviews", "recovery"]).optional() }).strict(),
   sync: z.object({ action: z.enum(["pull", "push"]), message: z.string().min(1).max(120).regex(/^[^\r\n]*\S[^\r\n]*$/u).optional() }).strict(),
 }
@@ -41,7 +42,7 @@ const descriptions = {
   read: "Open the original sections of recalled notes.",
   remember: "Save a decision with its evidence in a new note, or update an existing note while keeping its other content. Returns APPLIED with a receipt hash, TENSION when an active note conflicts (nothing written) or BLOCKED when review is needed (nothing written).",
   status: "Show what needs attention: an interrupted write, memory waiting for the owner, lifecycle and vault health, and Git sync state. With ask, the owner decides queued reviews or restores an interrupted write in the host's question UI; you never decide for them.",
-  link: "Maintain one note's links: add or remove relation properties (part_of, depends_on, implements, evidence_for, related) or repair a broken link to an existing note. Pass the hash you read; returns LINKED with the new hash, UNCHANGED or BLOCKED. Link only what a source asserts.",
+  link: "Maintain links across up to 50 notes in one call: add or remove relation properties (part_of, depends_on, implements, evidence_for, related) or repair broken links to existing notes. Pass each note's hash from read; the batch applies whole or not at all. Returns LINKED with each note's new hash, UNCHANGED or BLOCKED naming the note. Link only what a source asserts.",
   sync: "Sync the vault with its Git remote. pull fast-forwards only and never merges. push asks the owner to approve the listed changes in the host's question UI, then commits and pushes; secrets or a moved remote block it.",
 }
 const annotations = {

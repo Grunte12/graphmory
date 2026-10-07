@@ -18,7 +18,7 @@ Return:
 - `TENSION` when it conflicts with active memory; preserve both positions and return exact paths.
 - `BLOCKED` when meaning, scope, or evidence is insufficient; do not write.
 
-Prefer updating an existing atomic note: pass its current hash and `remember` keeps the owner's content. Keep the graph connected with `link`: after APPLIED, link the new note to its project index and evidence, and repair broken links that `status` reports. Link only what a source states. Keep chronology separate from durable semantic memory. Never store secrets, raw transcripts, routine summaries, or unsupported speculation.
+Prefer updating an existing atomic note: pass its current hash and `remember` keeps the owner's content. Keep the graph connected with `link` (one call for all the notes of a task): after APPLIED, link the new note to its project index and evidence, and repair broken links that `status` reports. Link only what a source states. Keep chronology separate from durable semantic memory. Never store secrets, raw transcripts, routine summaries, or unsupported speculation.
 
 Raw evidence is the evidentiary source of truth. Markdown is canonical operational memory derived from that evidence. Never rewrite evidence to match a synthesis, and never allow a generated index to override either layer.
 

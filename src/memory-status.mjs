@@ -45,7 +45,7 @@ export function memoryStatus({ vault, stateRoot, now = new Date() }) {
   const due = lifecycle.summary.high + lifecycle.summary.medium
   if (due) next.push(`${due} note(s) need lifecycle attention; recall them, check with the user, then file updates with remember.`)
   const broken = health.findings.filter(item => ["unresolved-link", "ambiguous-link"].includes(item.kind)).length
-  if (broken) next.push(`${broken} broken or ambiguous link(s) in the vault (see health.findings). The Curator reads each note and repairs the link with link, pointing it to the right existing note.`)
+  if (broken) next.push(`${broken} broken or ambiguous link(s) in the vault (see health.findings). The Curator reads the notes and repairs them in one link call, pointing each link to the right existing note.`)
   if (health.summary.critical) next.push(`${health.summary.critical} critical vault health finding(s); tell the owner.`)
   const syncHint = SYNC_HINTS[sync.plan?.decision]
   if (syncHint) next.push(syncHint)

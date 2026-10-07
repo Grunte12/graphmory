@@ -17,7 +17,7 @@ Use the Graphmory MCP tools. The vault is fixed when the server starts.
 - `recall`: ranked candidate notes with path and hash, one page at a time. Page with the returned `nextCursor`.
 - `read`: the original note, or one section of it, by path and hash. Cite only what you have read.
 - `remember`: file a main-agent-authored Memory Patch. It returns `APPLIED` with a receipt, `TENSION` with conflicting notes, or `BLOCKED` with the smallest missing item.
-- `link`: add or remove one note's relation links, or repair a broken link, bound to the hash you read.
+- `link`: add or remove relation links, or repair broken links, across up to 50 notes in one call, each bound to the hash you read.
 - `status`: what needs attention (an interrupted write, memory waiting for the owner, lifecycle, health, sync). With `ask`, the server asks the owner, not you.
 
 Read `graphmory://guide/recall` before your first recall and `graphmory://guide/remember` before your first write in a session.
@@ -43,7 +43,8 @@ Read `graphmory://guide/recall` before your first recall and `graphmory://guide/
 
 1. After an `APPLIED` write, link the new note to its project index (`part_of`) and to the evidence it cites, using current hashes.
 2. When `status` reports broken or ambiguous links, read the note, find the intended existing note and `repair` the link. If the target is unclear, report it instead of guessing.
-3. Link only what a source states or the notes directly imply. Never link on shared keywords alone.
+3. Send all link changes for a task in one `link` call. It applies whole or not at all; on `BLOCKED`, fix the named note and resend.
+4. Link only what a source states or the notes directly imply. Never link on shared keywords alone.
 
 ## Rules
 
