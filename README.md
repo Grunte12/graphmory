@@ -32,7 +32,7 @@ Three roles share the work:
 
 | Role | Does |
 |---|---|
-| **Main agent** | Your main coding agent. Decides what a finished task means, what is worth remembering, and whether a change is allowed |
+| **Main agent** | The coding agent you chat with. Decides what a finished task means, what is worth remembering, and whether a change is allowed |
 | **Curator** | A small, cheap model in your agent host. Reads the original notes, verifies the evidence and returns a short cited brief |
 | **Graphmory** | Finds candidate notes and guards every write. Runs on your machine and never invents or rewrites meaning |
 
