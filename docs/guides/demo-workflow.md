@@ -14,9 +14,9 @@ Evidence:
 - user statement: "Designer owns visual QA for visible UI"
 - local policy note: `notes/ui-ownership.md`
 
-## 2. Lead Agent Authors Meaning
+## 2. Main Agent Authors Meaning
 
-The lead agent has the task context. It writes the Memory Patch:
+The main agent has the task context. It writes the Memory Patch:
 
 ```json
 {
@@ -62,7 +62,7 @@ If the patch conflicts with an active memory, the curator returns `TENSION`. If 
 
 ## 4. Future Recall
 
-Before a similar UI task, the lead agent asks:
+Before a similar UI task, the main agent asks:
 
 > Which prior memory affects visual acceptance routing?
 

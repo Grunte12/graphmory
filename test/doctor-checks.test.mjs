@@ -32,7 +32,7 @@ test("curator-model reads a Codex TOML model", () => {
   assert.equal(curatorModelCheck({ home }).model, "gpt-6-luna")
 })
 
-test("curator-model warns when the agent inherits the lead model", () => {
+test("curator-model warns when the agent inherits the main agent's model", () => {
   const home = fakeHome({ ".cursor/agents/graphmory-curator.md": "---\nname: graphmory-curator\nmodel: inherit\n---\n" })
   const check = curatorModelCheck({ home })
   assert.equal(check.status, "warn")

@@ -23,7 +23,7 @@ It captures one claim, its evidence, its scope, and its lifecycle.
 
 ## Lifecycle
 
-1. **Authored** — The lead agent writes the patch from verified evidence.
+1. **Authored** — The main agent writes the patch from verified evidence.
 2. **Curated** — Memory Curator validates, deduplicates, links, and stores.
 3. **Recalled** — Future sessions retrieve via Brain Brief.
 4. **Superseded** — A newer patch replaces or refines the claim.

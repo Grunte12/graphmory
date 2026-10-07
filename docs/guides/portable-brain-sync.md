@@ -64,7 +64,7 @@ Private brain repo
 `- OpenCode local clone
 ```
 
-Each lead agent runs event-driven auto-pull at session start and before current shared recall:
+Each main agent runs event-driven auto-pull at session start and before current shared recall:
 
 ```powershell
 node scripts/brain-sync.mjs auto-pull --vault "C:\Users\you\HermesBrain" --json
@@ -177,7 +177,7 @@ The command is read-only. It fetches remote state, compares the common base, loc
 - local-only and remote-only memory changes,
 - dirty local drafts that must be committed/stashed before pull,
 - lifecycle hints such as APPLIED, TENSION, BLOCKED, SUPERSEDED, STALE, rollback, and provenance,
-- a next-decision prompt for the user or lead agent,
+- a next-decision prompt for the user or main agent,
 - structured `decisionOptions` for lifecycle choices such as merge-compatible, prefer-local, prefer-remote, supersede-local, supersede-remote, create-tension, or blocked-needs-evidence.
 
 Resolution remains a human-approved Memory Patch decision:
@@ -227,7 +227,7 @@ node scripts/brain-sync.mjs adoption-plan `
   --out "C:\Users\you\ExistingBrain\.memory-patch-harness\adoption-plan.md"
 ```
 
-The plan inventories current folders, counts Markdown notes, proposes target Graphmory folders, and buckets files into likely inbox/project/reference/template/review groups. It does not move files. The user or lead agent should approve a small migration step before any broad restructuring.
+The plan inventories current folders, counts Markdown notes, proposes target Graphmory folders, and buckets files into likely inbox/project/reference/template/review groups. It does not move files. The user or main agent should approve a small migration step before any broad restructuring.
 
 ### Reviewed Restructure Flow
 
@@ -239,7 +239,7 @@ node scripts/brain-sync.mjs restructure-plan `
   --out "$env:TEMP\memory-restructure-plan.json"
 ```
 
-The generated destinations are suggestions only. Every entry starts with `approved: false`. The lead agent or Memory Curator should read the affected notes, correct each target, and show the exact batch to the user. After approval, set `approved: true` only on accepted entries.
+The generated destinations are suggestions only. Every entry starts with `approved: false`. The main agent or Memory Curator should read the affected notes, correct each target, and show the exact batch to the user. After approval, set `approved: true` only on accepted entries.
 
 Validate without changing files:
 
@@ -285,7 +285,7 @@ node scripts/brain-sync.mjs restructure-rollback `
 
 ## Agent Use
 
-The lead agent should:
+The main agent should:
 
 1. Pull memory before important work when the machine/account may be stale.
 2. Work from a Brain Brief and exact note paths, not the whole vault.

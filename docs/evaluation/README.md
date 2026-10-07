@@ -93,9 +93,9 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - [LoCoMo anchored-preview development screen — 2026-09-28](locomo-anchored-preview-2026-09-28.md)
 - [Correctness-first external benchmark protocol](locomo-correctness-2026-09-27.md)
 - [LoCoMo coverage-preview development experiments — 2026-09-28](locomo-coverage-preview-2026-09-28.md)
-- [LoCoMo live Curator/Lead attribution — 2026-09-28](locomo-live-development-attribution-2026-09-28.md)
+- [LoCoMo live Curator/main agent attribution — 2026-09-28](locomo-live-development-attribution-2026-09-28.md)
 - [Native candidate output replay audit — 2026-09-28](locomo-native-output-audit-2026-09-28.md)
-- [Matched native LoCoMo Curator/Lead diagnostic — 2026-09-28](locomo-native-reader-2026-09-28.md)
+- [Matched native LoCoMo Curator/main agent diagnostic — 2026-09-28](locomo-native-reader-2026-09-28.md)
 - [LoCoMo preview-reader A/B development diagnostic — 2026-09-28](locomo-preview-reader-ab-2026-09-28.md)
 - [LongMemEval development CLI delivery — 2026-09-28](longmemeval-cli-delivery-2026-09-28.md)
 - [LongMemEval live Curator source-read pilot — 2026-09-28](longmemeval-live-reader-2026-09-28.md)
@@ -197,7 +197,7 @@ Graphmory is evaluated with deterministic tests, synthetic and public datasets, 
 - [SQLite mutation parity: development result](sqlite-mutation-parity-results-2026-09-29.md) — synthetic mutation screen passed; no product integration
 - [SQLite postings prototype: frozen development screen](sqlite-postings-prototype-protocol-2026-09-29.md)
 - [SQLite postings prototype: development result](sqlite-postings-prototype-results-2026-09-29.md) — promising storage prototype; no production change
-- [Structured Lead citation pilot — 2026-09-28](structured-citation-pilot-2026-09-28.md)
+- [Structured main agent citation pilot — 2026-09-28](structured-citation-pilot-2026-09-28.md)
 - [Three-arm native retrieval: first full diagnostic](three-arm-native-full1-2026-09-28.md)
 - [Three-arm native retrieval diagnostic: frozen design before execution](three-arm-native-retrieval-protocol-2026-09-28.md)
 - [Three-arm native retrieval: smoke chronology through smoke3](three-arm-native-smoke-2026-09-28.md)

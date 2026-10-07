@@ -90,7 +90,7 @@ The Curator's answer to a recall. It is a short, cited summary, not a dump of no
 - `note_paths` and 0-3 `direct_read_paths` for optional direct reading
 - `stop_reason` (`nothing-relevant-left`, `evidence-sufficient`, `budget`, `scan-limit`) and `pages_read`
 
-A `no-evidence` brief has no findings and means the Lead must say there is no supporting note rather than guess. The lead agent does not browse the whole vault; it asks the Curator for the smallest useful set. See `examples/brain-brief.json` and `schemas/brain-brief.schema.json`.
+A `no-evidence` brief has no findings and means the main agent must say there is no supporting note rather than guess. The main agent does not browse the whole vault; it asks the Curator for the smallest useful set. See `examples/brain-brief.json` and `schemas/brain-brief.schema.json`.
 
 ## Repository Map
 

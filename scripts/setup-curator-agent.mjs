@@ -105,13 +105,13 @@ try {
     if (host === "codex" && !effort && efforts.length) effort = await pick("Which reasoning effort?", efforts.map((value) => ({ value, label: value })))
   }
   if (!model && apply) throw new Error(`Choose the Curator model: pass --model <id>. Run 'graphmory-setup --host ${host} --choices' to list the models this host reports`)
-  if (model && (!/^[a-zA-Z0-9._:/-]+$/.test(model) || model.toLowerCase() === "inherit")) throw new Error("Invalid model identifier; 'inherit' would use the lead model")
+  if (model && (!/^[a-zA-Z0-9._:/-]+$/.test(model) || model.toLowerCase() === "inherit")) throw new Error("Invalid model identifier; 'inherit' would use the main agent's model")
   if (host === "codex" && !effort) effort = hostModels(host).models.find((item) => item.model === model)?.defaultEffort ?? "low"
   if (effort && !/^[a-z]+$/.test(effort)) throw new Error("Invalid effort level")
 
   const prompt = fs.readFileSync(path.join(skillSource, "references", "curator-agent.md"), "utf8").trim()
   const skillFile = path.join(skillDir, "SKILL.md")
-  const description = "Graphmory memory specialist. Use to recall cited memory from the Markdown vault as a Brain Brief, or to file a Lead-authored Memory Patch (APPLIED/TENSION/BLOCKED)."
+  const description = "Graphmory memory specialist. Use to recall cited memory from the Markdown vault as a Brain Brief, or to file a main-agent-authored Memory Patch (APPLIED/TENSION/BLOCKED)."
   const tools = "Read, Glob, Grep, Bash, Edit, Write, mcp__graphmory__recall, mcp__graphmory__read, mcp__graphmory__remember"
   const content = host === "codex"
     ? `name = "graphmory_curator"\ndescription = ${JSON.stringify(description)}\nmodel = ${JSON.stringify(model)}\nmodel_reasoning_effort = ${JSON.stringify(effort)}\ndeveloper_instructions = ${JSON.stringify(`${prompt}\n\nInstalled skill: ${skillFile}`)}\n\n[[skills.config]]\npath = ${JSON.stringify(skillFile)}\nenabled = true\n`
@@ -120,8 +120,8 @@ try {
   const action = fs.existsSync(agentPath) ? (fs.readFileSync(agentPath, "utf8") === content ? "unchanged" : update ? "update" : "conflict") : "create"
   const skillAction = fs.existsSync(skillDir) ? (sameTree(skillSource, skillDir) ? "unchanged" : update ? "update" : "conflict") : "create"
   const verificationReminder = host === "codex"
-    ? `${scope === "project" ? "Open this project as trusted in Codex, " : ""}restart Codex once so it loads the sub-agent. The lead agent then dispatches graphmory_curator as a child run; verify a native graphmory_curator child run. With a spawn schema exposing fork_turns, select agent_type=graphmory_curator and fork_turns=none; a full-history fork cannot select the configured role.`
-    : `Restart ${host} once so it loads the sub-agent. The lead agent then dispatches graphmory-curator as a child run; verify the named curator runs as a child.`
+    ? `${scope === "project" ? "Open this project as trusted in Codex, " : ""}restart Codex once so it loads the sub-agent. The main agent then dispatches graphmory_curator as a child run; verify a native graphmory_curator child run. With a spawn schema exposing fork_turns, select agent_type=graphmory_curator and fork_turns=none; a full-history fork cannot select the configured role.`
+    : `Restart ${host} once so it loads the sub-agent. The main agent then dispatches graphmory-curator as a child run; verify the named curator runs as a child.`
   console.log(JSON.stringify({ host, scope, model, ...(host === "codex" ? { effort } : {}), agentPath, action, skillDir, skillAction, mode: apply ? "apply" : "preview" }, null, 2))
   if (action === "conflict") throw new Error("Existing agent differs. Re-run with --update to replace it (a backup is kept); the installer will not overwrite it otherwise")
   if (skillAction === "conflict") throw new Error("Existing skill differs. Re-run with --update to replace it (a backup is kept); the installer will not overwrite it otherwise")

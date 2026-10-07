@@ -2,7 +2,7 @@
 
 Contributions should preserve Graphmory boundaries:
 
-- the lead agent owns new semantic meaning,
+- the main agent owns new semantic meaning,
 - the curator cannot invent unsupported memory,
 - canonical Markdown remains separate from derived indexes,
 - and measurable behavior matters more than prompt length.

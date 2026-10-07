@@ -162,7 +162,7 @@ A separate private real-vault evaluation is summarized in `cost-and-scale.md`. I
 Real-vault retrieval should be scored in at least two modes:
 
 1. **Global recall:** no scope filter. This measures worst-case vault noise and is expected to be harder.
-2. **Scoped recall:** each query includes the known project or domain path, such as `02 Projects/example` or `03 Reference/Agent Engineering`. This better matches agentic use, where the lead agent usually knows the active project/domain before asking memory.
+2. **Scoped recall:** each query includes the known project or domain path, such as `02 Projects/example` or `03 Reference/Agent Engineering`. This better matches agentic use, where the main agent usually knows the active project/domain before asking memory.
 
 Query labels may use either:
 
@@ -253,7 +253,7 @@ Current fixture result:
 | Missing Lifecycle | 55 | 0-79 |
 | Vague Summary | 65 | 0-69 |
 
-The intent is not to replace human judgment. It gives the lead agent and curator a cheap guardrail before durable memory is written.
+The intent is not to replace human judgment. It gives the main agent and curator a cheap guardrail before durable memory is written.
 
 ## Learning Loop And Future-Task Eval
 
@@ -316,9 +316,9 @@ npm run eval:curator:compare
 
 This compares three hand-authored proxy candidates:
 
-- **A - Direct Writer**: the lead agent writes or recalls memory directly.
+- **A - Direct Writer**: the main agent writes or recalls memory directly.
 - **B - Curator Inference**: a second agent infers what to remember from a task summary.
-- **C - Memory Patch**: the lead agent authors a structured patch; the curator applies it.
+- **C - Memory Patch**: the main agent authors a structured patch; the curator applies it.
 
 Current proxy result:
 
@@ -355,9 +355,9 @@ Before adding a hosted embedding or reranking service, record privacy, cost, cac
 
 Test the same scenarios using:
 
-- **A - Direct writer**: lead agent reads and writes memory directly.
-- **B - Curator inference**: lead agent sends a task summary; curator decides what to remember.
-- **C - Memory Patch**: lead agent authors the structured patch; curator applies it.
+- **A - Direct writer**: main agent reads and writes memory directly.
+- **B - Curator inference**: main agent sends a task summary; curator decides what to remember.
+- **C - Memory Patch**: main agent authors the structured patch; curator applies it.
 
 ## Dataset
 

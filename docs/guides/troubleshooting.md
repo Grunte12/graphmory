@@ -43,7 +43,7 @@ Do not delete a vault, `.git`, `.obsidian`, sync config, migration record, or br
 | `SYNC_CONFIG_NOT_FOUND` | The selected clone has no brain sync configuration | Run detect and bootstrap/adopt after confirming the intended repo |
 | `REMOTE_CHANGED` | Another agent updated remote memory before this push | Preserve local work, run `conflict-assist`, then reconcile semantically with user approval |
 | `SYNC_BUSY` | Another sync process holds the local clone lock | Wait for it to finish; inspect before removing a stale lock |
-| `PATCH_NOT_AUTHORITATIVE` | Memory Patch lacks canonical meaning | Lead agent must author the missing claim/delta; curator must not invent it |
+| `PATCH_NOT_AUTHORITATIVE` | Memory Patch lacks canonical meaning | Main agent must author the missing claim/delta; curator must not invent it |
 | `clean Git worktree` | Local changes exist before restructure | Review and commit/stash intentionally; never discard automatically |
 | `baseline commit` | Repo has no rollback point | Review current files and create the first commit with user approval |
 | `secret-like values` | Cloud sync/restructure safety scan found sensitive-looking text | Remove or relocate secrets; confirm false positives carefully |

@@ -1089,7 +1089,7 @@ async function configureRuntime() {
     console.log(`Saved ${file}`)
     console.log(config.workflow === "curator"
       ? `Workflow: curator; agent: ${config.curator.provider}/${config.curator.model}`
-      : `Workflow: ${config.workflow}; decision model: ${config.decision.model}; evidence goes directly to the lead agent`)
+      : `Workflow: ${config.workflow}; decision model: ${config.decision.model}; evidence goes directly to the main agent`)
     if (config.workflow === "curator") console.log("Codex and Cursor can dispatch a curator sub-agent from the agent guide. This saved model is metadata, not a host model override; pin a model in host settings only if needed. See docs/guides/agent-hosts.md.")
   } finally {
     input.close()

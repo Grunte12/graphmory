@@ -1,6 +1,6 @@
 # Language and token budget
 
-Graphmory stores new canonical agent memory in concise English. The lead agent talks to the user in the user's chosen language, including Thai. Do not maintain parallel translated notes. Preserve exact identifiers, commands, paths, citations, and provenance. Existing notes and raw evidence are not rewritten just to meet a language rule.
+Graphmory stores new canonical agent memory in concise English. The main agent talks to the user in the user's chosen language, including Thai. Do not maintain parallel translated notes. Preserve exact identifiers, commands, paths, citations, and provenance. Existing notes and raw evidence are not rewritten just to meet a language rule.
 
 The goal is fewer tokens **per correct task**, not the shortest possible reply. A short answer that causes a second search or hides a conflict can cost more overall. Use these defaults:
 

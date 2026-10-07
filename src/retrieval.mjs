@@ -129,7 +129,7 @@ export function governedRank(documents, query, method, options = {}) {
       : [
           "Try an alias or paraphrase of the task language.",
           "Inspect matching MOC/backlink paths before broad vault reads.",
-          "Ask the lead agent to reformulate the query when meaning remains ambiguous.",
+          "Ask the main agent to reformulate the query when meaning remains ambiguous.",
         ],
   }
 }

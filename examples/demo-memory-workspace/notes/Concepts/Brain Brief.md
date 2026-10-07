@@ -5,7 +5,7 @@
 ## What It Is
 
 A Brain Brief is the compact recall response from Memory Curator.
-It provides just enough context for a lead agent to make informed decisions.
+It provides just enough context for a main agent to make informed decisions.
 
 ## Schema
 

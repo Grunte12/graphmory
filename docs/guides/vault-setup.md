@@ -25,11 +25,11 @@ The installer should inspect `detect --json` before asking. Ask the user to sele
 
 Create only the folders and notes needed now. The fixed folder names above match Graphmory's existing project initializer and inbox conventions; other folders are allowed. `node scripts/init-project.mjs --vault "<vault>" --project "<project>"` creates a fuller optional project template with Decisions, Workflows, Root Causes, Preferences, Source Maps, Tensions, and a patch inbox. Do not use it when the user chose the minimal layout. For a minimal start, the installing agent can create `00 Inbox/` and `02 Projects/<project>/` using ordinary filesystem operations and add a project home only when there is real context to record.
 
-When reusing an existing structure, project folders may have different names. Pass the relevant vault-relative folder as `--scope` during recall; do not rename folders just to match this example. Keep the original language and identifiers of source evidence. New curated memory can be concise English while the lead agent answers the user in their preferred language.
+When reusing an existing structure, project folders may have different names. Pass the relevant vault-relative folder as `--scope` during recall; do not rename folders just to match this example. Keep the original language and identifiers of source evidence. New curated memory can be concise English while the main agent answers the user in their preferred language.
 
 ## Notes and graph links
 
-The lead agent writes a verified, durable memory patch. The curator places or updates a focused Markdown note, preserves its source evidence, and flags conflicts. Keep raw captures in `00 Inbox/` until curated. Record lifecycle status and provenance on canonical notes; short aliases help retrieval when a concept has multiple names. A project home should link to useful notes, but it need not list every note.
+The main agent writes a verified, durable memory patch. The curator places or updates a focused Markdown note, preserves its source evidence, and flags conflicts. Keep raw captures in `00 Inbox/` until curated. Record lifecycle status and provenance on canonical notes; short aliases help retrieval when a concept has multiple names. A project home should link to useful notes, but it need not list every note.
 
 Graphmory derives edges from ordinary local Markdown links, Obsidian wikilinks, and optional `part_of`, `depends_on`, `implements`, `evidence_for`, and `related` properties. Add a relation only when the evidence supports it. Full vault-relative targets resolve duplicate titles more reliably. See [knowledge graph](knowledge-graph.md) for the supported syntax and limits. Do not generate a large speculative graph during installation.
 
@@ -41,7 +41,7 @@ graphmory audit --vault "<vault>" --json
 graphmory graph-audit --vault "<vault>" --json
 ```
 
-`audit` and `graph-audit` inspect the vault without changing notes. Review broken or ambiguous links and missing provenance before relying on those notes. Once the vault contains real memory, test a scoped query with `graphmory recall --vault "<vault>" --query "<known question>" --scope "<project folder>" --agent` and have the lead agent check the returned source. The graph is a navigation aid; retrieved text still needs evidence review.
+`audit` and `graph-audit` inspect the vault without changing notes. Review broken or ambiguous links and missing provenance before relying on those notes. Once the vault contains real memory, test a scoped query with `graphmory recall --vault "<vault>" --query "<known question>" --scope "<project folder>" --agent` and have the main agent check the returned source. The graph is a navigation aid; retrieved text still needs evidence review.
 
 Private GitHub sync is an optional later step. Configure it only after the user chooses a repo and reviews any adoption plan. Local-only setup does not need `bootstrap` or `status`.
 
