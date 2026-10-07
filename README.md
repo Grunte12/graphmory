@@ -22,7 +22,7 @@ Memory that saves everything fills up with noise, stale facts and guesses. Graph
 - **Guarded writes.** A new memory needs evidence. It is checked before it is saved, and the save returns a receipt hash. Conflicts and low-confidence memories are never written silently.
 - **Memory that ages.** Notes carry a status, an expiry and revalidation triggers. Stale or replaced notes are not recalled; replaced notes stay as history. When a source changes, summaries built on it are flagged for a recheck.
 - **Plain files.** Notes are Markdown in a folder or Obsidian vault, with optional private Git sync. No database and no vector server.
-- **Any MCP client.** Five tools, one server: Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, OpenCode, Cline, Zed and others.
+- **Any MCP client.** Six tools, one server: Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, OpenCode, Cline, Zed and others.
 
 ## How it works
 
@@ -57,7 +57,7 @@ Search combines three lanes: keyword matching (BM25F over note sections), meanin
    graphmory doctor
    ```
 
-   Expect `vault ok`, `curator model ok (<model>)`, `mcp tools: recall · read · remember · status · sync` and `meaning search ok`. Any line that says `needs attention` comes with the fix.
+   Expect `vault ok`, `curator model ok (<model>)`, `mcp tools: recall · read · remember · link · status · sync` and `meaning search ok`. Any line that says `needs attention` comes with the fix.
 4. **Connect your agent** to the MCP server, below.
 
 Optional: `graphmory semantic-warmup` downloads the local meaning model once (about 130 MB) so the first recall does not wait.
@@ -88,13 +88,14 @@ OpenCode (`opencode.json`):
 
 Other hosts: [MCP host configuration](docs/guides/mcp-hosts.md). For a client that cannot start a local process, [Streamable HTTP](docs/guides/mcp-http.md) is available behind a bearer token.
 
-## The five tools
+## The six tools
 
 | Tool | What it does |
 |---|---|
 | `recall` | Finds a ranked shortlist for a question: up to ten candidates per page, each with path, heading, excerpt, note hash and the search lanes that found it. Pages with a cursor; a query is limited to 8 pages |
 | `read` | Opens the original note, or one section of it, so the Curator can verify a candidate. A stale hash is refused |
 | `remember` | Saves a decision with its evidence in a new note, or updates an existing note and keeps its other content. Returns `APPLIED`, `TENSION` or `BLOCKED` |
+| `link` | Lets the Curator keep the graph connected: adds or removes relation links (part of, depends on, evidence for, related) and repairs broken links, one note at a time |
 | `status` | Shows what needs attention: an interrupted write, memory waiting for you, notes due for revalidation, vault health and Git sync state. With `ask`, it puts your decisions to you in the host's question UI |
 | `sync` | Pulls from the vault's private Git remote (fast-forward only) or pushes to it. A push lists the changed files and waits for your approval |
 
@@ -106,7 +107,7 @@ What `remember` returns:
 | `TENSION` | An active note overlaps or conflicts. Nothing is written until the agent has read it and answered |
 | `BLOCKED` | Evidence is missing or stale, a secret was found, or confidence is low. Nothing is written. Low-confidence memory waits in a private queue, and the host asks you to approve, reject or decide later |
 
-The agent cannot approve its own low-confidence memory or restore an interrupted write: the server asks you through MCP elicitation, and no tool argument answers for you. Guides: [recall and citation](docs/guides/mcp-recall.md), [guarded writes](docs/guides/mcp-remember.md), [status and owner decisions](docs/guides/mcp-status.md), [Git sync](docs/guides/mcp-sync.md), [memory contracts](docs/guides/memory-contracts.md).
+The agent cannot approve its own low-confidence memory or restore an interrupted write: the server asks you through MCP elicitation, and no tool argument answers for you. Guides: [recall and citation](docs/guides/mcp-recall.md), [guarded writes](docs/guides/mcp-remember.md), [status and owner decisions](docs/guides/mcp-status.md), [Git sync](docs/guides/mcp-sync.md), [links](docs/guides/mcp-link.md), [memory contracts](docs/guides/memory-contracts.md).
 
 ## Documentation
 

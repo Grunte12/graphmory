@@ -1,11 +1,11 @@
 # Documentation
 
-Start with the [project README](../README.md), then connect an agent and learn what the five tools do.
+Start with the [project README](../README.md), then connect an agent and learn what the six tools do.
 
 ## Start here
 
 - [Installation](guides/install.md) and [MCP host configuration](guides/mcp-hosts.md)
-- [Recall and citation](guides/mcp-recall.md), [guarded writes](guides/mcp-remember.md) , [status and owner decisions](guides/mcp-status.md) and [Git sync](guides/mcp-sync.md)
+- [Recall and citation](guides/mcp-recall.md), [guarded writes](guides/mcp-remember.md) , [status and owner decisions](guides/mcp-status.md) , [Git sync](guides/mcp-sync.md) and [links](guides/mcp-link.md)
 - [Memory contracts](guides/memory-contracts.md) and the [glossary](glossary.md)
 - [Architecture](design/architecture.md)
 
@@ -26,6 +26,7 @@ Start with the [project README](../README.md), then connect an agent and learn w
 - [Guarded memory writes through MCP](guides/mcp-remember.md)
 - [Status and owner decisions through MCP](guides/mcp-status.md)
 - [Git sync through MCP](guides/mcp-sync.md)
+- [Curator link maintenance through MCP](guides/mcp-link.md)
 - [Memory contracts](guides/memory-contracts.md)
 - [Portable Brain Sync](guides/portable-brain-sync.md)
 - [Language and token budget](guides/token-efficient-language.md)

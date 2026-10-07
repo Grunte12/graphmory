@@ -2,7 +2,7 @@
 
 **Transport: MCP**
 
-This adapter connects any AI coding agent that can use MCP to Graphmory. Agents use the `graphmory-mcp` server and its tools `recall`, `read`, `remember`, `status` and `sync`; see [MCP host configuration](../../docs/guides/mcp-hosts.md). The owner uses Obsidian (or any editor) for the notes and the `graphmory` command only for one-time setup and maintenance.
+This adapter connects any AI coding agent that can use MCP to Graphmory. Agents use the `graphmory-mcp` server and its tools `recall`, `read`, `remember`, `link`, `status` and `sync`; see [MCP host configuration](../../docs/guides/mcp-hosts.md). The owner uses Obsidian (or any editor) for the notes and the `graphmory` command only for one-time setup and maintenance.
 
 ## Transport
 

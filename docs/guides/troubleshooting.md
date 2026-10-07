@@ -54,7 +54,7 @@ Do not delete a vault, `.git`, `.obsidian`, sync config, migration record, or br
 
 | Symptom or code | Cause | Recovery |
 |---|---|---|
-| The host does not list `recall`, `read`, `remember`, `status` and `sync` | The server is not registered, the host was not restarted, or `graphmory-mcp` is not on its PATH | Add the snippet from [MCP host configuration](mcp-hosts.md), restart the host, and run `graphmory doctor`; it should report `mcp tools: recall · read · remember · status · sync` |
+| The host does not list `recall`, `read`, `remember`, `link`, `status` and `sync` | The server is not registered, the host was not restarted, or `graphmory-mcp` is not on its PATH | Add the snippet from [MCP host configuration](mcp-hosts.md), restart the host, and run `graphmory doctor`; it should report `mcp tools: recall · read · remember · link · status · sync` |
 | `VAULT_REQUIRED` | The server started without a vault | Set `GRAPHMORY_VAULT` (or pass `--vault`) in the server's environment |
 | `STALE_CURSOR` or `INVALID_CURSOR` | The vault changed, the server restarted, or the cursor was edited | Call `recall` again from the start; keep the same query and scope while paging |
 | `STALE_SOURCE` | The hash passed to `read` no longer matches the note | Call `recall` again to get the current hash, then re-read the note |

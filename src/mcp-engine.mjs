@@ -14,6 +14,7 @@ import { enqueueReview, approveReview, rejectReview, listReviews, showReview } f
 import { memoryStatus, RESTORABLE } from "./memory-status.mjs"
 import { readSyncConfig, localSyncState, pullMemory, pushMemory, pendingChanges, scanVaultForSecrets } from "./vault-sync.mjs"
 import { findOverlappingNotes } from "./conflict-detection.mjs"
+import { editNoteLinks } from "./note-links.mjs"
 
 const hash = value => createHash("sha256").update(value).digest("hex")
 const fail = (code, message) => Object.assign(new Error(message), { publicCode: code })
@@ -31,6 +32,10 @@ export function publicError(error) {
     REMOTE_CHANGED: "Remote memory moved. Call sync with action: \"pull\" first; nothing was pushed.",
     CHANGED_DURING_REVIEW: "Memory changed after the owner approved; nothing was pushed. Call sync again so they see the new changes.",
     SYNC_BUSY: "Another sync is running. Wait, then try again.",
+    LINK_TARGET_NOT_FOUND: "A link target is not a note in the vault. Use the exact vault-relative path from recall.",
+    LINK_NOT_BROKEN: "That link already resolves. Add or remove a relation instead of repairing it.",
+    LINK_NOT_FOUND: "The note has no link with that target. Read the note again.",
+    TARGET_CHANGED: "The note changed since you read it. Read it again and use its current hash.",
     COMMAND_FAILED: "A Git command failed. Tell the owner; `graphmory push` in a terminal shows the details.",
   }[code] || "The operation could not be completed; inspect the configured server state." }
 }
@@ -290,6 +295,28 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
         indexes.clear()
         return { status: "APPLIED", receipt: { ...compactReceipt(finished.receipt), ...(options.ownerApprovedReview ? { approvedBy: "owner", reviewId: options.ownerApprovedReview } : {}) } }
       } catch (error) { return { status: "BLOCKED", ...publicError(error), ...(operation ? { checkpoint: operation } : {}) } }
+    },
+    // Link maintenance: relation properties and broken-link repair on one note, bound to the hash the
+    // Curator read. The write is a single atomic file replace; nothing outside the links changes.
+    async link({ path: relative, hash: expected, add, remove, repair }) {
+      try {
+        if (!add?.length && !remove?.length && !repair?.length) throw fail("INVALID_ARGUMENT", "Nothing to change")
+        const authority = beginAgentRead({ vault, stateRoot })
+        if (!authority.ok) throw fail(authority.code, "Pending curation")
+        if (safeMigrationPath(relative, "path") !== relative || !relative.endsWith(".md")) throw fail("INVALID_TARGET", "Exact Markdown path required")
+        const absolute = path.resolve(vault, relative)
+        assertRealPathInsideVault(fs, vault, absolute, "path")
+        const source = readSourceNotes(vault, [relative]).sources[0]
+        if (source.sha256 !== expected) throw fail("TARGET_CHANGED", "Note changed since review")
+        const notes = loadVaultDocuments(vault, { includeRawPaths: true }).map(d => ({ path: d.id, title: d.title, text: d.markdown }))
+        const edited = editNoteLinks({ markdown: source.markdown, notePath: relative, notes, add, remove, repair })
+        if (!edited.changes.length) return { status: "UNCHANGED", path: relative, hash: source.sha256 }
+        if (scanTextForSecrets(JSON.stringify(edited.changes)).length) throw fail("SECRET", "Secret-like content refused")
+        if (readSourceNotes(vault, [relative]).sources[0].sha256 !== expected) throw fail("TARGET_CHANGED", "Note changed during edit")
+        writeFileAtomic(absolute, edited.markdown)
+        indexes.clear()
+        return { status: "LINKED", path: relative, previousHash: expected, hash: hash(edited.markdown), changes: edited.changes }
+      } catch (error) { return { status: "BLOCKED", ...publicError(error) } }
     },
     // Pull only fast-forwards. Push commits and publishes only after the owner approved the exact
     // changes in the host's question UI; the approval is bound to their bytes.

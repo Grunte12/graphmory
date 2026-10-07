@@ -85,15 +85,16 @@ The apply command requires a clean Git worktree and baseline commit, creates a l
 
 ## MCP Tools
 
-Graphmory ships `graphmory-mcp`, a Model Context Protocol server. Set `GRAPHMORY_VAULT` to the vault path and register the server in the host as described in `docs/guides/mcp-hosts.md`. It exposes five tools:
+Graphmory ships `graphmory-mcp`, a Model Context Protocol server. Set `GRAPHMORY_VAULT` to the vault path and register the server in the host as described in `docs/guides/mcp-hosts.md`. It exposes six tools:
 
 - `recall(query, scope?, cursor?)` returns a ranked, paged shortlist with path, heading, excerpt and note hash.
 - `read(path, section?, hash?)` returns the original note or one section; a stale hash is refused.
 - `remember(claim, scope, evidence, curation?)` is a guarded write that returns `APPLIED`, `TENSION` or `BLOCKED`.
+- `link(path, hash, add?, remove?, repair?)` lets the Curator maintain one note's relation links and repair broken links, bound to the hash it read.
 - `status(ask?)` reports pending work, the owner review queue, lifecycle and health, and Git sync state. `ask: "reviews"` or `ask: "recovery"` puts the owner's decision to them through MCP elicitation.
 - `sync(action, message?)` pulls (fast-forward only) or pushes the vault's Git remote; a push needs the owner's approval through MCP elicitation.
 
-Read the MCP resources `graphmory://guide/recall` and `graphmory://guide/remember` before citing or writing. Use the CLI only when the host cannot run an MCP server. See `docs/guides/mcp-recall.md`, `docs/guides/mcp-remember.md`, `docs/guides/mcp-status.md` and `docs/guides/mcp-sync.md`.
+Read the MCP resources `graphmory://guide/recall` and `graphmory://guide/remember` before citing or writing. Use the CLI only when the host cannot run an MCP server. See `docs/guides/mcp-recall.md`, `docs/guides/mcp-remember.md`, `docs/guides/mcp-status.md`, `docs/guides/mcp-sync.md` and `docs/guides/mcp-link.md`.
 
 ## Memory Roles
 

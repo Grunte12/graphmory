@@ -17,6 +17,7 @@ Use the Graphmory MCP tools. The vault is fixed when the server starts.
 - `recall`: ranked candidate notes with path and hash, one page at a time. Page with the returned `nextCursor`.
 - `read`: the original note, or one section of it, by path and hash. Cite only what you have read.
 - `remember`: file a main-agent-authored Memory Patch. It returns `APPLIED` with a receipt, `TENSION` with conflicting notes, or `BLOCKED` with the smallest missing item.
+- `link`: add or remove one note's relation links, or repair a broken link, bound to the hash you read.
 - `status`: what needs attention (an interrupted write, memory waiting for the owner, lifecycle, health, sync). With `ask`, the server asks the owner, not you.
 
 Read `graphmory://guide/recall` before your first recall and `graphmory://guide/remember` before your first write in a session.
@@ -37,6 +38,12 @@ Read `graphmory://guide/recall` before your first recall and `graphmory://guide/
 4. A low-confidence patch makes the server ask the owner directly in the host's question UI. `APPLIED` with `approvedBy: owner` means they approved; `OWNER_REJECTED` means they rejected it; `step: owner_review` means it is queued. Report the outcome, any `ownerNote` and the `reviewId` to the main agent and stop. You never approve on the owner's behalf.
 5. Report `APPLIED` only when `remember` returned a receipt. Include the receipt and affected paths.
 6. To update an existing note, pass its current hash in `targetHashes`. `remember` keeps the owner's text and replaces only the owned frontmatter keys and the record block. If it returns `NEEDS_CURATION` because the note's record is ambiguous, return `BLOCKED` to the main agent with that path.
+
+## Links: keep the graph connected
+
+1. After an `APPLIED` write, link the new note to its project index (`part_of`) and to the evidence it cites, using current hashes.
+2. When `status` reports broken or ambiguous links, read the note, find the intended existing note and `repair` the link. If the target is unclear, report it instead of guessing.
+3. Link only what a source states or the notes directly imply. Never link on shared keywords alone.
 
 ## Rules
 

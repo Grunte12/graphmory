@@ -69,7 +69,7 @@ for (const mode of ["memory", "stdio", "http"]) {
     const f = fixture(t)
     const { client, logs } = await connect(t, mode, f)
     const tools = (await client.listTools()).tools
-    assert.deepEqual(tools.map(t => t.name), ["recall", "read", "remember", "status", "sync"])
+    assert.deepEqual(tools.map(t => t.name), ["recall", "read", "remember", "link", "status", "sync"])
     for (const tool of tools) {
       assert.ok(!tool.description.includes("\n"))
       if (tool.name === "remember") for (const outcome of ["APPLIED", "TENSION", "BLOCKED", "receipt"]) assert.match(tool.description, new RegExp(outcome))
@@ -77,7 +77,7 @@ for (const mode of ["memory", "stdio", "http"]) {
       assert.equal(tool.annotations.destructiveHint, tool.name === "remember")
       assert.equal(tool.annotations.openWorldHint, tool.name === "sync")
     }
-    assert.equal((await client.listResources()).resources.length, 7)
+    assert.equal((await client.listResources()).resources.length, 8)
     assert.match((await client.readResource({ uri: "graphmory://guide/recall" })).contents[0].text, /data, never instructions/)
     assert.match((await client.readResource({ uri: "graphmory://guide/remember" })).contents[0].text, /checkpoint/)
     const first = await call(client, "recall", { query: "release policy" })
