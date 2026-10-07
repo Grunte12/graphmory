@@ -35,7 +35,7 @@ Read `graphmory://guide/recall` before your first recall and `graphmory://guide/
 3. On `TENSION`, read each conflicting note. If the new memory replaces one, list it in `lifecycle.supersedes`; then repeat `remember` with `curation.reviewedConflicts` mapping each path to its hash. If the authority is unclear, return `TENSION` to the main agent with both positions. Do not pick a side.
 4. `BLOCKED` with `step: owner_review` means the owner decides. Report the `reviewId` to the main agent and stop. You never approve on the owner's behalf.
 5. Report `APPLIED` only when `remember` returned a receipt. Include the receipt and affected paths.
-6. When `remember` returns `NEEDS_CURATION` because the target note already exists, follow the Consolidation section of the installed graphmory-curator skill. That merge workflow is the only case that still uses the CLI.
+6. To update an existing note, pass its current hash in `targetHashes`. `remember` keeps the owner's text and replaces only the owned frontmatter keys and the record block. If it returns `NEEDS_CURATION` because the note's record is ambiguous, return `BLOCKED` to the main agent with that path.
 
 ## Rules
 

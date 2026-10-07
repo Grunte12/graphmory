@@ -3,7 +3,7 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import test from "node:test"
-import { patchDigest, renderPatchRecord } from "../src/patch-record.mjs"
+import { patchDigest, placePatchRecord, renderPatchRecord } from "../src/patch-record.mjs"
 import { verifyPatchPersistence } from "../src/patch-persistence.mjs"
 import { auditDocument } from "../src/memory-lifecycle-audit.mjs"
 import { governedRank, isRetrievable, parseMarkdown } from "../src/retrieval.mjs"
@@ -340,6 +340,38 @@ test("full writes accept date-only expiry through that day and reject it at the 
     const invalid = verifyPatchPersistence({ vault, patch: ambiguous, notePath: "Policy.md", full: true, now: new Date("2026-09-30T12:00:00Z") })
     assert.equal(invalid.valid, false)
     assert.ok(invalid.errors.some((error) => /invalid or lacks an explicit timezone/u.test(error)))
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test("placePatchRecord merges into existing notes and the result passes full verification", () => {
+  const { root, vault } = tempVault()
+  try {
+    const cases = {
+      "Plain.md": "Just a body line.\n",
+      "Headed.md": "# Release notes\n\nBody.\n",
+      "Front.md": "---\ntags:\n  - release\nrevalidate_when:\n  - old trigger\nstatus: draft\naliases: [rel]\n---\n# Release\nBody.\n",
+      "Fenced.md": "# Example\n\n```md\n<!-- graphmory-patch-record:v1:start -->\n```\n",
+      "Windows.md": "---\r\ntags: [win]\r\n---\r\n# Win\r\nBody.\r\n",
+    }
+    for (const [name, markdown] of Object.entries(cases)) {
+      const placed = placePatchRecord(markdown, patch())
+      fs.writeFileSync(path.join(vault, name), placed)
+      const result = verifyPatchPersistence({ vault, patch: patch(), notePath: name, full: true })
+      assert.equal(result.valid, true, `${name}: ${result.errors.join("; ")}`)
+    }
+    const front = fs.readFileSync(path.join(vault, "Front.md"), "utf8")
+    assert.match(front, /tags:\n  - release\n/)
+    assert.match(front, /aliases: \[rel\]/)
+    assert.doesNotMatch(front, /old trigger|status: draft/)
+    assert.match(fs.readFileSync(path.join(vault, "Fenced.md"), "utf8"), /```md\n<!-- graphmory-patch-record:v1:start -->\n```/)
+    assert.match(fs.readFileSync(path.join(vault, "Windows.md"), "utf8"), /\r\n/)
+    assert.equal(placePatchRecord(null, patch()), renderPatchRecord(patch()))
+    const replaced = placePatchRecord(placePatchRecord("# Keep\nTail.\n", patch()), patch({ status: "active", validUntil: "2030-01-01" }))
+    assert.equal(replaced.match(/graphmory-patch-record:v1:start/g).length, 1)
+    assert.match(replaced, /Tail\.\n$/)
+    assert.throws(() => placePatchRecord("---\nopen: true\n# no close\n", patch()), /NEEDS_CURATION/)
   } finally {
     fs.rmSync(root, { recursive: true, force: true })
   }
