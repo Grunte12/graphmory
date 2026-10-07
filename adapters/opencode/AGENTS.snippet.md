@@ -1,6 +1,6 @@
 ## Durable Memory
 
-- If `graphmory-mcp` is registered, use the `recall`, `read` and `remember` tools. Use the CLI commands below only as a fallback.
+- If `graphmory-mcp` is registered, use the `recall`, `read`, `remember` and `status` tools. Use the CLI commands below only as a fallback.
 - Write new canonical vault notes in concise English. Keep exact technical identifiers and provenance intact. Do not duplicate notes by language or translate existing notes solely for consistency. Answer the user in their chosen language, including Thai. Keep routine replies short while preserving decisions, evidence, uncertainty, and next actions.
 
 - At session start and before current shared memory is required, ask the main agent to run `graphmory auto-pull --json`. Graphmory Curator should not run Git sync itself.

@@ -6,11 +6,12 @@ import { loadRuntimeConfig } from "./runtime-config.mjs"
 import { loadVaultDocuments } from "./memory-recall.mjs"
 import { readSourceNotes } from "./source-read.mjs"
 import { withAgentReadAuthority, beginAgentRead } from "./read-authority.mjs"
-import { prepareCurationCheckpoint, finishCurationCheckpoint, verifyCurationWriteBinding } from "./curation-checkpoint.mjs"
+import { prepareCurationCheckpoint, finishCurationCheckpoint, verifyCurationWriteBinding, inspectCurationCheckpoint, restoreCurationCheckpoint } from "./curation-checkpoint.mjs"
 import { renderPatchRecord, placePatchRecord } from "./patch-record.mjs"
 import { scanTextForSecrets, safeMigrationPath, assertRealPathInsideVault } from "./brain-sync.mjs"
 import { writeFileAtomic } from "./atomic-write.mjs"
-import { enqueueReview, approveReview, rejectReview } from "./review-queue.mjs"
+import { enqueueReview, approveReview, rejectReview, listReviews, showReview } from "./review-queue.mjs"
+import { memoryStatus, RESTORABLE } from "./memory-status.mjs"
 import { findOverlappingNotes } from "./conflict-detection.mjs"
 
 const hash = value => createHash("sha256").update(value).digest("hex")
@@ -22,6 +23,8 @@ export function publicError(error) {
     STALE_SOURCE: "Source bytes changed; recall and verify the original again.",
     NEEDS_CURATION: "Supply a complete Memory Patch and reviewed placement in remember.curation.",
     LOW_CONFIDENCE: "Low-confidence memory waits for the owner's decision. Tell the user it is queued; do not retry or raise the confidence.",
+    RESTORE_HASH_MISMATCH: "A note changed while the owner was deciding; nothing was restored. Call status again.",
+    STATE_LOCK_OWNER_ALIVE: "Another Graphmory write is still running. Wait, then call status again.",
   }[code] || "The operation could not be completed; inspect the configured server state." }
 }
 
@@ -41,6 +44,8 @@ function summariesToRecheck(documents, query) {
 // and normally stops long before it (see docs/guides/mcp-recall.md for the stop rule).
 export const MAX_RECALL_PAGES = 8
 export const MAX_RECALL_CANDIDATES = 80
+// Owner questions per status call, so one call never turns into a long run of prompts.
+const REVIEW_BATCH = 5
 
 // A single engine is shared by all HTTP connections. No host decision/provider calls.
 export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateRoot, recallOptions = {} }) {
@@ -81,7 +86,7 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
   // anything else (later, dismissed, no elicitation support) leaves it queued for review.
   async function ownerDecides(askOwner, request, reviewId) {
     const queued = { status: "BLOCKED", code: "LOW_CONFIDENCE", step: "owner_review", reviewId, ...publicError(fail("LOW_CONFIDENCE", "")) }
-    if (!askOwner) return queued
+    if (!askOwner) return { answer: { action: "unsupported" }, result: queued }
     const answer = await askOwner({
       message: `Graphmory: approve this low-confidence memory?\n\nClaim: ${request.claim}\nNote: ${request.curation.target}\nEvidence: ${request.evidence.length} item(s)`,
       choices: [
@@ -93,13 +98,57 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
     const note = answer.note ? { ownerNote: answer.note } : {}
     if (answer.action === "accept" && answer.decision === "approve") {
       const approved = await approveReview({ vault, stateRoot, reviewId, engine })
-      return { ...approved, ...note }
+      return { answer, result: { ...approved, ...note } }
     }
     if (answer.action === "accept" && answer.decision === "reject") {
       rejectReview({ vault, stateRoot }, reviewId)
-      return { status: "BLOCKED", code: "OWNER_REJECTED", step: "owner_rejected", reviewId, message: "The owner rejected this memory. Nothing was written; do not retry.", ...note }
+      return { answer, result: { status: "BLOCKED", code: "OWNER_REJECTED", step: "owner_rejected", reviewId, message: "The owner rejected this memory. Nothing was written; do not retry.", ...note } }
     }
-    return { ...queued, ...note }
+    return { answer, result: { ...queued, ...note } }
+  }
+  const unsupported = { status: "unsupported", message: "This host cannot show owner questions. Tell the owner what is waiting; they can decide with `graphmory review list` or `graphmory curation-checkpoint status` in a terminal." }
+  // Walks the review queue one question at a time and stops as soon as the owner dismisses a question.
+  async function decideReviews(askOwner) {
+    const items = listReviews({ vault, stateRoot }).slice(0, REVIEW_BATCH)
+    if (!items.length) return { status: "nothing-to-decide" }
+    const decisions = []
+    for (const { reviewId } of items) {
+      const { answer, result } = await ownerDecides(askOwner, showReview({ vault, stateRoot }, reviewId).request, reviewId)
+      if (answer.action === "unsupported") return unsupported
+      const outcome = reviewOutcome(result)
+      decisions.push({ reviewId, outcome, ...(result.receipt ? { receipt: result.receipt } : {}),
+        ...(outcome === "stale" || outcome === "blocked" ? { code: result.code, message: result.message } : {}),
+        ...(result.ownerNote ? { ownerNote: result.ownerNote } : {}) })
+      if (answer.action !== "accept") break
+    }
+    return { status: "decided", decisions }
+  }
+  // Restores the notes an interrupted write touched, only after the owner chose it in the host's UI.
+  async function decideRecovery(askOwner) {
+    const checkpoint = inspectCurationCheckpoint({ vault, stateRoot })
+    if (!checkpoint.blocked) return { status: "nothing-to-decide" }
+    if (!checkpoint.operation || !RESTORABLE.has(checkpoint.status) || checkpoint.unsafeTargets) {
+      return { status: "needs-terminal", state: checkpoint.status, message: "This state cannot be restored from MCP. Ask the owner to run `graphmory curation-checkpoint status` in a terminal." }
+    }
+    if (!askOwner) return unsupported
+    const drift = checkpoint.sourceDrift?.length ? `\nSources changed since the write began: ${checkpoint.sourceDrift.map(item => item.path).join(", ")}` : ""
+    const lock = checkpoint.locked ? `\nA lock from process ${checkpoint.lockOwner?.pid ?? "unknown"} remains; Graphmory clears it only if that process has ended.` : ""
+    const answer = await askOwner({
+      message: `Graphmory: an interrupted memory write left ${checkpoint.targets.length} note(s) unfinished:\n${checkpoint.targets.map(target => `- ${target}`).join("\n")}\n\nRestore them to how they were before the write? Source notes are never changed.${drift}${lock}`,
+      choices: [
+        { value: "restore", title: "Restore the notes and discard the interrupted write" },
+        { value: "leave", title: "Leave it for now (recall and remember stay blocked)" },
+      ],
+      note: false,
+    })
+    if (answer.action === "unsupported") return unsupported
+    if (answer.action !== "accept" || answer.decision !== "restore") return { status: "kept", operation: checkpoint.operation }
+    try {
+      const restored = restoreCurationCheckpoint({ vault, stateRoot, operation: checkpoint.operation, expectedHashes: checkpoint.expectedHashes, approve: true,
+        ...(checkpoint.locked ? { reviewLockHash: checkpoint.lockOwnerSha256 ?? "" } : {}) })
+      indexes.clear()
+      return { status: "restored", operation: checkpoint.operation, restored: restored.restored, sourceDrift: restored.sourceDrift.map(item => item.path) }
+    } catch (error) { return { status: "BLOCKED", operation: checkpoint.operation, ...publicError(error) } }
   }
   const engine = {
     async recall({ query, scope = "", cursor }) {
@@ -211,7 +260,7 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
             message: "Read these notes. If the change replaces one, list it in lifecycle.supersedes. Then repeat remember with curation.reviewedConflicts mapping each path to its hash." }
           if (lowConfidence) {
             const { reviewId } = enqueueReview({ vault, stateRoot, request: input })
-            return ownerDecides(options.askOwner, input, reviewId)
+            return (await ownerDecides(options.askOwner, input, reviewId)).result
           }
           const prepared = prepareCurationCheckpoint({ vault, stateRoot, patch, targets, sources })
           operation = prepared.operation
@@ -232,8 +281,21 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
         return { status: "APPLIED", receipt: { ...compactReceipt(finished.receipt), ...(options.ownerApprovedReview ? { approvedBy: "owner", reviewId: options.ownerApprovedReview } : {}) } }
       } catch (error) { return { status: "BLOCKED", ...publicError(error), ...(operation ? { checkpoint: operation } : {}) } }
     },
+    // Read-only report. With ask, the server puts the owner's decisions to them and reports the outcome.
+    async status({ ask } = {}, options = {}) {
+      const owner = ask === "reviews" ? await decideReviews(options.askOwner)
+        : ask === "recovery" ? await decideRecovery(options.askOwner) : undefined
+      return { ...memoryStatus({ vault, stateRoot }), ...(owner ? { owner } : {}) }
+    },
   }
   return engine
+}
+function reviewOutcome(result) {
+  if (result.status === "APPLIED") return "approved"
+  if (result.status === "STALE") return "stale"
+  if (result.code === "OWNER_REJECTED") return "rejected"
+  if (result.code === "LOW_CONFIDENCE") return "kept"
+  return "blocked"
 }
 function compactReceipt(receipt) {
   if (!receipt) return undefined

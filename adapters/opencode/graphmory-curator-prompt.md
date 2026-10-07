@@ -20,7 +20,7 @@ Prefer updating an existing atomic note. Keep chronology separate from durable s
 
 Raw evidence is the evidentiary source of truth. Markdown is canonical operational memory derived from that evidence. Never rewrite evidence to match a synthesis, and never allow a generated index to override either layer.
 
-When Graphmory MCP is configured, use its `recall`, `read` and `remember` tools; `remember` writes a new note or places the record into an existing note (keeping the owner's content) and returns APPLIED only with a receipt. Only recovery of a pending operation uses the CLI checkpoint workflow.
+When Graphmory MCP is configured, use its `recall`, `read`, `remember` and `status` tools; `remember` writes a new note or places the record into an existing note (keeping the owner's content) and returns APPLIED only with a receipt. On `CURATION_PENDING`, call `status`; `status` with `ask: "recovery"` lets the owner restore an interrupted write, and `ask: "reviews"` lets them decide queued memory.
 
 Follow the installed graphmory-curator skill and trial-workflow reference. Use normal managed hybrid recall (keyword, local semantic and authored links), then original reads; missing embedding support is BLOCKED. Evidence-linked durable summaries may be reused after `summary check`; `summary sources` generates dependency metadata. Refresh prose from reviewed sources through the same checkpointed patch workflow. Do not treat source hashes as entailment proof.
 

@@ -2,7 +2,7 @@
 
 The same `graphmory` CLI and `graphmory-curator` skill work across hosts that can run shell commands. For broad compatibility, have the user's coding agent follow the [guided install interview](../../adapters/generic-agent/INSTALL.md#agent-guided-setup). The agent inspects its host, asks for missing choices, and installs one named curator with a consistent role, skill, and inexpensive model. The main agent still decides when to delegate and authors every new Memory Patch.
 
-Hosts that support MCP should also connect the `graphmory-mcp` server, which exposes `recall`, `read` and `remember` as tools; see [MCP host configuration](mcp-hosts.md). The CLI steps below remain available for hosts that cannot run an MCP server.
+Hosts that support MCP should also connect the `graphmory-mcp` server, which exposes `recall`, `read`, `remember` and `status` as tools; see [MCP host configuration](mcp-hosts.md). The CLI steps below remain available for hosts that cannot run an MCP server.
 
 ## 1. Install the CLI once
 
@@ -24,7 +24,7 @@ graphmory-setup --host codex --choices
 graphmory-setup --host codex --model <chosen model> --apply
 ```
 
-The Curator is a specialist sub-agent, not a general one: its prompt (`skills/graphmory-curator/references/curator-agent.md`) gives it one job, a fixed set of tools (the Graphmory MCP `recall`, `read` and `remember`) and the graphmory-curator skill.
+The Curator is a specialist sub-agent, not a general one: its prompt (`skills/graphmory-curator/references/curator-agent.md`) gives it one job, a fixed set of tools (the Graphmory MCP `recall`, `read`, `remember` and `status`) and the graphmory-curator skill.
 
 Setup never picks the model, and each host's agent sets up only its own Curator: Codex for Codex, Cursor for Cursor. `--host <host> --choices` lists the models that host reports: Codex from `~/.codex/models_cache.json` (with each model's reasoning efforts), Cursor from `cursor-agent models`, and Claude Code its `haiku`, `sonnet` and `opus` aliases (Claude Code has no listing command). The output carries `guidance` for the installing agent: suggest 2-4 models, the newest fast, low-cost tier first, and let the user pick or type another. Pass the answer with `--model <id>` (and `--effort <level>` for Codex). In an interactive terminal, `--apply` without `--model` shows the same list.
 

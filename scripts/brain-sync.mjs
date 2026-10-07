@@ -341,7 +341,7 @@ function usage(exitCode = 0) {
     ]],
   ]
   out.write(`Graphmory: governed memory for AI agents\n\n`)
-  out.write(`Agents connect through the MCP server (graphmory-mcp) and its tools recall, read and remember.\n`)
+  out.write(`Agents connect through the MCP server (graphmory-mcp) and its tools recall, read, remember and status.\n`)
   out.write(`This CLI is for the vault owner: setup, health checks, review and Git sync.\n`)
   for (const [title, lines] of sections) {
     out.write(`\n${title}:\n`)

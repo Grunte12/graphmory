@@ -16,7 +16,7 @@ Require:
 
 `lifecycle.valid_until` is optional and represents a separate date expiry. Preserve event-based `revalidate_when` conditions as a YAML list; a date does not satisfy an event trigger.
 
-Reject low-confidence patches unless the uncertainty itself is the durable fact being recorded. Over MCP a low-confidence `remember` is decided by the owner: the server asks them in the host's question UI. Report the result (`APPLIED` with `approvedBy: owner`, `OWNER_REJECTED`, or queued with `reviewId` and `step: owner_review`); never retry it, raise its confidence, or approve it yourself.
+Reject low-confidence patches unless the uncertainty itself is the durable fact being recorded. Over MCP a low-confidence `remember` is decided by the owner: the server asks them in the host's question UI. Report the result (`APPLIED` with `approvedBy: owner`, `OWNER_REJECTED`, or queued with `reviewId` and `step: owner_review`); never retry it, raise its confidence, or approve it yourself. `status` with `ask: "reviews"` puts queued items to the owner again.
 
 Raw evidence is immutable or independently verifiable evidentiary truth. The Markdown note is operational synthesis. A patch may update the synthesis but must never rewrite, conceal, or supersede its evidence.
 
