@@ -9,7 +9,7 @@ Install Graphmory normally with `npm install -g .` from its checkout; do not omi
 `graphmory config` selects hybrid for Curator setup. Existing config files without `retrievalMode` retain lexical behavior for compatibility; explicitly migrate through configuration, or use the flag below. Native host model selection remains in the host's named agent definition.
 
 ```sh
-graphmory recall-managed --vault "<vault>" --query "<question>" --retrieval-mode hybrid --agent
+node scripts/brain-sync.mjs recall-managed --vault "<vault>" --query "<question>" --retrieval-mode hybrid --agent
 ```
 
 Continue with `--offset <nextOffset>` while evidence is incomplete and `hasMore` is true. There is no fixed total three-note cap. Returned `lanes` and `graphTrail` explain navigation, not proof or probability. Graph traversal uses up to eight seeds, three edges and 512 visited notes per request; `graphLimitReached` reports truncated traversal. `recall-explore` supports explicit additional exploration. Scan caps and lexical/semantic candidate heuristics mean exhaustive semantic completeness is not guaranteed.
@@ -23,13 +23,13 @@ The semantic candidate floor is currently cosine 0.3, an uncalibrated broad navi
 After reviewing originals, ask the tool to generate metadata:
 
 ```sh
-graphmory summary sources --vault "<vault>" --paths '["Evidence/A.md","Evidence/B.md"]'
+node scripts/brain-sync.mjs summary sources --vault "<vault>" --paths '["Evidence/A.md","Evidence/B.md"]'
 ```
 
 The response includes `memory_kind: summary`, `evidence_for` paths and `summary_sources` fingerprints, plus ready-to-copy frontmatter fields. Curator writes concise supported prose, adds these fields alongside the normal rendered patch frontmatter, and preserves evidence links. Do not create a second frontmatter block. Prepare/finish the summary through the normal checkpointed write workflow, including source bindings. The command itself writes nothing.
 
 ```sh
-graphmory summary check --vault "<vault>" --note "Project/Summary.md"
+node scripts/brain-sync.mjs summary check --vault "<vault>" --note "Project/Summary.md"
 ```
 
 Changed, missing, inactive or stale transitive sources make the summary stale. Cycles/depth limits are not considered fresh. Normal retrieval excludes stale summaries without editing their files. Direct reuse needs a fresh check. Refreshing requires re-reading originals, checking meaning, generating new fingerprints and checkpointing the supported update. Do not merely update hashes to hide a stale summary.

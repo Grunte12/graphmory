@@ -22,7 +22,7 @@ Memory that saves everything fills up with noise, stale facts and guesses. Graph
 - **Guarded writes.** A new memory needs evidence. It is checked before it is saved, and the save returns a receipt hash. Conflicts and low-confidence memories are never written silently.
 - **Memory that ages.** Notes carry a status, an expiry and revalidation triggers. Stale or replaced notes are not recalled; replaced notes stay as history. When a source changes, summaries built on it are flagged for a recheck.
 - **Plain files.** Notes are Markdown in a folder or Obsidian vault, with optional private Git sync. No database and no vector server.
-- **Any MCP client.** Three tools, one server: Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, OpenCode, Cline, Zed and others.
+- **Any MCP client.** Five tools, one server: Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, OpenCode, Cline, Zed and others.
 
 ## How it works
 
@@ -42,7 +42,7 @@ Search combines three lanes: keyword matching (BM25F over note sections), meanin
 
 ## Quick start
 
-1. **Install the CLI** (not on npm yet, so install from this repository; Node.js 20+ and Git are required):
+1. **Install Graphmory** (not on npm yet, so install from this repository; Node.js 20+ and Git are required):
 
    ```sh
    git clone https://github.com/Grunte12/graphmory.git

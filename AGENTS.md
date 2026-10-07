@@ -112,67 +112,28 @@ Graphmory ships an installable `graphmory-curator` skill at `skills/graphmory-cu
 - **OpenCode**: the runtime's skill system automatically discovers skills under `<target>/skills/`. Load the skill when memory recall or consolidation is needed.
 - **Other runtimes**: read `skills/graphmory-curator/SKILL.md` and embed it as a role/function definition.
 
-The installer (`node scripts/install.mjs --target <dir>`) copies three components to the target directory:
+The installer (`node scripts/install.mjs --target <dir>`) copies these components to the target directory:
 
 | Component | Destination | Purpose |
 |-----------|-------------|---------|
 | `skills/graphmory-curator/` | `<target>/skills/graphmory-curator/` | Agent skill with protocol, schema, and authority rules |
 | `src/` | `<target>/src/` | Reusable runtime modules (recall, sync, lifecycle, contracts, etc.) |
-| `bin/graphmory.mjs` | `<target>/bin/graphmory.mjs` | CLI entry point for `doctor`, `recall`, `health`, `push`, etc. |
+| `bin/graphmory.mjs` | `<target>/bin/graphmory.mjs` | Owner CLI: `doctor`, `health`, `review`, `push`, etc. |
+| `bin/brain-sync.mjs` | `<target>/bin/brain-sync.mjs` | Full CLI that `graphmory.mjs` loads; developer and evaluation commands |
 
 Adapters (under `adapters/`) configure the runtime — they do not overwrite agent config, merge prompts, or install system packages. Choose the adapter for your platform and apply the files as documented.
 
 ## Tool-Assisted Memory Work
 
-Use deterministic tools for mechanical checks so the LLM spends judgment on meaning:
+Agents use the MCP tools only. The `graphmory` command is the owner's CLI for setup, health, review and sync; agents do not run it, and they never read the vault with file tools to work around a tool result.
 
-```sh
-node <graphmory-path>/scripts/brain-sync.mjs health --vault "<vault-path>" --json
-```
+- **What needs attention.** Call `status` at session start and after conflict resolution or a large intake. It reports an interrupted write, memory waiting for the owner, lifecycle findings (revalidation due, replacement markers, tension without a decision path, raw memory outside Inbox) and vault health (unresolved links, duplicate titles, orphans, missing provenance, secrets). Relay its `next` steps; treat critical health findings as blockers before a push. The owner's terminal equivalents are `graphmory health --vault <path>` and `graphmory lifecycle-audit --vault <path>`. Do not ask the Curator to rediscover these checks by hand.
+- **Recall.** Ask the Curator for a Brain Brief. It calls `recall` with a specific query and a `scope` when the project or domain is known, `read`s each relevant candidate by path and hash, and pages under the stop rule in the skill. Default recall leaves out raw inbox/clipping notes and stale or superseded notes. If candidates miss the answer, reformulate with project vocabulary or follow the named MOC neighborhood; do not scan the whole vault. Do not infer facts from graph connectivity alone. Optional relation properties and folder guidance are in `docs/guides/knowledge-graph.md`.
+- **Retrieval mode.** The server runs keyword, local semantic and authored-link search together. If the local meaning backend is missing, recall returns `BLOCKED` instead of silently downgrading; the owner runs `graphmory doctor` and `graphmory semantic-warmup`. The MCP server requires the curator workflow; hosted Jev, local decision and local rerank modes are evaluation workflows run from a checkout (`node scripts/brain-sync.mjs`, see `docs/guides/cli-reference.md`).
+- **Summaries.** The first recall page lists summaries whose sources changed (`recheck`); they are left out of ranking. Freshness proves source identity, not semantic support. Refresh a summary from reviewed sources through a normal `remember`.
+- **Writes and owner decisions.** `remember` files a main-agent-authored Memory Patch. Low-confidence memory, recovery of an interrupted write and every push are decided by the owner in the host's question UI (`status` with `ask`, `sync` with `action: "push"`).
 
-Run `health` after conflict resolution, restructure, large intake triage, and before a sync push that publishes durable memory. It checks unresolved links, duplicate titles, orphan notes, missing provenance/lifecycle markers, stale memory without revalidation, inbox backlog, raw captures outside Inbox, and secret-like values. Treat critical findings as blockers before push. Do not ask the Graphmory Curator to manually rediscover these checks from scratch.
-
-When memory may be time-sensitive or recently changed, run the lifecycle audit before relying on it:
-
-```sh
-node <graphmory-path>/scripts/brain-sync.mjs lifecycle-audit --vault "<vault-path>" --json
-```
-
-Use it after vendor/API/policy changes, before resurrecting old operational notes, during periodic hygiene, and after conflict resolution. It is read-only and returns review actions such as revalidate, add replacement marker, split/mark tension, add a decision path, or triage raw memory. It must not delete, supersede, or rewrite notes automatically.
-
-For recall, start with the bounded machine-readable path selector instead of broad vault reads:
-
-```sh
-node <graphmory-path>/scripts/brain-sync.mjs recall --vault "<vault-path>" --query "<task-specific memory question>" --json
-```
-
-When the user has configured a managed workflow with `graphmory config`, use the compact agent interface instead. In Jev/local mode it returns an EvidencePacket with bounded excerpts and paths; `abstain` means no accepted evidence. Do not repeat a failed decision call automatically; report the error or expansion signal.
-
-```sh
-node <graphmory-path>/scripts/brain-sync.mjs recall-managed --vault "<vault-path>" --query "<task-specific memory question>" --scope "<known project-or-domain path>" --agent
-```
-
-Add `--scope "<known project-or-domain path>"` when the active project/domain is known. In curator mode, inspect the returned paths and request `--offset <nextOffset>` while evidence is incomplete and `hasMore` is true. Stop when the evidence is sufficient or candidates are exhausted; there is no fixed total note count. Raw inbox/clipping paths and stale/superseded lifecycle states are excluded by default. If the candidate paths still miss the answer, reformulate using project vocabulary or inspect the named MOC/backlink neighborhood; do not immediately scan the whole vault.
-
-For explicit note relationships or multi-hop exploration, use `recall-explore --agent` and inspect the returned path trails. Run `graph-audit --agent` to check unresolved/ambiguous references and isolated notes before proposing curation. Optional relation properties and minimal folder guidance are in `docs/guides/knowledge-graph.md`. Do not infer facts from graph connectivity alone.
-
-If bounded recall misses repeatedly, use the diagnostic sparse-fusion loop once before broad manual vault search:
-
-```sh
-node <graphmory-path>/scripts/brain-sync.mjs recall-loop --vault "<vault-path>" --query "<task-specific memory question>" --scope "<known project-or-domain path>" --json
-```
-
-Treat `recall-loop` as a fallback, not the default. If eval misses persist, generate a curation recommendation report instead of guessing:
-
-```sh
-node <graphmory-path>/scripts/brain-sync.mjs curation-recommend --report "<eval-report.json>" --queries "<query-set.json>" --method governed-bm25f-sections --json
-```
-
-Use the report to classify whether the miss is buried gold, missing scope, no candidates, or vocabulary/gold ambiguity. Apply clearly reversible curator improvements such as adding non-sensitive aliases, frontmatter hints, or MOC links when the evidence is explicit and the target note is unambiguous. Ask before meaning-changing rewrites, grouped-gold changes, note moves, deletions, or conflict resolution.
-
-New Curator configuration uses keyword, local semantic and authored graph navigation together in `recall-managed`. Install normally (including optional embedding dependencies), and allow the initial BGE model download during setup. Model files and rebuildable vectors belong outside the vault. No separate vector database or embedding API is required. If the backend is missing, hybrid recall returns BLOCKED instead of silently downgrading. Older configs without `retrievalMode` retain lexical behavior; choose hybrid in `graphmory config`, or pass `--retrieval-mode hybrid` explicitly. `--retrieval-mode lexical` is for compatibility/diagnostics, not the recommended new setup.
-
-Curator-maintained summaries may reuse supported synthesis across agents. Run `summary sources --vault <path> --paths '<JSON array>'` to generate source fingerprints and evidence links, preserve these fields alongside the summary, and use `summary check --vault <path> --note <path>` before direct reuse. Default recall excludes summaries with changed, missing, inactive or stale transitive sources. Freshness proves source identity, not semantic support. Preserve originals and use the checkpointed write flow for summary creation/refresh; do not rewrite hashes without reviewing the changed evidence.
+Apply clearly reversible curator improvements such as non-sensitive aliases, frontmatter hints or MOC links when the evidence is explicit and the target note is unambiguous. Ask before meaning-changing rewrites, note moves, deletions or conflict resolution.
 
 ## Human Judgment Gates
 
@@ -200,7 +161,7 @@ If the user decision is not available, return `BLOCKED` with the smallest decisi
 
 ## Shared Brain Sync
 
-When multiple agents use the same private brain repo, each runtime should use its own local clone. At session start and before a Brain Brief that depends on current shared state, the main agent calls the MCP tool `sync` with `action: "pull"`, and publishes with `action: "push"`, which the owner approves in the host's question UI (`docs/guides/mcp-sync.md`). Without MCP, the CLI fallback is:
+When multiple agents use the same private brain repo, each runtime should use its own local clone. At session start and before a Brain Brief that depends on current shared state, the main agent calls the MCP tool `sync` with `action: "pull"`, and publishes with `action: "push"`, which the owner approves in the host's question UI (`docs/guides/mcp-sync.md`). The owner's terminal equivalent is:
 
 ```sh
 node <graphmory-path>/scripts/brain-sync.mjs auto-pull --vault "<vault-path>" --json
@@ -226,7 +187,7 @@ Do not push after every remembered item. Batch memory sync when it keeps the bra
 - Push after 3-7 small APPLIED patches or one high-value/risky patch.
 - Push before any restructure, conflict resolution, or long multi-session handoff.
 
-Use `status` (`sync.plan`) or, without MCP, `sync-plan --json` before deciding whether to hold, pull first, request conflict review, or push. The plan is advisory and is never push approval.
+Check `status` (`sync.plan`) before deciding whether to hold, pull first, request conflict review, or push. The plan is advisory and is never push approval.
 - Do not push raw inbox/clipping noise, partial notes, unresolved conflicts, or unverified facts.
 - If local commits are `local-ahead`, it is safe to keep working locally until one of the thresholds above is reached.
 

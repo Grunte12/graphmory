@@ -1023,10 +1023,25 @@ test("CLI help points agents to MCP and groups owner commands first", () => {
   assert.equal(result.status, 0, result.stderr)
   assert.match(result.stdout, /graphmory-mcp/)
   const owner = result.stdout.indexOf("Setup and health:")
-  const advanced = result.stdout.indexOf("Advanced:")
-  assert.ok(owner !== -1 && advanced > owner, "owner sections come before Advanced")
-  assert.ok(result.stdout.indexOf("graphmory recall --vault") > advanced, "agent recall is listed under Advanced")
+  const developer = result.stdout.indexOf("Developer and evaluation commands")
+  assert.ok(owner !== -1 && developer > owner, "owner sections come before the developer section")
+  assert.ok(result.stdout.indexOf("graphmory recall --vault") > developer, "agent recall is listed under the developer section")
   assert.doesNotMatch(result.stdout, /^ {2}recall-managed/m)
+})
+
+test("the installed graphmory command is the owner CLI and sends agents to MCP", () => {
+  const owner = path.join(repoRoot, "scripts", "graphmory.mjs")
+  const help = spawnSync(process.execPath, [owner, "--help"], { encoding: "utf8" })
+  assert.equal(help.status, 0, help.stderr)
+  assert.match(help.stdout, /review list/); assert.match(help.stdout, /curation-checkpoint restore/); assert.match(help.stdout, /push --vault/)
+  assert.doesNotMatch(help.stdout, /recall --vault|read-notes|render-patch|curation-checkpoint prepare|Developer and evaluation/)
+  for (const agentCommand of [["recall-managed", "--query", "x"], ["read-notes"], ["render-patch"], ["curation-checkpoint", "prepare"]]) {
+    const refused = spawnSync(process.execPath, [owner, ...agentCommand], { encoding: "utf8" })
+    assert.equal(refused.status, 2, agentCommand.join(" "))
+    assert.match(refused.stderr, /graphmory-mcp tools recall, read, remember, status and sync/)
+  }
+  const status = spawnSync(process.execPath, [owner, "curation-checkpoint", "status", "--vault", os.tmpdir()], { encoding: "utf8" })
+  assert.doesNotMatch(status.stderr, /not part of the owner CLI/)
 })
 
 test("CLI help lists the new audit, lint, and brain-session-brief commands", () => {

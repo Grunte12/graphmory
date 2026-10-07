@@ -44,7 +44,7 @@ Include the supporting explanation/source in the body. The properties record ass
 
 ```sh
 graphmory graph-audit --vault /path/to/brain --agent
-graphmory recall-explore --vault /path/to/brain --query "What other notes are linked to Cedar?" --agent
+node scripts/brain-sync.mjs recall-explore --vault /path/to/brain --query "What other notes are linked to Cedar?" --agent
 ```
 
 `graph-audit` is read-only. `issues` reports up to 20 unresolved/ambiguous references with totals in `issueCounts`. `excludedReferences` separately reports up to 20 links to existing loaded notes omitted from the current graph, with totals in `excludedCounts` (`scope` and `lifecycle:<status>`). A reference excluded for both reasons contributes to both counts. Exclusion is informational: preserve a valid history/evidence link instead of deleting it to clear the audit. Such targets remain outside current graph traversal; read the originals explicitly when inspecting history. The audit cannot establish filesystem-wide absence outside its loaded inventory.

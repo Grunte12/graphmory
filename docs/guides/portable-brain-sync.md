@@ -64,7 +64,7 @@ Private brain repo
 `- OpenCode local clone
 ```
 
-Each main agent runs event-driven auto-pull at session start and before current shared recall:
+Each main agent calls the MCP `sync` tool with `action: "pull"` at session start and before current shared recall. Pushes go through `sync` with `action: "push"`, which the owner approves in the host's question UI ([Git sync](mcp-sync.md)). The owner's terminal equivalent of the pull is:
 
 ```powershell
 node scripts/brain-sync.mjs auto-pull --vault "C:\Users\you\HermesBrain" --json
@@ -121,17 +121,7 @@ Check memory health before publishing durable changes:
 node scripts/brain-sync.mjs health --vault "C:\Users\you\YourBrain" --json
 ```
 
-Retrieve a bounded set of canonical note paths before asking an agent to read memory broadly:
-
-```powershell
-node scripts/brain-sync.mjs recall --vault "C:\Users\you\YourBrain" --query "what did we decide about deployment rollback?" --scope "02 Projects/example" --json
-```
-
-If normal recall is low-confidence, run the bounded diagnostic loop once:
-
-```powershell
-node scripts/brain-sync.mjs recall-loop --vault "C:\Users\you\YourBrain" --query "what did we decide about deployment rollback?" --scope "02 Projects/example" --json
-```
+Agents retrieve memory through the Curator and the MCP `recall` and `read` tools, which return a bounded, paged shortlist instead of broad vault reads. Developers can reproduce the same ranking from a checkout with `node scripts/brain-sync.mjs recall-managed --vault <path> --query <question> --agent`.
 
 If an eval report shows repeated misses, generate a curation plan instead of broad manual searching:
 

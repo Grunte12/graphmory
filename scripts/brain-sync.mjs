@@ -50,6 +50,13 @@ import { pullMemory, pushMemory, scanVaultForSecrets, withSyncLock } from "../sr
 const args = process.argv.slice(2)
 const command = args[0]
 const rest = args.slice(1)
+// The installed `graphmory` command (scripts/graphmory.mjs) is the owner's CLI: setup, health,
+// review, recovery and sync. Agents use the graphmory-mcp tools; developers and evaluations run
+// this file directly, which also keeps the agent and evaluation commands below.
+const OWNER_CLI = globalThis.GRAPHMORY_OWNER_CLI === true
+const AGENT_COMMANDS = new Set(["recall", "recall-loop", "recall-managed", "recall-semantic", "recall-rerank", "recall-explore",
+  "read-notes", "source-handoff", "summary", "curate-plan", "validate-patch", "render-patch", "verify-patch-persistence", "curation-recommend"])
+const isAgentCommand = () => AGENT_COMMANDS.has(command) || (command === "curation-checkpoint" && ["prepare", "finish"].includes(rest[0]))
 
 function option(name, fallback) {
   const index = rest.indexOf(name)
@@ -291,9 +298,11 @@ function usage(exitCode = 0) {
       `graphmory status --vault <path>`,
       `graphmory health --vault <path> [--json] [--out <file>]`,
     ]],
-    ["Owner review", [
+    ["Owner review and recovery", [
       `graphmory review list|show <id>|reject <id> --vault <path> [--json] (memory waiting for owner review)`,
       `graphmory review approve <id> --vault <path> (owner only: interactive terminal, confirms by typing the id)`,
+      `graphmory curation-checkpoint status --vault <path> [--state-root <outside-directory>]`,
+      `graphmory curation-checkpoint restore --vault <path> --operation <id> --expected '<JSON current target hashes>' --approve [--review-lock <reviewed dead-owner SHA256>]`,
     ]],
     ["Git sync", [
       `graphmory sync-plan --vault <path> [--patches <count>] [--session-end] [--handoff] [--high-risk] [--json]`,
@@ -316,7 +325,7 @@ function usage(exitCode = 0) {
       `graphmory curation-apply --vault <path> --plan <file> --approve`,
       `graphmory brain-session-brief --vault <path> [--json] [--out <file>]`,
     ]],
-    ["Advanced: agent and evaluation commands (agents should call the MCP tools instead)", [
+    ["Developer and evaluation commands (node scripts/brain-sync.mjs only; agents use the MCP tools)", [
       `graphmory summary sources --vault <path> --paths '<JSON array>' (summary source fingerprints; no note writes)`,
       `graphmory summary check --vault <path> --note <summary.md> (source freshness; no semantic truth claim)`,
       `graphmory read-notes --vault <path> --paths '<JSON array of relative Markdown paths>' [--pretty] (full sources; --pretty splits JSON fields across lines)`,
@@ -335,16 +344,14 @@ function usage(exitCode = 0) {
       `graphmory render-patch --input <patch.json> (canonical Markdown projection; stdout only, no vault write)`,
       `graphmory verify-patch-persistence --vault <path> --input <patch.json> --note <relative.md> [--full] [--agent|--json] (full mode checks saved fields/lineage, not truth or permission)`,
       `graphmory curation-checkpoint prepare --vault <path> --input <patch.json> --targets '<JSON paths>' --sources '<JSON paths>' [--state-root <outside-directory>]`,
-      `graphmory curation-checkpoint status --vault <path> [--state-root <outside-directory>]`,
       `graphmory curation-checkpoint finish --vault <path> --operation <id> --input <patch.json> --note <relative.md>`,
-      `graphmory curation-checkpoint restore --vault <path> --operation <id> --expected '<JSON current target hashes>' --approve [--review-lock <reviewed dead-owner SHA256>]`,
       `graphmory curation-recommend --report <eval-report.json> --queries <queries.json> [--method governed-bm25f-sections] [--json]`,
     ]],
   ]
   out.write(`Graphmory: governed memory for AI agents\n\n`)
   out.write(`Agents connect through the MCP server (graphmory-mcp) and its tools recall, read, remember, status and sync.\n`)
   out.write(`This CLI is for the vault owner: setup, health checks, review and Git sync.\n`)
-  for (const [title, lines] of sections) {
+  for (const [title, lines] of OWNER_CLI ? sections.filter(([title]) => !title.startsWith("Developer")) : sections) {
     out.write(`\n${title}:\n`)
     for (const line of lines) out.write(`  ${line}\n`)
   }
@@ -2138,6 +2145,11 @@ function curationApply() {
 
 try {
   if (!command || command === "--help" || command === "-h" || flag("--help") || command === "help") usage(0)
+  if (OWNER_CLI && isAgentCommand()) {
+    console.error(`graphmory ${command} is not part of the owner CLI. Agents use the graphmory-mcp tools recall, read, remember, status and sync.`)
+    console.error(`Developers and evaluations: node <graphmory>/scripts/brain-sync.mjs ${command} ...`)
+    process.exit(2)
+  }
   if (command === "adoption-plan") adoptionPlan()
   else if (command === "bootstrap") bootstrap()
   else if (command === "detect") detect()

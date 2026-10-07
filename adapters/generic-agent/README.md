@@ -1,41 +1,29 @@
 # Generic Agent Adapter
 
-**Transport: MCP, with filesystem as a fallback**
+**Transport: MCP**
 
-This adapter connects any AI coding agent to Graphmory. The recommended transport is the `graphmory-mcp` MCP server; see [MCP host configuration](../../docs/guides/mcp-hosts.md). Direct filesystem access through the CLI scripts also works and needs no plugin, REST API or Obsidian-specific tooling.
+This adapter connects any AI coding agent that can use MCP to Graphmory. Agents use the `graphmory-mcp` server and its tools `recall`, `read`, `remember`, `status` and `sync`; see [MCP host configuration](../../docs/guides/mcp-hosts.md). The owner uses Obsidian (or any editor) for the notes and the `graphmory` command only for one-time setup and maintenance.
 
 ## Transport
 
 | Property | Value |
 |---|---|
-| Method | **Filesystem** (Node.js `fs` via `scripts/brain-sync.mjs`) |
-| Requirements | Local clone or checkout of Graphmory repository |
-| Fallback | None — filesystem must be available on the runtime machine |
-| Lock discipline | Single-writer recommended; see `INSTALL.md` Shared Brain Hook |
-| Startup setup | `node scripts/brain-sync.mjs auto-pull --vault "<path>" --json` |
+| Method | **MCP** stdio (`graphmory-mcp`), or Streamable HTTP behind a bearer token |
+| Requirements | Node.js 20+, Graphmory installed, `GRAPHMORY_VAULT` set in the host's MCP config |
+| Lock discipline | One coordinated writer per vault; see `INSTALL.md` Shared Brain Hook |
+| Startup setup | The main agent calls `sync` with `action: "pull"` |
 
 ## How Memory Access Is Established
 
-1. The agent has filesystem read/write access to Graphmory repo directory.
-2. The user provides a vault path (local directory or Git clone).
-3. Commands such as `recall`, `health`, `lifecycle-audit`, and `brain-sync` operate
-   directly on that directory via `scripts/brain-sync.mjs`.
-4. Memory Patches are written as Markdown files in the vault.
-5. Git sync is managed by the main agent via `sync-plan` / `push` commands.
+1. The owner installs Graphmory and runs `graphmory doctor` once.
+2. The host's MCP config starts `graphmory-mcp` with the vault path.
+3. The Curator sub-agent recalls and reads notes, and files Memory Patches, through the MCP tools.
+4. `status` reports pending work, owner reviews, lifecycle and health; `sync` pulls and pushes the private Git remote.
+5. Decisions that belong to the owner (low-confidence memory, recovery, every push) appear as questions in the host's own UI.
 
 Write new canonical notes in concise English and let the main agent answer in the user's chosen language. Keep exact identifiers and provenance. See the [language and token budget guide](../../docs/guides/token-efficient-language.md).
 
-## When to Change Transport
-
-MCP is the default. If the host cannot run an MCP server, use the filesystem transport, or another mechanism from this list:
-
-| Transport | Description |
-|---|---|
-| `filesystem` | Direct directory access via Graphmory scripts |
-| `mcp` | Model Context Protocol server (`graphmory-mcp`), recommended |
-| `obsidian-cli` | Obsidian CLI (e.g., `obsidian vault open`) |
-| `obsidian-rest` | Obsidian Local REST API plugin |
-| `custom` | Agent-specific mechanism |
+A host that cannot run an MCP server is not supported for agents. Developers and evaluations can drive the full CLI from a checkout (`node scripts/brain-sync.mjs`, see `docs/guides/cli-reference.md`).
 
 ## See Also
 

@@ -1,4 +1,6 @@
-# Guarded local Curator workflow
+# Guarded local Curator workflow (CLI, historical)
+
+> Historical: this was the agent workflow for the October 2026 CLI trial and the evaluations that cite it. Agents now use the MCP tools; see `skills/graphmory-curator/SKILL.md`. The commands below run from a checkout as `node scripts/brain-sync.mjs <command>`; the installed `graphmory` command is the owner CLI.
 
 Use the CLI, this installed skill and a named inexpensive host Curator. The scoped acceptance target is Codex with Luna and one local Markdown memory root. Hybrid retrieval needs the local BGE embedding model and Transformers.js; no embedding API or graph/database service is required. The Curator still runs in the coding agent host. Existing other-host/optional-engine paths are outside this trial's acceptance claim.
 

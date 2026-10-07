@@ -19,7 +19,7 @@
     "node": ">=20"
   },
   "bin": {
-    "graphmory": "scripts/brain-sync.mjs",
+    "graphmory": "scripts/graphmory.mjs",
     "graphmory-setup": "scripts/setup-curator-agent.mjs",
     "graphmory-mcp": "scripts/graphmory-mcp.mjs"
   },
@@ -49,6 +49,7 @@
     "eval/local-rerank/",
     "schemas/",
     "scripts/brain-sync.mjs",
+    "scripts/graphmory.mjs",
     "scripts/init-project.mjs",
     "scripts/install.mjs",
     "scripts/setup-curator-agent.mjs",

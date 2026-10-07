@@ -41,7 +41,7 @@ graphmory audit --vault "<vault>" --json
 graphmory graph-audit --vault "<vault>" --json
 ```
 
-`audit` and `graph-audit` inspect the vault without changing notes. Review broken or ambiguous links and missing provenance before relying on those notes. Once the vault contains real memory, test a scoped query with `graphmory recall --vault "<vault>" --query "<known question>" --scope "<project folder>" --agent` and have the main agent check the returned source. The graph is a navigation aid; retrieved text still needs evidence review.
+`audit` and `graph-audit` inspect the vault without changing notes. Review broken or ambiguous links and missing provenance before relying on those notes. Once the vault contains real memory, ask the agent for one scoped recall of a known question through the MCP `recall` tool and check the returned source. The graph is a navigation aid; retrieved text still needs evidence review.
 
 Private GitHub sync is an optional later step. Configure it only after the user chooses a repo and reviews any adoption plan. Local-only setup does not need `bootstrap` or `status`.
 

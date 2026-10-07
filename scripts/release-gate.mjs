@@ -66,6 +66,7 @@ function assertPackIsClean(packReport) {
     "AGENTS.md",
     "README.md",
     "scripts/brain-sync.mjs",
+    "scripts/graphmory.mjs",
     "scripts/install.mjs",
     "scripts/setup-curator-agent.mjs",
     "scripts/recommend-curation.mjs",
