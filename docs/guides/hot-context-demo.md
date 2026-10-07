@@ -99,7 +99,7 @@ Regenerate it whenever one of the following triggers fires:
 4. **The `generated_at` timestamp is older than the most recent Memory Patch** in the vault.
 5. **Before a high-stakes task** — ensure the hot context reflects the latest curated memory.
 
-Do not treat the rendered output as canonical. Always fall back to full Memory Curator recall
+Do not treat the rendered output as canonical. Always fall back to full Graphmory Curator recall
 when a claim needs verification.
 
 ## See Also

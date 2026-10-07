@@ -40,7 +40,7 @@ The main agent has the task context. It writes the Memory Patch:
 }
 ```
 
-## 3. Memory Curator Applies Or Blocks
+## 3. Graphmory Curator Applies Or Blocks
 
 The curator does not invent meaning. It searches nearby notes, checks for duplicates or contradictions, and returns one status.
 

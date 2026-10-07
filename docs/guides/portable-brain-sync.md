@@ -217,7 +217,7 @@ node scripts/brain-sync.mjs bootstrap `
   --adopt-existing
 ```
 
-Adoption does not rewrite existing notes into Memory Patch format. It only connects sync metadata and creates missing neutral folders. A Memory Curator should later triage old notes gradually.
+Adoption does not rewrite existing notes into Memory Patch format. It only connects sync metadata and creates missing neutral folders. A Graphmory Curator should later triage old notes gradually.
 
 If the user wants to reshape an existing memory repo into the Graphmory structure, generate a plan first:
 
@@ -239,7 +239,7 @@ node scripts/brain-sync.mjs restructure-plan `
   --out "$env:TEMP\memory-restructure-plan.json"
 ```
 
-The generated destinations are suggestions only. Every entry starts with `approved: false`. The main agent or Memory Curator should read the affected notes, correct each target, and show the exact batch to the user. After approval, set `approved: true` only on accepted entries.
+The generated destinations are suggestions only. Every entry starts with `approved: false`. The main agent or Graphmory Curator should read the affected notes, correct each target, and show the exact batch to the user. After approval, set `approved: true` only on accepted entries.
 
 Validate without changing files:
 
@@ -272,7 +272,7 @@ Safety behavior:
 - Uses an exclusive lock and rolls back already-applied moves if a later move fails.
 - Writes an exact migration record for verification and rollback.
 
-`restructure-verify` confirms that source and target paths match the record. It does not prove that links or note meaning remain correct. The Memory Curator must repair wikilinks/Markdown links, check duplicates and conflicts, and run vault health checks before commit or push.
+`restructure-verify` confirms that source and target paths match the record. It does not prove that links or note meaning remain correct. The Graphmory Curator must repair wikilinks/Markdown links, check duplicates and conflicts, and run vault health checks before commit or push.
 
 Rollback before further edits if the migration is wrong:
 
@@ -290,10 +290,10 @@ The main agent should:
 1. Pull memory before important work when the machine/account may be stale.
 2. Work from a Brain Brief and exact note paths, not the whole vault.
 3. Author the Memory Patch after verified work.
-4. Ask the Memory Curator to place, link, and validate it.
+4. Ask the Graphmory Curator to place, link, and validate it.
 5. Run `status`, then `push` only if the memory update is safe and durable.
 
-The Memory Curator should not invent facts to make sync succeed. If the patch lacks evidence or conflicts with existing notes, it should return `BLOCKED` or `TENSION`.
+The Graphmory Curator should not invent facts to make sync succeed. If the patch lacks evidence or conflicts with existing notes, it should return `BLOCKED` or `TENSION`.
 
 ## Agent-Assisted Setup
 

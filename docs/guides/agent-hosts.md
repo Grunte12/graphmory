@@ -1,6 +1,6 @@
 # Codex, Cursor, and Claude Code
 
-The same `graphmory` CLI and `memory-curator` skill work across hosts that can run shell commands. For broad compatibility, have the user's coding agent follow the [guided install interview](../../adapters/generic-agent/INSTALL.md#agent-guided-setup). The agent inspects its host, asks for missing choices, and installs one named curator with a consistent role, skill, and inexpensive model. The main agent still decides when to delegate and authors every new Memory Patch.
+The same `graphmory` CLI and `graphmory-curator` skill work across hosts that can run shell commands. For broad compatibility, have the user's coding agent follow the [guided install interview](../../adapters/generic-agent/INSTALL.md#agent-guided-setup). The agent inspects its host, asks for missing choices, and installs one named curator with a consistent role, skill, and inexpensive model. The main agent still decides when to delegate and authors every new Memory Patch.
 
 Hosts that support MCP should also connect the `graphmory-mcp` server, which exposes `recall`, `read` and `remember` as tools; see [MCP host configuration](mcp-hosts.md). The CLI steps below remain available for hosts that cannot run an MCP server.
 
@@ -24,7 +24,7 @@ graphmory-setup --host codex --choices
 graphmory-setup --host codex --model <chosen model> --apply
 ```
 
-The Curator is a specialist sub-agent, not a general one: its prompt (`skills/memory-curator/references/curator-agent.md`) gives it one job, a fixed set of tools (the Graphmory MCP `recall`, `read` and `remember`) and the memory-curator skill.
+The Curator is a specialist sub-agent, not a general one: its prompt (`skills/graphmory-curator/references/curator-agent.md`) gives it one job, a fixed set of tools (the Graphmory MCP `recall`, `read` and `remember`) and the graphmory-curator skill.
 
 Setup never picks the model, and each host's agent sets up only its own Curator: Codex for Codex, Cursor for Cursor. `--host <host> --choices` lists the models that host reports: Codex from `~/.codex/models_cache.json` (with each model's reasoning efforts), Cursor from `cursor-agent models`, and Claude Code its `haiku`, `sonnet` and `opus` aliases (Claude Code has no listing command). The output carries `guidance` for the installing agent: suggest 2-4 models, the newest fast, low-cost tier first, and let the user pick or type another. Pass the answer with `--model <id>` (and `--effort <level>` for Codex). In an interactive terminal, `--apply` without `--model` shows the same list.
 
@@ -36,9 +36,9 @@ Model catalog visibility does not prove account support. If the host rejects the
 
 | Host | User agent file | User skill directory |
 | --- | --- | --- |
-| Codex | `~/.codex/agents/graphmory_curator.toml` | `~/.agents/skills/memory-curator/` |
-| Cursor | `~/.cursor/agents/graphmory-curator.md` | `~/.cursor/skills/memory-curator/` |
-| Claude Code | `~/.claude/agents/graphmory-curator.md` | `~/.claude/skills/memory-curator/` |
+| Codex | `~/.codex/agents/graphmory_curator.toml` | `~/.agents/skills/graphmory-curator/` |
+| Cursor | `~/.cursor/agents/graphmory-curator.md` | `~/.cursor/skills/graphmory-curator/` |
+| Claude Code | `~/.claude/agents/graphmory-curator.md` | `~/.claude/skills/graphmory-curator/` |
 
 The locations and model fields follow the [Codex](https://learn.chatgpt.com/docs/agent-configuration/subagents), [Claude Code](https://code.claude.com/docs/en/sub-agents), and [Cursor](https://cursor.com/docs/subagents) subagent documentation. Claude preloads the skill. Codex points to its installed skill in the agent definition. Cursor's agent prompt points to the installed skill because its documented subagent frontmatter does not specify a `skills` field. Tool/file restrictions vary by host; the prompt is a behavioral boundary, not a filesystem sandbox. Configure host permissions separately if you need a hard boundary.
 
@@ -46,22 +46,22 @@ Choose the Markdown/Obsidian vault as part of the same setup. Run `graphmory det
 
 ### Manual skill copy
 
-Copy the entire `skills/memory-curator` directory, including `references/` and `agents/`. Choose a project path for one workspace or a user path for all local workspaces:
+Copy the entire `skills/graphmory-curator` directory, including `references/` and `agents/`. Choose a project path for one workspace or a user path for all local workspaces:
 
 | Host | Project skill directory | User skill directory |
 | --- | --- | --- |
-| Codex | `<project>/.agents/skills/memory-curator/` | `~/.agents/skills/memory-curator/` |
-| Cursor | `<project>/.cursor/skills/memory-curator/` | `~/.cursor/skills/memory-curator/` |
-| Claude Code | `<project>/.claude/skills/memory-curator/` | `~/.claude/skills/memory-curator/` |
+| Codex | `<project>/.agents/skills/graphmory-curator/` | `~/.agents/skills/graphmory-curator/` |
+| Cursor | `<project>/.cursor/skills/graphmory-curator/` | `~/.cursor/skills/graphmory-curator/` |
+| Claude Code | `<project>/.claude/skills/graphmory-curator/` | `~/.claude/skills/graphmory-curator/` |
 
 For example, from this repository checkout:
 
 ```sh
 mkdir -p "<project>/.agents/skills"
-cp -R skills/memory-curator "<project>/.agents/skills/"
+cp -R skills/graphmory-curator "<project>/.agents/skills/"
 ```
 
-Substitute the Cursor or Claude Code project directory from the table when appropriate. Restart or reload the agent session after copying. In curator mode, confirm the agent can discover `memory-curator` before configuring a sub-agent. The default workflow needs no Jev account or additional model API key. Jev/local decision modes remain optional advanced setups.
+Substitute the Cursor or Claude Code project directory from the table when appropriate. Restart or reload the agent session after copying. In curator mode, confirm the agent can discover `graphmory-curator` before configuring a sub-agent. The default workflow needs no Jev account or additional model API key. Jev/local decision modes remain optional advanced setups.
 
 The host locations follow [Codex's repository skill convention](https://developers.openai.com/blog/skills-agents-sdk), [Cursor's skill directories](https://prod.cursor.com/help/customization/skills), and [Claude Code's directory reference](https://code.claude.com/docs/en/claude-directory). Cursor also discovers `.agents/skills/`, but use its native `.cursor/skills/` path when testing Cursor by itself. Keep only one installed copy per host scope to avoid duplicate discovery.
 

@@ -25,7 +25,7 @@ Graphmory adds a durable Markdown memory layer for coding agents. The tool repo 
    ```
 5. Apply the adapter for your runtime. For OpenCode, review and apply the files under `adapters/opencode/`:
    - Merge `AGENTS.snippet.md` into the main agent instructions.
-   - In curator mode, use `memory-curator-prompt.md` as the `memory_curator` sub-agent prompt and `opencode.agent.example.json` as its configuration template.
+   - In curator mode, use `graphmory-curator-prompt.md` as the `graphmory_curator` sub-agent prompt and `opencode.agent.example.json` as its configuration template.
    - In Jev/local decision modes, route managed recall directly to the main agent.
    See `docs/guides/install.md#opencode-adapter` for detailed instructions.
    For Codex, Cursor, or Claude Code, follow `docs/guides/agent-hosts.md` to select a vault and add the short main-agent instruction.
@@ -98,23 +98,23 @@ Read the MCP resources `graphmory://guide/recall` and `graphmory://guide/remembe
 - Write new canonical memory in concise English; the main agent answers the user in their chosen language. Preserve exact identifiers and provenance, and do not create translated duplicate notes. See `docs/guides/token-efficient-language.md`.
 
 - Main agent: decides what was learned and writes the Memory Patch.
-- In curator mode, Memory Curator retrieves, places, links, deduplicates, and validates memory without inventing missing facts.
+- In curator mode, Graphmory Curator retrieves, places, links, deduplicates, and validates memory without inventing missing facts.
 - In hosted Jev and local decision modes, the selected decision engine judges bounded retrieval candidates directly. In local rerank mode, a local model only reorders candidates and the main agent checks whether the evidence answers the query. The main agent remains responsible for prose and Memory Patch authorship; no curator sub-agent is dispatched for these recall modes.
 - Markdown/Obsidian vault: canonical operational memory.
 - GitHub brain repo: optional private sync target for portable memory.
 
-## Using The Memory Curator Skill
+## Using The Graphmory Curator Skill
 
-Graphmory ships an installable `memory-curator` skill at `skills/memory-curator/SKILL.md`. After the installer copies it to your target directory, load or reference it in your agent runtime:
+Graphmory ships an installable `graphmory-curator` skill at `skills/graphmory-curator/SKILL.md`. After the installer copies it to your target directory, load or reference it in your agent runtime:
 
 - **OpenCode**: the runtime's skill system automatically discovers skills under `<target>/skills/`. Load the skill when memory recall or consolidation is needed.
-- **Other runtimes**: read `skills/memory-curator/SKILL.md` and embed it as a role/function definition.
+- **Other runtimes**: read `skills/graphmory-curator/SKILL.md` and embed it as a role/function definition.
 
 The installer (`node scripts/install.mjs --target <dir>`) copies three components to the target directory:
 
 | Component | Destination | Purpose |
 |-----------|-------------|---------|
-| `skills/memory-curator/` | `<target>/skills/memory-curator/` | Agent skill with protocol, schema, and authority rules |
+| `skills/graphmory-curator/` | `<target>/skills/graphmory-curator/` | Agent skill with protocol, schema, and authority rules |
 | `src/` | `<target>/src/` | Reusable runtime modules (recall, sync, lifecycle, contracts, etc.) |
 | `bin/graphmory.mjs` | `<target>/bin/graphmory.mjs` | CLI entry point for `doctor`, `recall`, `health`, `push`, etc. |
 
@@ -128,7 +128,7 @@ Use deterministic tools for mechanical checks so the LLM spends judgment on mean
 node <graphmory-path>/scripts/brain-sync.mjs health --vault "<vault-path>" --json
 ```
 
-Run `health` after conflict resolution, restructure, large intake triage, and before a sync push that publishes durable memory. It checks unresolved links, duplicate titles, orphan notes, missing provenance/lifecycle markers, stale memory without revalidation, inbox backlog, raw captures outside Inbox, and secret-like values. Treat critical findings as blockers before push. Do not ask the Memory Curator to manually rediscover these checks from scratch.
+Run `health` after conflict resolution, restructure, large intake triage, and before a sync push that publishes durable memory. It checks unresolved links, duplicate titles, orphan notes, missing provenance/lifecycle markers, stale memory without revalidation, inbox backlog, raw captures outside Inbox, and secret-like values. Treat critical findings as blockers before push. Do not ask the Graphmory Curator to manually rediscover these checks from scratch.
 
 When memory may be time-sensitive or recently changed, run the lifecycle audit before relying on it:
 

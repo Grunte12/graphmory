@@ -1,0 +1,4 @@
+interface:
+  display_name: "Graphmory Curator"
+  short_description: "Curate durable agent memory without invention"
+  default_prompt: "Use $graphmory-curator to retrieve a compact Brain Brief or apply a verified Memory Patch."

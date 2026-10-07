@@ -155,7 +155,7 @@ test("install.mjs copies skill, src, and CLI to target and CLI runs without a va
       cwd: path.resolve("."), encoding: "utf8", shell: false,
     })
     assert.equal(before.status, 0, before.stderr)
-    assert.ok(JSON.parse(before.stdout).changes.some((change) => change.file.startsWith("skills/memory-curator/")))
+    assert.ok(JSON.parse(before.stdout).changes.some((change) => change.file.startsWith("skills/graphmory-curator/")))
 
     // Run the installer
     const install = spawnSync(process.execPath, [installScript, "--target", target, "--force"], {
@@ -166,8 +166,8 @@ test("install.mjs copies skill, src, and CLI to target and CLI runs without a va
     assert.equal(install.status, 0, `installer failed: ${install.stderr}`)
 
     // Verify skill was copied
-    const skillPath = path.join(target, "skills", "memory-curator", "SKILL.md")
-    assert.ok(fs.existsSync(skillPath), "skills/memory-curator/SKILL.md should exist after install")
+    const skillPath = path.join(target, "skills", "graphmory-curator", "SKILL.md")
+    assert.ok(fs.existsSync(skillPath), "skills/graphmory-curator/SKILL.md should exist after install")
 
     // Verify src module was copied
     const srcPath = path.join(target, "src", "brain-sync.mjs")

@@ -13,7 +13,7 @@ For the guarded local Curator workflow, see [the trial guide](trial-mvp.md). A n
 - This guide explains setup and vault choices; [host setup](agent-hosts.md) gives exact commands and agent paths.
 - [Vault setup and architecture](vault-setup.md) explains the minimal Markdown layout, existing-vault choices, and graph links.
 - [Generic agent install guide](../../adapters/generic-agent/INSTALL.md) is the checklist for a coding agent doing setup for someone.
-- [AGENTS.md](../../AGENTS.md) guides agents working in this repository; [`memory-curator/SKILL.md`](../../skills/memory-curator/SKILL.md) defines curator behavior after installation. Neither is a substitute for installing the CLI.
+- [AGENTS.md](../../AGENTS.md) guides agents working in this repository; [`graphmory-curator/SKILL.md`](../../skills/graphmory-curator/SKILL.md) defines curator behavior after installation. Neither is a substitute for installing the CLI.
 
 For now, clone the GitHub repository and run `npm install -g .` from it. A fork is needed only if you intend to maintain your own changes. The npm registry package name is not published yet, so `npm install -g graphmory` is a future distribution path, not a current command.
 
@@ -21,7 +21,7 @@ For now, clone the GitHub repository and run `npm install -g .` from it. A fork 
 
 - Node.js 20 or newer
 - A Markdown memory folder or Obsidian vault
-- A coding agent that can read files and run the CLI; install a named memory-curator sub-agent for consistent curator mode
+- A coding agent that can read files and run the CLI; install a named graphmory-curator sub-agent for consistent curator mode
 
 ## Install The Skill
 
@@ -32,7 +32,7 @@ npm run check
 node scripts/install.mjs --target "$HOME/.config/opencode"
 ```
 
-The installer copies `skills/memory-curator/`, `src/` modules, and the `brain-sync.mjs` CLI binary (`bin/graphmory.mjs`). It does not edit `opencode.json`.
+The installer copies `skills/graphmory-curator/`, `src/` modules, and the `brain-sync.mjs` CLI binary (`bin/graphmory.mjs`). It does not edit `opencode.json`.
 
 To verify the CLI works after install:
 ```sh
@@ -89,11 +89,11 @@ After the installer has copied the skill, CLI, and src modules to `<target>`, ap
 1. **Merge `AGENTS.snippet.md` into your main agent instructions.**
    Open `adapters/opencode/AGENTS.snippet.md` and insert its durable-memory rules into the main agent or orchestrator prompt. This gives the main agent the memory protocol (auto-pull, Brain Briefs, Memory Patches, health checks, conflict assist, etc.).
 
-2. **Use `memory-curator-prompt.md` as the `memory_curator` sub-agent prompt.**
-   Set this file's full content as the prompt for your `memory_curator` sub-agent. It defines the three recall/synthesis/consolidation modes and the `APPLIED`/`TENSION`/`BLOCKED` return contract.
+2. **Use `graphmory-curator-prompt.md` as the `graphmory_curator` sub-agent prompt.**
+   Set this file's full content as the prompt for your `graphmory_curator` sub-agent. It defines the three recall/synthesis/consolidation modes and the `APPLIED`/`TENSION`/`BLOCKED` return contract.
 
 3. **Use `opencode.agent.example.json` as a sub-agent configuration template.**
-   Copy the agent definition from this file and adjust the `prompt` field to paste the contents of `memory-curator-prompt.md`. The example grants `read`, `edit`, `glob`, `grep`, `list`, and `external_directory`; it asks before each `bash` command so the curator can run the Graphmory CLI, and denies `task`, `webfetch`, and `websearch`. Keep the curator in `subagent` mode. If the main agent denies `task`/`subtask`, allow only this named curator in the main agent's dispatch permission; do not enable unrestricted sub-agent launching. If an installed OpenCode plugin has a separate capability allowlist, permit `memory_curator` to run the Graphmory CLI while preserving its command approval rules and other agents' permissions.
+   Copy the agent definition from this file and adjust the `prompt` field to paste the contents of `graphmory-curator-prompt.md`. The example grants `read`, `edit`, `glob`, `grep`, `list`, and `external_directory`; it asks before each `bash` command so the curator can run the Graphmory CLI, and denies `task`, `webfetch`, and `websearch`. Keep the curator in `subagent` mode. If the main agent denies `task`/`subtask`, allow only this named curator in the main agent's dispatch permission; do not enable unrestricted sub-agent launching. If an installed OpenCode plugin has a separate capability allowlist, permit `graphmory_curator` to run the Graphmory CLI while preserving its command approval rules and other agents' permissions.
 
 4. **Add `<target>/bin/` to your `PATH`** so you can run `graphmory.mjs` from any directory without `node <target>/bin/...`.
 
@@ -111,7 +111,7 @@ The core mapping is:
 
 ```text
 Main agent / orchestrator -> authors Memory Patch
-memory_curator -> retrieves Brain Briefs and applies patches
+graphmory_curator -> retrieves Brain Briefs and applies patches
 Markdown / Obsidian -> canonical operational memory
 Derived Index / Hot Context Pack -> rebuildable views
 ```

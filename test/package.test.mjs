@@ -130,7 +130,7 @@ test("agent package includes the shared-brain auto-pull contract", () => {
   assert.match(portable, /same-note conflicts/)
   assert.match(portable, /never auto-rebases/)
   assert.match(cliReference, /health --vault/)
-  assert.match(opencode, /Memory Curator should not run Git sync itself/)
+  assert.match(opencode, /Graphmory Curator should not run Git sync itself/)
   assert.match(opencode, /conflict-assist --json/)
 })
 

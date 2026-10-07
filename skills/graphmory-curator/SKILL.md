@@ -1,9 +1,9 @@
 ---
-name: memory-curator
+name: graphmory-curator
 description: Retrieve compact Brain Briefs from a Markdown or Obsidian memory wiki and apply main-agent-authored Memory Patches without inventing facts. Use for durable agent memory, prior-decision recall, project preferences, root causes, workflow lessons, contradiction handling, provenance, MOC/index maintenance, or stale, duplicate, and orphan note cleanup.
 ---
 
-# Memory Curator
+# Graphmory Curator
 
 Treat durable memory as a governed knowledge base, not a diary.
 

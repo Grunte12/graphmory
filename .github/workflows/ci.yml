@@ -50,7 +50,7 @@ jobs:
         run: |
           TARGET=$(mktemp -d)
           node scripts/install.mjs --target "$TARGET" --force
-          test -f "$TARGET/skills/memory-curator/SKILL.md" || { echo "Missing skill"; exit 1; }
+          test -f "$TARGET/skills/graphmory-curator/SKILL.md" || { echo "Missing skill"; exit 1; }
           test -f "$TARGET/src/brain-sync.mjs" || { echo "Missing src"; exit 1; }
           test -f "$TARGET/bin/graphmory.mjs" || { echo "Missing CLI"; exit 1; }
           node "$TARGET/bin/graphmory.mjs" doctor --json || { echo "doctor failed"; exit 1; }

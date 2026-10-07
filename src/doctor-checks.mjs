@@ -8,11 +8,11 @@ export const MCP_TOOLS = ["recall", "read", "remember"]
 
 // Where graphmory-setup writes the user-scope Curator agent for each host (docs/guides/agent-hosts.md).
 const HOST_AGENTS = [
-  { host: "codex", file: [".codex", "agents", "graphmory_curator.toml"], skill: [".agents", "skills", "memory-curator"], toml: true, model: /^\s*model\s*=\s*["']([^"']+)["']/mu },
-  { host: "claude", file: [".claude", "agents", "graphmory-curator.md"], skill: [".claude", "skills", "memory-curator"], model: /^model:\s*["']?([^\s"']+)/mu },
-  { host: "cursor", file: [".cursor", "agents", "graphmory-curator.md"], skill: [".cursor", "skills", "memory-curator"], model: /^model:\s*["']?([^\s"']+)/mu },
+  { host: "codex", file: [".codex", "agents", "graphmory_curator.toml"], skill: [".agents", "skills", "graphmory-curator"], toml: true, model: /^\s*model\s*=\s*["']([^"']+)["']/mu },
+  { host: "claude", file: [".claude", "agents", "graphmory-curator.md"], skill: [".claude", "skills", "graphmory-curator"], model: /^model:\s*["']?([^\s"']+)/mu },
+  { host: "cursor", file: [".cursor", "agents", "graphmory-curator.md"], skill: [".cursor", "skills", "graphmory-curator"], model: /^model:\s*["']?([^\s"']+)/mu },
 ]
-const PACKAGE_SKILL = fileURLToPath(new URL("../skills/memory-curator", import.meta.url))
+const PACKAGE_SKILL = fileURLToPath(new URL("../skills/graphmory-curator", import.meta.url))
 
 const isPinned = (model) => Boolean(model) && model.toLowerCase() !== "inherit"
 
@@ -51,7 +51,8 @@ export function curatorFreshnessCheck({ home = os.homedir(), packageSkill = PACK
     const skillCurrent = fs.existsSync(skillDir) && JSON.stringify(files(skillDir)) === JSON.stringify(expected)
       && expected.every((file) => fs.readFileSync(path.join(skillDir, file)).equals(fs.readFileSync(path.join(packageSkill, file))))
     const promptCurrent = source.includes(agent.toml ? JSON.stringify(prompt).slice(1, -1) : prompt)
-    if (!skillCurrent || !promptCurrent) outdated.push(agent.host)
+    const legacySkill = fs.existsSync(path.join(path.dirname(skillDir), "memory-curator"))
+    if (!skillCurrent || !promptCurrent || legacySkill) outdated.push(agent.host)
   }
   if (outdated.length) {
     return { id: "curator-current", status: "warn", required: false,

@@ -4,7 +4,7 @@ Graphmory's trial workflow uses a named inexpensive coding-agent Curator, local 
 
 1. Follow [agent-guided installation](agent-hosts.md) and choose the [vault layout](vault-setup.md).
 2. Verify the installed CLI and an actual named Curator dispatch; keep existing user config and notes.
-3. Follow the [packaged Curator workflow](../../skills/memory-curator/references/trial-workflow.md) for recall, supported writes, replay and recovery. The installer copies that reference with the skill, so the Curator does not depend on the source checkout for instructions.
+3. Follow the [packaged Curator workflow](../../skills/graphmory-curator/references/trial-workflow.md) for recall, supported writes, replay and recovery. The installer copies that reference with the skill, so the Curator does not depend on the source checkout for instructions.
 
 `render-patch` produces canonical Markdown; it does not write your vault. `curation-checkpoint` records a pending operation, verifies completion and offers reviewed target restoration. Existing metadata-only checks remain available for compatibility; the trial requires full persistence and a completion receipt.
 

@@ -73,7 +73,7 @@ Ask `Download the local meaning model now (about 130 MB, once)?` Choices: `Yes, 
 
    Read affected notes, set exact targets, and show the proposed batch to the user. Generated entries are unapproved. After explicit approval, mark only accepted entries `approved: true`, run `restructure-apply --dry-run`, then `restructure-apply --approve`. Run `restructure-verify` on the emitted record and repair links before committing.
 
-6. Install the CLI and named Memory Curator agent for the chosen host. On a supported host, the helper may preview the files before applying:
+6. Install the CLI and named Graphmory Curator agent for the chosen host. On a supported host, the helper may preview the files before applying:
 
    ```sh
    npm install -g .
