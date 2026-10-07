@@ -3,21 +3,8 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 
-// Which coding hosts are installed and which models each can give the Curator sub-agent.
+// Which models a coding host can give the Curator sub-agent.
 // Graphmory lists what the host reports; it never picks a model for the user.
-
-function onPath(command) {
-  const finder = process.platform === "win32" ? "where" : "which"
-  return spawnSync(finder, [command], { encoding: "utf8", shell: false }).status === 0
-}
-
-export function detectHosts({ home = os.homedir(), hasCommand = onPath } = {}) {
-  const hosts = []
-  if (fs.existsSync(path.join(home, ".codex")) || hasCommand("codex")) hosts.push("codex")
-  if (fs.existsSync(path.join(home, ".claude")) || hasCommand("claude")) hosts.push("claude")
-  if (fs.existsSync(path.join(home, ".cursor")) || hasCommand("cursor-agent")) hosts.push("cursor")
-  return hosts
-}
 
 // Codex caches the models this account can use, with the reasoning efforts each supports.
 function codexModels(home) {

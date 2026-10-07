@@ -5,13 +5,13 @@ import path from "node:path"
 import process from "node:process"
 import readline from "node:readline/promises"
 import { fileURLToPath } from "node:url"
-import { detectHosts, hostModels, modelFamily } from "../src/host-models.mjs"
+import { hostModels, modelFamily } from "../src/host-models.mjs"
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const args = process.argv.slice(2)
 
 // How the installing agent turns the host's list into a suggestion. The user always decides.
-const CHOOSING_GUIDANCE = "Suggest 2-4 models from these choices, then let the user pick or type another. Do not choose for the user. "
+const CHOOSING_GUIDANCE = "Set up only the host you are running in. Suggest 2-4 models from these choices, then let the user pick or type another. Do not choose for the user. "
   + "The Curator reads notes, follows a strict protocol and returns short structured answers, so it needs reliable instruction following and tool use, not frontier reasoning. "
   + "Put first the newest generation of the host's fast, low-cost tier (for example a Luna, Haiku or Flash model); prefer it over an older generation of the same tier. "
   + "Offer one stronger mid-tier model for vaults with many conflicts. Mention that frontier models cost more for little gain here. Never suggest auto or inherit. "
@@ -19,9 +19,9 @@ const CHOOSING_GUIDANCE = "Suggest 2-4 models from these choices, then let the u
 
 if (args.includes("--help") || args.includes("-h")) {
   console.log("Usage: graphmory-setup --host codex|claude|cursor [--scope user|project] [--project <path>] [--model <host-model-id>] [--effort <level>] [--apply] [--update]")
-  console.log("       graphmory-setup [--host codex|claude|cursor] --choices")
+  console.log("       graphmory-setup --host codex|claude|cursor --choices")
   console.log("Preview is the default. --apply installs the Graphmory Curator sub-agent and its skill. --update replaces an older install and keeps a backup.")
-  console.log("--choices prints the installed hosts, or the models a host reports, as JSON so an agent can ask the user. Graphmory never picks the model:")
+  console.log("--choices prints the models the host reports as JSON so the agent running in that host can ask the user. Graphmory never picks the model:")
   console.log("pass --model, or run --apply in an interactive terminal to choose from the host's list.")
   process.exit(0)
 }
@@ -68,12 +68,7 @@ try {
   const host = option("--host")
   if (host && !["codex", "claude", "cursor"].includes(host)) throw new Error("Choose --host codex|claude|cursor")
   if (args.includes("--choices")) {
-    if (!host) {
-      const hosts = detectHosts()
-      console.log(JSON.stringify({ question: "Which coding agent should get the Graphmory Curator sub-agent?", header: "Agent host",
-        choices: hosts.map((id) => ({ host: id })), next: "graphmory-setup --host <host> --choices" }, null, 2))
-      process.exit(0)
-    }
+    if (!host) throw new Error("Pass --host for the coding agent you are running in; set up only your own host")
     const { source, models } = hostModels(host)
     console.log(JSON.stringify({
       question: "Which model should the Graphmory Curator sub-agent use?",
@@ -86,7 +81,7 @@ try {
     }, null, 2))
     process.exit(0)
   }
-  if (!host) throw new Error("Choose --host codex|claude|cursor, or run --choices to list the installed hosts")
+  if (!host) throw new Error("Choose --host codex|claude|cursor: the coding agent you are running in")
   const scope = option("--scope") || "user"
   const apply = args.includes("--apply")
   const update = args.includes("--update")

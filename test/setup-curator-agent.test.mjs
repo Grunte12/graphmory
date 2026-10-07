@@ -105,6 +105,10 @@ test("curator setup --choices prints the model question for the agent to ask", (
   assert.equal(question.allowCustom, true)
   assert.deepEqual(question.choices.map((choice) => choice.model), ["haiku", "sonnet", "opus"])
   assert.match(question.guidance, /Do not choose for the user/)
+  assert.match(question.guidance, /only the host you are running in/)
+  const noHost = spawnSync(process.execPath, [script, "--choices"], { encoding: "utf8" })
+  assert.equal(noHost.status, 1)
+  assert.match(noHost.stderr, /set up only your own host/)
   assert.match(question.next, /--model <chosen model> --apply/)
 })
 

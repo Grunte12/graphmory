@@ -20,14 +20,13 @@ The npm package is not published yet. `npm install -g .` may link this checkout;
 For a supported host, the agent may use this helper after confirming the host format and model. Preview first, then apply. The setup command does not overwrite existing agent or skill files unless you pass `--update`:
 
 ```sh
-graphmory-setup --choices
 graphmory-setup --host codex --choices
 graphmory-setup --host codex --model <chosen model> --apply
 ```
 
 The Curator is a specialist sub-agent, not a general one: its prompt (`skills/memory-curator/references/curator-agent.md`) gives it one job, a fixed set of tools (the Graphmory MCP `recall`, `read` and `remember`) and the memory-curator skill.
 
-Setup never picks the model. `graphmory-setup --choices` lists the installed hosts; `--host <host> --choices` lists the models that host reports: Codex from `~/.codex/models_cache.json` (with each model's reasoning efforts), Cursor from `cursor-agent models`, and Claude Code its `haiku`, `sonnet` and `opus` aliases (Claude Code has no listing command). The output carries `guidance` for the installing agent: suggest 2-4 models, the newest fast, low-cost tier first, and let the user pick or type another. Pass the answer with `--model <id>` (and `--effort <level>` for Codex). In an interactive terminal, `--apply` without `--model` shows the same list.
+Setup never picks the model, and each host's agent sets up only its own Curator: Codex for Codex, Cursor for Cursor. `--host <host> --choices` lists the models that host reports: Codex from `~/.codex/models_cache.json` (with each model's reasoning efforts), Cursor from `cursor-agent models`, and Claude Code its `haiku`, `sonnet` and `opus` aliases (Claude Code has no listing command). The output carries `guidance` for the installing agent: suggest 2-4 models, the newest fast, low-cost tier first, and let the user pick or type another. Pass the answer with `--model <id>` (and `--effort <level>` for Codex). In an interactive terminal, `--apply` without `--model` shows the same list.
 
 Setup copies the skill and prompt, so a newer Graphmory does not change an existing install. `graphmory doctor` shows `curator: update available` when the copies are older. Then run `graphmory-setup --host <host> --apply --update`: it keeps the installed model and reasoning effort unless you pass new ones, and moves the old files to a `graphmory-backups` folder next to the skills folder.
 
