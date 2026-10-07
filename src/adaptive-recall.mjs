@@ -165,7 +165,7 @@ export async function recallVaultAdaptive(vault, query, {
   })
   const rankedWithRoutes = expanded.length && navigate ? (intent?.excludeSeed ? [...expanded, ...lexical.slice(1)] : [lexical[0], ...expanded, ...lexical.slice(1)]) : lexical
   // MOCs and derived indexes stay in the traversal pool, but cannot crowd out
-  // source notes in the evidence returned to the lead agent.
+  // source notes in the evidence returned to the main agent.
   const ranked = rankedWithRoutes.filter((item) => isAnswerCandidate(graph.byId.get(item.path)))
   const candidatePool = [...ranked.map((item) => item.path), ...[...pool.keys()].filter((id) => !ranked.some((item) => item.path === id) && isAnswerCandidate(graph.byId.get(id)))]
   return {

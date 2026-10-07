@@ -53,7 +53,7 @@ It also reports up to 20 isolated notes and 10 high-degree notes. Isolation is a
 
 `recall-explore` remains optional. It starts from search and traverses at most two rounds for questions that explicitly ask about related notes, wikilinks, or a route through a shared index/MOC. It returns at most three results by default from a 12-note candidate budget. MOCs marked `canonical_memory: false` can act as bridges but do not occupy answer-evidence slots. Each traversed result includes a bounded trail with source, destination, direction, and relation. A backlink reverses traversal direction, not the asserted relationship. Existing search candidates can still act as bridges. The default autonomous traversal starts at the strongest seed; an evidence assessor can choose among up to three seeds.
 
-Limits: 64 examined references per note, 20,000 graph edges, 5,000 loaded notes; truncation is reported. The parser supports common Markdown patterns, not the complete Obsidian plugin ecosystem. Results remain `unverified`: the lead agent must read the evidence and handle conflicts/no-answer cases. Normal recall remains the simple default; graph traversal does not replace semantic retrieval for vocabulary gaps.
+Limits: 64 examined references per note, 20,000 graph edges, 5,000 loaded notes; truncation is reported. The parser supports common Markdown patterns, not the complete Obsidian plugin ecosystem. Results remain `unverified`: the main agent must read the evidence and handle conflicts/no-answer cases. Normal recall remains the simple default; graph traversal does not replace semantic retrieval for vocabulary gaps.
 
 ## Why this design
 

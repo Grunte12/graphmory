@@ -29,7 +29,7 @@ valid_until: YYYY-MM-DD
 ---
 ```
 
-For a lead-authored patch, preserve every `lifecycle.revalidate_when` condition as a separate item in a simple multiline YAML list. If the patch has no event triggers, no `revalidate_when` note field is required. Preserve `valid_until` as its own date only when the patch supplies it. Do not replace event triggers with a date.
+For a main-agent-authored patch, preserve every `lifecycle.revalidate_when` condition as a separate item in a simple multiline YAML list. If the patch has no event triggers, no `revalidate_when` note field is required. Preserve `valid_until` as its own date only when the patch supplies it. Do not replace event triggers with a date.
 
 Every canonical note should contain:
 

@@ -4,9 +4,9 @@ Names that appear in the guides and in the evaluation reports.
 
 | Term | Meaning |
 |---|---|
-| **Lead agent** | The main coding agent in your host. It decides what is worth remembering and owns the meaning of any new memory. |
+| **Main agent** | The coding agent you chat with in your host (other docs call it the lead or parent agent). It dispatches the Curator sub-agent, decides what is worth remembering and owns the meaning of any new memory. |
 | **Curator** | A small, cheap model running as a sub-agent in your host. It reads original notes, verifies evidence and returns a short cited Brain Brief. |
-| **Brain Brief** | The Curator's compact answer to the Lead: relevant notes with path and hash, plus `outcome` (`answered`, `partial`, `no-evidence`), `stop_reason` and `pages_read`. See [memory contracts](guides/memory-contracts.md). |
+| **Brain Brief** | The Curator's compact answer to the main agent: relevant notes with path and hash, plus `outcome` (`answered`, `partial`, `no-evidence`), `stop_reason` and `pages_read`. See [memory contracts](guides/memory-contracts.md). |
 | **Memory Patch** | A structured proposal for one memory: claim, why it matters, scope, provenance, confidence, type and lifecycle. `remember` checks it before anything is saved. |
 | **Receipt** | The hash-based proof that a write happened exactly as approved. |
 | **TENSION / BLOCKED / APPLIED** | The three results of `remember`: an overlap needs a decision, a check failed so nothing was written, or the note was saved. See [guarded writes](guides/mcp-remember.md). |

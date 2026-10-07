@@ -53,4 +53,4 @@ Return:
 - `stop_reason`: `nothing-relevant-left`, `evidence-sufficient`, `budget` or `scan-limit` (stop rule: `graphmory://guide/curator`, CLI section)
 - `pages_read`: recall pages read before stopping
 
-A `no-evidence` brief is a valid answer. The Lead must tell the user there is no supporting note; it must not fill the gap with a guess or an unsupported memory.
+A `no-evidence` brief is a valid answer. The main agent must tell the user there is no supporting note; it must not fill the gap with a guess or an unsupported memory.

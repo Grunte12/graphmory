@@ -1,6 +1,6 @@
 # Manual curator smoke test on a native host
 
-Use this once after installing Graphmory to verify the host can discover and actually dispatch the named curator, retrieve linked memory, apply a lead-authored patch, and check lifecycle/link state. This is a manual integration check; deterministic CLI tests do not prove native host dispatch.
+Use this once after installing Graphmory to verify the host can discover and actually dispatch the named curator, retrieve linked memory, apply a main-agent-authored patch, and check lifecycle/link state. This is a manual integration check; deterministic CLI tests do not prove native host dispatch.
 
 The commands below use Codex. The curator model override is an explicit smoke choice, not a Graphmory default. Substitute a small model ID available to the account if `gpt-5.6-luna` is unavailable.
 
@@ -96,17 +96,17 @@ graphmory-setup --host codex --scope project --project "$SMOKE_ROOT" --model gpt
 
 ## Verify actual discovery and read-only recall
 
-In the fresh Codex session opened on `SMOKE_ROOT`, replace `<VAULT>` below with the printed absolute value of `$VAULT`, then ask the lead to delegate a read-only task to the installed `graphmory_curator`:
+In the fresh Codex session opened on `SMOKE_ROOT`, replace `<VAULT>` below with the printed absolute value of `$VAULT`, then ask the main agent to delegate a read-only task to the installed `graphmory_curator`:
 
 > Use native named-agent dispatch to ask `graphmory_curator` what ownership rule the production runbook reaches by following its map. Give it the vault path `<VAULT>`. It should use `graphmory recall-managed --vault "<VAULT>" --query "What ownership rule does the production release runbook use?" --scope "01 Projects/Release" --agent`, inspect returned originals, then use `graphmory recall-explore --vault "<VAULT>" --query "What ownership note does the runbook reach through its MOC?" --scope "01 Projects/Release" --agent`. Follow the ownership note's historical-policy link to the old rule and E0. Return the source-backed path chain and quote E1. State explicitly that E1 proves who owns readiness, not who approves a release; report E0's conflicting approval rule or say approval remains unverified if E0 was not returned. Do not edit.
 
-Confirm the host shows a native child run for `graphmory_curator` and that the child read the installed `memory-curator` skill. A role file on disk or a lead's text claiming it delegated is not proof of dispatch. The recall result should identify the runbook-to-map-to-ownership route and cite the original evidence; graph traversal is a navigation aid, so the child must open the notes before treating the rule as supported.
+Confirm the host shows a native child run for `graphmory_curator` and that the child read the installed `memory-curator` skill. A role file on disk or the main agent's text claiming it delegated is not proof of dispatch. The recall result should identify the runbook-to-map-to-ownership route and cite the original evidence; graph traversal is a navigation aid, so the child must open the notes before treating the rule as supported.
 
-If the child did not start, report `dispatch unverified` and stop this smoke before asking the lead to simulate the child inline. Recheck project trust and session reload through the host, then repeat once.
+If the child did not start, report `dispatch unverified` and stop this smoke before asking the main agent to simulate the child inline. Recheck project trust and session reload through the host, then repeat once.
 
 ## Apply a supported patch and check lifecycle
 
-Ask the lead to author and pass this bounded patch to `graphmory_curator`:
+Ask the main agent to author and pass this bounded patch to `graphmory_curator`:
 
 ```json
 {
@@ -138,9 +138,9 @@ Save that JSON as `"$SMOKE_ROOT/patch.json"` outside the vault and run the schem
 graphmory validate-patch --input "$SMOKE_ROOT/patch.json" --agent
 ```
 
-Proceed only when it returns `valid: true`. This checks the patch shape only; it does not verify evidence, authorization, or lifecycle meaning. The lead still must explicitly authorize the E2 policy update and the named supersession below.
+Proceed only when it returns `valid: true`. This checks the patch shape only; it does not verify evidence, authorization, or lifecycle meaning. The main agent still must explicitly authorize the E2 policy update and the named supersession below.
 
-When delegating, the lead must say: “The synthetic user explicitly authorizes the E2 policy update and superseding only `01 Projects/Release/Old approval rule.md`. Preserve the E0/E1 evidence records.” The curator should open the E2 source and both target notes, apply the patch with the host's normal file-editing tools, retain E1, mark the old rule superseded with a replacement link, and return `APPLIED` with paths. In this default curator workflow it should not call `curate-plan`; that command is for hosted Jev/local decision workflows and does not edit notes.
+When delegating, the main agent must say: “The synthetic user explicitly authorizes the E2 policy update and superseding only `01 Projects/Release/Old approval rule.md`. Preserve the E0/E1 evidence records.” The curator should open the E2 source and both target notes, apply the patch with the host's normal file-editing tools, retain E1, mark the old rule superseded with a replacement link, and return `APPLIED` with paths. In this default curator workflow it should not call `curate-plan`; that command is for hosted Jev/local decision workflows and does not edit notes.
 
 Then verify the resulting files and reports:
 

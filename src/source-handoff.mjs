@@ -3,7 +3,7 @@ import { readSourceNotes } from "./source-read.mjs"
 
 const PROTOCOL = "graphmory-source-handoff-v1"
 
-// The lead supplies exact paths. This records identity, not relevance or authority.
+// The main agent supplies exact paths. This records identity, not relevance or authority.
 export function createSourceHandoff(vault, paths) {
   const vaultRoot = fs.realpathSync(vault)
   const originals = readSourceNotes(vaultRoot, paths)

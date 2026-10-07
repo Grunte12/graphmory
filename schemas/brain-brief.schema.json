@@ -20,7 +20,7 @@
         "partial"
       ],
       "default": "answered",
-      "description": "no-evidence means recall found nothing that supports an answer; the Lead must say \"no supporting note\" and not guess."
+      "description": "no-evidence means recall found nothing that supports an answer; the main agent must say \"no supporting note\" and not guess."
     },
     "stop_reason": {
       "type": "string",

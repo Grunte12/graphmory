@@ -21,9 +21,9 @@ This adapter connects any AI coding agent to Graphmory. The recommended transpor
 3. Commands such as `recall`, `health`, `lifecycle-audit`, and `brain-sync` operate
    directly on that directory via `scripts/brain-sync.mjs`.
 4. Memory Patches are written as Markdown files in the vault.
-5. Git sync is managed by the lead agent via `sync-plan` / `push` commands.
+5. Git sync is managed by the main agent via `sync-plan` / `push` commands.
 
-Write new canonical notes in concise English and let the lead agent answer in the user's chosen language. Keep exact identifiers and provenance. See the [language and token budget guide](../../docs/guides/token-efficient-language.md).
+Write new canonical notes in concise English and let the main agent answer in the user's chosen language. Keep exact identifiers and provenance. See the [language and token budget guide](../../docs/guides/token-efficient-language.md).
 
 ## When to Change Transport
 

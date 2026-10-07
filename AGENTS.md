@@ -24,11 +24,11 @@ Graphmory adds a durable Markdown memory layer for coding agents. The tool repo 
    # OpenCode's copied launcher: node <target>/bin/graphmory.mjs doctor --json
    ```
 5. Apply the adapter for your runtime. For OpenCode, review and apply the files under `adapters/opencode/`:
-   - Merge `AGENTS.snippet.md` into the lead agent instructions.
+   - Merge `AGENTS.snippet.md` into the main agent instructions.
    - In curator mode, use `memory-curator-prompt.md` as the `memory_curator` sub-agent prompt and `opencode.agent.example.json` as its configuration template.
-   - In Jev/local decision modes, route managed recall directly to the lead agent.
+   - In Jev/local decision modes, route managed recall directly to the main agent.
    See `docs/guides/install.md#opencode-adapter` for detailed instructions.
-   For Codex, Cursor, or Claude Code, follow `docs/guides/agent-hosts.md` to select a vault and add the short lead-agent instruction.
+   For Codex, Cursor, or Claude Code, follow `docs/guides/agent-hosts.md` to select a vault and add the short main-agent instruction.
 6. If the user wants portable memory across machines/accounts, read `docs/guides/portable-brain-sync.md`.
 7. If setup or a command fails, run `doctor --json` and follow `docs/guides/troubleshooting.md`.
 8. Do not edit the user's agent config until you know which adapter they use.
@@ -95,11 +95,11 @@ Read the MCP resources `graphmory://guide/recall` and `graphmory://guide/remembe
 
 ## Memory Roles
 
-- Write new canonical memory in concise English; the lead agent answers the user in their chosen language. Preserve exact identifiers and provenance, and do not create translated duplicate notes. See `docs/guides/token-efficient-language.md`.
+- Write new canonical memory in concise English; the main agent answers the user in their chosen language. Preserve exact identifiers and provenance, and do not create translated duplicate notes. See `docs/guides/token-efficient-language.md`.
 
-- Lead agent: decides what was learned and writes the Memory Patch.
+- Main agent: decides what was learned and writes the Memory Patch.
 - In curator mode, Memory Curator retrieves, places, links, deduplicates, and validates memory without inventing missing facts.
-- In hosted Jev and local decision modes, the selected decision engine judges bounded retrieval candidates directly. In local rerank mode, a local model only reorders candidates and the lead agent checks whether the evidence answers the query. The lead agent remains responsible for prose and Memory Patch authorship; no curator sub-agent is dispatched for these recall modes.
+- In hosted Jev and local decision modes, the selected decision engine judges bounded retrieval candidates directly. In local rerank mode, a local model only reorders candidates and the main agent checks whether the evidence answers the query. The main agent remains responsible for prose and Memory Patch authorship; no curator sub-agent is dispatched for these recall modes.
 - Markdown/Obsidian vault: canonical operational memory.
 - GitHub brain repo: optional private sync target for portable memory.
 
@@ -198,7 +198,7 @@ If the user decision is not available, return `BLOCKED` with the smallest decisi
 
 ## Shared Brain Sync
 
-When multiple agents use the same private brain repo, each runtime should use its own local clone. At session start and before a Brain Brief that depends on current shared state, the lead agent runs:
+When multiple agents use the same private brain repo, each runtime should use its own local clone. At session start and before a Brain Brief that depends on current shared state, the main agent runs:
 
 ```sh
 node <graphmory-path>/scripts/brain-sync.mjs auto-pull --vault "<vault-path>" --json

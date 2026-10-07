@@ -32,8 +32,8 @@ export function curatorModelCheck({ home = os.homedir() } = {}) {
   const unpinned = found.filter((entry) => !isPinned(entry.model))
   if (unpinned.length) {
     return { id: "curator-model", status: "warn", required: false,
-      detail: `${unpinned.map((entry) => entry.host).join(", ")} Curator agent does not pin a model and may inherit the lead model`,
-      fix: "Run 'graphmory-setup --host <host> --model <inexpensive-model-id>' so the Curator never uses the lead model." }
+      detail: `${unpinned.map((entry) => entry.host).join(", ")} Curator agent does not pin a model and may inherit the main agent's model`,
+      fix: "Run 'graphmory-setup --host <host> --model <inexpensive-model-id>' so the Curator never uses the main agent's model." }
   }
   return { id: "curator-model", status: "pass", required: false, detail: found.map((entry) => `${entry.host}: ${entry.model}`).join("; "), model: found[0].model, fix: null }
 }

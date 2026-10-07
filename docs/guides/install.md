@@ -86,14 +86,14 @@ Install the shared `graphmory` CLI with `npm install -g .` first, including its 
 
 After the installer has copied the skill, CLI, and src modules to `<target>`, apply the adapter files under `adapters/opencode/` to your OpenCode runtime:
 
-1. **Merge `AGENTS.snippet.md` into your lead agent instructions.**
-   Open `adapters/opencode/AGENTS.snippet.md` and insert its durable-memory rules into the main agent or orchestrator prompt. This gives the lead agent the memory protocol (auto-pull, Brain Briefs, Memory Patches, health checks, conflict assist, etc.).
+1. **Merge `AGENTS.snippet.md` into your main agent instructions.**
+   Open `adapters/opencode/AGENTS.snippet.md` and insert its durable-memory rules into the main agent or orchestrator prompt. This gives the main agent the memory protocol (auto-pull, Brain Briefs, Memory Patches, health checks, conflict assist, etc.).
 
 2. **Use `memory-curator-prompt.md` as the `memory_curator` sub-agent prompt.**
    Set this file's full content as the prompt for your `memory_curator` sub-agent. It defines the three recall/synthesis/consolidation modes and the `APPLIED`/`TENSION`/`BLOCKED` return contract.
 
 3. **Use `opencode.agent.example.json` as a sub-agent configuration template.**
-   Copy the agent definition from this file and adjust the `prompt` field to paste the contents of `memory-curator-prompt.md`. The example grants `read`, `edit`, `glob`, `grep`, `list`, and `external_directory`; it asks before each `bash` command so the curator can run the Graphmory CLI, and denies `task`, `webfetch`, and `websearch`. Keep the curator in `subagent` mode. If the lead agent denies `task`/`subtask`, allow only this named curator in the lead's dispatch permission; do not enable unrestricted sub-agent launching. If an installed OpenCode plugin has a separate capability allowlist, permit `memory_curator` to run the Graphmory CLI while preserving its command approval rules and other agents' permissions.
+   Copy the agent definition from this file and adjust the `prompt` field to paste the contents of `memory-curator-prompt.md`. The example grants `read`, `edit`, `glob`, `grep`, `list`, and `external_directory`; it asks before each `bash` command so the curator can run the Graphmory CLI, and denies `task`, `webfetch`, and `websearch`. Keep the curator in `subagent` mode. If the main agent denies `task`/`subtask`, allow only this named curator in the main agent's dispatch permission; do not enable unrestricted sub-agent launching. If an installed OpenCode plugin has a separate capability allowlist, permit `memory_curator` to run the Graphmory CLI while preserving its command approval rules and other agents' permissions.
 
 4. **Add `<target>/bin/` to your `PATH`** so you can run `graphmory.mjs` from any directory without `node <target>/bin/...`.
 
@@ -132,7 +132,7 @@ If you are not using OpenCode, keep the same boundary:
 3. The memory curator finds the target note, checks conflicts, and returns `APPLIED`, `TENSION`, or `BLOCKED`.
 4. Future work asks the curator for a bounded Brain Brief before loading broad memory.
 
-The memory curator may be cheap. It should not decide what the system learned; it should place, link, and lint the lead-agent-authored patch.
+The memory curator may be cheap. It should not decide what the system learned; it should place, link, and lint the main-agent-authored patch.
 
 ## Verify
 

@@ -11,7 +11,7 @@ Verified lessons become Memory Patches that survive across sessions.
 
 ## Harness Pillars
 
-1. **Lead agent** authors Memory Patches after verified work.
+1. **Main agent** authors Memory Patches after verified work.
 2. **Memory Curator** retrieves, deduplicates, links, and validates.
 3. **Brain Briefs** provide bounded recall.
 4. **Derived indexes and hot context packs** are cache-friendly non-canonical views.

@@ -20,7 +20,7 @@ Lifecycle filtering is also applied before traversal so excluded notes cannot ac
 
 ## Responsibility Boundary
 
-The lead agent has the richest task context. It owns the semantic decision:
+The main agent has the richest task context. It owns the semantic decision:
 
 - Is this worth remembering?
 - What exactly changed?
@@ -48,7 +48,7 @@ Every Memory Patch includes lifecycle metadata:
 - optional `valid_until`,
 - optional `supersedes`.
 
-This is the harness's answer to stale context risk. A remembered claim should not remain authoritative merely because it was saved. If the trigger condition fires, the lead agent should treat the memory as a candidate for revalidation before relying on it.
+This is the harness's answer to stale context risk. A remembered claim should not remain authoritative merely because it was saved. If the trigger condition fires, the main agent should treat the memory as a candidate for revalidation before relying on it.
 
 ## Memory Layers
 
@@ -96,7 +96,7 @@ Markdown note -> canonical operational memory
 Memory Patch -> only durable write path
 ```
 
-The index may point to relationships, files, symbols, or notes. It must not claim that a generated edge is accepted memory. If an index reveals a durable lesson, the lead agent still authors a Memory Patch and the curator still returns `APPLIED`, `TENSION`, or `BLOCKED`.
+The index may point to relationships, files, symbols, or notes. It must not claim that a generated edge is accepted memory. If an index reveals a durable lesson, the main agent still authors a Memory Patch and the curator still returns `APPLIED`, `TENSION`, or `BLOCKED`.
 
 ### Hot Context Pack
 
@@ -115,7 +115,7 @@ It exists to make repeated agent sessions cheaper and more consistent. It is not
 
 1. Complete and verify a task.
 2. Apply the significance gate.
-3. Lead agent emits a valid Memory Patch.
+3. Main agent emits a valid Memory Patch.
 4. Curator searches the relevant project map and nearby notes.
 5. Curator returns `APPLIED`, `TENSION`, or `BLOCKED`.
 6. A deterministic validator checks contract shape and patch quality.
@@ -135,7 +135,7 @@ The Learning Packet contract records the lesson, trigger, future behavior change
 
 ## Recall Flow
 
-1. Lead agent asks a narrow memory question.
+1. Main agent asks a narrow memory question.
 2. Curator starts from the project map or index.
 3. Curator follows only relevant links.
 4. Curator reads additional pages and full source notes while evidence is
@@ -144,7 +144,7 @@ The Learning Packet contract records the lesson, trigger, future behavior change
 5. Curator returns a concise Brain Brief with supported claims, source paths,
    unresolved conflicts and missing evidence. Summary length does not establish
    that retrieval was complete.
-6. Lead agent may inspect the named originals when exact nuance matters; there
+6. Main agent may inspect the named originals when exact nuance matters; there
    is no fixed three-note limit. Trace the actual notes read and stop reason so
    evaluation can detect premature stopping or unsupported summaries.
 
