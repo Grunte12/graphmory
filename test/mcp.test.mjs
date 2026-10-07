@@ -167,7 +167,7 @@ test("remember one-call apply, exact replay and supersession preserve source and
   assert.equal(fs.readFileSync(path.join(f.vault, "Old.md"), "utf8"), updatedOld)
 })
 
-test("remember refuses unsupported review, stale sources, undeclared provenance, existing target and low confidence", async t => {
+test("remember refuses unsupported review, stale sources, undeclared provenance, an ambiguous existing record and low confidence", async t => {
   const f = fixture(t, 1)
   const unsupported = input(); unsupported.curation.supportVerified = false
   assert.equal((await f.engine.remember(unsupported)).code, "REVIEW_REQUIRED")
@@ -175,11 +175,41 @@ test("remember refuses unsupported review, stale sources, undeclared provenance,
   assert.equal((await f.engine.remember(stale)).code, "STALE_SOURCE")
   const unbound = input(); unbound.curation.patch.provenance[0].value = "Unknown quote"
   assert.equal((await f.engine.remember(unbound)).code, "UNRESOLVED_PROVENANCE")
-  const occupied = input("N0.md"); occupied.curation.targetHashes["N0.md"] = digest(fs.readFileSync(path.join(f.vault, "N0.md")))
+  const ambiguous = "# Two records\n<!-- graphmory-patch-record:v1:start -->\n<!-- graphmory-patch-record:v1:end -->\n<!-- graphmory-patch-record:v1:start -->\n<!-- graphmory-patch-record:v1:end -->\n"
+  fs.writeFileSync(path.join(f.vault, "Ambiguous.md"), ambiguous)
+  const occupied = input("Ambiguous.md"); occupied.curation.targetHashes["Ambiguous.md"] = digest(ambiguous)
   assert.equal((await f.engine.remember(occupied)).code, "NEEDS_CURATION")
   const uncertain = input(); uncertain.curation.patch.confidence = "low"
   assert.equal((await f.engine.remember(uncertain)).code, "LOW_CONFIDENCE")
   assert.equal(inspectCurationCheckpoint(f).blocked, false)
+})
+
+test("remember places the record into an existing note, keeps the owner's content and updates it again later", async t => {
+  const f = fixture(t, 1)
+  const note = "---\ntags: [release]\ntype: scratch\nstatus: draft\n---\n# Hotfix runbook\n\nOwner notes stay here.\n\n## Steps\n1. Page the commander.\n"
+  fs.writeFileSync(path.join(f.vault, "Runbook.md"), note)
+  const request = input("Runbook.md"); request.curation.targetHashes["Runbook.md"] = digest(note)
+  const applied = await f.engine.remember(request)
+  assert.equal(applied.status, "APPLIED", JSON.stringify(applied))
+  const merged = fs.readFileSync(path.join(f.vault, "Runbook.md"), "utf8")
+  assert.match(merged, /^---\ntype: decision\n/)
+  assert.match(merged, /tags: \[release\]/)
+  assert.doesNotMatch(merged, /type: scratch|status: draft/)
+  assert.match(merged, /# Hotfix runbook\n\n<!-- graphmory-patch-record:v1:start -->/)
+  assert.match(merged, /Owner notes stay here\.\n\n## Steps\n1\. Page the commander\.\n$/)
+  assert.equal(applied.receipt.targetHashes["Runbook.md"], digest(merged))
+
+  const revised = input("Runbook.md"); revised.curation.targetHashes["Runbook.md"] = digest(merged)
+  revised.claim = revised.curation.patch.claim = "Hotfix deployments need a named incident commander and a scribe on call."
+  const again = await f.engine.remember(revised)
+  assert.equal(again.status, "APPLIED", JSON.stringify(again))
+  const updated = fs.readFileSync(path.join(f.vault, "Runbook.md"), "utf8")
+  assert.equal(updated.match(/graphmory-patch-record:v1:start/g).length, 1)
+  assert.match(updated, /and a scribe on call/)
+  assert.match(updated, /Owner notes stay here\./)
+
+  const stale = input("Runbook.md"); stale.curation.targetHashes["Runbook.md"] = digest(note)
+  assert.equal((await f.engine.remember(stale)).code, "TARGET_CHANGED")
 })
 
 test("source drift after prepare remains pending and prevents resume", async t => {

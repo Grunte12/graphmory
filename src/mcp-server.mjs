@@ -31,7 +31,7 @@ const schemas = {
 const descriptions = {
   recall: "Find cited evidence in project memory. No candidates means no supporting note; say so instead of guessing.",
   read: "Open the original sections of recalled notes.",
-  remember: "Save a decision with its evidence. Returns APPLIED with a receipt hash, TENSION when an active note conflicts (nothing written) or BLOCKED when review is needed (nothing written).",
+  remember: "Save a decision with its evidence in a new note, or update an existing note while keeping its other content. Returns APPLIED with a receipt hash, TENSION when an active note conflicts (nothing written) or BLOCKED when review is needed (nothing written).",
 }
 const guides = {
   "graphmory://guide/recall": ["Recall and citation", new URL("../docs/guides/mcp-recall.md", import.meta.url)],

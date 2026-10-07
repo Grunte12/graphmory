@@ -103,6 +103,56 @@ export function renderPatchRecord(patch) {
   return frontmatter + "\n# " + renderHeading(patch.claim) + "\n\n" + START_MARKER + "\n" + rows + END_MARKER + "\n"
 }
 
+// Frontmatter keys the record owns; aliases go too so the merged note has one canonical key each.
+const OWNED_KEYS = new Set(["type", "confidence", "status", "lifecycle", "patch_digest", "graphmory_record_format",
+  "revalidate_when", "revalidate-when", "revalidate", "valid_until", "valid-until", "validuntil", "supersedes"])
+
+// Places the canonical record into an existing note: owned frontmatter keys and the one record block
+// are replaced, everything else the owner wrote stays. A new note gets the full projection.
+export function placePatchRecord(existing, patch) {
+  const rendered = renderPatchRecord(patch)
+  if (existing === null || existing === undefined) return rendered
+  const newline = existing.includes("\r\n") ? "\r\n" : "\n"
+  const lines = existing.replace(/\r\n?/gu, "\n").split("\n")
+  const renderedLines = rendered.split("\n")
+  const ownedFrontmatter = renderedLines.slice(1, renderedLines.indexOf("---", 1))
+  const recordLines = renderedLines.slice(renderedLines.indexOf(START_MARKER), renderedLines.indexOf(END_MARKER) + 1)
+
+  let kept = []
+  let body = lines
+  if (lines[0]?.trim() === "---") {
+    const close = lines.findIndex((line, index) => index > 0 && /^\s*(?:---|\.\.\.)\s*$/u.test(line))
+    if (close < 0) throw new Error("NEEDS_CURATION: existing frontmatter is unterminated")
+    let dropping = false
+    for (const line of lines.slice(1, close)) {
+      const key = /^([A-Za-z0-9_-]+):/u.exec(line)?.[1]?.toLowerCase()
+      if (key) dropping = OWNED_KEYS.has(key)
+      else if (!/^(?:\s+\S|\s*-\s)/u.test(line)) dropping = false
+      if (!dropping) kept.push(line)
+    }
+    body = lines.slice(close + 1)
+  }
+
+  let fence = null
+  const starts = [], ends = []
+  let heading = -1
+  body.forEach((line, index) => {
+    const marker = /^ {0,3}(`{3,}|~{3,})/u.exec(line)
+    if (fence) { if (marker && marker[1][0] === fence) fence = null; return }
+    if (marker) { fence = marker[1][0]; return }
+    if (line.trim() === START_MARKER) starts.push(index)
+    if (line.trim() === END_MARKER) ends.push(index)
+    if (heading < 0 && /^# \S/u.test(line)) heading = index
+  })
+  if (starts.length > 1 || ends.length > 1 || starts.length !== ends.length || (starts.length && ends[0] < starts[0])) {
+    throw new Error("NEEDS_CURATION: existing note has an ambiguous patch record")
+  }
+  if (starts.length) body = [...body.slice(0, starts[0]), ...recordLines, ...body.slice(ends[0] + 1)]
+  else if (heading >= 0) body = [...body.slice(0, heading + 1), "", ...recordLines, ...body.slice(heading + 1)]
+  else body = ["", ...recordLines, ...body]
+  return ["---", ...ownedFrontmatter, ...kept, "---", ...body].join(newline)
+}
+
 function renderHeading(claim) {
   let title = String(claim).replace(/[\u0000-\u001f\u007f]/gu, " ").replace(/\s+/gu, " ").trim()
   for (const character of ["\\", "`", "*", "_", "[", "]", "<", ">"])

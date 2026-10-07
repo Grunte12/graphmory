@@ -7,7 +7,7 @@ import { loadVaultDocuments } from "./memory-recall.mjs"
 import { readSourceNotes } from "./source-read.mjs"
 import { withAgentReadAuthority, beginAgentRead } from "./read-authority.mjs"
 import { prepareCurationCheckpoint, finishCurationCheckpoint, verifyCurationWriteBinding } from "./curation-checkpoint.mjs"
-import { renderPatchRecord } from "./patch-record.mjs"
+import { renderPatchRecord, placePatchRecord } from "./patch-record.mjs"
 import { scanTextForSecrets, safeMigrationPath, assertRealPathInsideVault } from "./brain-sync.mjs"
 import { writeFileAtomic } from "./atomic-write.mjs"
 import { enqueueReview } from "./review-queue.mjs"
@@ -140,7 +140,7 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
         if (!patch || !target || !targetHashes) return { status: "BLOCKED", ...publicError(fail("NEEDS_CURATION", "")), step: "needs_curation" }
         if (!supportVerified || !conflictsReviewed || !authorized) throw fail("REVIEW_REQUIRED", "Host review and authorization required")
         if (patch?.claim !== claim || JSON.stringify(patch?.scope) !== JSON.stringify(scope)) throw fail("PATCH_BINDING_MISMATCH", "Claim and scope must match patch")
-        const record = renderPatchRecord(patch)
+        renderPatchRecord(patch) // Rejects a patch outside the record contract before any vault check.
         if (scanTextForSecrets(JSON.stringify(input)).length) throw fail("SECRET", "Secret-like content refused")
         if (safeMigrationPath(target, "target") !== target || !target.endsWith(".md")) throw fail("INVALID_TARGET", "Exact Markdown target required")
         const predecessors = patch.lifecycle.supersedes ?? []
@@ -175,8 +175,8 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
             const actual = fs.existsSync(file) ? readSourceNotes(vault, [relative]).sources[0].sha256 : null
             if (!Object.hasOwn(targetHashes, relative) || actual !== targetHashes[relative]) throw fail("TARGET_CHANGED", "Target changed since review")
           }
-          // Deterministic placement creates a new canonical note; existing notes are preserved.
-          if (fs.existsSync(absolute) && fs.readFileSync(absolute, "utf8") !== record) throw fail("NEEDS_CURATION", "Existing target requires reviewed merge via CLI")
+          // Placement into an existing note keeps the owner's content; check it can be placed before preparing.
+          placePatchRecord(fs.existsSync(absolute) ? fs.readFileSync(absolute, "utf8") : null, patch)
           // The host attests it reviewed conflicts, but the engine still checks that it looked at every
           // overlapping active note, by current hash. The host decides; the engine refuses to skip the question.
           const overlapping = findOverlappingNotes({ documents: documents().documents, patch, exclude: [...targets, ...sources] })
@@ -195,11 +195,13 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
         if (stage === "prepare") return { status: "BLOCKED", code: "NEEDS_CURATION", step: "needs_curation", checkpoint: operation,
           message: "Complete this reviewed placement using remember with curation.operation and current target hashes." }
         verifyCurationWriteBinding({ vault, stateRoot, operation, patch, targets, sources, expectedHashes: targetHashes })
-        if (fs.existsSync(absolute) && fs.readFileSync(absolute, "utf8") !== record) throw fail("NEEDS_CURATION", "Existing content cannot be overwritten")
+        // The binding check above confirmed the target still has its reviewed bytes, so placement is deterministic.
+        const current = fs.existsSync(absolute) ? fs.readFileSync(absolute, "utf8") : null
+        const placed = placePatchRecord(current, patch)
         fs.mkdirSync(path.dirname(absolute), { recursive: true })
         // Binding check includes the full inventory immediately before the write.
         assertRealPathInsideVault(fs, vault, absolute, "target")
-        writeFileAtomic(absolute, record)
+        if (placed !== current) writeFileAtomic(absolute, placed)
         const finished = finishCurationCheckpoint({ vault, stateRoot, operation, patch, notePath: target })
         indexes.clear()
         return { status: "APPLIED", receipt: { ...compactReceipt(finished.receipt), ...(options.ownerApprovedReview ? { approvedBy: "owner", reviewId: options.ownerApprovedReview } : {}) } }
