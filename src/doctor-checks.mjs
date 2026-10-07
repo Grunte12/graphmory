@@ -1,16 +1,18 @@
 import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
+import { fileURLToPath } from "node:url"
 import { DEFAULT_MODEL } from "./semantic-recall.mjs"
 
 export const MCP_TOOLS = ["recall", "read", "remember"]
 
 // Where graphmory-setup writes the user-scope Curator agent for each host (docs/guides/agent-hosts.md).
 const HOST_AGENTS = [
-  { host: "codex", file: [".codex", "agents", "graphmory_curator.toml"], toml: true, model: /^\s*model\s*=\s*["']([^"']+)["']/mu },
-  { host: "claude", file: [".claude", "agents", "graphmory-curator.md"], model: /^model:\s*["']?([^\s"']+)/mu },
-  { host: "cursor", file: [".cursor", "agents", "graphmory-curator.md"], model: /^model:\s*["']?([^\s"']+)/mu },
+  { host: "codex", file: [".codex", "agents", "graphmory_curator.toml"], skill: [".agents", "skills", "memory-curator"], toml: true, model: /^\s*model\s*=\s*["']([^"']+)["']/mu },
+  { host: "claude", file: [".claude", "agents", "graphmory-curator.md"], skill: [".claude", "skills", "memory-curator"], model: /^model:\s*["']?([^\s"']+)/mu },
+  { host: "cursor", file: [".cursor", "agents", "graphmory-curator.md"], skill: [".cursor", "skills", "memory-curator"], model: /^model:\s*["']?([^\s"']+)/mu },
 ]
+const PACKAGE_SKILL = fileURLToPath(new URL("../skills/memory-curator", import.meta.url))
 
 const isPinned = (model) => Boolean(model) && model.toLowerCase() !== "inherit"
 
@@ -34,6 +36,29 @@ export function curatorModelCheck({ home = os.homedir() } = {}) {
       fix: "Run 'graphmory-setup --host <host> --model <inexpensive-model-id>' so the Curator never uses the lead model." }
   }
   return { id: "curator-model", status: "pass", required: false, detail: found.map((entry) => `${entry.host}: ${entry.model}`).join("; "), model: found[0].model, fix: null }
+}
+
+// graphmory-setup copies the skill and prompt; a later package update does not change those copies.
+export function curatorFreshnessCheck({ home = os.homedir(), packageSkill = PACKAGE_SKILL } = {}) {
+  const prompt = fs.readFileSync(path.join(packageSkill, "references", "curator-agent.md"), "utf8").trim()
+  const files = (directory) => fs.readdirSync(directory, { recursive: true }).filter((file) => fs.statSync(path.join(directory, file)).isFile()).sort()
+  const expected = files(packageSkill)
+  const outdated = []
+  for (const agent of HOST_AGENTS) {
+    let source
+    try { source = fs.readFileSync(path.join(home, ...agent.file), "utf8") } catch { continue }
+    const skillDir = path.join(home, ...agent.skill)
+    const skillCurrent = fs.existsSync(skillDir) && JSON.stringify(files(skillDir)) === JSON.stringify(expected)
+      && expected.every((file) => fs.readFileSync(path.join(skillDir, file)).equals(fs.readFileSync(path.join(packageSkill, file))))
+    const promptCurrent = source.includes(agent.toml ? JSON.stringify(prompt).slice(1, -1) : prompt)
+    if (!skillCurrent || !promptCurrent) outdated.push(agent.host)
+  }
+  if (outdated.length) {
+    return { id: "curator-current", status: "warn", required: false,
+      detail: `${outdated.join(", ")} Curator agent or skill is older than this Graphmory version`,
+      fix: outdated.map((host) => `graphmory-setup --host ${host} --apply --update`).join("; ") + " (keeps your model and a backup)" }
+  }
+  return { id: "curator-current", status: "pass", required: false, detail: "Curator agent and skill match this Graphmory version", fix: null }
 }
 
 export async function mcpToolsCheck() {
@@ -91,6 +116,7 @@ export function doctorSummaryLines(checks) {
   if (vault) lines.push(vault.status === "pass" && by("vault-permission")?.status !== "fail" ? "vault ok" : "vault: needs attention")
   const curator = by("curator-model")
   if (curator) lines.push(curator.status === "pass" ? `curator model ok (${curator.model})` : "curator model: needs attention")
+  if (by("curator-current")?.status === "warn") lines.push("curator: update available")
   const tools = by("mcp-tools")
   if (tools) lines.push(tools.status === "pass" ? tools.detail : "mcp tools: needs attention")
   const semantic = by("semantic-backend")

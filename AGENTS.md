@@ -13,10 +13,10 @@ Graphmory adds a durable Markdown memory layer for coding agents. The tool repo 
 3. Follow the [agent-guided setup](adapters/generic-agent/INSTALL.md#agent-guided-setup): inspect the host and machine, ask the user for missing choices, and keep those answers in the conversation. For Codex, Cursor, or Claude Code, the optional helper can preview and write the named curator agent after the host format and model are confirmed:
    ```sh
    npm install -g .
-   graphmory-setup --host codex
-   graphmory-setup --host codex --apply
+   graphmory-setup --host codex --choices
+   graphmory-setup --host codex --model <chosen model> --apply
    ```
-   Replace `codex` with `claude` or `cursor` for that host. Cursor requires `--model <host-model-id>`. If the helper does not fit the host, follow its current agent/skill documentation and create the files manually. For OpenCode, run `node scripts/install.mjs --target "<agent-config-root>"` and follow `docs/guides/install.md#opencode-adapter`. Do not overwrite an existing host agent or skill.
+   Set up only the host you are running in. `--choices` lists the models that host reports; suggest 2-4 by the guidance in that output and let the user pick. Replace `codex` with `claude` or `cursor` for that host. Setup never picks the model. If the helper does not fit the host, follow its current agent/skill documentation and create the files manually. For OpenCode, run `node scripts/install.mjs --target "<agent-config-root>"` and follow `docs/guides/install.md#opencode-adapter`. Do not overwrite an existing host agent or skill.
    Choose the Obsidian/Markdown [vault layout](docs/guides/vault-setup.md) in the same interview; show the resolved `--vault` path and minimal path tree before creating files. Local-only memory does not need GitHub sync.
 4. Verify the selected CLI works after installation:
    ```sh

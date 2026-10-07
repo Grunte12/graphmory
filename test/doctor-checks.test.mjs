@@ -5,7 +5,7 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
-import { curatorModelCheck, doctorSummaryLines, mcpToolsCheck, semanticBackendCheck } from "../src/doctor-checks.mjs"
+import { curatorFreshnessCheck, curatorModelCheck, doctorSummaryLines, mcpToolsCheck, semanticBackendCheck } from "../src/doctor-checks.mjs"
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const cli = path.join(repoRoot, "scripts", "brain-sync.mjs")
@@ -95,4 +95,19 @@ test("semantic-warmup is an explicit command and reports a missing dependency in
   const help = spawnSync(process.execPath, [cli, "help"], { cwd: repoRoot, encoding: "utf8" })
   assert.match(help.stdout, /semantic-warmup/)
   assert.match(help.stdout, /review list/)
+})
+
+test("curator freshness check warns when the installed curator is older than the package", () => {
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), "graphmory-fresh-"))
+  try {
+    assert.equal(spawnSync(process.execPath, [path.resolve("scripts/setup-curator-agent.mjs"), "--host", "claude", "--scope", "project", "--project", home, "--model", "haiku", "--apply"], { encoding: "utf8" }).status, 0)
+    assert.equal(curatorFreshnessCheck({ home }).status, "pass")
+    fs.appendFileSync(path.join(home, ".claude", "skills", "memory-curator", "SKILL.md"), "\nold\n")
+    const check = curatorFreshnessCheck({ home })
+    assert.equal(check.status, "warn")
+    assert.match(check.fix, /graphmory-setup --host claude --apply --update/)
+    assert.ok(doctorSummaryLines([check]).includes("curator: update available"))
+  } finally {
+    fs.rmSync(home, { recursive: true, force: true })
+  }
 })

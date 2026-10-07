@@ -17,14 +17,20 @@ The npm package is not published yet. `npm install -g .` may link this checkout;
 
 ## 2. Install the curator agent and skill
 
-For a supported host, the agent may use this helper after confirming the host format and model. Preview first, then apply. The setup command does not overwrite existing agent or skill files:
+For a supported host, the agent may use this helper after confirming the host format and model. Preview first, then apply. The setup command does not overwrite existing agent or skill files unless you pass `--update`:
 
 ```sh
-graphmory-setup --host codex
-graphmory-setup --host codex --apply
+graphmory-setup --host codex --choices
+graphmory-setup --host codex --model <chosen model> --apply
 ```
 
-Replace `codex` with `claude` or `cursor`. Codex defaults to `gpt-6-luna`; Claude Code defaults to `haiku`. Cursor requires `--model <model-id>` because `inherit` may use the lead model. Choose an ID available to your host and subscription. Use `--scope project --project <path>` for one workspace rather than the default user scope. Run this once per host you use. Restart or start a fresh session if it does not see the new agent. For project-scoped Codex files, open the project as trusted in Codex; do not change global trust settings just for Graphmory. The script installs the skill and a `graphmory_curator` (Codex) or `graphmory-curator` (Claude/Cursor) agent definition. It does not set up the vault or change existing global lead instructions.
+The Curator is a specialist sub-agent, not a general one: its prompt (`skills/memory-curator/references/curator-agent.md`) gives it one job, a fixed set of tools (the Graphmory MCP `recall`, `read` and `remember`) and the memory-curator skill.
+
+Setup never picks the model, and each host's agent sets up only its own Curator: Codex for Codex, Cursor for Cursor. `--host <host> --choices` lists the models that host reports: Codex from `~/.codex/models_cache.json` (with each model's reasoning efforts), Cursor from `cursor-agent models`, and Claude Code its `haiku`, `sonnet` and `opus` aliases (Claude Code has no listing command). The output carries `guidance` for the installing agent: suggest 2-4 models, the newest fast, low-cost tier first, and let the user pick or type another. Pass the answer with `--model <id>` (and `--effort <level>` for Codex). In an interactive terminal, `--apply` without `--model` shows the same list.
+
+Setup copies the skill and prompt, so a newer Graphmory does not change an existing install. `graphmory doctor` shows `curator: update available` when the copies are older. Then run `graphmory-setup --host <host> --apply --update`: it keeps the installed model and reasoning effort unless you pass new ones, and moves the old files to a `graphmory-backups` folder next to the skills folder.
+
+Replace `codex` with `claude` or `cursor`. `inherit` is refused because it would use the lead model. Use `--scope project --project <path>` for one workspace rather than the default user scope. Run this once per host you use. Restart or start a fresh session if it does not see the new agent. For project-scoped Codex files, open the project as trusted in Codex; do not change global trust settings just for Graphmory. The script installs the skill and a `graphmory_curator` (Codex) or `graphmory-curator` (Claude/Cursor) agent definition. It does not set up the vault or change existing global lead instructions.
 
 Model catalog visibility does not prove account support. If the host rejects the default, preview setup with an explicitly supported inexpensive model, such as `--model gpt-5.6-luna`, before applying. Verify an actual child run; do not silently fall back to the lead model.
 
