@@ -27,6 +27,16 @@ export function publicError(error) {
     NEEDS_CURATION: "Supply a complete Memory Patch and reviewed placement in remember.curation.",
     REVIEW_REQUIRED: "Complete the missing host reviews listed in missingFields before writing; do not attest to checks that were not performed.",
     LOW_CONFIDENCE: "Low-confidence memory waits for the owner's decision. Tell the user it is queued; do not retry or raise the confidence.",
+    SECRET: "The request contains a secret-like value (password, token, key or credential). Remove it; never store secrets in memory.",
+    INVALID_TARGET: "Target must be one exact vault-relative Markdown path inside the vault, listed once.",
+    INVALID_CURSOR: "The cursor is not one this server issued. Repeat recall without a cursor.",
+    STALE_CURSOR: "The vault or query changed since this cursor was issued. Repeat recall without a cursor.",
+    SECTION_NOT_FOUND: "No heading with that exact text. Read the whole note to see its headings.",
+    UNRESOLVED_PROVENANCE: "Every provenance item must match evidence: vault files as {path, hash} evidence, user statements as exact {quote} evidence, external files as an absolute path with #sha256=<hex>.",
+    PATCH_BINDING_MISMATCH: "The outer claim and scope must equal patch.claim and patch.scope.",
+    INVALID_EVIDENCE: "Each evidence item is {path, hash} for a vault note or {quote} for a user statement, without duplicates.",
+    ENOENT: "No note at that path. Use an exact path returned by recall.",
+    REVIEW_PENDING: "This claim or note waits for the owner's review of an earlier low-confidence memory. Tell the user; status with ask: \"reviews\" lets the owner decide.",
     RESTORE_HASH_MISMATCH: "A note changed while the owner was deciding; nothing was restored. Call status again.",
     STATE_LOCK_OWNER_ALIVE: "Another Graphmory write is still running. Wait, then call status again.",
     SYNC_NOT_CONFIGURED: "This vault has no Git sync yet. The owner sets it up once with `graphmory bootstrap`.",
@@ -40,7 +50,7 @@ export function publicError(error) {
     TARGET_CHANGED: "The note changed since you read it. Read it again and use its current hash.",
     COMMAND_FAILED: "A Git command failed. Tell the owner; `graphmory push` in a terminal shows the details.",
   }[code] || "The operation could not be completed; inspect the configured server state.",
-    ...(error.missingFields ? { missingFields: error.missingFields } : {}) }
+    ...(error.missingFields ? { missingFields: error.missingFields } : {}), ...(error.reviewId ? { reviewId: error.reviewId } : {}) }
 }
 
 // Summaries dropped from recall because a source changed. Listed so the agent can tell the user;
@@ -191,7 +201,7 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
         if (documents(scope).fingerprint !== index.fingerprint) throw fail("STALE_SOURCE", "Vault changed during recall")
         const recheck = cursor ? [] : summariesToRecheck(index.documents, query)
         const budgetReached = Boolean(report.hasMore) && (pageNumber >= MAX_RECALL_PAGES || report.nextOffset >= MAX_RECALL_CANDIDATES)
-        return { candidates, page: pageNumber, scanLimitReached: Boolean(report.scanLimitReached),
+        return { candidates, page: pageNumber, ...(report.confidence ? { confidence: report.confidence } : {}), scanLimitReached: Boolean(report.scanLimitReached),
           ...(recheck.length ? { recheck } : {}),
           ...(report.status === "abstain" ? { status: "abstain", code: "ABSTAIN_FLOOR" } : {}),
           ...(budgetReached ? { budgetReached: true } : {}),
@@ -251,6 +261,11 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
         if (new Set(targets).size !== targets.length) throw fail("INVALID_TARGET", "Duplicate target")
         const lowConfidence = patch.confidence === "low" && !options.ownerApprovedReview
         if (lowConfidence && curation.operation) throw fail("LOW_CONFIDENCE", "Low-confidence memory needs owner review outside MCP")
+        // A queued low-confidence memory holds its claim and target until the owner decides, so resubmitting it
+        // with a higher confidence (or another write to that note) cannot skip the review.
+        const held = options.ownerApprovedReview ? undefined
+          : listReviews({ vault, stateRoot }).find(item => item.claim === claim || targets.includes(item.target))
+        if (held && !lowConfidence) throw Object.assign(fail("REVIEW_PENDING", "Owner review pending"), { reviewId: held.reviewId })
         const sources = evidence.filter(e => e.path).map(e => e.path)
         if (new Set(sources).size !== sources.length) throw fail("INVALID_EVIDENCE", "Duplicate source")
         if (curation.operation) {

@@ -38,7 +38,7 @@ const schemas = {
   sync: z.object({ action: z.enum(["pull", "push"]), message: z.string().min(1).max(120).regex(/^[^\r\n]*\S[^\r\n]*$/u).optional() }).strict(),
 }
 const descriptions = {
-  recall: "Find cited evidence in project memory. No candidates means no supporting note; say so instead of guessing. Stop as soon as the notes you read answer the question. If two differently worded queries bring no new relevant note, answer with what you found and name what is missing.",
+  recall: "Find cited evidence in project memory. No candidates means no supporting note; say so instead of guessing. Candidates are matches, not proof: read a note before citing it. confidence low means nothing matched by keyword or link, only by loose meaning; treat those candidates as likely unrelated. Stop as soon as the notes you read answer the question. If two differently worded queries bring no new relevant note, answer with what you found and name what is missing.",
   read: "Open the original note or one section. links lists the notes it links to and its backlinks by exact path; read those directly instead of recalling each [[link]].",
   remember: "Save a decision with its evidence in a new note, or update an existing note while keeping its other content. Returns APPLIED with a receipt hash, TENSION when an active note conflicts (nothing written) or BLOCKED when review is needed (nothing written).",
   status: "Show what needs attention: an interrupted write, memory waiting for the owner, lifecycle and vault health, and Git sync state. With ask, the owner decides queued reviews or restores an interrupted write in the host's question UI; you never decide for them.",
@@ -79,7 +79,8 @@ export function createMcpServer(engine) {
     const schema = Object.hasOwn(schemas, params.name) && schemas[params.name]
     if (!schema) return result({ code: "UNKNOWN_TOOL", message: "Choose recall, read, remember, link, status or sync." }, true)
     const input = schema.safeParse(params.arguments)
-    if (!input.success) return result({ code: "INVALID_ARGUMENT", message: "Arguments do not match the tool schema." }, true)
+    if (!input.success) return result({ code: "INVALID_ARGUMENT", message: "Arguments do not match the tool schema.",
+      fields: input.error.issues.slice(0, 5).map(issue => `${issue.path.join(".") || "(root)"}: ${issue.message}`) }, true)
     try { const value = await engine[params.name](input.data, { askOwner }); return result(value, value.status === "BLOCKED") }
     catch (error) { return result(publicError(error), true) }
   })

@@ -46,7 +46,10 @@ export function memoryStatus({ vault, stateRoot, now = new Date() }) {
   if (due) next.push(`${due} note(s) need lifecycle attention; recall them, check with the user, then file updates with remember.`)
   const broken = health.findings.filter(item => ["unresolved-link", "ambiguous-link"].includes(item.kind)).length
   if (broken) next.push(`${broken} broken or ambiguous link(s) in the vault (see health.findings). The Curator reads the notes and repairs them in one link call, pointing each link to the right existing note.`)
-  if (health.summary.critical) next.push(`${health.summary.critical} critical vault health finding(s); tell the owner.`)
+  if (health.summary.critical) next.push(`${health.summary.critical} critical vault health finding(s), listed first in health.findings; tell the owner.`)
+  // Critical findings come first and are never cut by the list limit.
+  const rank = item => item.severity === "critical" ? 0 : 1
+  const findings = health.findings.filter(item => item.severity !== "info").sort((a, b) => rank(a) - rank(b))
   const syncHint = SYNC_HINTS[sync.plan?.decision]
   if (syncHint) next.push(syncHint)
   return {
@@ -56,8 +59,9 @@ export function memoryStatus({ vault, stateRoot, now = new Date() }) {
     lifecycle: { scanned: lifecycle.scanned, ...lifecycle.summary,
       actions: lifecycle.actions.slice(0, LIST_LIMIT).map(({ file, action, reason }) => ({ path: file, action, reason })) },
     health: { ok: health.ok, score: health.score, ...health.summary,
-      findings: health.findings.filter(item => item.severity !== "info").slice(0, LIST_LIMIT)
-        .map(({ severity, kind, file, detail }) => ({ severity, kind, path: file, detail })) },
+      findings: findings.slice(0, Math.max(LIST_LIMIT, health.summary.critical ?? 0))
+        .map(({ severity, kind, file, detail }) => ({ severity, kind, path: file, detail })),
+      findingsTotal: findings.length },
     sync,
     next,
   }

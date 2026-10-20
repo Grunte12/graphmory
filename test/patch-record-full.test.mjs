@@ -376,3 +376,14 @@ test("placePatchRecord merges into existing notes and the result passes full ver
     fs.rmSync(root, { recursive: true, force: true })
   }
 })
+
+test("an update that changes the claim updates a generated heading and keeps an owner heading", () => {
+  const patch = claim => ({ claim, why_it_matters: "Database exposure decides who can read customer data.", scope: { applies: ["databases"], excludes: [] },
+    provenance: [{ kind: "user-statement", value: "Owner decided database exposure." }], confidence: "high", suggested_type: "decision",
+    lifecycle: { status: "active", revalidate_when: ["database policy changes"] } })
+  const generated = renderPatchRecord(patch("All production databases must be world-readable."))
+  const heading = markdown => markdown.split("\n").find(line => line.startsWith("# "))
+  assert.equal(heading(placePatchRecord(generated, patch("All production databases must be private."))), "# All production databases must be private.")
+  const owned = generated.replace(/^# .*$/mu, "# Database exposure policy")
+  assert.equal(heading(placePatchRecord(owned, patch("All production databases must be private."))), "# Database exposure policy")
+})

@@ -830,3 +830,17 @@ test("sync plan blocks unsafe publication and escalates divergence", () => {
   assert.equal(buildSyncPlan({ commitsAhead: 1, commitsBehind: 1 }).decision, "human-review")
   assert.equal(buildSyncPlan({ commitsBehind: 1 }).decision, "pull-first")
 })
+
+test("secret scan catches punctuation, prose, fine-grained tokens, auth headers, invisible splits and base64", () => {
+  const secrets = [
+    "password: Abcd!efgh!ijkl!mnop!12345",
+    "The deploy password is correct-horse-battery-staple-xyz",
+    "github_pat_11AAAAAAA0BBBBBBBBBCCCCCCCCCDDDDDDDDDEEEEEEEEE",
+    "Authorization: Basic dXNlcjpBYmNkZWZnaGlqa2xtbm9wMTIzNDU=",
+    "pass‍word=SuperSecretValue99",
+    Buffer.from("aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY").toString("base64"),
+  ]
+  for (const text of secrets) assert.ok(scanTextForSecrets(text).length, text)
+  const ordinary = ["token = aws_eks_cluster.cluster.token", "The password is stored in Vault.", "Rotate the token automatically every 90 days."]
+  for (const text of ordinary) assert.deepEqual(scanTextForSecrets(text), [], text)
+})

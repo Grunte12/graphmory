@@ -18,7 +18,9 @@ export const DEFAULT_SYNC_CONFIG = {
 }
 
 export const SECRET_PATTERNS = [
-  { name: "generic api key", regex: /\b(api[_-]?key|secret|token|password)\b\s*[:=]\s*['"]?[A-Za-z0-9_\-./+=]{12,}/i },
+  { name: "generic api key", regex: /\b(api[_-]?key|secret|token|password|passwd|passphrase)\b\s*(?:[:=]|\bis\b)\s*['"]?([^\s'"]{12,})/i, value: 2 },
+  { name: "authorization header", regex: /\bAuthorization\s*:\s*(?:Basic|Bearer)\s+[A-Za-z0-9._~+/=-]{12,}/i },
+  { name: "github fine-grained token", regex: /\bgithub_pat_[A-Za-z0-9_]{22,}/ },
   { name: "openai / anthropic key", regex: /\b(sk-[A-Za-z0-9]{20,}|sk-ant-[A-Za-z0-9-]{20,})\b/ },
   { name: "github token", regex: /\bgh[pousr]_[A-Za-z0-9_]{30,}\b/ },
   { name: "private key block", regex: /-----BEGIN [A-Z ]*PRIVATE KEY-----/ },
@@ -534,11 +536,27 @@ export function assertSafeToBootstrap(inspected, { adoptExisting = false } = {})
   }
 }
 
-export function scanTextForSecrets(text) {
+// A config reference such as `aws_eks_cluster.cluster.token` names a value; it is not the value.
+const CONFIG_REFERENCE = /^[a-z_][a-z0-9_]*(?:\.[a-z_][a-z0-9_]*)+$/u
+const INVISIBLE = /[\u00AD\u200B-\u200F\u2060-\u2064\uFEFF]/gu
+
+function matchSecrets(text) {
   const findings = []
   for (const pattern of SECRET_PATTERNS) {
     const match = text.match(pattern.regex)
-    if (match) findings.push({ name: pattern.name, sample: redact(match[0]) })
+    if (match && !(pattern.value && CONFIG_REFERENCE.test(match[pattern.value]))) findings.push({ name: pattern.name, sample: redact(match[0]) })
+  }
+  return findings
+}
+
+export function scanTextForSecrets(text) {
+  // Invisible characters can split a keyword ("pass\u200dword"); base64 can hide a whole assignment.
+  const visible = String(text).replace(INVISIBLE, "")
+  const findings = matchSecrets(visible)
+  for (const [encoded] of visible.matchAll(/[A-Za-z0-9+/]{24,}={0,2}/gu)) {
+    const decoded = Buffer.from(encoded, "base64").toString("utf8")
+    if (!/^[\x20-\x7E\s]+$/u.test(decoded)) continue
+    for (const finding of matchSecrets(decoded)) findings.push({ ...finding, name: `${finding.name} (base64)` })
   }
   return findings
 }

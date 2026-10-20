@@ -147,7 +147,14 @@ export function placePatchRecord(existing, patch) {
   if (starts.length > 1 || ends.length > 1 || starts.length !== ends.length || (starts.length && ends[0] < starts[0])) {
     throw new Error("NEEDS_CURATION: existing note has an ambiguous patch record")
   }
-  if (starts.length) body = [...body.slice(0, starts[0]), ...recordLines, ...body.slice(ends[0] + 1)]
+  if (starts.length) {
+    // A heading Graphmory generated from the old claim follows the record; an owner-written heading stays.
+    const oldClaimLine = body.slice(starts[0], ends[0]).find(line => line.startsWith("claim: "))
+    let oldClaim
+    try { oldClaim = oldClaimLine && JSON.parse(oldClaimLine.slice("claim: ".length)) } catch { oldClaim = undefined }
+    if (heading >= 0 && typeof oldClaim === "string" && body[heading] === "# " + renderHeading(oldClaim)) body[heading] = "# " + renderHeading(patch.claim)
+    body = [...body.slice(0, starts[0]), ...recordLines, ...body.slice(ends[0] + 1)]
+  }
   else if (heading >= 0) body = [...body.slice(0, heading + 1), "", ...recordLines, ...body.slice(heading + 1)]
   else body = ["", ...recordLines, ...body]
   return ["---", ...ownedFrontmatter, ...kept, "---", ...body].join(newline)

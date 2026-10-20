@@ -444,6 +444,17 @@ test("owner reject drops the request; later, dismiss and no elicitation keep it 
   assert.equal(listReviews(f).length, 1)
 })
 
+test("a queued low-confidence claim cannot be resubmitted at higher confidence before the owner decides", async t => {
+  const f = fixture(t, 1), { client } = await ownerClient(t, f, null)
+  const low = input("Helm.md"); low.curation.patch.confidence = "low"
+  const queued = await call(client, "remember", low)
+  assert.equal(queued.code, "LOW_CONFIDENCE")
+  for (const target of ["Helm.md", "Elsewhere.md"]) {
+    const retry = await call(client, "remember", input(target))
+    assert.equal(retry.code, "REVIEW_PENDING"); assert.equal(retry.reviewId, queued.reviewId)
+  }
+  assert.equal(fs.existsSync(path.join(f.vault, "Helm.md")) || fs.existsSync(path.join(f.vault, "Elsewhere.md")), false)
+})
 test("status reports pending work, queued reviews, lifecycle, health and sync without writing", async t => {
   const f = fixture(t, 1), { client } = await ownerClient(t, f, null)
   const clean = await call(client, "status", {})
@@ -454,7 +465,9 @@ test("status reports pending work, queued reviews, lifecycle, health and sync wi
 
   const low = input(); low.curation.patch.confidence = "low"
   assert.equal((await call(client, "remember", low)).code, "LOW_CONFIDENCE")
-  const prepared = await call(client, "remember", { ...input("Other.md"), curation: { ...input("Other.md").curation, stage: "prepare" } })
+  // A different claim: the queued low-confidence claim itself is held until the owner decides.
+  const other = input("Other.md"); other.claim = other.curation.patch.claim = "Scheduled deployments need a change ticket."
+  const prepared = await call(client, "remember", { ...other, curation: { ...other.curation, stage: "prepare" } })
   const before = fs.readdirSync(f.vault).sort()
   const report = await call(client, "status", {})
   assert.equal(report.status, "attention")
