@@ -113,13 +113,12 @@ try {
   if (effort && !/^[a-z]+$/.test(effort)) throw new Error("Invalid effort level")
 
   const prompt = fs.readFileSync(path.join(skillSource, "references", "curator-agent.md"), "utf8").trim()
-  const skillFile = path.join(skillDir, "SKILL.md")
   const description = "Graphmory memory specialist. Use to recall cited memory from the Markdown vault as a Brain Brief, or to file a main-agent-authored Memory Patch (APPLIED/TENSION/BLOCKED)."
-  // Read is for the skill's reference files; all vault access goes through the MCP tools.
-  const tools = "Read, mcp__graphmory__recall, mcp__graphmory__read, mcp__graphmory__remember, mcp__graphmory__link, mcp__graphmory__status"
+  // The prompt is the whole contract: the Curator gets only the vault tools and no skill to discover or load.
+  const tools = "mcp__graphmory__recall, mcp__graphmory__read, mcp__graphmory__remember, mcp__graphmory__link, mcp__graphmory__status"
   const content = host === "codex"
-    ? `name = "graphmory_curator"\ndescription = ${JSON.stringify(description)}\nmodel = ${JSON.stringify(model)}\nmodel_reasoning_effort = ${JSON.stringify(effort)}\ndeveloper_instructions = ${JSON.stringify(`${prompt}\n\nInstalled skill: ${skillFile}`)}\n\n[[skills.config]]\npath = ${JSON.stringify(skillFile)}\nenabled = true\n`
-    : `---\nname: graphmory-curator\ndescription: ${description}\nmodel: ${model}\n${host === "claude" ? `tools: ${tools}\nskills:\n  - graphmory-curator\n` : "readonly: false\n"}---\n\n${prompt}\n\nInstalled skill: ${skillFile}\n`
+    ? `name = "graphmory_curator"\ndescription = ${JSON.stringify(description)}\nmodel = ${JSON.stringify(model)}\nmodel_reasoning_effort = ${JSON.stringify(effort)}\ndeveloper_instructions = ${JSON.stringify(prompt)}\n`
+    : `---\nname: graphmory-curator\ndescription: ${description}\nmodel: ${model}\n${host === "claude" ? `tools: ${tools}\n` : "readonly: false\n"}---\n\n${prompt}\n`
 
   const action = fs.existsSync(agentPath) ? (fs.readFileSync(agentPath, "utf8") === content ? "unchanged" : update ? "update" : "conflict") : "create"
   const skillAction = fs.existsSync(skillDir) ? (sameTree(skillSource, skillDir) ? "unchanged" : update ? "update" : "conflict") : "create"

@@ -1,0 +1,139 @@
+{
+  "date": "2026-10-20T04:48:54.292Z",
+  "model": "grok-4.7-low-fast",
+  "summary": [
+    {
+      "system": "graphmory",
+      "runs": 5,
+      "correct": 2,
+      "median_seconds": 25.7,
+      "median_tool_calls": 3
+    }
+  ],
+  "rows": [
+    {
+      "system": "graphmory",
+      "id": "conflict-dont-use-rag",
+      "exit": 0,
+      "seconds": 25.2,
+      "tool_calls": 3,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 27682,
+        "outputTokens": 325,
+        "cacheReadTokens": 71936,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look this up only in the bakeoff_memory vault and reply with the JSON you asked for.{\"answer\": \"Yes: Chan et al. argue cache-augmented generation beats RAG for small, bounded knowledge sets, which is a case for not using RAG at all on those tasks.\",\"sources\": [\"03 Reference/Papers/chan2024cag.m"
+    },
+    {
+      "system": "graphmory",
+      "id": "multihop-lifecycle-cluster",
+      "exit": 0,
+      "seconds": 39.4,
+      "tool_calls": 8,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "recall",
+        "recall",
+        "read",
+        "read",
+        "recall",
+        "read"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 33096,
+        "outputTokens": 647,
+        "cacheReadTokens": 168704,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look up the 2026 provenance and lifecycle papers in bakeoff_memory only.{\"answer\":\"The provenance and lifecycle governance bibliography groups eight 2026 papers: Jin et al. on typed memory, TOKI, Lin et al. on memory-lifecycle security, Ding et al. on always-on agents, SAGE, MemGuard, Eywa, and"
+    },
+    {
+      "system": "graphmory",
+      "id": "multihop-agent-memory-foundations",
+      "exit": 0,
+      "seconds": 80.2,
+      "tool_calls": 22,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "read",
+        "read",
+        "read",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "read",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "read",
+        "recall"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 48954,
+        "outputTokens": 1716,
+        "cacheReadTokens": 597632,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look up that related-work opening only through the bakeoff_memory server.{\"answer\":\"The related-work section opens with Park et al. 2023 (Generative Agents: memory stream, reflection, and retrieval) and Packer et al. 2023 (MemGPT: LLM-as-OS tiered memory).\",\"sources\":[\"03 Reference/Papers/park2"
+    },
+    {
+      "system": "graphmory",
+      "id": "link-recovery-sage",
+      "exit": 0,
+      "seconds": 25.7,
+      "tool_calls": 3,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 50802,
+        "outputTokens": 412,
+        "cacheReadTokens": 49024,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look up that SAGE write-decision cross-reference only in the bakeoff_memory vault.{\"answer\": \"Eywa (Joshi 2026) and Ground Truth First (Spencer 2026) are the papers cross-referenced alongside SAGE's novelty-gating add/redundant/review write decision.\", \"sources\": [\"03 Reference/Papers/wang2026s"
+    },
+    {
+      "system": "graphmory",
+      "id": "link-recovery-selfrag",
+      "exit": 0,
+      "seconds": 24.3,
+      "tool_calls": 3,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 26532,
+        "outputTokens": 360,
+        "cacheReadTokens": 73088,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look this up only in the bakeoff_memory vault.{\"answer\":\"Near Self-RAG's retrieve-generate-critique loop, the bibliography cross-references Corrective Retrieval Augmented Generation (Yan et al., 2024) and A-RAG (Du et al., 2026).\",\"sources\":[\"03 Reference/Papers/asai2024selfrag.md\"]}"
+    }
+  ]
+}

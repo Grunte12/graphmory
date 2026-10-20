@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-20T03:43:06.891Z",
+  "vault": "eval/real-vault/vault",
+  "notes": 54,
+  "summary": [
+    {
+      "system": "graphmory",
+      "queries": 34,
+      "hit@5": 0.971,
+      "mrr": 0.806,
+      "p50_ms": 31,
+      "p95_ms": 99,
+      "avg_response_chars": 4990
+    },
+    {
+      "system": "hindsight",
+      "queries": 34,
+      "hit@5": 0.941,
+      "mrr": 0.834,
+      "p50_ms": 1210,
+      "p95_ms": 1893,
+      "avg_response_chars": 82425
+    }
+  ],
+  "misses": {
+    "graphmory": [
+      "conflict-llm-free-retrieval"
+    ],
+    "hindsight": [
+      "semantic-degradation",
+      "semantic-self-reflection"
+    ]
+  }
+}
