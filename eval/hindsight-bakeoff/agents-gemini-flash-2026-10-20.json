@@ -1,0 +1,319 @@
+{
+  "date": "2026-10-20T04:00:02.520Z",
+  "model": "gemini-3.7-flash-high",
+  "summary": [
+    {
+      "system": "graphmory",
+      "runs": 5,
+      "correct": 3,
+      "median_seconds": 50.9,
+      "median_tool_calls": 6
+    },
+    {
+      "system": "hindsight",
+      "runs": 5,
+      "correct": 4,
+      "median_seconds": 57.5,
+      "median_tool_calls": 10
+    }
+  ],
+  "rows": [
+    {
+      "system": "graphmory",
+      "id": "exact-toki",
+      "exit": 0,
+      "seconds": 30.6,
+      "tool_calls": 3,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 28401,
+        "outputTokens": 659,
+        "cacheReadTokens": 48750,
+        "cacheWriteTokens": 0
+      },
+      "answer": "```json\n{\n  \"answer\": \"The paper \\\"TOKI: A Bitemporal Operator Algebra for Contradiction Resolution in LLM-Agent Persistent Memory\\\" by Z. Wang (2026) formalizes contradiction resolution in agent persistent memory using a bitemporal operator algebra.\",\n  \"sources\": [\n    \"03 Reference/Papers/wang202"
+    },
+    {
+      "system": "graphmory",
+      "id": "semantic-degradation",
+      "exit": 0,
+      "seconds": 46.5,
+      "tool_calls": 6,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read",
+        "recall",
+        "recall",
+        "read"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 29300,
+        "outputTokens": 1246,
+        "cacheReadTokens": 125199,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\n  \"answer\": \"Yes, evidence from Zhang et al. (2026) shows that repeated LLM-driven memory consolidation and updates degrade memory quality over time, causing useful memories to become faulty.\",\n  \"sources\": [\n    \"03 Reference/Papers/zhang2026faultymemory.md\"\n  ]\n}"
+    },
+    {
+      "system": "graphmory",
+      "id": "conflict-dont-use-rag",
+      "exit": 0,
+      "seconds": 50.9,
+      "tool_calls": 5,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "recall",
+        "status",
+        "recall"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 35480,
+        "outputTokens": 2680,
+        "cacheReadTokens": 98485,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\n  \"answer\": \"Yes, for small and bounded knowledge tasks, RAG introduces unnecessary retrieval complexity, chunking artifacts, and failure modes compared to directly placing the full context into the LLM's context window.\",\n  \"sources\": []\n}"
+    },
+    {
+      "system": "graphmory",
+      "id": "multihop-agent-memory-foundations",
+      "exit": 0,
+      "seconds": 168.2,
+      "tool_calls": 29,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "read",
+        "recall",
+        "recall",
+        "read",
+        "recall",
+        "recall",
+        "read",
+        "recall",
+        "recall",
+        "status",
+        "read",
+        "recall",
+        "recall",
+        "recall",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "recall",
+        "recall"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 239592,
+        "outputTokens": 4761,
+        "cacheReadTokens": 748498,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\n  \"answer\": \"The project's related-work section on agent-memory architectures opens with the foundational papers Generative Agents (Park et al., 2023) and MemGPT (Packer et al., 2023).\",\n  \"sources\": [\n    \"03 Reference/agent-memory-architecture-moc.md\",\n    \"03 Reference/Papers/park2023generative"
+    },
+    {
+      "system": "graphmory",
+      "id": "link-recovery-selfrag",
+      "exit": 0,
+      "seconds": 54.8,
+      "tool_calls": 10,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read",
+        "recall",
+        "recall",
+        "read",
+        "read",
+        "recall",
+        "recall",
+        "read"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 40908,
+        "outputTokens": 1796,
+        "cacheReadTokens": 209752,
+        "cacheWriteTokens": 0
+      },
+      "answer": "```json\n{\n  \"answer\": \"Self-RAG's retrieve/generate/critique loop cross-references Corrective Retrieval Augmented Generation (CRAG by Yan et al., 2024) and A-RAG (Du et al., 2026).\",\n  \"sources\": [\n    \"03 Reference/Papers/asai2024selfrag.md\"\n  ]\n}\n```"
+    },
+    {
+      "system": "hindsight",
+      "id": "exact-toki",
+      "exit": 0,
+      "seconds": 36.7,
+      "tool_calls": 8,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "search_knowledge_base",
+        "list_documents",
+        "list_documents",
+        "list_memories",
+        "list_memories",
+        "get_document"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 81713,
+        "outputTokens": 1094,
+        "cacheReadTokens": 91347,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\"answer\": \"The paper that formalizes contradiction resolution in LLM-agent persistent memory using a bitemporal operator algebra is \\\"TOKI: A Bitemporal Operator Algebra for Contradiction Resolution in LLM-Agent Persistent Memory\\\" by Z. Wang (2026).\", \"sources\": [\"03 Reference/Papers/wang2026toki."
+    },
+    {
+      "system": "hindsight",
+      "id": "semantic-degradation",
+      "exit": 0,
+      "seconds": 51.4,
+      "tool_calls": 12,
+      "tools": [
+        "getMcpToolsToolCall",
+        "get_knowledge_base_tree",
+        "list_documents",
+        "recall",
+        "list_mental_models",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "list_documents",
+        "list_memories"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 66255,
+        "outputTokens": 1945,
+        "cacheReadTokens": 206981,
+        "cacheWriteTokens": 0
+      },
+      "answer": "```json\n{\n  \"answer\": \"Yes, Zhang et al. (2026) demonstrate that repeated LLM-driven memory consolidation degrades memory quality over time, motivating systems to preserve raw episodic records instead of continuously auto-rewriting memory.\",\n  \"sources\": [\n    \"03 Reference/Papers/zhang2026faultymem"
+    },
+    {
+      "system": "hindsight",
+      "id": "conflict-dont-use-rag",
+      "exit": 0,
+      "seconds": 57.5,
+      "tool_calls": 10,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "list_documents",
+        "get_knowledge_base_tree",
+        "list_mental_models",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "list_memories"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 55994,
+        "outputTokens": 1873,
+        "cacheReadTokens": 121661,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\n  \"answer\": \"Yes, Chan et al. (2024) argue that cache-augmented generation outperforms RAG for small, bounded knowledge sets.\",\n  \"sources\": [\n    \"03 Reference/Papers/chan2024cag.md\"\n  ]\n}"
+    },
+    {
+      "system": "hindsight",
+      "id": "multihop-agent-memory-foundations",
+      "exit": 0,
+      "seconds": 126.7,
+      "tool_calls": 34,
+      "tools": [
+        "getMcpToolsToolCall",
+        "get_knowledge_base_tree",
+        "list_documents",
+        "list_mental_models",
+        "recall",
+        "get_document",
+        "list_documents",
+        "list_memories",
+        "list_memories",
+        "list_memories",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "list_memories",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "recall",
+        "list_memories",
+        "list_memories",
+        "get_bank"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 108855,
+        "outputTokens": 8092,
+        "cacheReadTokens": 697685,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\"answer\": \"The project's agent-memory architecture related-work section opens with foundational 2023 papers including Generative Agents by Park et al., MemGPT by Packer et al., and MemoryBank by Zhong et al.\", \"sources\": [\"03 Reference/agent-memory-architecture-moc.md\", \"03 Reference/Papers/packer2"
+    },
+    {
+      "system": "hindsight",
+      "id": "link-recovery-selfrag",
+      "exit": 0,
+      "seconds": 62.1,
+      "tool_calls": 10,
+      "tools": [
+        "getMcpToolsToolCall",
+        "search_knowledge_base",
+        "recall",
+        "list_documents",
+        "get_knowledge_base_tree",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document",
+        "get_document"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 59830,
+        "outputTokens": 1879,
+        "cacheReadTokens": 158284,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\"answer\": \"Near Self-RAG's retrieve-generate-critique loop, the bibliography cross-references CRAG (Yan et al., 2024) and A-RAG (Du et al., 2026).\", \"sources\": [\"03 Reference/Papers/asai2024selfrag.md\"]}"
+    }
+  ]
+}

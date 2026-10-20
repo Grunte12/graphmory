@@ -5,6 +5,7 @@ import { managedRecall, relevantExcerpt } from "./decision-recall.mjs"
 import { loadRuntimeConfig } from "./runtime-config.mjs"
 import { loadVaultDocuments } from "./memory-recall.mjs"
 import { readSourceNotes } from "./source-read.mjs"
+import { buildNoteGraph, linkedNeighbors } from "./graph-navigation.mjs"
 import { withAgentReadAuthority, beginAgentRead } from "./read-authority.mjs"
 import { prepareCurationCheckpoint, finishCurationCheckpoint, verifyCurationWriteBinding, inspectCurationCheckpoint, restoreCurationCheckpoint } from "./curation-checkpoint.mjs"
 import { renderPatchRecord, placePatchRecord } from "./patch-record.mjs"
@@ -24,6 +25,7 @@ export function publicError(error) {
     CURATION_PENDING: "Finish or review the pending curation before reading memory.",
     STALE_SOURCE: "Source bytes changed; recall and verify the original again.",
     NEEDS_CURATION: "Supply a complete Memory Patch and reviewed placement in remember.curation.",
+    REVIEW_REQUIRED: "Complete the missing host reviews listed in missingFields before writing; do not attest to checks that were not performed.",
     LOW_CONFIDENCE: "Low-confidence memory waits for the owner's decision. Tell the user it is queued; do not retry or raise the confidence.",
     RESTORE_HASH_MISMATCH: "A note changed while the owner was deciding; nothing was restored. Call status again.",
     STATE_LOCK_OWNER_ALIVE: "Another Graphmory write is still running. Wait, then call status again.",
@@ -37,7 +39,8 @@ export function publicError(error) {
     LINK_NOT_FOUND: "The note has no link with that target. Read the note again.",
     TARGET_CHANGED: "The note changed since you read it. Read it again and use its current hash.",
     COMMAND_FAILED: "A Git command failed. Tell the owner; `graphmory push` in a terminal shows the details.",
-  }[code] || "The operation could not be completed; inspect the configured server state." }
+  }[code] || "The operation could not be completed; inspect the configured server state.",
+    ...(error.missingFields ? { missingFields: error.missingFields } : {}) }
 }
 
 // Summaries dropped from recall because a source changed. Listed so the agent can tell the user;
@@ -56,6 +59,8 @@ function summariesToRecheck(documents, query) {
 // and normally stops long before it (see docs/guides/mcp-recall.md for the stop rule).
 export const MAX_RECALL_PAGES = 8
 export const MAX_RECALL_CANDIDATES = 80
+// read lists at most this many resolved neighbors of the note.
+export const MAX_READ_LINKS = 40
 // Owner questions per status call, so one call never turns into a long run of prompts.
 const REVIEW_BATCH = 5
 // Changed paths listed in the push question; the rest are counted.
@@ -211,7 +216,14 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
           if (start < 0) throw fail("SECTION_NOT_FOUND", "Section not found")
           markdown = lines.slice(start, end).join("")
         }
-        return { path: source.path, hash: source.sha256, ...(section ? { section } : {}), authority: "source-data", markdown }
+        // Resolved neighbors save a recall per [[link]] when a question hops across notes.
+        const index = documents()
+        index.graph ??= buildNoteGraph(index.documents)
+        const neighbors = linkedNeighbors(index.graph, source.path)
+        const links = neighbors.slice(0, MAX_READ_LINKS).map(({ path: linked, via, relations }) =>
+          ({ path: linked, title: index.graph.byId.get(linked)?.title ?? "", via, relations }))
+        return { path: source.path, hash: source.sha256, ...(section ? { section } : {}), authority: "source-data", markdown,
+          ...(links.length ? { links } : {}), ...(neighbors.length > links.length ? { linksTruncated: true } : {}) }
       })
     },
     // Tool input never reaches `options`: the server adds only its own askOwner callback, and
@@ -227,7 +239,9 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
           return { status: "TENSION", code: "CONFLICT", conflictingNote: { path: source.path, hash: source.sha256 } }
         }
         if (!patch || !target || !targetHashes) return { status: "BLOCKED", ...publicError(fail("NEEDS_CURATION", "")), step: "needs_curation" }
-        if (!supportVerified || !conflictsReviewed || !authorized) throw fail("REVIEW_REQUIRED", "Host review and authorization required")
+        const missingFields = Object.entries({ supportVerified, conflictsReviewed, authorized })
+          .filter(([, reviewed]) => reviewed !== true).map(([field]) => `curation.${field}`)
+        if (missingFields.length) throw Object.assign(fail("REVIEW_REQUIRED", "Host review and authorization required"), { missingFields })
         if (patch?.claim !== claim || JSON.stringify(patch?.scope) !== JSON.stringify(scope)) throw fail("PATCH_BINDING_MISMATCH", "Claim and scope must match patch")
         renderPatchRecord(patch) // Rejects a patch outside the record contract before any vault check.
         if (scanTextForSecrets(JSON.stringify(input)).length) throw fail("SECRET", "Secret-like content refused")
@@ -253,7 +267,19 @@ export function createMemoryEngine({ vault, config = loadRuntimeConfig(), stateR
             if (!patch.provenance.some(p => p.kind === "file" && p.value.split("#")[0] === e.path)) throw fail("UNRESOLVED_PROVENANCE", "Evidence must be bound to patch")
           } else if (!patch.provenance.some(p => p.kind === "user-statement" && p.value === e.quote)) throw fail("UNRESOLVED_PROVENANCE", "Quote attribution missing")
         }
-        if (patch.provenance.some(p => p.kind === "file" ? !sources.includes(p.value.split("#")[0]) : p.kind !== "user-statement" || !evidence.some(e => e.quote === p.value))) throw fail("UNRESOLVED_PROVENANCE", "All provenance must be verified")
+        // A file outside the vault cannot be read here; the lead verified it, so its provenance must name the
+        // absolute path and its SHA-256. Vault files must still arrive as hash-checked evidence.
+        const leadVerifiedExternal = p => {
+          const [, file] = /^(.+?)#sha256=[0-9a-f]{64}(?:\s|$)/u.exec(p.value) ?? []
+          if (!file || !path.isAbsolute(file)) return false
+          const real = target => { try { return fs.realpathSync(target) } catch { return path.resolve(target) } }
+          const roots = [path.resolve(vault), real(vault)], files = [path.resolve(file), real(file)]
+          return roots.every(root => files.every(candidate => {
+            const relative = path.relative(root, candidate)
+            return relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)
+          }))
+        }
+        if (patch.provenance.some(p => p.kind === "file" ? !sources.includes(p.value.split("#")[0]) && !leadVerifiedExternal(p) : p.kind !== "user-statement" || !evidence.some(e => e.quote === p.value))) throw fail("UNRESOLVED_PROVENANCE", "All provenance must be verified")
         const absolute = path.resolve(vault, target)
         assertRealPathInsideVault(fs, vault, absolute, "target")
         if (!curation.operation) {

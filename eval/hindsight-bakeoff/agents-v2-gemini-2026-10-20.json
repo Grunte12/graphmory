@@ -1,0 +1,168 @@
+{
+  "date": "2026-10-20T04:52:32.120Z",
+  "model": "gemini-3.7-flash-high",
+  "summary": [
+    {
+      "system": "graphmory",
+      "runs": 5,
+      "correct": 2,
+      "median_seconds": 58.8,
+      "median_tool_calls": 8
+    }
+  ],
+  "rows": [
+    {
+      "system": "graphmory",
+      "id": "conflict-dont-use-rag",
+      "exit": 0,
+      "seconds": 58.8,
+      "tool_calls": 6,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "recall",
+        "status",
+        "getMcpToolsToolCall",
+        "read"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 42544,
+        "outputTokens": 4020,
+        "cacheReadTokens": 119713,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\"answer\": \"For small and bounded knowledge tasks, placing the entire context directly into the model's prompt is often preferable because RAG introduces retrieval failure modes, chunking complexity, and unnecessary latency.\", \"sources\": []}"
+    },
+    {
+      "system": "graphmory",
+      "id": "multihop-lifecycle-cluster",
+      "exit": 0,
+      "seconds": 63.5,
+      "tool_calls": 13,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "recall",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "recall"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 50304,
+        "outputTokens": 3620,
+        "cacheReadTokens": 175199,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\n  \"answer\": \"The full set of 2026 papers grouped under provenance and lifecycle governance consists of Ding et al. (Always-On Agents: A Survey of Persistent Memory, State, and Governance in LLM Agents), Ha et al. (MemGuard: Preventing Memory Contamination in Long-Term Memory-Augmented Large Langua"
+    },
+    {
+      "system": "graphmory",
+      "id": "multihop-agent-memory-foundations",
+      "exit": 0,
+      "seconds": 196.9,
+      "tool_calls": 35,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "status",
+        "recall",
+        "read",
+        "read",
+        "recall",
+        "recall",
+        "read",
+        "read",
+        "recall",
+        "recall",
+        "read",
+        "read",
+        "read",
+        "read",
+        "recall",
+        "read",
+        "read",
+        "read",
+        "read",
+        "recall",
+        "recall",
+        "read",
+        "read",
+        "read",
+        "read",
+        "recall",
+        "recall",
+        "recall",
+        "read",
+        "read"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 209125,
+        "outputTokens": 7093,
+        "cacheReadTokens": 1474481,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\"answer\": \"This project's related-work section opens with the foundational agent-memory architecture papers Generative Agents (Park et al., 2023) and MemGPT (Packer et al., 2023).\", \"sources\": [\"03 Reference/Papers/park2023generativeagents.md\", \"03 Reference/Papers/packer2023memgpt.md\", \"03 Referen"
+    },
+    {
+      "system": "graphmory",
+      "id": "link-recovery-sage",
+      "exit": 0,
+      "seconds": 52,
+      "tool_calls": 8,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "recall"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 37732,
+        "outputTokens": 1989,
+        "cacheReadTokens": 166851,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\n  \"answer\": \"In the bibliography note for SAGE (Wang et al., 2026), the cross-referenced papers listed under closely related work are Eywa (Joshi, 2026) and Ground Truth First (Spencer, 2026).\",\n  \"sources\": [\n    \"03 Reference/Papers/wang2026sage.md\"\n  ]\n}"
+    },
+    {
+      "system": "graphmory",
+      "id": "link-recovery-selfrag",
+      "exit": 0,
+      "seconds": 41.4,
+      "tool_calls": 6,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read",
+        "read",
+        "read",
+        "read"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 25859,
+        "outputTokens": 1320,
+        "cacheReadTokens": 98309,
+        "cacheWriteTokens": 0
+      },
+      "answer": "```json\n{\n  \"answer\": \"Near Self-RAG's retrieve-generate-critique loop, the bibliography cross-references Corrective Retrieval Augmented Generation (Yan et al., 2024) and A-RAG: Scaling Agentic Retrieval-Augmented Generation via Hierarchical Retrieval Interfaces (Du et al., 2026).\",\n  \"sources\": [\n "
+    }
+  ]
+}

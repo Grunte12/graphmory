@@ -1,0 +1,140 @@
+{
+  "date": "2026-10-20T04:39:28.830Z",
+  "model": "gemini-3.7-flash-high",
+  "summary": [
+    {
+      "system": "graphmory",
+      "runs": 4,
+      "correct": 1,
+      "median_seconds": 89.6,
+      "median_tool_calls": 15
+    }
+  ],
+  "rows": [
+    {
+      "system": "graphmory",
+      "id": "multihop-lifecycle-cluster",
+      "exit": 0,
+      "seconds": 89.6,
+      "tool_calls": 15,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "recall",
+        "recall",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "recall",
+        "read"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 107071,
+        "outputTokens": 2958,
+        "cacheReadTokens": 351921,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\"answer\": \"The bibliography groups eight 2026 papers under provenance and lifecycle governance: Ding et al. (Always-On Agents), Ha et al. (MemGuard), Jin et al. (Mitigating Provenance-Role Collapse in Long-Term Agents via Typed Memory Representation), Joshi (Eywa), Lin et al. (A Survey on Long-Term"
+    },
+    {
+      "system": "graphmory",
+      "id": "multihop-agent-memory-foundations",
+      "exit": 0,
+      "seconds": 154.8,
+      "tool_calls": 30,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "read",
+        "read",
+        "recall",
+        "recall",
+        "recall",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "read",
+        "recall",
+        "recall",
+        "recall",
+        "read",
+        "recall",
+        "recall",
+        "read",
+        "recall"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 196192,
+        "outputTokens": 4940,
+        "cacheReadTokens": 973025,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\n  \"answer\": \"The foundational agent-memory architecture papers this project's related-work section opens with are MemGPT (Packer et al., 2023) and Generative Agents (Park et al., 2023).\",\n  \"sources\": [\n    \"03 Reference/Papers/packer2023memgpt.md\",\n    \"03 Reference/Papers/park2023generativeagent"
+    },
+    {
+      "system": "graphmory",
+      "id": "link-recovery-sage",
+      "exit": 0,
+      "seconds": 50,
+      "tool_calls": 7,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read",
+        "read",
+        "read",
+        "read",
+        "recall"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 33030,
+        "outputTokens": 1790,
+        "cacheReadTokens": 143996,
+        "cacheWriteTokens": 0
+      },
+      "answer": "```json\n{\n  \"answer\": \"The papers cross-referenced alongside SAGE's novelty-gating write decision are Eywa (Joshi, 2026) and Ground Truth First (Spencer, 2026).\",\n  \"sources\": [\n    \"03 Reference/Papers/wang2026sage.md\"\n  ]\n}\n```"
+    },
+    {
+      "system": "graphmory",
+      "id": "link-recovery-selfrag",
+      "exit": 0,
+      "seconds": 53.4,
+      "tool_calls": 5,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "recall",
+        "status",
+        "read"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 34797,
+        "outputTokens": 4029,
+        "cacheReadTokens": 98449,
+        "cacheWriteTokens": 0
+      },
+      "answer": "{\"answer\": \"The papers cross-referenced near Self-RAG's retrieve-generate-critique loop include FLARE (Jiang et al., 2023), Corrective RAG (CRAG; Yan et al., 2024), ReAct (Yao et al., 2022), and Reflexion (Shinn et al., 2023).\", \"sources\": [\"bibliography.md\", \"papers/self-rag.md\"]}"
+    }
+  ]
+}

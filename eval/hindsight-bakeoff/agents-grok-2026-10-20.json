@@ -1,0 +1,301 @@
+{
+  "date": "2026-10-20T03:55:44.882Z",
+  "model": "grok-4.7-low-fast",
+  "summary": [
+    {
+      "system": "graphmory",
+      "runs": 5,
+      "correct": 4,
+      "median_seconds": 27.8,
+      "median_tool_calls": 3
+    },
+    {
+      "system": "hindsight",
+      "runs": 5,
+      "correct": 4,
+      "median_seconds": 42.1,
+      "median_tool_calls": 12
+    }
+  ],
+  "rows": [
+    {
+      "system": "graphmory",
+      "id": "exact-toki",
+      "exit": 0,
+      "seconds": 27.8,
+      "tool_calls": 3,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 49429,
+        "outputTokens": 378,
+        "cacheReadTokens": 50048,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look this up only in the bakeoff_memory server and reply with the JSON you asked for.{\"answer\": \"TOKI (Wang, Z., 2026; arXiv:2606.06240) formalizes contradiction resolution in LLM-agent persistent memory using a bitemporal operator algebra.\",\"sources\": [\"03 Reference/Papers/wang2026toki.md\"]}"
+    },
+    {
+      "system": "graphmory",
+      "id": "semantic-degradation",
+      "exit": 0,
+      "seconds": 28.3,
+      "tool_calls": 3,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 27692,
+        "outputTokens": 433,
+        "cacheReadTokens": 71808,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look only in the bakeoff_memory server for evidence on whether an LLM rewriting its own memory gets worse over time.{\"answer\":\"Yes: Zhang et al. (2026) report that repeated LLM-driven consolidation degrades memory quality over time.\",\"sources\":[\"03 Reference/Papers/zhang2026faultymemory.md\"]}"
+    },
+    {
+      "system": "graphmory",
+      "id": "conflict-dont-use-rag",
+      "exit": 0,
+      "seconds": 25.5,
+      "tool_calls": 3,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 22137,
+        "outputTokens": 378,
+        "cacheReadTokens": 77312,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look up that question only in bakeoff_memory and reply with the JSON you asked for.{\"answer\":\"Yes: Chan et al. argue cache-augmented generation beats RAG for small, bounded knowledge sets.\",\"sources\":[\"03 Reference/Papers/chan2024cag.md\"]}"
+    },
+    {
+      "system": "graphmory",
+      "id": "multihop-agent-memory-foundations",
+      "exit": 0,
+      "seconds": 69.5,
+      "tool_calls": 25,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "recall",
+        "read",
+        "read",
+        "recall",
+        "recall",
+        "read",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "read",
+        "recall",
+        "recall",
+        "read",
+        "recall",
+        "recall",
+        "read",
+        "read",
+        "recall",
+        "recall",
+        "read",
+        "recall",
+        "read"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 40466,
+        "outputTokens": 1788,
+        "cacheReadTokens": 426880,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look up that related-work answer only through the bakeoff_memory server.{\"answer\":\"The related-work section opens with Park et al. 2023 (Generative Agents) and Packer et al. 2023 (MemGPT), the two papers marked as foundational agent-memory architectures.\",\"sources\":[\"03 Reference/Papers/park202"
+    },
+    {
+      "system": "graphmory",
+      "id": "link-recovery-selfrag",
+      "exit": 0,
+      "seconds": 26.7,
+      "tool_calls": 3,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 52075,
+        "outputTokens": 451,
+        "cacheReadTokens": 47360,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look up Self-RAG's retrieve-generate-critique loop in bakeoff_memory only.{\"answer\":\"Near Self-RAG's retrieve-generate-critique loop, the bibliography cross-references Yan et al. 2024 (CRAG) and Du et al. 2026 (A-RAG).\",\"sources\":[\"03 Reference/Papers/asai2024selfrag.md\"]}"
+    },
+    {
+      "system": "hindsight",
+      "id": "exact-toki",
+      "exit": 0,
+      "seconds": 29.2,
+      "tool_calls": 3,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "grepToolCall"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 23273,
+        "outputTokens": 677,
+        "cacheReadTokens": 64768,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look this up only in the bakeoff_memory server.The recall result is large, so I’ll pull just the part about the bitemporal paper.{\"answer\": \"Wang, Z. (2026) formalizes contradiction resolution in agent memory with a bitemporal operator algebra in “TOKI: A Bitemporal Operator Algebra for Contrad"
+    },
+    {
+      "system": "hindsight",
+      "id": "semantic-degradation",
+      "exit": 0,
+      "seconds": 42.1,
+      "tool_calls": 9,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "search_knowledge_base",
+        "list_memories",
+        "list_documents",
+        "get_document",
+        "get_document",
+        "list_memories",
+        "reflect"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 47376,
+        "outputTokens": 775,
+        "cacheReadTokens": 146944,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look only in bakeoff_memory for evidence on whether an LLM rewriting its own memory degrades over time.The knowledge base had no pages, so I’ll browse stored memories and documents for the same claim.{\"answer\": \"Yes: Zhang et al. (2026) report that repeated LLM-driven consolidation degrades mem"
+    },
+    {
+      "system": "hindsight",
+      "id": "conflict-dont-use-rag",
+      "exit": 0,
+      "seconds": 43.1,
+      "tool_calls": 16,
+      "tools": [
+        "getMcpToolsToolCall",
+        "getMcpToolsToolCall",
+        "getMcpToolsToolCall",
+        "recall",
+        "search_knowledge_base",
+        "getMcpToolsToolCall",
+        "getMcpToolsToolCall",
+        "list_memories",
+        "list_documents",
+        "getMcpToolsToolCall",
+        "list_memories",
+        "list_memories",
+        "list_memories",
+        "get_document",
+        "list_documents",
+        "getMcpToolsToolCall"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 33240,
+        "outputTokens": 1141,
+        "cacheReadTokens": 184960,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look only in the bakeoff_memory server for whether RAG is a poor fit for small, bounded knowledge tasks.{\"answer\": \"Yes: Chan et al. (2024), “Don't Do RAG,” argue that cache-augmented generation beats RAG for small, bounded knowledge sets.\",\"sources\": [\"03 Reference/Papers/chan2024cag.md\"]}"
+    },
+    {
+      "system": "hindsight",
+      "id": "multihop-agent-memory-foundations",
+      "exit": 0,
+      "seconds": 94.3,
+      "tool_calls": 32,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "grepToolCall",
+        "getMcpToolsToolCall",
+        "getMcpToolsToolCall",
+        "search_knowledge_base",
+        "getMcpToolsToolCall",
+        "getMcpToolsToolCall",
+        "list_documents",
+        "list_documents",
+        "recall",
+        "get_document",
+        "getMcpToolsToolCall",
+        "list_memories",
+        "list_memories",
+        "list_documents",
+        "list_memories",
+        "list_memories",
+        "getMcpToolsToolCall",
+        "get_knowledge_base_tree",
+        "list_memories",
+        "list_memories",
+        "list_memories",
+        "get_document",
+        "grepToolCall",
+        "list_documents",
+        "list_memories",
+        "list_memories",
+        "getMcpToolsToolCall",
+        "list_mental_models",
+        "getMcpToolsToolCall",
+        "reflect"
+      ],
+      "correct_source": true,
+      "usage": {
+        "inputTokens": 75476,
+        "outputTokens": 2726,
+        "cacheReadTokens": 655488,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look up that related-work opening only in the bakeoff memory server.The recall result is large, so I’m pulling the related-work passage from it.{\"answer\":\"The related-work section opens with Packer et al.’s MemGPT (2023) and Park et al.’s Generative Agents (2023), the foundational agent-memory "
+    },
+    {
+      "system": "hindsight",
+      "id": "link-recovery-selfrag",
+      "exit": 0,
+      "seconds": 41.1,
+      "tool_calls": 12,
+      "tools": [
+        "getMcpToolsToolCall",
+        "search_knowledge_base",
+        "recall",
+        "list_documents",
+        "list_memories",
+        "list_memories",
+        "get_document",
+        "recall",
+        "get_document",
+        "list_documents",
+        "list_documents",
+        "get_document"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 47751,
+        "outputTokens": 1203,
+        "cacheReadTokens": 240640,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look only in the bakeoff_memory server for papers cited next to Self-RAG's retrieve-generate-critique loop.{\"answer\": \"The Self-RAG note lists Yan et al. 2024 (Corrective Retrieval Augmented Generation) and Du et al. 2026 (A-RAG) as the closely related papers next to its retrieve-generate-criti"
+    }
+  ]
+}

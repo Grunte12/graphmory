@@ -138,6 +138,20 @@ test("read rejects stale hashes, traversal, symlinks and forged tool arguments w
   assert.equal((await call(client, "read", { path: "N0.md", section: "Missing" })).code, "SECTION_NOT_FOUND")
 })
 
+test("read lists resolved links and backlinks so a multi-hop answer needs no recall per link", async t => {
+  const f = fixture(t, 0)
+  fs.mkdirSync(path.join(f.vault, "Papers"))
+  fs.writeFileSync(path.join(f.vault, "Related Work.md"), "# Related work\n\nFoundations: [[memgpt]] and [[Generative Agents|generative agents]].\n")
+  fs.writeFileSync(path.join(f.vault, "Papers", "memgpt.md"), "---\nrelated: \"[[Generative Agents]]\"\n---\n# MemGPT\n")
+  fs.writeFileSync(path.join(f.vault, "Papers", "Generative Agents.md"), "# Generative Agents\n")
+  const { client } = await connect(t, "memory", f)
+  const hub = await call(client, "read", { path: "Related Work.md" })
+  assert.deepEqual(hub.links.map(l => [l.path, l.via]).sort(), [["Papers/Generative Agents.md", "outgoing"], ["Papers/memgpt.md", "outgoing"]])
+  const paper = await call(client, "read", { path: "Papers/memgpt.md" })
+  assert.deepEqual(paper.links.find(l => l.path === "Papers/Generative Agents.md").relations, ["related"])
+  assert.equal(paper.links.find(l => l.path === "Related Work.md").via, "backlink")
+  assert.equal((await call(client, "read", { path: "Papers/Generative Agents.md", section: "Generative Agents" })).links.length, 2)
+})
 test("cursor rejects tampering, wrong query/scope, source edit and process restart", async t => {
   const f = fixture(t), first = await f.engine.recall({ query: "release" })
   await assert.rejects(f.engine.recall({ query: "release", cursor: first.nextCursor + "x" }), e => e.publicCode === "INVALID_CURSOR")
@@ -169,6 +183,53 @@ test("remember one-call apply, exact replay and supersession preserve source and
   const replay = await f.engine.remember(request)
   assert.equal(replay.status, "APPLIED", JSON.stringify(replay)); assert.equal(replay.replayed, true)
   assert.equal(fs.readFileSync(path.join(f.vault, "Old.md"), "utf8"), updatedOld)
+})
+
+test("missing or false review attestations identify the gate without writing; a complete reviewed request saves once", async t => {
+  const f = fixture(t, 1)
+  const { client } = await connect(t, "memory", f)
+  for (const field of ["supportVerified", "conflictsReviewed", "authorized"]) {
+    for (const value of [undefined, false]) {
+      const request = input()
+      if (value === undefined) delete request.curation[field]
+      else request.curation[field] = value
+      const refused = await call(client, "remember", request)
+      assert.equal(refused.status, "BLOCKED")
+      assert.equal(refused.code, "REVIEW_REQUIRED")
+      assert.deepEqual(refused.missingFields, [`curation.${field}`])
+      assert.match(refused.message, /missing host reviews/)
+      assert.equal(fs.existsSync(path.join(f.vault, "Decision.md")), false)
+      assert.equal(inspectCurationCheckpoint(f).blocked, false)
+    }
+  }
+  const applied = await call(client, "remember", input())
+  assert.equal(applied.status, "APPLIED", JSON.stringify(applied))
+  const hash = applied.receipt.targetHashes["Decision.md"]
+  const saved = await call(client, "read", { path: "Decision.md", hash })
+  assert.equal(saved.hash, hash)
+  assert.match(saved.markdown, /named incident commander/)
+  assert.equal(inspectCurationCheckpoint(f).blocked, false)
+})
+
+test("remember accepts lead-verified external file provenance with exact quote evidence", async t => {
+  const f = fixture(t, 1)
+  const external = path.join(f.root, "project", "NOTES.md")
+  const request = input()
+  request.curation.patch.provenance.push({ kind: "file", value: `${external}#sha256=${"a".repeat(64)} lead-verified hotfix runbook section` })
+  const applied = await f.engine.remember(request)
+  assert.equal(applied.status, "APPLIED", JSON.stringify(applied))
+  assert.match(fs.readFileSync(path.join(f.vault, "Decision.md"), "utf8"), /lead-verified hotfix runbook/)
+
+  const noHash = input(); noHash.curation.target = "NoHash.md"; noHash.curation.targetHashes = { "NoHash.md": null }
+  noHash.curation.patch.provenance.push({ kind: "file", value: external })
+  assert.equal((await f.engine.remember(noHash)).code, "UNRESOLVED_PROVENANCE")
+  const relative = input(); relative.curation.target = "Relative.md"; relative.curation.targetHashes = { "Relative.md": null }
+  relative.curation.patch.provenance.push({ kind: "file", value: `N0.md#sha256=${"a".repeat(64)}` })
+  assert.equal((await f.engine.remember(relative)).code, "UNRESOLVED_PROVENANCE")
+  const insideVault = input(); insideVault.curation.target = "Inside.md"; insideVault.curation.targetHashes = { "Inside.md": null }
+  insideVault.curation.patch.provenance.push({ kind: "file", value: `${path.join(f.vault, "N0.md")}#sha256=${"a".repeat(64)}` })
+  assert.equal((await f.engine.remember(insideVault)).code, "UNRESOLVED_PROVENANCE")
+  assert.equal(inspectCurationCheckpoint(f).blocked, false)
 })
 
 test("remember refuses unsupported review, stale sources, undeclared provenance, an ambiguous existing record and low confidence", async t => {

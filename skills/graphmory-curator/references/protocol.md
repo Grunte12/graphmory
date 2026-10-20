@@ -20,6 +20,30 @@ Reject low-confidence patches unless the uncertainty itself is the durable fact 
 
 Raw evidence is immutable or independently verifiable evidentiary truth. The Markdown note is operational synthesis. A patch may update the synthesis but must never rewrite, conceal, or supersede its evidence.
 
+## MCP write envelope
+
+The patch is not the tool argument by itself. Supply outer `claim` and `scope` matching the patch, `evidence: [{path, hash}]` for vault originals or `[{quote}]` for trusted user statements, and:
+
+```javascript
+{
+  claim: patch.claim,
+  scope: patch.scope,
+  evidence,
+  curation: {
+    patch,
+    target,
+    targetHashes,
+    supportVerified: true,
+    conflictsReviewed: true,
+    authorized: true
+  }
+}
+```
+
+Here `patch` is the complete lead-authored object, `target` is the exact authorized vault-relative Markdown path, and `targetHashes` maps every target to its reviewed hash. `null` means an explicitly authorized new note; existing targets and superseded notes require their current MCP-read hashes. Quote evidence must exactly match attributed user-statement provenance. File evidence must be an original in the configured vault; the lead verifies external project files and supplies supported meaning rather than asking this vault-only server to read them. Record such a file as one `file` provenance item whose value is the absolute path, `#sha256=` and its 64-character lowercase hex hash, optionally followed by a space and the supported meaning (for example `/repo/docs/RUNBOOK.md#sha256=<hex> hotfix section`). It needs no outer evidence item; vault files still require hash-checked evidence.
+
+The three booleans attest to distinct checks: evidence supports the patch (`supportVerified`), relevant existing notes were checked for conflict (`conflictsReviewed`), and the owner authorized the meaning and exact placement (`authorized`). They are not defaults. Return missing evidence or authorization to the lead, rather than trying an incomplete write. Use the default one-call stage; explicit prepare/apply is only for a task that requires a split handoff. `REVIEW_REQUIRED` identifies missing attestations in `missingFields`; report them, not a speculative server-state cause. A refusal is not a saved memory or a reason to retry unchanged input.
+
 ## Result States
 
 ### APPLIED

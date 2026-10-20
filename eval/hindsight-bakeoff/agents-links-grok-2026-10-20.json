@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-20T04:35:56.018Z",
+  "model": "grok-4.7-low-fast",
+  "summary": [
+    {
+      "system": "graphmory",
+      "runs": 4,
+      "correct": 0,
+      "median_seconds": 30.8,
+      "median_tool_calls": 5
+    }
+  ],
+  "rows": [
+    {
+      "system": "graphmory",
+      "id": "multihop-lifecycle-cluster",
+      "exit": 0,
+      "seconds": 55.7,
+      "tool_calls": 10,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "recall",
+        "recall",
+        "recall",
+        "read",
+        "recall",
+        "read",
+        "recall",
+        "read"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 37262,
+        "outputTokens": 1011,
+        "cacheReadTokens": 229632,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look up the 2026 provenance and lifecycle papers in bakeoff_memory only.{\"answer\": \"The bibliography’s 2026 provenance and lifecycle governance set is Jin’s typed-memory paper, Wang’s TOKI, Lin’s memory-security survey, Ding’s Always-On Agents survey, Wang’s SAGE, Ha’s MemGuard, Joshi’s Eywa, a"
+    },
+    {
+      "system": "graphmory",
+      "id": "multihop-agent-memory-foundations",
+      "exit": 0,
+      "seconds": 22.7,
+      "tool_calls": 3,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "recall"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 27694,
+        "outputTokens": 573,
+        "cacheReadTokens": 80896,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look up the related-work papers in the bakeoff_memory server only.The first lookup was blocked, so I’ll retry the memory search with the required call details.{\"answer\":\"The bakeoff_memory lookup was rejected, so no cited note establishes which foundational papers the related-work section opens"
+    },
+    {
+      "system": "graphmory",
+      "id": "link-recovery-sage",
+      "exit": 0,
+      "seconds": 25.8,
+      "tool_calls": 3,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 27932,
+        "outputTokens": 505,
+        "cacheReadTokens": 72064,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look up that SAGE novelty-gating decision only in the bakeoff_memory server.{\"answer\": \"Eywa (Joshi 2026) and Ground Truth First (Spencer 2026) are the papers cross-referenced alongside SAGE’s novelty-gating add/redundant/review write decision.\", \"sources\": [\"03 Reference/Papers/wang2026sage.md"
+    },
+    {
+      "system": "graphmory",
+      "id": "link-recovery-selfrag",
+      "exit": 0,
+      "seconds": 30.8,
+      "tool_calls": 5,
+      "tools": [
+        "getMcpToolsToolCall",
+        "recall",
+        "read",
+        "recall",
+        "read"
+      ],
+      "correct_source": false,
+      "usage": {
+        "inputTokens": 27931,
+        "outputTokens": 521,
+        "cacheReadTokens": 104192,
+        "cacheWriteTokens": 0
+      },
+      "answer": "I'll look up Self-RAG's retrieve-generate-critique loop in bakeoff_memory only.{\"answer\":\"CRAG (Yan et al. 2024) and A-RAG (Du et al. 2026) are the papers cross-referenced beside Self-RAG’s retrieve-generate-critique loop.\",\"sources\":[\"03 Reference/Papers/asai2024selfrag.md\"]}"
+    }
+  ]
+}
