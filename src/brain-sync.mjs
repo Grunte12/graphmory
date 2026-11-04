@@ -28,7 +28,7 @@ export const SECRET_PATTERNS = [
   { name: "azure connection string", regex: /(DefaultEndpointsProtocol|AccountName|AccountKey|BlobEndpoint|QueueEndpoint|TableEndpoint|FileEndpoint)\s*=[^;\s]{10,}/ },
   { name: "azure subscription key", regex: /\b(SubscriptionId|subscription-id|azure_subscription)\s*[:=]\s*['"]?[a-f0-9-]{36}['"]?/i },
   { name: "gcp service account", regex: /"type"\s*:\s*"service_account"/i },
-  { name: "heroku api key", regex: /\b(h?:[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}|heroku_api_key)\b/i },
+  { name: "heroku api key", regex: /\bheroku[_ -]?api[_ -]?key\b['"]?[ \t]*[:=][ \t]*['"]?[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}(?![\w-])/i },
   { name: "slack token", regex: /\b(xox[baprs]-[0-9A-Za-z-]{10,})\b/ },
   { name: "discord bot token", regex: /\b[MN][A-Za-z\d_-]{18,30}\.[A-Za-z\d_-]{6,10}\.[A-Za-z\d_-]{27,40}\b/ },
   { name: "env file export", regex: /^export\s+[A-Z_]+=\$?['"]?[A-Za-z0-9_\-./+=]{12,}['"]?$/m },

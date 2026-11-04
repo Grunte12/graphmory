@@ -99,6 +99,34 @@ test("detects GCP service account keys", () => {
   assert.ok(findings.some((f) => f.name === "gcp service account"))
 })
 
+test("detects UUID values assigned to a Heroku API key and redacts the value", () => {
+  const uuid = "123e4567-e89b-12d3-a456-426614174000"
+  for (const text of [
+    `HEROKU_API_KEY=${uuid}`,
+    `{"heroku_api_key": "${uuid.toUpperCase()}"}`,
+  ]) {
+    const findings = scanTextForSecrets(text)
+    const heroku = findings.find((finding) => finding.name === "heroku api key")
+    assert.ok(heroku?.sample.endsWith(uuid.slice(-4)), "expected a finding for the UUID value")
+    assert.ok(!JSON.stringify(findings).includes(uuid.toLowerCase()) &&
+      !JSON.stringify(findings).includes(uuid.toUpperCase()), "expected redacted finding")
+  }
+})
+
+test("does not flag Heroku labels, unrelated UUIDs or malformed Heroku values", () => {
+  const uuid = "123e4567-e89b-12d3-a456-426614174000"
+  for (const text of [
+    "Use the `HEROKU_API_KEY` environment variable.",
+    `request_id: ${uuid}`,
+    `request_id:${uuid}`,
+    uuid,
+    "HEROKU_API_KEY=<placeholder>",
+    `HEROKU_API_KEY=${uuid}-extra`,
+  ]) {
+    assert.deepEqual(scanTextForSecrets(text), [])
+  }
+})
+
 test("detects Slack tokens", () => {
   // Assemble at runtime to avoid push protection matching the literal
   const token = "xoxb-" + "123456789012-abcdefghijklmnopqrst"
